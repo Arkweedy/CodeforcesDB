@@ -130,6 +130,13 @@ CREATE TABLE IF NOT EXISTS problem_tags (
     PRIMARY KEY (problem_uid, tag, importance, source)
 );
 
+CREATE TABLE IF NOT EXISTS problem_user_state (
+    problem_uid TEXT PRIMARY KEY REFERENCES problems(problem_uid) ON DELETE CASCADE,
+    favorite INTEGER NOT NULL DEFAULT 0 CHECK (favorite IN (0, 1)),
+    note TEXT NOT NULL DEFAULT '',
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS ingestion_queue (
     contest_id INTEGER PRIMARY KEY,
     status TEXT NOT NULL DEFAULT 'queued'
@@ -162,3 +169,6 @@ CREATE INDEX IF NOT EXISTS idx_problem_tags_tag
 
 CREATE INDEX IF NOT EXISTS idx_problem_tags_problem
     ON problem_tags(problem_uid, importance);
+
+CREATE INDEX IF NOT EXISTS idx_problem_user_state_favorite
+    ON problem_user_state(favorite, problem_uid);

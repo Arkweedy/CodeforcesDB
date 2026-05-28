@@ -8,6 +8,7 @@ from .tags import descendants, resolve_tag
 
 
 DEFAULT_IMPORTANCE = ("primary", "secondary")
+DEFAULT_RATING_STATUSES = ("official",)
 
 
 def _problem_set_for_tag(
@@ -40,11 +41,18 @@ def search_problems(
     tags: list[str] | None = None,
     exclude_tags: list[str] | None = None,
     importance: tuple[str, ...] = DEFAULT_IMPORTANCE,
-    rating_statuses: tuple[str, ...] = ("official",),
+    rating_statuses: tuple[str, ...] = DEFAULT_RATING_STATUSES,
+    tag_mode: str = "and",
+    query_text: str | None = None,
+    favorite_only: bool = False,
     limit: int = 100,
+    offset: int = 0,
 ) -> list[dict[str, object]]:
     params: list[object] = []
     where = []
+    tag_mode = tag_mode.lower()
+    if tag_mode not in {"and", "or"}:
+        raise ValueError("tag_mode must be 'and' or 'or'")
 
     if rating_statuses:
         placeholders = ",".join("?" for _ in rating_statuses)
@@ -57,6 +65,15 @@ def search_problems(
     if rating_max is not None:
         where.append("p.rating <= ?")
         params.append(rating_max)
+    if query_text and query_text.strip():
+        needle = f"%{query_text.strip()}%"
+        where.append(
+            "(p.problem_uid LIKE ? OR (CAST(p.contest_id AS TEXT) || p.problem_index) LIKE ? "
+            "OR p.title LIKE ? OR c.title LIKE ?)"
+        )
+        params.extend([needle, needle, needle, needle])
+    if favorite_only:
+        where.append("COALESCE(us.favorite, 0) = 1")
 
     where_sql = "WHERE " + " AND ".join(where) if where else ""
     rows = conn.execute(
@@ -64,6 +81,7 @@ def search_problems(
         SELECT p.problem_uid
         FROM problems p
         JOIN contests c ON c.contest_id = p.contest_id
+        LEFT JOIN problem_user_state us ON us.problem_uid = p.problem_uid
         {where_sql}
         {"AND" if where_sql else "WHERE"} (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
         """,
@@ -71,8 +89,13 @@ def search_problems(
     ).fetchall()
     candidates = {row["problem_uid"] for row in rows}
 
-    for tag in tags or []:
-        candidates &= _problem_set_for_tag(conn, resolve_tag(conn, tag), importance)
+    tag_sets = [_problem_set_for_tag(conn, resolve_tag(conn, tag), importance) for tag in tags or []]
+    if tag_sets:
+        if tag_mode == "and":
+            for tag_set in tag_sets:
+                candidates &= tag_set
+        else:
+            candidates &= set().union(*tag_sets)
 
     for tag in exclude_tags or []:
         candidates -= _problem_set_for_tag(conn, resolve_tag(conn, tag), importance)
@@ -86,18 +109,19 @@ def search_problems(
         SELECT
             p.problem_uid, p.contest_id, p.problem_index, p.title, p.rating,
             p.rating_status, p.canonical_url, c.title AS contest_title,
-            c.start_time_utc
+            c.start_time_utc, COALESCE(us.favorite, 0) AS favorite
         FROM problems p
         JOIN contests c ON c.contest_id = p.contest_id
+        LEFT JOIN problem_user_state us ON us.problem_uid = p.problem_uid
         WHERE p.problem_uid IN ({placeholders})
         ORDER BY
             CASE WHEN p.rating IS NULL THEN 1 ELSE 0 END,
             p.rating,
             p.contest_id,
             p.problem_index
-        LIMIT ?
+        LIMIT ? OFFSET ?
         """,
-        (*candidates, limit),
+        (*candidates, limit, offset),
     ).fetchall()
 
     results: list[dict[str, object]] = []

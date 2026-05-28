@@ -244,3 +244,39 @@ $env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
 ```powershell
 python scripts/dedupe_division_duplicates.py
 ```
+
+## WebUI 查询
+
+本仓库提供本地 WebUI，用于分层选择 tag、组合 rating 条件、查看题目详情，以及保存个人收藏和备注。
+
+安装依赖：
+
+```powershell
+python -m pip install -r requirements.txt
+npm.cmd install --prefix web
+```
+
+开发模式：
+
+```powershell
+python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
+npm.cmd run dev --prefix web
+```
+
+打开 Vite 输出的本地地址即可使用。开发模式下前端会把 `/api` 代理到 FastAPI。
+
+构建并由 FastAPI 托管：
+
+```powershell
+npm.cmd run build --prefix web
+python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
+```
+
+WebUI 行为：
+
+- 默认只查询 canonical problem，不显示 Div.2 重复 alias。
+- 默认 rating status 为 `official`，importance 为 `primary + secondary`。
+- 多个 tag 可切换 `AND` 或 `OR`。
+- 题目主按钮只显示 `id + title`，点击跳转 Codeforces。
+- 详情抽屉显示 annotation、tags、solution variants、sources、aliases。
+- 收藏和备注写入 `problem_user_state`，不会修改 AI-reviewed tags。

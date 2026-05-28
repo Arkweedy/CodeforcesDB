@@ -16,6 +16,9 @@ def main() -> None:
     parser.add_argument("--rating", nargs=2, type=int, metavar=("MIN", "MAX"))
     parser.add_argument("--tag", action="append", default=[], help="Required tag. Multiple tags are ANDed.")
     parser.add_argument("--exclude", action="append", default=[], help="Excluded tag.")
+    parser.add_argument("--tag-mode", choices=("and", "or"), default="and", help="How multiple tags are combined.")
+    parser.add_argument("--q", help="Text search over id, title, and contest title.")
+    parser.add_argument("--favorite-only", action="store_true", help="Only show favorited problems.")
     parser.add_argument(
         "--importance",
         action="append",
@@ -30,6 +33,7 @@ def main() -> None:
     )
     parser.add_argument("--include-unrated", action="store_true", help="Include pending/no-rating/unknown problems.")
     parser.add_argument("--limit", type=int, default=100)
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--show-tags", action="store_true")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
@@ -55,7 +59,11 @@ def main() -> None:
             exclude_tags=args.exclude,
             importance=importance,
             rating_statuses=rating_statuses,
+            tag_mode=args.tag_mode,
+            query_text=args.q,
+            favorite_only=args.favorite_only,
             limit=args.limit,
+            offset=args.offset,
         )
 
     if args.format == "json":

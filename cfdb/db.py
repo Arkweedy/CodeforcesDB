@@ -52,6 +52,19 @@ def migrate_db(conn: sqlite3.Connection) -> None:
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_problems_canonical ON problems(canonical_problem_uid, dedupe_status)"
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS problem_user_state (
+            problem_uid TEXT PRIMARY KEY REFERENCES problems(problem_uid) ON DELETE CASCADE,
+            favorite INTEGER NOT NULL DEFAULT 0 CHECK (favorite IN (0, 1)),
+            note TEXT NOT NULL DEFAULT '',
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_problem_user_state_favorite ON problem_user_state(favorite, problem_uid)"
+    )
 
 
 def init_db(path: str | Path = DEFAULT_DB_PATH, seed: bool = True) -> None:

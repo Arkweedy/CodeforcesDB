@@ -63,6 +63,58 @@ class CfDbTests(unittest.TestCase):
                 results = search_problems(conn, tags=["acam", "algorithm/dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:1:A"])
 
+    def test_or_tag_search_and_favorite_filter(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, eligibility_status, extraction_status)
+                    VALUES (1, 'cf_contest:1', 'Synthetic Contest', 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:1:A', 1, 'A', 'DP Only', 1800, 'official',
+                         'https://codeforces.com/contest/1/problem/A',
+                         'https://codeforces.com/problemset/problem/1/A'),
+                        ('cf_problem:1:B', 1, 'B', 'Geometry Only', 1900, 'official',
+                         'https://codeforces.com/contest/1/problem/B',
+                         'https://codeforces.com/problemset/problem/1/B')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
+                    VALUES
+                        ('cf_problem:1:A', 'algorithm/dp', 'primary', 'synthetic', 'manual'),
+                        ('cf_problem:1:B', 'math/geometry', 'primary', 'synthetic', 'manual')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_user_state(problem_uid, favorite, note)
+                    VALUES ('cf_problem:1:B', 1, 'remember this')
+                    """
+                )
+                results = search_problems(
+                    conn,
+                    tags=["algorithm/dp", "math/geometry"],
+                    tag_mode="or",
+                )
+                self.assertEqual(
+                    [item["problem_uid"] for item in results],
+                    ["cf_problem:1:A", "cf_problem:1:B"],
+                )
+                favorite_results = search_problems(conn, tag_mode="or", favorite_only=True)
+                self.assertEqual([item["problem_uid"] for item in favorite_results], ["cf_problem:1:B"])
+
     def reviewed_payload(self) -> dict[str, object]:
         return {
             "contest": {"contest_id": 2, "title": "Synthetic Contest"},
@@ -255,6 +307,41 @@ class CfDbTests(unittest.TestCase):
                     ("cf_problem:100:A",),
                 ).fetchone()
                 self.assertEqual(annotation["review_status"], "reviewed")
+
+    def test_web_api_tags_search_detail_and_user_state(self) -> None:
+        from fastapi.testclient import TestClient
+
+        from cfdb.web_app import create_app
+
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                apply_reviewed_payload(conn, self.reviewed_payload())
+
+            client = TestClient(create_app(db))
+            tags = client.get("/api/tags")
+            self.assertEqual(tags.status_code, 200)
+            self.assertTrue(any(item["tag"] == "algorithm" for item in tags.json()))
+
+            search = client.get("/api/search", params={"tags": "algorithm/dp", "tag_mode": "and"})
+            self.assertEqual(search.status_code, 200)
+            self.assertEqual(search.json()["items"][0]["problem_uid"], "cf_problem:2:B")
+
+            detail = client.get("/api/problems/cf_problem:2:B")
+            self.assertEqual(detail.status_code, 200)
+            self.assertEqual(detail.json()["annotation"]["review_status"], "reviewed")
+
+            state = client.patch(
+                "/api/problems/cf_problem:2:B/user-state",
+                json={"favorite": True, "note": "practice later"},
+            )
+            self.assertEqual(state.status_code, 200)
+            self.assertTrue(state.json()["favorite"])
+
+            favorite = client.get("/api/search", params={"favorite_only": "true"})
+            self.assertEqual(favorite.status_code, 200)
+            self.assertEqual(favorite.json()["items"][0]["problem_uid"], "cf_problem:2:B")
 
 
 if __name__ == "__main__":
