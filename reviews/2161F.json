@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2161,
+    "title": "Pinely Round 5 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2161,
+    "index": "F",
+    "title": "SubMST",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "graphs", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2161/problem/F",
+      "notes": "For every vertex subset of a tree-metric complete graph, sum the MST weight of the induced subset."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8lqw4c67",
+      "notes": "Luogu solution uses the nearest smaller-depth representative view and sums each possible chosen minimum edge contribution in O(n^2)."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a tree metric, sum MST weights over all subsets of vertices in the complete graph weighted by tree distance.",
+    "constraints": "Sum of n^2 is at most 5000^2, so O(n^2) tree-distance/contribution aggregation is intended.",
+    "core_idea": "For a fixed subset S, orient each selected vertex except the shallowest representative to its nearest selected vertex with smaller depth; this gives an optimal MST contribution in the tree metric. Sort vertices by depth, and for each vertex rank i consider earlier vertices in increasing distance order. If an earlier vertex is fixed as the nearest parent, then all earlier closer candidates must be absent, while all other vertices are free, contributing a power of two factor. Summing these edge-choice contributions over all vertices and candidate parents gives the total over subsets.",
+    "complexity": "O(n^2) per test case after all-pairs tree distances or per-root DFS distances.",
+    "tricks": ["MST in tree metric via nearest earlier representative", "sort by depth and break ties by priority", "sum edge contribution over all subsets"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "nearest-earlier-contribution",
+      "summary": "Order vertices by depth, enumerate the nearest earlier parent for each vertex, and add its distance times the number of subsets where it is chosen.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "threshold-components-count",
+      "summary": "Alternative Luogu solution sums over distance thresholds using connected components and representative counts.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/mst",
+      "importance": "primary",
+      "evidence": "The quantity being summed is the MST weight of each subset in a complete graph under tree distances.",
+      "solution_variant": "nearest-earlier-contribution"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "All distances and the nearest-parent MST property come from the original tree metric.",
+      "solution_variant": "nearest-earlier-contribution"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Each possible MST edge contributes to a counted number of subsets, typically a power of two coefficient.",
+      "solution_variant": "nearest-earlier-contribution"
+    }
+  ]
+}

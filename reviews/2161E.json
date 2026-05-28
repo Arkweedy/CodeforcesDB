@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2161,
+    "title": "Pinely Round 5 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2161,
+    "index": "E",
+    "title": "Left is Always Right",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2161/problem/E",
+      "notes": "Count replacements of ? in a binary pattern so every length-k substring has the leftmost bit as strict majority."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Hengqwq/p/19218690",
+      "notes": "Blog solution observes the transition of the signed count between adjacent windows and derives period k-1 after the first switch."
+    }
+  ],
+  "annotation": {
+    "summary": "Count binary completions such that in every length-k window, the first bit occurs more often than the other bit.",
+    "constraints": "n totals 1e5 and k is odd, so O(n) or O(n log n) counting over forced periodic classes is needed.",
+    "core_idea": "For a window, track d = #1 - #0. When moving one position right, d changes by -2, 0, or +2 depending on the removed left bit and new right bit. A valid window whose left bit changes from 1 to 0 forces the previous signed count to be 1, the next to be -1, and the new entering bit to be 0; continuing this shows that after the first change, the suffix is periodic with period k-1. Enumerate the prefix length of the initial run, impose the resulting periodic constraints, and count choices with the required balance of (k-1)/2 zeros/ones in the boundary block.",
+    "complexity": "O(n) to O(n log n) depending on prefix-count implementation.",
+    "tricks": ["signed window balance", "first change forces a period k-1 suffix", "enumerate initial run length", "respect fixed pattern characters"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "periodic-first-switch-count",
+      "summary": "Try the initial bit and first switch position, propagate period k-1 constraints, and count balanced assignments compatible with the pattern.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The final answer counts assignments of constrained residue classes and balanced blocks.",
+      "solution_variant": "periodic-first-switch-count"
+    },
+    {
+      "tag": "algorithm/string",
+      "importance": "primary",
+      "evidence": "The object is a constrained binary string with wildcard pattern matching.",
+      "solution_variant": "periodic-first-switch-count"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Most pitfalls are in propagating forced positions, checking ? compatibility, and handling symmetric initial bit cases.",
+      "solution_variant": "periodic-first-switch-count"
+    }
+  ]
+}

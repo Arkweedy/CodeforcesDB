@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2161,
+    "title": "Pinely Round 5 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2161,
+    "index": "D",
+    "title": "Locked Out",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "dp", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2161/problem/D",
+      "notes": "Delete the minimum number of elements so the remaining array has no i<j with b_j-b_i=1."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/a2tzbzxq",
+      "notes": "Luogu solution sorts by value/index and optimizes the DP transition with a Fenwick tree for prefix maxima."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147941",
+      "notes": "Official editorial comments discuss the same good-subsequence DP structure over value groups."
+    }
+  ],
+  "annotation": {
+    "summary": "Remove as few elements as possible so the kept subsequence contains no earlier value x followed later by x+1.",
+    "constraints": "Total n is 3e5, so the longest good subsequence must be computed in O(n log n).",
+    "core_idea": "Keep the longest good subsequence and answer n minus its length. Sort elements by value ascending and equal values by original index descending. For current value v at original position p, it may extend any previous kept subsequence ending at value not equal to v-1, or one ending at v-1 whose position is after p. A global best over values at most v-2 and a Fenwick maximum over reversed positions for value v-1 optimize this transition.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["sort equal values by reverse index", "split DP transition into far-value and previous-value cases", "Fenwick prefix maximum over positions"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-value-fenwick-dp",
+      "summary": "Process elements by value, maintain best DP for values <=v-2 and Fenwick maxima for compatible positions of value v-1.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/lis-dp",
+      "importance": "primary",
+      "evidence": "The main task is a longest subsequence DP with value/order compatibility constraints.",
+      "solution_variant": "sorted-value-fenwick-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "Fenwick tree stores prefix maxima over original positions to optimize transitions from value v-1.",
+      "solution_variant": "sorted-value-fenwick-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting by value and reverse original index is required to make the DP order valid.",
+      "solution_variant": "sorted-value-fenwick-dp"
+    }
+  ]
+}

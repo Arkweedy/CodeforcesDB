@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2161,
+    "title": "Pinely Round 5 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2161,
+    "index": "B",
+    "title": "Make Connected",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["brute force", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2161/problem/B",
+      "notes": "Grid completion problem: turn white cells black so all black cells are connected and no horizontal/vertical run exceeds length 3."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4g5vwzpy",
+      "notes": "Luogu solution classifies all possible connected shapes under the run-length constraint as a 2x2 square or two adjacent diagonals, then brute-forces containment."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether the existing black cells can be extended to one connected black component with no 4 consecutive black cells horizontally or vertically.",
+    "constraints": "n is only 100, so enumerating O(n) diagonal bands and O(n^2) squares is safe.",
+    "core_idea": "The local run-length restriction is so strong that any connected completed shape must be either a 2x2 square or two adjacent diagonals of slope +1 or -1. Therefore the original black cells are feasible iff they are all contained in one of those candidate shapes; empty input and n=1 are special easy YES cases.",
+    "complexity": "O(n^2) per test case.",
+    "tricks": ["classify possible connected shapes", "cover all existing black cells by a candidate shape", "diagonal coordinates x-y and x+y"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "shape-classification-bruteforce",
+      "summary": "Enumerate every 2x2 square and every pair of adjacent diagonals in both slopes, checking whether all existing black cells lie inside.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "After the shape classification, all possible candidate shapes are enumerated directly.",
+      "solution_variant": "shape-classification-bruteforce"
+    },
+    {
+      "tag": "implementation",
+      "importance": "primary",
+      "evidence": "The solution is mostly careful enumeration of diagonal/square cases and edge cases.",
+      "solution_variant": "shape-classification-bruteforce"
+    },
+    {
+      "tag": "algorithm/graph/connectivity",
+      "importance": "secondary",
+      "evidence": "The feasibility condition is about one 4-neighbour connected component, although no graph traversal is needed after classification.",
+      "solution_variant": "shape-classification-bruteforce"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2161,
+    "title": "Pinely Round 5 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2161,
+    "index": "G",
+    "title": "Bitwise And Equals",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2161/problem/G",
+      "notes": "For each query X, minimally increment array elements so their bitwise AND is exactly X."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/life-of-a-libertine/p/19287908",
+      "notes": "Bilingual solution derives per-element up_X, then accelerates high-to-low bit processing with AND FWT and inclusion-exclusion."
+    }
+  ],
+  "annotation": {
+    "summary": "For many targets X, find the minimum total increments so all adjusted numbers AND to exactly X.",
+    "constraints": "n,q up to 2e5 and values below 2^20; an O(nq) per-query scan is impossible.",
+    "core_idea": "First every adjusted value must satisfy y & X = X. For a single x, the cheapest up_X(x) is obtained by changing the highest bit where x violates X and setting lower bits to fit X. After all elements are lifted this way, their AND Y may still contain extra 1 bits. The highest extra bit can be fixed by one more carefully chosen element, avoiding the case where all other elements keep that bit. To batch queries, process bits of X high-to-low and aggregate costs for masks containing required prefix bits but not the next bit using AND FWT plus inclusion-exclusion.",
+    "complexity": "O(B 2^B + q B) for B=20, plus O(n B) preprocessing.",
+    "tricks": ["minimum lift to a supermask of X", "fix highest extra AND bit with one element", "AND FWT over mask supersets", "inclusion-exclusion over required bits"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "and-fwt-batched-greedy",
+      "summary": "Batch all queries by mask using AND FWT/inclusion-exclusion, then apply the greedy one-element correction for extra AND bits.",
+      "complexity": "O(B 2^B + q B)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "direct-per-query-greedy",
+      "summary": "Compute up_X(a_i) for every element and then fix extra bits directly; useful for understanding but too slow for constraints.",
+      "complexity": "O(n q B)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/transform/fwt/and-fwt",
+      "importance": "primary",
+      "evidence": "The optimized solution uses AND Fast Walsh-Hadamard Transform to aggregate costs over masks containing required bits.",
+      "solution_variant": "and-fwt-batched-greedy",
+      "description": "Fast Walsh-Hadamard Transform specialized for subset/superset convolution over bitwise AND masks.",
+      "parent": "algorithm/transform/fwt",
+      "created_reason": "AND-FWT is a concrete FWT subtype useful for high-rating bitmask aggregation queries.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "The batched cost computation uses inclusion-exclusion over required and forbidden bit conditions.",
+      "solution_variant": "and-fwt-batched-greedy"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "All feasibility and cost aggregation is over 20-bit masks and bitwise AND constraints.",
+      "solution_variant": "and-fwt-batched-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The per-element lift and final correction both choose the highest problematic bit greedily.",
+      "solution_variant": "and-fwt-batched-greedy"
+    }
+  ]
+}
