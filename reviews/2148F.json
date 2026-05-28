@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2148,
+    "title": "Codeforces Round 1050 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2148,
+    "index": "F",
+    "title": "Gravity Falls",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2148/problem/F",
+      "notes": "Stack arrays under gravity and output the lexicographically minimum possible bottom row."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146112",
+      "notes": "Official editorial chooses at each current length the array with the lexicographically minimum remaining suffix, with ranks computed from right to left."
+    }
+  ],
+  "annotation": {
+    "summary": "Given several arrays, repeatedly stack them so gravity appends suffixes, and construct the lexicographically minimum final bottom row.",
+    "constraints": "Total length is up to 2e5, so suffix choices must be ranked without repeatedly comparing whole suffixes.",
+    "core_idea": "If the current answer has length i, stacking any array of longer length appends exactly its suffix starting at i+1. Therefore the next choice should be the lexicographically smallest such suffix. Compute suffix ranks for all arrays by scanning positions from right to left and sorting pairs (value at position, rank of suffix after it); then greedily append the entire suffix of the best array at the current length.",
+    "complexity": "O(total_length log total_length) from sorting candidates at each position.",
+    "tricks": ["suffix rank by backward sorting", "append whole chosen suffix", "lexicographic greedy choice"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-rank-greedy",
+      "summary": "Precompute the lexicographically smallest available suffix for each position and greedily append it to the answer.",
+      "complexity": "O(total_length log total_length)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "At each current length, choosing the lexicographically minimum remaining suffix is locally and globally optimal.",
+      "solution_variant": "suffix-rank-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "The suffix ranks are computed by sorting candidates by current value and previous suffix rank.",
+      "solution_variant": "suffix-rank-greedy"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Careful indexing of suffix lengths and ranks is the main implementation burden.",
+      "solution_variant": "suffix-rank-greedy"
+    }
+  ]
+}

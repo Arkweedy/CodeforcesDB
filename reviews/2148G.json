@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2148,
+    "title": "Codeforces Round 1050 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2148,
+    "index": "G",
+    "title": "Farmer John's Last Wish",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2148/problem/G",
+      "notes": "For every prefix, maximize the last position before a strict gcd drop over all reorderings of that prefix."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146112",
+      "notes": "Official editorial maintains counts of divisors and answers with the largest divisor-count that is not equal to the current prefix length."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/05ik2krh",
+      "notes": "Used to confirm the divisor-count criterion and the Fenwick optimization over frequencies of counts."
+    }
+  ],
+  "annotation": {
+    "summary": "For each prefix, output the largest possible index where the prefix gcd can strictly decrease after reordering that prefix.",
+    "constraints": "Total n and values are up to 2e5, so divisor lists and incremental counts are feasible.",
+    "core_idea": "A strict gcd drop after k elements means there exists a divisor d that divides the first k arranged elements but not the next one. For a prefix of length i, if d divides c_d elements and c_d<i, we can place those c_d elements first and get a drop at k=c_d. Thus the answer is max c_d over all divisors with c_d<i. Maintain divisor occurrence counts as the prefix grows, and maintain which counts currently appear using a Fenwick tree or an active candidate list.",
+    "complexity": "O(N log N + total_divisors log N) after divisor precomputation.",
+    "tricks": ["gcd drop becomes divisor-frequency count", "exclude divisors common to all prefix elements", "maintain maximum active count"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "divisor-count-fenwick",
+      "summary": "Precompute divisors, update each divisor's frequency when a new value arrives, and query the largest frequency below the prefix length.",
+      "complexity": "O(N log N + total_divisors log N)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "active-divisor-list",
+      "summary": "Track only divisors whose current count may still become the answer and update the maximum by candidate lists.",
+      "complexity": "O(N sqrt[3] N) style bound from the official implementation notes",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The condition for a gcd drop is characterized by a divisor d that divides exactly c_d prefix elements.",
+      "solution_variant": "divisor-count-fenwick"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "primary",
+      "evidence": "The algorithm groups prefix elements by their divisors and optimizes over divisor frequencies.",
+      "solution_variant": "divisor-count-fenwick"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "The Luogu implementation maintains how many divisor counts have each frequency with a Fenwick tree.",
+      "solution_variant": "divisor-count-fenwick"
+    }
+  ]
+}
