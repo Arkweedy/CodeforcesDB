@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "D",
+    "title": "Copy String",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["greedy", "implementation", "strings", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/D",
+      "notes": "Copy characters from s to form t with minimum number of operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial greedily matches t from right to left using the rightmost possible source character."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/281ytqpf",
+      "notes": "Luogu writeup confirms the right-to-left greedy matching and maximum movement distance answer."
+    }
+  ],
+  "annotation": {
+    "summary": "Copy/move characters from s to produce t and minimize the number of operations.",
+    "constraints": "Total string length is large, so O(n) or O(n alphabet) greedy matching is intended.",
+    "core_idea": "Process t from right to left. For each character, match it with the rightmost still-unused compatible occurrence in s; choosing a more-left occurrence can only increase future movement and never helps. If every character is matched, the minimum number of operations equals the maximum distance any matched character must travel. The actual operation sequence follows by moving characters right-prioritized.",
+    "complexity": "O(n alphabet) or O(n) with position queues.",
+    "tricks": ["right-to-left greedy matching", "maximum matched distance is the answer", "construct moves in right-priority order"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rightmost-source-greedy",
+      "summary": "Match t positions from right to left with the rightmost available source character in s.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/string",
+      "importance": "primary",
+      "evidence": "The whole problem is a string transformation/matching task.",
+      "solution_variant": "rightmost-source-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The rightmost feasible match for each target character is always optimal.",
+      "solution_variant": "rightmost-source-greedy"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "Implementation can use per-character pointers/queues moving from the right.",
+      "solution_variant": "rightmost-source-greedy"
+    }
+  ]
+}

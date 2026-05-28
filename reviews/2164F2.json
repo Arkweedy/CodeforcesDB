@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "F2",
+    "title": "Chain Prefix Rank (Hard Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "combinatorics", "data structures", "dfs and similar", "dp", "graphs", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/F2",
+      "notes": "Hard version of chain prefix rank on a tree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial optimizes the easy tree DP with data structures and binary search over ranks."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://luogu.store/a/uefxcf77",
+      "notes": "Luogu solution gives additional details for the hard-version optimization."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute chain prefix ranks on a tree under hard constraints.",
+    "constraints": "n is large; the quadratic DP from F1 must be optimized with data structures.",
+    "core_idea": "Keep the rooted-tree DP interpretation from F1, but avoid materializing all rank tables. Rank thresholds are monotone, so binary search can locate the boundary where a chain prefix contributes. Fenwick/segment-tree style structures over DFS order store active child contributions while processing each node, allowing subtree contributions to be queried and merged logarithmically.",
+    "complexity": "O(n log^2 n) or O(n log n) depending on implementation.",
+    "tricks": ["optimize tree DP with DFS-order data structure", "binary search monotone rank threshold", "merge child contributions without quadratic tables"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dfs-order-rank-dp",
+      "summary": "Use DFS-order range structures and binary search on rank thresholds to compress the easy DP transitions.",
+      "complexity": "O(n log^2 n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/graph-dp",
+      "importance": "primary",
+      "evidence": "The hard version still solves a tree DP over chain-prefix contributions.",
+      "solution_variant": "dfs-order-rank-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "DFS-order range aggregates can be maintained with Fenwick-like structures.",
+      "solution_variant": "dfs-order-rank-dp"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "The rank contribution boundary is found by binary search.",
+      "solution_variant": "dfs-order-rank-dp"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "secondary",
+      "evidence": "All states and queries are over rooted-tree chains/subtrees.",
+      "solution_variant": "dfs-order-rank-dp"
+    }
+  ]
+}

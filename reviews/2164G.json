@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "G",
+    "title": "Pointless Machine",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "graphs", "interactive", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/G",
+      "notes": "Interactive-style tree/machine reconstruction; interactor is non-adaptive."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial reconstructs the hidden tree/machine by carefully chosen path/branch queries."
+    },
+    {
+      "source_type": "contest",
+      "url": "https://codeforces.com/contest/2164",
+      "notes": "Contest announcement notes the interactor is non-adaptive for problem G."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover a hidden tree-like machine using a limited number of queries.",
+    "constraints": "The query budget requires reconstructing large parts of the tree per query rather than testing every edge.",
+    "core_idea": "Use structural tree queries to identify a root/path, then recursively split unresolved components by asking about carefully chosen branch vertices. Since the interactor is non-adaptive, the reconstruction can rely on deterministic consistency of previous answers. Each query either fixes a vertex relation or separates a component into smaller subcomponents.",
+    "complexity": "O(n log n) style queries/construction.",
+    "tricks": ["tree reconstruction by branch queries", "recursive component splitting", "exploit non-adaptive interactor consistency"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "recursive-tree-query-reconstruction",
+      "summary": "Find a core path/root and recursively use queries to split and attach remaining tree components.",
+      "complexity": "O(n log n) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The task is an interactive hidden-structure reconstruction problem.",
+      "solution_variant": "recursive-tree-query-reconstruction"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The hidden object and reconstruction invariant are tree-structured.",
+      "solution_variant": "recursive-tree-query-reconstruction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The final answer explicitly reconstructs the machine/tree.",
+      "solution_variant": "recursive-tree-query-reconstruction"
+    }
+  ]
+}

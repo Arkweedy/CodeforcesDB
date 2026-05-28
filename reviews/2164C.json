@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "C",
+    "title": "Dungeon",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/C",
+      "notes": "Choose an order to defeat monsters/rooms with parameters A,B,C."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial proves all C>0 events can be processed by increasing B, using the smallest feasible A."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-global-round-30",
+      "notes": "Maspy notes C=0 items should be postponed, then the same greedy is applied after C>0 items."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine whether all dungeon events can be completed in a valid order.",
+    "constraints": "n is large enough that sorting plus logarithmic multiset operations is intended.",
+    "core_idea": "Events with C=0 never help earlier, so postpone them. For C>0, process events by increasing B; if two such events are out of B order, swapping them is never worse. Among currently feasible A values, always use the smallest one, preserving larger A for later harder requirements. After all helpful events are handled, process the remaining C=0 events with the same smallest-feasible greedy.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["postpone zero-gain events", "sort by B via exchange argument", "smallest feasible resource greedy"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-greedy-multiset",
+      "summary": "Sort positive-gain events by B and repeatedly assign the smallest feasible A using a multiset.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The proof relies on sorting by B and always choosing the smallest feasible resource.",
+      "solution_variant": "sorted-greedy-multiset"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "C>0 events are processed in increasing B order.",
+      "solution_variant": "sorted-greedy-multiset"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "A multiset or ordered structure is used to find the smallest feasible A.",
+      "solution_variant": "sorted-greedy-multiset"
+    }
+  ]
+}

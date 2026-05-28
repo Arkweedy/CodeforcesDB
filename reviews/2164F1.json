@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "F1",
+    "title": "Chain Prefix Rank (Easy Version)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dfs and similar", "dp", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/F1",
+      "notes": "Easy version of chain prefix rank on a tree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial derives a tree DP over chain prefixes and rank counts."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute/count prefix ranks of chains in a tree under easier constraints.",
+    "constraints": "Easy version permits quadratic or heavier subtree DP over all chain endpoints.",
+    "core_idea": "Root the tree and consider chains by their top endpoint. The rank of a prefix can be computed from subtree sizes/order statistics along the chain. A DP over tree nodes accumulates the number of chains with each rank contribution, combining children one by one with combinatorial coefficients.",
+    "complexity": "O(n^2) in the easy version.",
+    "tricks": ["rooted-tree chain decomposition", "prefix rank as subtree/order statistic", "combine child DP tables"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-tree-dp",
+      "summary": "Compute chain-prefix contributions with a rooted tree DP that keeps rank/count tables.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/graph-dp",
+      "importance": "primary",
+      "evidence": "The solution is a DP over tree nodes/children.",
+      "solution_variant": "quadratic-tree-dp"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The objects being counted are chains/prefixes in a tree.",
+      "solution_variant": "quadratic-tree-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "Child contributions are combined with combinatorial coefficients.",
+      "solution_variant": "quadratic-tree-dp"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2164,
+    "title": "Codeforces Global Round 30 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2164,
+    "index": "E",
+    "title": "Journey",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dfs and similar", "dsu", "graphs", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2164/problem/E",
+      "notes": "Add transfers to make an Eulerian journey possible with minimum cost."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148126?locale=en&mobile=false",
+      "notes": "Official tutorial uses Euler-trail parity and turns the task into minimum-cost matching of odd vertices on a merge tree."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-global-round-30",
+      "notes": "Maspy explains the merge-process tree, lca transfer costs, and subtree DP pairing odd vertices."
+    }
+  ],
+  "annotation": {
+    "summary": "Add minimum-cost transfers so every vertex has even degree and the journey is Eulerian.",
+    "constraints": "The graph is large; transfer costs must be represented compactly via a merge tree.",
+    "core_idea": "By Euler trail theory, the goal is to pair odd-degree vertices with transfers. Two transfers sharing an intermediate even vertex can be merged, so only direct odd-odd pairings matter. Build the merge tree from edges in increasing index/weight; after propagating chmin values from root to leaves, the cost of pairing two odd vertices is the weight at their LCA. Then tree DP pairs odd vertices inside each subtree whenever two pending odd endpoints meet.",
+    "complexity": "O(n log n) with LCA/DSU merge tree construction.",
+    "tricks": ["odd-degree pairing for Eulerian graph", "merge tree encodes transfer cost", "LCA gives pair cost", "subtree DP matches pending odd endpoints"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "merge-tree-odd-pairing",
+      "summary": "Build a Kruskal-style merge tree, interpret transfer cost as LCA weight, and greedily pair odd leaves in subtrees.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/euler-trail",
+      "importance": "primary",
+      "evidence": "The problem is reduced to making all vertex degrees even for an Eulerian journey.",
+      "solution_variant": "merge-tree-odd-pairing"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The transfer costs are represented and solved on a merge tree.",
+      "solution_variant": "merge-tree-odd-pairing"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "The merge tree is constructed by a DSU/Kruskal-like process.",
+      "solution_variant": "merge-tree-odd-pairing"
+    }
+  ]
+}
