@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2158,
+    "title": "Codeforces Round 1067 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2158,
+    "index": "E",
+    "title": "Sink",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["data structures", "divide and conquer", "dsu", "graphs", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2158/problem/E",
+      "notes": "Dynamic grid problem with decreasing updates; maintain the number of equal-value components that are sinks."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148782",
+      "notes": "Official editorial models each updated cell as a new time-version node and maintains equal-value components by DSU."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain the beauty of a grid under point decreases, where equal-value connected components are grouped and a component contributes if it has no strictly smaller neighbour.",
+    "constraints": "The total number of cells plus updates is linear enough for near-O((nm+q) alpha(nm+q)) DSU with local neighbour updates.",
+    "core_idea": "Treat every current value of a cell as a version node. Initially union adjacent equal-value nodes and mark whether each component is important, i.e. has no smaller neighbour. On a decrease, only the changed cell and its four-neighbour components can change contribution, so subtract their old contribution, create a new node for the new value, invalidate affected larger components, union equal-value neighbours, and add the new local contribution.",
+    "complexity": "O((n m + q) alpha(n m + q) + q log 5) per test case.",
+    "tricks": ["component contribution is local", "create a new node for each value version", "subtract and re-add only affected components"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "versioned-node-dsu",
+      "summary": "Represent each cell update as a new DSU node, union equal-valued current neighbours, and maintain an important flag per component.",
+      "complexity": "O((n m + q) alpha(n m + q))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "Equal-valued grid components are maintained with DSU unions and component-level flags.",
+      "solution_variant": "versioned-node-dsu"
+    },
+    {
+      "tag": "data-structure/dsu/versioned-node",
+      "importance": "primary",
+      "evidence": "Each decrease creates a fresh node for the new value of a cell instead of mutating the old DSU component.",
+      "solution_variant": "versioned-node-dsu",
+      "description": "DSU modeling where updates create new version nodes for an object, while old nodes preserve historical components or invalidated states.",
+      "parent": "data-structure/dsu",
+      "created_reason": "This is a reusable dynamic-connectivity modeling trick distinct from ordinary static DSU.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/connectivity",
+      "importance": "secondary",
+      "evidence": "The maintained objects are connected components in the 4-neighbour grid graph.",
+      "solution_variant": "versioned-node-dsu"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The answer is updated by removing and re-adding only components adjacent to the changed cell.",
+      "solution_variant": "versioned-node-dsu"
+    }
+  ]
+}

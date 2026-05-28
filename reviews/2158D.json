@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2158,
+    "title": "Codeforces Round 1067 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2158,
+    "index": "D",
+    "title": "Palindrome Flipping",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "graphs", "implementation", "shortest paths", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2158/problem/D",
+      "notes": "Construct a sequence of palindromic substring flips transforming binary string s into t."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148782",
+      "notes": "Official editorial transforms each string to all zeroes, then reverses the operations for the target."
+    }
+  ],
+  "annotation": {
+    "summary": "Given two binary strings, output palindromic substring flips that transform the first into the second.",
+    "constraints": "The operation list must be short; an O(n) constructive procedure with at most about 2n operations fits.",
+    "core_idea": "It is enough to define a procedure that converts any valid binary string to all zeroes. Find or create adjacent equal bits, maintain a growing block of equal bits, and when the next boundary bit differs, flip the current equal block so the boundary can be absorbed. Apply this to s, apply it to t, and reverse t's operation list to obtain a path from zeroes to t.",
+    "complexity": "O(n) operations and O(n) time per test case.",
+    "tricks": ["reduce both endpoints to a canonical all-zero string", "grow an equal-bit block", "reverse target operations"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-zero-construction",
+      "summary": "Convert both strings to 0^n with a block-growing palindromic flip routine, then concatenate one routine with the reverse of the other.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The answer is an explicit operation sequence built by reducing both strings to a canonical state.",
+      "solution_variant": "canonical-zero-construction"
+    },
+    {
+      "tag": "algorithm/string",
+      "importance": "primary",
+      "evidence": "The construction relies on binary string structure and maintaining a contiguous equal-character block.",
+      "solution_variant": "canonical-zero-construction"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "The transformation is simplified by routing both endpoints through the same canonical all-zero string.",
+      "solution_variant": "canonical-zero-construction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Careful 1-indexed interval output and operation reversal are the main implementation risks.",
+      "solution_variant": "canonical-zero-construction"
+    }
+  ]
+}

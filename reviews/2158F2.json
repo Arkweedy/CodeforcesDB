@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2158,
+    "title": "Codeforces Round 1067 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2158,
+    "index": "F2",
+    "title": "Distinct GCDs (Hard Version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "constructive algorithms", "graphs", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2158/problem/F2",
+      "notes": "Hard version of constructing a long sequence with pairwise distinct adjacent gcds."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148782",
+      "notes": "Official solution constructs numbers from prime powers and precomputes long Eulerian-style walks with enough unique adjacent gcds."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a long sequence of integers whose adjacent gcds are all different.",
+    "constraints": "The hard version needs a scalable construction for large n under integer bounds, so the set of base numbers and walk length must be precomputed carefully.",
+    "core_idea": "Build a grid of numbers from independent prime powers so the gcd of two chosen vertices is determined by their pair of indices/edge. Precompute a family of walks whose consecutive pairs cover many distinct edges without repetition. Pick the smallest walk long enough for n and output the corresponding numbers; because no edge is repeated, all adjacent gcds are distinct.",
+    "complexity": "O(K^2 + n) precomputation/output, with small fixed K around 100 in the editorial implementation.",
+    "tricks": ["encode edge identity into gcd by prime exponents", "precompute recursively extended walks", "choose the shortest sufficient walk length"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prime-grid-euler-walk",
+      "summary": "Generate a fixed set of prime-power numbers and use a precomputed Eulerian-style walk over their indices so each adjacent gcd is unique.",
+      "complexity": "O(K^2 + n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "randomized-prime-set",
+      "summary": "A community variant chooses random prime-subsets for vertices; with enough primes, adjacent gcd collisions can be avoided with high probability.",
+      "complexity": "Expected O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The hard version is an explicit sequence construction using a designed finite object.",
+      "solution_variant": "prime-grid-euler-walk"
+    },
+    {
+      "tag": "algorithm/graph/euler-trail",
+      "importance": "primary",
+      "evidence": "The sequence is obtained from a walk that avoids repeated edges, which is the mechanism that keeps adjacent gcds distinct.",
+      "solution_variant": "prime-grid-euler-walk",
+      "description": "Euler trail/path style constructions or checks where edges must be used exactly once or at most once in a graph walk.",
+      "parent": "algorithm/graph",
+      "created_reason": "Euler-walk constructions are a standard graph technique and useful to retrieve distinct-edge/gcd construction problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "Prime exponents are arranged so each traversed edge has a distinct gcd value.",
+      "solution_variant": "prime-grid-euler-walk"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The construction depends on counting and recursively extending a walk family with enough distinct adjacent pairs.",
+      "solution_variant": "prime-grid-euler-walk"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2158,
+    "title": "Codeforces Round 1067 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2158,
+    "index": "F1",
+    "title": "Distinct GCDs (Easy Version)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "graphs", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2158/problem/F1",
+      "notes": "Construct a sequence whose adjacent gcd values are all distinct."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148782",
+      "notes": "The hard-version editorial gives the general construction by precomputed walks over specially chosen numbers."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct n integers such that the gcd of every adjacent pair is distinct.",
+    "constraints": "Easy version has smaller n, so a direct constructive graph walk over a small set of base numbers is enough.",
+    "core_idea": "Choose numbers whose prime-exponent patterns make gcds identify edges between chosen vertices. Then output numbers along a walk that does not repeat an edge, so every adjacent gcd is unique. For the easy version, a small precomputed construction or manual Euler-trail style walk over a small graph suffices.",
+    "complexity": "O(n) after precomputing a small walk.",
+    "tricks": ["encode graph vertices as numbers", "make adjacent gcd identify the traversed edge", "use a no-repeated-edge walk"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "small-euler-walk-construction",
+      "summary": "Use a small finite set of constructed numbers and output them along a walk whose edge gcds are unique.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly constructing a valid integer sequence rather than optimizing or testing.",
+      "solution_variant": "small-euler-walk-construction"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The condition is entirely about making all adjacent gcd values distinct.",
+      "solution_variant": "small-euler-walk-construction"
+    },
+    {
+      "tag": "algorithm/graph/euler-trail",
+      "importance": "secondary",
+      "evidence": "The construction is naturally viewed as a walk using graph edges at most once so each edge-coded gcd is unique.",
+      "solution_variant": "small-euler-walk-construction",
+      "description": "Euler trail/path style constructions or checks where edges must be used exactly once or at most once in a graph walk.",
+      "parent": "algorithm/graph",
+      "created_reason": "Euler-walk constructions are a standard graph technique and useful to retrieve distinct-edge/gcd construction problems.",
+      "status": "candidate"
+    }
+  ]
+}

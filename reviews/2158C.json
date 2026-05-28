@@ -1,0 +1,73 @@
+{
+  "contest": {
+    "contest_id": 2158,
+    "title": "Codeforces Round 1067 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2158,
+    "index": "C",
+    "title": "Annoying Game",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["dp", "games", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2158/problem/C",
+      "notes": "Game over arrays a,b for exactly k turns; final score is the maximum non-empty subarray sum."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148782",
+      "notes": "Official editorial reduces paired moves by parity and computes best subarray passing through each modified index."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/148809",
+      "notes": "Shayan's solution discussion was used as an additional reference pointer for this round."
+    }
+  ],
+  "annotation": {
+    "summary": "Alice and Bob alternately add or subtract b_i from some a_i, then the score is the maximum non-empty subarray sum.",
+    "constraints": "Total n is 2e5, so only linear scans over the array are allowed.",
+    "core_idea": "Moves on the same index can cancel in pairs, so only the parity of k matters. If k is even, the original maximum subarray sum is forced. If k is odd, Alice gets one effective last change and should choose an index i; the best subarray affected by this change is the best suffix ending at i plus the best prefix starting at i minus a_i, then plus b_i.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["pairwise cancellation by parity", "best subarray through a chosen index"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-kadane",
+      "summary": "Reduce the game to zero or one effective move, then use left/right Kadane values to test every possible changed index.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The game is solved by the optimal cancellation strategy between Alice and Bob, leaving only k mod 2 effective moves.",
+      "solution_variant": "parity-kadane"
+    },
+    {
+      "tag": "algorithm/dp/max-subarray",
+      "importance": "primary",
+      "evidence": "The final value is computed by Kadane-style maximum subarray DP from both directions.",
+      "solution_variant": "parity-kadane",
+      "description": "Kadane-style dynamic programming for maximum subarray sums, including directional best prefix/suffix variants.",
+      "parent": "algorithm/dp",
+      "created_reason": "Maximum subarray DP is a reusable retrieval category distinct from generic DP and prefix maximum optimization.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "After the cancellation reduction, Alice greedily chooses the single index whose modified through-subarray value is largest.",
+      "solution_variant": "parity-kadane"
+    }
+  ]
+}
