@@ -334,8 +334,8 @@ textarea {
 }
 
 .problem-rating-orange {
-  --problem-link-bg: #c2410c;
-  --problem-link-hover: #9a3412;
+  --problem-link-bg: #f97316;
+  --problem-link-hover: #ea580c;
 }
 
 .problem-rating-red {

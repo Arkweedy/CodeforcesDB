@@ -50,6 +50,15 @@ const RATING_STATUSES: RatingStatus[] = [
   "unknown"
 ];
 const IMPORTANCE_VALUES: Importance[] = ["primary", "secondary", "incidental"];
+const IMPORTANCE_RANK: Record<Importance, number> = {
+  primary: 0,
+  secondary: 1,
+  incidental: 2
+};
+
+interface VisibleProblemTag extends ProblemTag {
+  mergedEntries: Array<Pick<ProblemTag, "importance" | "source">>;
+}
 
 function toggleValue<T>(values: T[], value: T): T[] {
   return values.includes(value)
@@ -59,6 +68,50 @@ function toggleValue<T>(values: T[], value: T): T[] {
 
 function byImportance(tags: ProblemTag[], importance: Importance): ProblemTag[] {
   return tags.filter((tag) => tag.importance === importance);
+}
+
+function dedupeVisibleTags(tags: ProblemTag[]): VisibleProblemTag[] {
+  const byTag = new Map<string, VisibleProblemTag>();
+
+  for (const tag of tags) {
+    if (tag.importance === "incidental") continue;
+
+    const existing = byTag.get(tag.tag);
+    if (!existing) {
+      byTag.set(tag.tag, {
+        ...tag,
+        mergedEntries: [{ importance: tag.importance, source: tag.source }]
+      });
+      continue;
+    }
+
+    const entryExists = existing.mergedEntries.some(
+      (entry) => entry.importance === tag.importance && entry.source === tag.source
+    );
+    if (!entryExists) {
+      existing.mergedEntries.push({ importance: tag.importance, source: tag.source });
+    }
+
+    if (IMPORTANCE_RANK[tag.importance] < IMPORTANCE_RANK[existing.importance]) {
+      existing.importance = tag.importance;
+      existing.source = tag.source;
+    }
+  }
+
+  return [...byTag.values()].sort((left, right) => {
+    const rankDiff = IMPORTANCE_RANK[left.importance] - IMPORTANCE_RANK[right.importance];
+    return rankDiff || left.tag.localeCompare(right.tag);
+  });
+}
+
+function tagTooltip(locale: Locale, tag: VisibleProblemTag): string {
+  const entries = tag.mergedEntries
+    .map(
+      (entry) =>
+        `${importanceLabel(locale, entry.importance)}: ${valueLabel(locale, entry.source)}`
+    )
+    .join("\n");
+  return `${tag.tag}\n${entries}`;
 }
 
 function TagTreeItem({
@@ -292,9 +345,7 @@ function ProblemResult({
   locale: Locale;
   onOpen: (problemUid: string) => void;
 }) {
-  const visibleTags = problem.tags
-    .filter((tag) => tag.importance !== "incidental")
-    .slice(0, 5);
+  const visibleTags = dedupeVisibleTags(problem.tags).slice(0, 5);
 
   return (
     <article className="result-item">
@@ -322,9 +373,9 @@ function ProblemResult({
         ) : null}
         {visibleTags.map((tag) => (
           <span
-            key={`${problem.problem_uid}:${tag.tag}:${tag.importance}`}
+            key={`${problem.problem_uid}:${tag.tag}`}
             className={tagTokenClassName(tag.tag, "mini-tag")}
-            title={tag.tag}
+            title={tagTooltip(locale, tag)}
           >
             {tagLabel(locale, tag.tag)}
           </span>
