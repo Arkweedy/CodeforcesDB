@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2145,
+    "title": "Educational Codeforces Round 183 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2145,
+    "index": "E",
+    "title": "Predicting Popularity",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2145/problem/E",
+      "notes": "Maintain changing attack/defense values and answer each update with the predicted popularity count."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147164",
+      "notes": "Official reference code converts every item into a demand value, applies range additions over thresholds, and finds the first negative segment-tree leaf."
+    }
+  ],
+  "annotation": {
+    "summary": "After point updates to two attributes, maintain the maximum predicted popularity value under global attack and defense baselines.",
+    "constraints": "n and the number of updates are large, so each update needs logarithmic maintenance of threshold counts.",
+    "core_idea": "For each object, compute its demand p=max(a_i-A,0)+max(d_i-D,0): how much extra resource it needs before it can count toward a popularity level. A level x is feasible exactly when enough objects have demand below x. Maintain for every x the value count(demand<x)-x; each object with demand p contributes +1 to all thresholds x>p. A lazy segment tree supports removing and adding one object's range contribution and finds the first negative threshold, so the answer is that threshold minus one.",
+    "complexity": "O((n+q) log n).",
+    "tricks": ["convert each item to a demand threshold", "range contribution over feasible levels", "first failing threshold"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "threshold-segment-tree",
+      "summary": "Maintain demand-threshold contributions with range add and query the first level whose count is insufficient.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "Range add over threshold suffixes and first-negative search are the core data structure operations.",
+      "solution_variant": "threshold-segment-tree"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Each object contributes +1 to a suffix of popularity thresholds, and updates are handled by removing and re-adding that contribution.",
+      "solution_variant": "threshold-segment-tree"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The answer is found as the first threshold where the monotone feasibility count becomes insufficient.",
+      "solution_variant": "threshold-segment-tree"
+    }
+  ]
+}

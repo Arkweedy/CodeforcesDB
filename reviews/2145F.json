@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2145,
+    "title": "Educational Codeforces Round 183 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2145,
+    "index": "F",
+    "title": "Long Journey",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["dfs and similar", "divide and conquer", "dp", "graphs", "greedy", "math", "matrices", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2145/problem/F",
+      "notes": "A chip moves along an infinite path with periodic traps; find the first turn when it reaches cell m or report impossible."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147164",
+      "notes": "Official reference code uses period 2520 and binary lifting over (turn mod n, position mod 2520) to count how far the chip advances in 2^j turns."
+    }
+  ],
+  "annotation": {
+    "summary": "Given periodic traps and a chip that may advance one cell per turn, compute the earliest turn when it reaches distance m.",
+    "constraints": "n<=10, trap periods divide 2520 in the official solution, and m can be huge, so direct simulation is impossible.",
+    "core_idea": "The state needed for future behavior is only the turn index modulo n and the current position modulo lcm(1..10)=2520. In one turn, the chip advances if moving to the next cell will not land on a trap activated by that turn; otherwise it stays. Precompute go[j][turn_mod][pos_mod] = number of cells advanced over 2^j turns by doubling transitions. If even 2^49 turns are insufficient, the answer is -1; otherwise binary lift the largest prefix with total advance < m.",
+    "complexity": "O(50 * n * 2520) preprocessing per test case.",
+    "tricks": ["periodic state compression", "doubling transition values", "binary search over time by lifting"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "periodic-binary-lifting",
+      "summary": "Compress by turn and position residues, precompute doubled advance counts, and lift the first time total progress reaches m.",
+      "complexity": "O(50 * n * 2520)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/binary-lifting",
+      "importance": "primary",
+      "evidence": "The official solution precomputes transitions for 2^j turns and greedily lifts the answer time from high bits to low bits.",
+      "solution_variant": "periodic-binary-lifting",
+      "description": "Doubling transitions or ancestors to answer large-step reachability, first-time, or jump queries in logarithmic factors.",
+      "parent": "algorithm",
+      "created_reason": "This is a standard reusable technique distinct from binary search and general DP; it is useful for retrieving doubling-transition problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "primary",
+      "evidence": "The state compression depends on residues modulo the least common period 2520 of the trap cycles.",
+      "solution_variant": "periodic-binary-lifting"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "The infinite path and huge time are reduced to finitely many residue states (turn mod n, position mod 2520).",
+      "solution_variant": "periodic-binary-lifting"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2145,
+    "title": "Educational Codeforces Round 183 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2145,
+    "index": "G",
+    "title": "Cost of Coloring",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "divide and conquer", "dp", "fft", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2145/problem/G",
+      "notes": "Count colorings of an n by m grid by their coloring cost for exactly k colors."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147164",
+      "notes": "Official reference code precomputes binomial counts A[x][cost] for color values up to x and applies inclusion-exclusion over the k colors."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/e4lxjied",
+      "notes": "Chinese writeup cross-checks the combinatorial layer-counting interpretation for the official formula."
+    }
+  ],
+  "annotation": {
+    "summary": "For every possible cost, count the number of k-color grid colorings with that cost.",
+    "constraints": "n,m,k are up to a few thousand in the official implementation, so closed combinatorial sums with precomputed binomials are required.",
+    "core_idea": "For a bound x on usable colors, compute A[x][cost]: the number of colorings whose rows and columns expose a particular outer layer size, using binomial choices of nonempty row and column sets and powers of x for lower colors. To count colorings that use all k colors, apply inclusion-exclusion on the missing colors: sum (-1)^j C(k-1,j) A[k-1-j][cost]. Prefix sums over row/column layer counts make each A[x] entry fast to compute after factorial precomputation.",
+    "complexity": "O(k(n+m) + k*max(n,m)) after factorial precomputation in the official direct formula.",
+    "tricks": ["layer-counting formula", "colors used by inclusion-exclusion", "binomial prefix sums"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "inclusion-exclusion-combinatorics",
+      "summary": "Precompute color-bound layer counts and use inclusion-exclusion over colors to force using the full palette.",
+      "complexity": "O(k(n+m) + k*max(n,m))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The solution is an explicit binomial-counting formula for grid colorings grouped by cost.",
+      "solution_variant": "inclusion-exclusion-combinatorics"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "The final answer enforces all k colors by alternating over missing colors with C(k-1,j).",
+      "solution_variant": "inclusion-exclusion-combinatorics"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Prefix sums over binomial row and column counts are used to compute layer contributions quickly.",
+      "solution_variant": "inclusion-exclusion-combinatorics"
+    },
+    {
+      "tag": "algorithm/transform/fft",
+      "importance": "incidental",
+      "evidence": "The official metadata lists FFT, but the reviewed reference implementation uses a direct combinatorial formula rather than FFT as the main solution.",
+      "solution_variant": "inclusion-exclusion-combinatorics"
+    }
+  ]
+}

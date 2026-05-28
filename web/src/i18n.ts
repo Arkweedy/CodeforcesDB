@@ -167,6 +167,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
 
 const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm": "算法",
+  "algorithm/binary-lifting": "倍增",
   "algorithm/bitmask": "位掩码",
   "algorithm/bitmask/xor-subset": "异或子集",
   "algorithm/divide-and-conquer": "分治",
@@ -288,6 +289,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "algorithm": "算法",
   "automaton-dp": "自动机 DP",
   "batch-simulation": "批量模拟",
+  "binary-lifting": "倍增",
   "binary-search": "二分",
   "bipartite-graph": "二分图",
   "bitmask": "位掩码",

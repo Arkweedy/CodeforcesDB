@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2145,
+    "title": "Educational Codeforces Round 183 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2145,
+    "index": "D",
+    "title": "Inversion Value of a Permutation",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dfs and similar", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2145/problem/D",
+      "notes": "Construct a permutation of length n with a required inversion-related value k, or report impossible."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147164",
+      "notes": "Official reference code runs a partition DP over block sizes and reconstructs consecutive increasing blocks in descending block order."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a permutation whose inversion value equals k, or output 0 if no such permutation exists.",
+    "constraints": "n is small enough for DP over all possible inversion values up to n(n-1)/2.",
+    "core_idea": "View the permutation as consecutive increasing blocks, arranged so every element of an earlier block is larger than every element of a later block. A block of size y contributes C(y,2) to the complement of the target cross-block inversion value, so the problem becomes partitioning n into block sizes whose C(y,2) sum is n(n-1)/2-k. A knapsack-style DP records whether a prefix length and complement value are reachable, then the block sizes reconstruct the permutation.",
+    "complexity": "O(n^2 * n(n-1)/2) in the direct DP used by the official solution.",
+    "tricks": ["partition into monotone blocks", "convert target to complement", "reconstruct from DP parents"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "block-partition-dp",
+      "summary": "DP over total length and complement value to choose block sizes, then output increasing consecutive blocks in descending value ranges.",
+      "complexity": "O(n^2 * n(n-1)/2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "The solution chooses block sizes whose triangular-number contributions sum to the required complement.",
+      "solution_variant": "block-partition-dp"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "After the DP proves reachability, the answer is built explicitly from the recovered block sizes.",
+      "solution_variant": "block-partition-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "The key observation is a structured permutation made of increasing blocks ordered by decreasing value ranges.",
+      "solution_variant": "block-partition-dp"
+    }
+  ]
+}
