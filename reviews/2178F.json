@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2178,
+    "title": "Good Bye 2025"
+  },
+  "problem": {
+    "contest_id": 2178,
+    "index": "F",
+    "title": "Conquer or of Forest",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2178/problem/F",
+      "notes": "Count possible target rooted trees after operations on white nodes defined by even subtree size."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150189/en16",
+      "notes": "Good Bye 2025 editorial section for 2178F."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://gdst.dev/posts/CF2178F/",
+      "notes": "Detailed writeup cuts parent edges of white nodes, proves fixed components, and derives the chain-counting formula."
+    }
+  ],
+  "annotation": {
+    "summary": "Count the different target trees reachable when operations move even-subtree white components so all white nodes lie on one root-to-node path.",
+    "constraints": "n up to 2e5, so the count must be derived from a single DFS and a closed formula.",
+    "core_idea": "Cut the parent edge of every non-root white node. This partitions the tree into the root component S0 and even-sized components S1..Sk, each with exactly one top white node and fixed internal structure. The target condition requires arranging all non-root components into one chain below S0. For a fixed order, attaching component B under component A has |A|*|B| choices; summing over all orders gives a factorial/product formula involving component sizes and inverse sizes.",
+    "complexity": "O(n) per test case after factorial precomputation.",
+    "tricks": ["cut by even-subtree nodes", "component chain counting", "factorized sum over permutations"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "white-component-chain-formula",
+      "summary": "DFS to collect even-subtree component sizes, then evaluate the component-order formula.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/tree-dfs",
+      "importance": "primary",
+      "evidence": "A DFS computes subtree parity and extracts component sizes.",
+      "solution_variant": "white-component-chain-formula"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The answer is a closed-form count over permutations and attachment choices of components.",
+      "solution_variant": "white-component-chain-formula"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "secondary",
+      "evidence": "The formula sums over all orders of the detached components and separates the last component choice.",
+      "solution_variant": "white-component-chain-formula",
+      "description": "Count objects by ordering components/items and multiplying choices along the order.",
+      "parent": "math/combinatorics",
+      "created_reason": "Permutation-order counting is a reusable subpattern within combinatorics.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "primary",
+      "evidence": "The key transformation is cutting edges above white nodes to form fixed components.",
+      "solution_variant": "white-component-chain-formula",
+      "description": "Transform a graph/tree problem by cutting or contracting into independent components.",
+      "parent": "trick",
+      "created_reason": "Component decomposition is a common graph/tree reduction worth indexing.",
+      "status": "candidate"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2178,
+    "title": "Good Bye 2025"
+  },
+  "problem": {
+    "contest_id": 2178,
+    "index": "H",
+    "title": "Create or Duplicate",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "graphs", "number theory", "shortest paths"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2178/problem/H",
+      "notes": "Minimum cost to make the multiset sum divisible by m using create and duplicate operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149548",
+      "notes": "Good Bye 2025 editorial hints discuss merging presents into a graph while handling duplicate operations."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/5098zak2",
+      "notes": "Layered-graph shortest path solution for create/duplicate counts modulo m."
+    }
+  ],
+  "annotation": {
+    "summary": "Starting with one a,b,c, minimize the cost to make the total sum congruent to 0 modulo m using add-one and double-count operations.",
+    "constraints": "m up to 5e5 over tests, so the state graph must be linear or near-linear in m.",
+    "core_idea": "For one value, residues form a shortest-path graph with edges +value and times-two. For several values, duplications can be synchronized by using layered states that describe which values have been introduced; transitions add values or double all currently active counts. Running shortest paths on the layered modulo graph yields costs for residue classes, then combine the independent parts and subtract the artificial initial additions.",
+    "complexity": "O(m log m) or O(8m log m) depending on the layered formulation.",
+    "tricks": ["modulo residue shortest path", "layered graph for active values", "synchronize doubling operations"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "layered-mod-shortest-path",
+      "summary": "Build a layered modulo graph for add and duplicate operations, then run Dijkstra.",
+      "complexity": "O(m log m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/shortest-path",
+      "importance": "primary",
+      "evidence": "Residue transitions are modeled as weighted edges and solved by Dijkstra.",
+      "solution_variant": "layered-mod-shortest-path"
+    },
+    {
+      "tag": "algorithm/graph/layered-graph",
+      "importance": "primary",
+      "evidence": "The solution uses layers for which gift types have been introduced before applying doubling transitions.",
+      "solution_variant": "layered-mod-shortest-path",
+      "description": "Model extra discrete state dimensions by duplicating graph vertices into layers.",
+      "parent": "algorithm/graph",
+      "created_reason": "Layered graph modeling is a common graph reduction that should be searchable.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "secondary",
+      "evidence": "All states and transitions are residues modulo m.",
+      "solution_variant": "layered-mod-shortest-path"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The general layered model can represent active gift subsets by a small bitmask.",
+      "solution_variant": "layered-mod-shortest-path"
+    }
+  ]
+}

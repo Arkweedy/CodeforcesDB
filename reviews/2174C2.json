@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "C2",
+    "title": "Beautiful Patterns (Hard Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/C2",
+      "notes": "Hard version of the expected-square palindromic-substring counting task."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149003",
+      "notes": "Official tutorial link for Codeforces Round 1069."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/mnen8v0q",
+      "notes": "Independent writeup classifies pairs of intervals and optimizes the second-moment sum."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the expected square of the number of palindromic substrings in a random color string under the hard constraints.",
+    "constraints": "The hard version is too large for direct pair enumeration, so the pair contribution sum must be grouped by overlap structure and parity.",
+    "core_idea": "Expand the square into ordered pairs of palindrome indicators. A pair contributes m^{-components} after imposing equality constraints. The hard version classifies disjoint, nested, and crossing interval pairs, then aggregates equal formulas with prefix sums by length/parity instead of rebuilding constraints for each pair.",
+    "complexity": "Near-linear or low-polynomial after grouping interval-pair formulas.",
+    "tricks": ["second moment as pairwise indicators", "classify overlapping intervals", "aggregate by parity and interval geometry"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "grouped-second-moment",
+      "summary": "Group ordered pairs of substring-palindrome events by their interval relation and sum the corresponding probabilities.",
+      "complexity": "Optimized from direct pair enumeration using prefix sums/grouping",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "primary",
+      "evidence": "The answer is E[X^2], expanded into probabilities of ordered pairs of palindrome indicators.",
+      "solution_variant": "grouped-second-moment"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Each pair contribution is computed by counting equality components induced by palindrome constraints.",
+      "solution_variant": "grouped-second-moment"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "The hard version needs prefix-sum style aggregation over many interval-pair classes.",
+      "solution_variant": "grouped-second-moment",
+      "description": "Use prefix sums or cumulative buckets to aggregate repeated contribution formulas.",
+      "parent": "algorithm",
+      "created_reason": "The database needs a general retrieval tag for non-DP prefix-sum aggregation optimizations.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "secondary",
+      "evidence": "The optimization depends on separating interval pairs by disjoint/nested/crossing relationships.",
+      "solution_variant": "grouped-second-moment",
+      "description": "Solve an interval-pair problem by classifying how two intervals overlap before summing contributions.",
+      "parent": "trick",
+      "created_reason": "Overlap classification is a reusable technique distinct from generic combinatorics.",
+      "status": "candidate"
+    }
+  ]
+}

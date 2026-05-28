@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "F",
+    "title": "Mosaic Tree",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "fft", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/F",
+      "notes": "Count labeled trees whose degree-sum parity by color matches a mask."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/96xs50md",
+      "notes": "Prufer-sequence and EGF solution with coefficient DP."
+    }
+  ],
+  "annotation": {
+    "summary": "Count labeled trees on colored vertices such that each color class has prescribed degree-sum parity.",
+    "constraints": "n,m up to 1e4, so direct degree-sequence DP is too slow; the color-class contribution must be compressed.",
+    "core_idea": "Use the Prufer sequence bijection: deg(v)-1 is the number of occurrences of v. For a color with cnt vertices, the parity constraint becomes a parity constraint on the number of positions in the Prufer sequence colored by that color. Its EGF is (e^{cnt x} +/- e^{-cnt x})/2. Multiplying all color EGFs leaves a sum of exponentials; a DP over coefficients of e^{jx} and final summation of j^{n-2} gives the answer.",
+    "complexity": "O(nm) coefficient DP; possible divide-and-conquer NTT optimization is noted but not necessary for common implementations.",
+    "tricks": ["Prufer sequence degree transform", "parity EGF", "sum of exponentials coefficient DP"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prufer-egf-dp",
+      "summary": "Convert degree parity constraints to Prufer color-count parity and multiply color EGFs.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "divide-conquer-ntt",
+      "summary": "The same EGF product can be optimized by divide-and-conquer polynomial multiplication.",
+      "complexity": "O(n log^2 n) style with NTT",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The solution counts labeled trees through the Prufer sequence bijection.",
+      "solution_variant": "prufer-egf-dp"
+    },
+    {
+      "tag": "math/combinatorics/prufer-sequence",
+      "importance": "primary",
+      "evidence": "The key reduction is deg(v)-1 equals the number of occurrences of v in the Prufer sequence.",
+      "solution_variant": "prufer-egf-dp",
+      "description": "Use the Prufer sequence bijection to count or characterize labeled trees by degrees.",
+      "parent": "math/combinatorics",
+      "created_reason": "Prufer sequence is a specific, reusable labeled-tree counting technique.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/generating-function/egf",
+      "importance": "primary",
+      "evidence": "Color-class parity constraints are represented with exponential generating functions.",
+      "solution_variant": "prufer-egf-dp",
+      "description": "Use exponential generating functions where labeled positions contribute divided by factorials.",
+      "parent": "math/combinatorics",
+      "created_reason": "EGF-based counting should be retrievable separately from broad combinatorics.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "secondary",
+      "evidence": "After simplifying the EGFs, coefficients over possible exponential exponents are maintained by DP.",
+      "solution_variant": "prufer-egf-dp"
+    },
+    {
+      "tag": "algorithm/transform/fft",
+      "importance": "incidental",
+      "evidence": "FFT/NTT is an optional optimization for multiplying many generating functions.",
+      "solution_variant": "divide-conquer-ntt"
+    }
+  ]
+}

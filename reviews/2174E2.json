@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "E2",
+    "title": "Game of Scientists (Version 2)",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "chinese remainder theorem", "dfs and similar", "interactive", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/E2",
+      "notes": "Harder interactive version with different k,c constraints."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19756048",
+      "notes": "Writeup derives fixed query bases 36, 3239, and 100003 and resolves residual candidate sets."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively guess a hidden integer from digit-sum responses in carefully chosen bases.",
+    "constraints": "The query budget is tiny, so the strategy must precompute a compact decision tree over residues and threshold replies.",
+    "core_idea": "A query in base b returns -1 if x<b, otherwise a digit sum congruent to x modulo b-1. Use fixed bases whose moduli split the range into manageable residue classes; if a -1 reply shrinks the range, query a smaller base and resolve the remaining candidate set by checking digit-sum signatures.",
+    "complexity": "O(1) interactive queries with small offline candidate filtering.",
+    "tricks": ["digit-sum residue", "non-adaptive residue basis", "candidate-set decision tree"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "fixed-bases-decision-tree",
+      "summary": "Use several preselected bases and branch on -1 replies to keep a unique candidate.",
+      "complexity": "O(1) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is a bounded-query interactive protocol.",
+      "solution_variant": "fixed-bases-decision-tree"
+    },
+    {
+      "tag": "math/number-theory/chinese-remainder-theorem",
+      "importance": "primary",
+      "evidence": "Large-case reconstruction combines residues modulo selected b-1 values.",
+      "solution_variant": "fixed-bases-decision-tree"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "The hard version depends on branching over -1 answers and resolving candidate sets.",
+      "solution_variant": "fixed-bases-decision-tree",
+      "description": "Design a small adaptive branching strategy where each response narrows a finite candidate set.",
+      "parent": "trick",
+      "created_reason": "Interactive and information-theoretic problems often hinge on decision-tree construction.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "incidental",
+      "evidence": "Threshold replies act like comparison information, but the main solution is CRT plus a fixed decision tree.",
+      "solution_variant": "fixed-bases-decision-tree"
+    }
+  ]
+}

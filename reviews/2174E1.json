@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "E1",
+    "title": "Game of Scientists (Version 1)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["chinese remainder theorem", "constructive algorithms", "interactive", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/E1",
+      "notes": "Interactive digit-sum query task with k=4 and c=4e18."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19756048",
+      "notes": "Version 2 writeup gives the main residue observation; Version 1 follows the same CRT/interactivity principle with looser query budget."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively determine a hidden integer by asking digit sums in chosen bases.",
+    "constraints": "Only four queries are available and c is 4e18, so the bases must reveal enough modular information at once.",
+    "core_idea": "For base b, when x >= b, the digit sum is congruent to x modulo b-1. Choose bases whose b-1 values are coprime and whose product exceeds the search range, while using -1 answers as threshold information for small x. The final answer is reconstructed from residues by CRT and checked through the interactor.",
+    "complexity": "O(1) queries and arithmetic per game.",
+    "tricks": ["digit sum modulo b-1", "CRT reconstruction", "handle -1 threshold replies"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "crt-bases",
+      "summary": "Choose bases so digit-sum responses provide residues modulo pairwise coprime b-1 values.",
+      "complexity": "O(1) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query strategy against an interactor.",
+      "solution_variant": "crt-bases"
+    },
+    {
+      "tag": "math/number-theory/chinese-remainder-theorem",
+      "importance": "primary",
+      "evidence": "Digit-sum answers give residues modulo b-1, which are combined by CRT.",
+      "solution_variant": "crt-bases"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The main work is constructing a fixed set of useful query bases.",
+      "solution_variant": "crt-bases"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The invariant digit_sum_b(x) == x mod (b-1) drives the strategy.",
+      "solution_variant": "crt-bases"
+    }
+  ]
+}

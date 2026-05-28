@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2178,
+    "title": "Good Bye 2025"
+  },
+  "problem": {
+    "contest_id": 2178,
+    "index": "D",
+    "title": "Xmas or Hysteria",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2178/problem/D",
+      "notes": "Construct an attack sequence so exactly m elves survive."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150189/en16",
+      "notes": "Good Bye 2025 editorial section for 2178D."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://gdst.dev/posts/CF2178C/",
+      "notes": "Independent writeup explains sorting by attack, the 2m <= n condition, and the m=0 special case."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct attacks among distinct-strength elves so that exactly m remain alive, or report impossible.",
+    "constraints": "n up to 2e5, so the construction must be sorting plus linear output.",
+    "core_idea": "Sort elves by strength. If 2m > n, every survivor would need a weaker victim but there are not enough victims. For m > 0, let the strongest m kill the next m, and let remaining weaker elves attack a stronger neighbor to die by recoil. For m = 0, the strongest cannot be killed by a stronger elf, so all other elves must accumulate enough damage on it; if their total strength is insufficient, impossible.",
+    "complexity": "O(n log n) for sorting plus O(n) output.",
+    "tricks": ["sort by strength", "pair survivors with victims", "special all-dead case by accumulated damage"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-pair-construction",
+      "summary": "Sort strengths, pair the strongest m survivors with the next m victims, and handle m=0 by surrounding the maximum.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for an explicit attack sequence and the solution directly constructs one.",
+      "solution_variant": "sorted-pair-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The construction greedily makes the strongest m survive and assigns them the next m victims.",
+      "solution_variant": "sorted-pair-construction"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "All pairings are defined by sorted strength order.",
+      "solution_variant": "sorted-pair-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The m=0 case needs a separate accumulated-damage construction for the strongest elf.",
+      "solution_variant": "sorted-pair-construction",
+      "description": "A solution whose main construction works broadly but one boundary case requires a distinct argument or construction.",
+      "parent": "trick",
+      "created_reason": "Boundary-case construction is a recurring pattern worth distinguishing from generic implementation.",
+      "status": "candidate"
+    }
+  ]
+}

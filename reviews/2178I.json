@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2178,
+    "title": "Good Bye 2025"
+  },
+  "problem": {
+    "contest_id": 2178,
+    "index": "I",
+    "title": "Numbers or Fireworks",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "dp", "graphs"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2178/problem/I",
+      "notes": "Sum explosiveness over all proper subsets of lattice points under fixed squared distance k."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149548",
+      "notes": "Good Bye 2025 editorial hints identify a bipartite graph and brute force over the smaller side."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com/article/1609wz79",
+      "notes": "Full-solution notes explain bipartiteness, |small side| <= 15, and subset DP over ternary states."
+    }
+  ],
+  "annotation": {
+    "summary": "Given lattice points, connect pairs at distance sqrt(k) and sum a product expression over all proper subsets.",
+    "constraints": "n is small in cubic aggregate but still large enough that all 2^n subsets are too many; one bipartition side is at most 15.",
+    "core_idea": "The distance graph is bipartite by repeatedly reducing parity of k or rotating/scaling the lattice. Choose the smaller color class and enumerate its states. Reinterpret each factor as choosing at most one matching neighbor from T for every vertex outside T. Then process the larger side with DP over ternary states of the small side: in T, outside T, or undecided/matchable.",
+    "complexity": "O(n^2 3^{min(partition)}) with min side at most about 15.",
+    "tricks": ["lattice-distance graph is bipartite", "enumerate smaller bipartition", "matching interpretation of product factors"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "small-side-ternary-dp",
+      "summary": "Color the distance graph bipartitely, enumerate/DP over the smaller side states, and process choices on the larger side.",
+      "complexity": "O(n^2 3^15)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/subset-dp",
+      "importance": "primary",
+      "evidence": "The main algorithm performs DP over states of the smaller bipartition side.",
+      "solution_variant": "small-side-ternary-dp",
+      "description": "Dynamic programming over subsets or small-state masks.",
+      "parent": "algorithm/dp",
+      "created_reason": "Subset DP is a major DP subcategory needed for rating/tag queries.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/bipartite-graph",
+      "importance": "primary",
+      "evidence": "The crucial structural fact is that the fixed-distance graph on lattice points is bipartite.",
+      "solution_variant": "small-side-ternary-dp",
+      "description": "Use bipartite graph structure, coloring, or side enumeration.",
+      "parent": "algorithm/graph",
+      "created_reason": "Bipartite graph structure is a recurring graph subtag distinct from matching/flow.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The small side is represented by bitmask/ternary-mask states.",
+      "solution_variant": "small-side-ternary-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The product expression is transformed into counting choices of matched neighbors.",
+      "solution_variant": "small-side-ternary-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "The bipartite property comes from parity geometry of lattice points at squared distance k.",
+      "solution_variant": "small-side-ternary-dp"
+    }
+  ]
+}

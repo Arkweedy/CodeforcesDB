@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "D",
+    "title": "Secret Message",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/D",
+      "notes": "Find the minimum total weight of n-1 selected edges that do not form a tree."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19756048",
+      "notes": "Writeup reduces the answer to an MST plus one or two non-tree edges and uses tree path queries."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a weighted simple graph, choose n-1 edges of minimum total weight whose selected subgraph is not a tree.",
+    "constraints": "Sum of n,m is 2e5, so the solution must sort edges once and answer tree path maximum queries efficiently.",
+    "core_idea": "Start from the minimum spanning tree. A non-tree set of n-1 edges can be viewed as adding one non-tree edge and deleting a suitable tree edge from the cycle, or in the special two-non-tree-edge case deleting the two largest relevant tree edges. Kruskal gives the baseline MST; HLD/DFS order plus range maximum structures check the best removable tree edge on or outside the involved paths.",
+    "complexity": "O(m log m) with sorting and path/range maximum queries.",
+    "tricks": ["MST exchange argument", "one or two non-tree edges are sufficient", "path complement maximum query"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mst-exchange-with-path-queries",
+      "summary": "Build an MST, then evaluate adding non-tree edges and removing maximum eligible tree edges with HLD/RMQ.",
+      "complexity": "O(m log m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/mst",
+      "importance": "primary",
+      "evidence": "The solution begins from the MST and uses exchange arguments around non-tree edges.",
+      "solution_variant": "mst-exchange-with-path-queries",
+      "description": "Minimum spanning tree construction and exchange/cycle arguments.",
+      "parent": "algorithm/graph",
+      "created_reason": "MST is a major graph retrieval category not covered by the broad graph tag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/heavy-light-decomposition",
+      "importance": "secondary",
+      "evidence": "The implementation queries maxima on tree paths and path complements after rooting the MST.",
+      "solution_variant": "mst-exchange-with-path-queries",
+      "description": "Decompose a tree into chains to answer path queries or updates efficiently.",
+      "parent": "algorithm/graph/tree",
+      "created_reason": "Tree path-query problems should be searchable separately from generic tree DFS.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Kruskal and the exchange step choose cheapest edges and remove maximum-weight replaceable edges.",
+      "solution_variant": "mst-exchange-with-path-queries"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "Efficient range maximum/path maximum data structures are needed after building the MST.",
+      "solution_variant": "mst-exchange-with-path-queries"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2178,
+    "title": "Good Bye 2025"
+  },
+  "problem": {
+    "contest_id": 2178,
+    "index": "G",
+    "title": "deCH OR Dations",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "data structures", "dp", "hashing", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2178/problem/G",
+      "notes": "Chord-prefix task asking whether every chord appears an even number of times across all chains."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149548",
+      "notes": "Good Bye 2025 editorial hints mention Fenwick tree of bitsets and XOR hashing."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com/article/1609wz79",
+      "notes": "Full-solution notes explain maintaining chain parity sets via XOR hashing."
+    }
+  ],
+  "annotation": {
+    "summary": "For each prefix of non-sharing chords on a circle, determine whether all chains make every chord appear even times.",
+    "constraints": "Total endpoints up to 1e6, so explicit bitsets over all chains are too large.",
+    "core_idea": "For a new chord i, the parity set of chords appearing in chains ending at i is the XOR of parity sets of previous intersecting chords plus itself. Chord intersection is an interval-crossing query on endpoints. Instead of storing full sets, assign random/hash values to chords and maintain XOR hashes with a Fenwick tree; a prefix is tight exactly when the accumulated parity hash is zero with high probability.",
+    "complexity": "O(n log n) with Fenwick-tree range XOR updates/queries.",
+    "tricks": ["reduce even-occurrence condition to parity sets", "XOR hash sets", "circle chord intersection as interval query"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-hashed-parity-dp",
+      "summary": "DP over chains ending at each chord, storing parity sets by XOR hash and querying intersecting previous chords.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The recurrence computes parity information for chains ending at each newly added chord.",
+      "solution_variant": "xor-hashed-parity-dp"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "primary",
+      "evidence": "Full parity sets are represented by randomized/hash XOR values.",
+      "solution_variant": "xor-hashed-parity-dp"
+    },
+    {
+      "tag": "trick/xor-hashing",
+      "importance": "primary",
+      "evidence": "The core memory reduction is replacing large parity bitsets by XOR hashes.",
+      "solution_variant": "xor-hashed-parity-dp",
+      "description": "Represent a set or parity vector by XORing random/hash values assigned to elements.",
+      "parent": "trick",
+      "created_reason": "XOR hashing is a specific randomized compression trick useful for retrieval.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "Fenwick tree supports interval/range XOR maintenance over chord endpoints.",
+      "solution_variant": "xor-hashed-parity-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "Hash equality is probabilistic unless implemented with deterministic large bitsets.",
+      "solution_variant": "xor-hashed-parity-dp"
+    }
+  ]
+}
