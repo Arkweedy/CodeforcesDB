@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2156,
+    "title": "Codeforces Round 1061 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2156,
+    "index": "E",
+    "title": "Best Time to Buy and Sell Stock",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "dp", "games", "graphs", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2156/problem/E",
+      "notes": "Two-player deletion/locking game on an array; maximize the final stock beauty."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/148402/en15",
+      "notes": "Official editorial binary-searches the target beauty g and counts, capped at 3, how many opposite-side indices can form a pair with each index."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the game value where one player tries to guarantee a pair with value difference at least g and the other deletes one index first.",
+    "constraints": "n is large and values are up to 1e9, so the target beauty is binary-searched and each check must be linear.",
+    "core_idea": "For a target g, define f_g(i) as the number of other indices j on the appropriate side with value difference at least g, capped at 3. If after Hao removes one index all f_g(i)<=1, Alex cannot force a pair; otherwise Alex can. During the check, only the three smallest previous values and three largest suffix values matter to decide whether each f_g(i) reaches 2 or more. Then test whether some first removal covers all vertices with degree 2 or more in this threshold graph.",
+    "complexity": "O(n log V) per test case.",
+    "tricks": ["binary search game value", "cap pair counts at three", "threshold graph after one deletion"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "threshold-game-binary-search",
+      "summary": "Binary search g; for each g, compute capped threshold-pair counts and test whether the first player can still force a valid pair after one deletion.",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The game value is found by binary searching the target beauty g.",
+      "solution_variant": "threshold-game-binary-search"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The feasibility check explicitly analyzes Hao's first deletion and Alex's ability to force a remaining pair.",
+      "solution_variant": "threshold-game-binary-search"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "The check only distinguishes whether each index has 0, 1, 2, or more than 2 qualifying partners.",
+      "solution_variant": "threshold-game-binary-search"
+    }
+  ]
+}

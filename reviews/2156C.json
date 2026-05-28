@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2156,
+    "title": "Codeforces Round 1061 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2156,
+    "index": "C",
+    "title": "Maximum GCD on Whiteboard",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["greedy", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2156/problem/C",
+      "notes": "Choose erases and splits to maximize the final gcd of all remaining numbers."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/148402/en15",
+      "notes": "Official editorial characterizes when a number can be made divisible by a fixed g: it is good if x is a multiple of g or x>=4g."
+    }
+  ],
+  "annotation": {
+    "summary": "Maximize the gcd of the remaining whiteboard numbers after up to k erases and arbitrary split operations.",
+    "constraints": "a_i<=n and total n<=2e5, so every possible gcd g can be checked with frequency prefix sums.",
+    "core_idea": "Fix a target gcd g. All multiples of g are already good, and any x>=4g can be split into two written multiples of g by discarding the middle part. Conversely, a non-multiple x<4g cannot be made divisible by g. Thus g is feasible iff count(x>=4g)+freq(g)+freq(2g)+freq(3g) >= n-k. Check all g using frequencies and prefix sums.",
+    "complexity": "O(n) per test case after frequency preprocessing.",
+    "tricks": ["fixed-gcd feasibility", "split threshold 4g", "frequency prefix count"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-gcd-feasibility",
+      "summary": "For every g, count values that are already multiples among g,2g,3g or large enough to split into multiples.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The feasibility condition is entirely about divisibility by a candidate gcd g.",
+      "solution_variant": "enumerate-gcd-feasibility"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Prefix sums of value frequencies count how many numbers are at least 4g.",
+      "solution_variant": "enumerate-gcd-feasibility"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "For a candidate gcd, every bad number must be erased and every good number can be kept independently.",
+      "solution_variant": "enumerate-gcd-feasibility"
+    }
+  ]
+}

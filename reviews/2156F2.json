@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2156,
+    "title": "Codeforces Round 1061 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2156,
+    "index": "F2",
+    "title": "Strange Operation (Hard Version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["data structures", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2156/problem/F2",
+      "notes": "Hard version of lexicographically minimizing the reachable permutation under the strange operation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/148402/en15",
+      "notes": "Official hard solution accelerates the greedy with a Fenwick tree over alive values and a segment tree over inverse positions to jump to the next smaller element."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the lexicographically smallest reachable permutation under the strange triple operation for large n.",
+    "constraints": "n is large, so the easy O(n^2) greedy must be optimized to O(n log n).",
+    "core_idea": "Use the same greedy target-fixing logic as F1. Maintain alive values with a Fenwick tree to query the current rank parity of a position's value. If the rank is odd, the current index can be fixed immediately. If it is even, jump to the next smaller value to its right using a segment tree over inverse positions. Each index is visited at most twice, so these jumps plus Fenwick/segment-tree updates yield O(n log n).",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["alive rank parity", "jump to next smaller value on the right", "each index visited at most twice"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "fenwick-segment-tree-greedy",
+      "summary": "Run the lexicographic greedy while using Fenwick rank queries and segment-tree next-smaller jumps to avoid quadratic scans.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The same left-to-right lexicographic greedy from the easy version remains the main correctness idea.",
+      "solution_variant": "fenwick-segment-tree-greedy"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "A Fenwick tree maintains alive values and answers current rank parity queries.",
+      "solution_variant": "fenwick-segment-tree-greedy"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "A segment tree over inverse positions finds the next smaller alive value to the right.",
+      "solution_variant": "fenwick-segment-tree-greedy"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "The reachable lexicographic minimum is determined by ranks and relative positions of consecutive values.",
+      "solution_variant": "fenwick-segment-tree-greedy"
+    }
+  ]
+}

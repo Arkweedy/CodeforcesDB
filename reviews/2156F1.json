@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2156,
+    "title": "Codeforces Round 1061 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2156,
+    "index": "F1",
+    "title": "Strange Operation (Easy Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2156/problem/F1",
+      "notes": "Easy version asks for the lexicographically smallest permutation reachable by a strange triple operation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/148402/en15",
+      "notes": "Official/tester solutions greedily fix the next smallest value; the easy version can linearly scan feasible values each step."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the lexicographically smallest permutation reachable by repeatedly applying the strange operation to triples of consecutive values.",
+    "constraints": "The easy version permits O(n^2) scanning over remaining values.",
+    "core_idea": "Process target values cnt=1..n. A value v can be reduced to cnt iff v has the same parity as cnt and all values in [cnt,v-1] are to its right, so the feasible choices are record-minimum positions when scanning values upward. Greedily place cnt at the leftmost feasible position; then conceptually reduce that value and increment all intervening values by 1, preserving a permutation of the remaining suffix.",
+    "complexity": "O(n^2) per test case.",
+    "tricks": ["parity feasibility of triple moves", "record-minimum positions by value", "greedy lexicographic fixing"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-greedy-ranks",
+      "summary": "For each next target value, scan remaining values to find the leftmost feasible same-parity record minimum.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "local-operation-simulation",
+      "summary": "Alternative O(n^2) implementation repeatedly applies the legal operation to local triples until no lexicographic decrease remains.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The lexicographically smallest result is built by greedily fixing the smallest possible value at the earliest feasible position.",
+      "solution_variant": "quadratic-greedy-ranks"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "The feasibility condition depends on ranks and positions of consecutive values in the remaining permutation.",
+      "solution_variant": "quadratic-greedy-ranks"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The easy version directly scans all remaining values at every step.",
+      "solution_variant": "quadratic-greedy-ranks"
+    }
+  ]
+}

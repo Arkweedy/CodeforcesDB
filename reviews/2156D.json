@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2156,
+    "title": "Codeforces Round 1061 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2156,
+    "index": "D",
+    "title": "Find the Last Number",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "constructive algorithms", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2156/problem/D",
+      "notes": "Interactive task: determine the missing last permutation value with bitwise AND queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/148402/en15",
+      "notes": "Official editorial determines the answer bit by bit and halves the candidate set after each bit to stay below 2n queries."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively recover the last hidden permutation value using bitwise AND queries.",
+    "constraints": "The query limit is below 2n, so querying every bit of every known position is too expensive.",
+    "core_idea": "For bit k, compare the number of known values with that bit set against the corresponding count among all candidate numbers. If the counts differ, the missing value has that bit. Once a bit is known, restrict both the known indices and candidate values to those sharing the known prefix bits with the missing value; this approximately halves the remaining query set each bit.",
+    "complexity": "Fewer than 2n interactive queries.",
+    "tricks": ["bit-count deficit identifies missing value", "halve candidates by known prefix bits", "AND query for one bit"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bitwise-candidate-halving",
+      "summary": "Determine bits from low to high by comparing bit counts, filtering candidates and queried indices after each bit.",
+      "complexity": "O(n) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query protocol using bitwise AND queries.",
+      "solution_variant": "bitwise-candidate-halving"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The hidden value is reconstructed bit by bit from AND query responses.",
+      "solution_variant": "bitwise-candidate-halving"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "Each discovered bit partitions and shrinks the candidate set, forming a bounded-query decision process.",
+      "solution_variant": "bitwise-candidate-halving"
+    }
+  ]
+}
