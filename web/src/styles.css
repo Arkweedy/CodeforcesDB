@@ -297,7 +297,7 @@ textarea {
 }
 
 .problem-link {
-  background: #102a43;
+  background: var(--problem-link-bg);
   color: #ffffff;
   display: inline-block;
   font-weight: 700;
@@ -309,7 +309,43 @@ textarea {
 }
 
 .problem-link:hover {
-  background: #243b53;
+  background: var(--problem-link-hover);
+}
+
+.problem-rating-unrated,
+.problem-rating-gray {
+  --problem-link-bg: #334155;
+  --problem-link-hover: #1e293b;
+}
+
+.problem-rating-cyan {
+  --problem-link-bg: #0f766e;
+  --problem-link-hover: #115e59;
+}
+
+.problem-rating-blue {
+  --problem-link-bg: #1d4ed8;
+  --problem-link-hover: #1e40af;
+}
+
+.problem-rating-violet {
+  --problem-link-bg: #7c3aed;
+  --problem-link-hover: #6d28d9;
+}
+
+.problem-rating-orange {
+  --problem-link-bg: #c2410c;
+  --problem-link-hover: #9a3412;
+}
+
+.problem-rating-red {
+  --problem-link-bg: #dc2626;
+  --problem-link-hover: #b91c1c;
+}
+
+.problem-rating-legendary {
+  --problem-link-bg: #991b1b;
+  --problem-link-hover: #7f1d1d;
 }
 
 .result-meta {

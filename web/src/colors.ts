@@ -39,6 +39,10 @@ export function ratingClassName(rating: number | null, status: RatingStatus): st
   return `rating-badge rating-${ratingBand(rating, status)}`;
 }
 
+export function problemLinkClassName(rating: number | null, status: RatingStatus): string {
+  return `problem-link problem-rating-${ratingBand(rating, status)}`;
+}
+
 export function tagColorKey(tag: string): string {
   const normalized = tag.toLowerCase();
   const match = TAG_PREFIX_COLORS.find(([prefix]) => normalized.startsWith(prefix));

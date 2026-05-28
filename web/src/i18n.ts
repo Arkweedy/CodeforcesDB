@@ -161,33 +161,6 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
   }
 };
 
-const RATING_TITLE_TEXT: Record<Locale, Array<[number, string]>> = {
-  zh: [
-    [3000, "传奇特级大师"],
-    [2600, "国际特级大师"],
-    [2400, "特级大师"],
-    [2300, "国际大师"],
-    [2100, "大师"],
-    [1900, "专家候选"],
-    [1600, "高手"],
-    [1400, "专家"],
-    [1200, "入门"],
-    [0, "新手"]
-  ],
-  en: [
-    [3000, "Legendary Grandmaster"],
-    [2600, "International Grandmaster"],
-    [2400, "Grandmaster"],
-    [2300, "International Master"],
-    [2100, "Master"],
-    [1900, "Candidate Master"],
-    [1600, "Expert"],
-    [1400, "Specialist"],
-    [1200, "Pupil"],
-    [0, "Newbie"]
-  ]
-};
-
 const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm": "算法",
   "algorithm/bitmask": "位掩码",
@@ -467,8 +440,7 @@ export function ratingText(
   status: RatingStatus
 ): string {
   if (rating === null || status !== "official") return ratingStatusLabel(locale, status);
-  const title = RATING_TITLE_TEXT[locale].find(([floor]) => rating >= floor)?.[1];
-  return `${rating} · ${title ?? ratingStatusLabel(locale, status)}`;
+  return String(rating);
 }
 
 export function statsText(locale: Locale, stats: Stats): string {

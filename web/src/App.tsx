@@ -28,7 +28,7 @@ import type {
   TagMode,
   TagNode
 } from "./types";
-import { ratingClassName, tagTokenClassName } from "./colors";
+import { problemLinkClassName, ratingClassName, tagTokenClassName } from "./colors";
 import {
   importanceLabel,
   ratingStatusLabel,
@@ -300,7 +300,7 @@ function ProblemResult({
     <article className="result-item">
       <div className="result-main">
         <a
-          className="problem-link"
+          className={problemLinkClassName(problem.rating, problem.rating_status)}
           href={problem.canonical_url}
           target="_blank"
           rel="noreferrer"
