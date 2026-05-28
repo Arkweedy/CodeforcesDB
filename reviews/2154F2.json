@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "F2",
+    "title": "Bombing (Hard Version)",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/F2",
+      "notes": "Hard version of counting partial-permutation completions that are riffle shuffles."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official editorial derives fixed/middle regions, handles the sorted-valid case by 2^len-len-1 over gaps, and restricts k ranges for crossing gaps to obtain linear total work."
+    }
+  ],
+  "annotation": {
+    "summary": "Count completions of a partial permutation that are riffle shuffles, under hard constraints requiring near-linear processing.",
+    "constraints": "n is large; the O(n^2) split enumeration from F1 must be compressed to O(n).",
+    "core_idea": "Use structural properties of riffle shuffles. If p_i<i then value p_i must be on the left side of the split, and if p_i>i it must be on the right. A valid shuffle has fixed prefix/suffix regions and a middle non-fixed region, so most known entries determine the side of their gaps. If all known entries are fixed, each -1 run contributes the closed form 2^len-len-1 plus the sorted case. Otherwise, for crossing gaps left->right or right->left, each split k demands a unique count of left-side elements inside the gap; this restricts k to an interval. Intersect all intervals, precompute same-side gap contributions, and only enumerate the reduced k range and crossing gaps, whose product is O(n).",
+    "complexity": "O(n) per test case after factorial/power precomputation.",
+    "tricks": ["infer side from p_i compared with i", "fixed prefix/suffix plus middle region", "closed form for all-unknown sorted-valid runs", "restrict split k by crossing gaps"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "gap-range-dp-combinatorics",
+      "summary": "Classify gaps by endpoint sides, compute same-side factors once, and enumerate only feasible split values constrained by crossing gaps.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "quadratic-split-count",
+      "summary": "The easy-version enumeration remains a useful conceptual baseline but does not pass the hard version.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "The task is counting completions of a partial permutation under a riffle-shuffle constraint.",
+      "solution_variant": "gap-range-dp-combinatorics"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The hard solution compresses gap contributions and feasible split ranges into reusable count states rather than enumerating every split/gap pair.",
+      "solution_variant": "gap-range-dp-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Binomial coefficients and closed forms over unknown runs are central to the count.",
+      "solution_variant": "gap-range-dp-combinatorics"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "The decisive observation is the fixed-prefix/fixed-suffix/middle structure of riffle shuffles.",
+      "solution_variant": "gap-range-dp-combinatorics"
+    }
+  ]
+}

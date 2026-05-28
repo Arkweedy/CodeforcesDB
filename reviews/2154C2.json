@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "C2",
+    "title": "No Cost Too Great (Hard Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["greedy", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/C2",
+      "notes": "Hard version has non-uniform increment costs b_i."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official editorial extends C1 and proves that more than one operation only needs to be considered on the minimum-cost element."
+    }
+  ],
+  "annotation": {
+    "summary": "Each +1 on element i costs b_i; minimize total cost to make two elements share a divisor greater than 1.",
+    "constraints": "Values are at most about 2e5 and total n is large, so factoring via precomputed prime divisors is needed.",
+    "core_idea": "As in the easy version, zero operations means an existing shared prime, and one operation means some a_i+1 shares a prime with another value, now costing b_i. For cases using at least two increments on one element, it is enough to consider the element with minimum b_i; if another element got k>=2 increments, using the cheapest element together with it to make both even is no worse. Then try every prime divisor already present in the other elements and compute the cheapest number of increments needed to make the cheapest element divisible by that prime.",
+    "complexity": "O(N log log N + n omega(N)).",
+    "tricks": ["only cheapest element needs multi-step increments", "shared prime factor counts", "compare against two cheapest parity repair"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cheapest-multi-increment",
+      "summary": "Check 0/1-step shared-prime cases for all elements, then test multi-step alignment only on the minimum-cost element.",
+      "complexity": "O(N log log N + n omega(N))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/prime-factor-count",
+      "importance": "primary",
+      "evidence": "The algorithm is driven by prime divisors of a_i, a_i+1, and target divisors for the cheapest element.",
+      "solution_variant": "cheapest-multi-increment"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The optimization target is creating a pair with gcd greater than 1.",
+      "solution_variant": "cheapest-multi-increment"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The key proof greedily restricts all multi-increment attempts to the minimum-cost element.",
+      "solution_variant": "cheapest-multi-increment"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting or selecting by b_i identifies the cheapest one/two elements used in the bound.",
+      "solution_variant": "cheapest-multi-increment"
+    }
+  ]
+}

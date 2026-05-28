@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "F1",
+    "title": "Bombing (Easy Version)",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "constructive algorithms", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/F1",
+      "notes": "Count completions of a partial permutation that can be a riffle shuffle."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official editorial fixes a split k and counts how many missing positions can be colored left/right using binomial coefficients, in O(n) per split."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a partial permutation with -1 entries, count completions that are a riffle shuffle of the identity permutation.",
+    "constraints": "Easy version allows O(n^2) by iterating every split and scanning the array.",
+    "core_idea": "For a valid completed permutation that is not sorted, the split k is determined by the first inversion k appearing after k+1. Fix k and color values <=k as left and values >k as right. While scanning the partial permutation, every known left/right value imposes how many missing positions before it must be filled by that side; choose those positions with precomputed binomial coefficients. Sum over all splits and subtract overcounts of the sorted permutation.",
+    "complexity": "O(n^2) per test case after factorial precomputation.",
+    "tricks": ["fix riffle split", "left/right coloring by value", "count gaps with binomial coefficients", "subtract sorted overcount"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "split-enumeration-combinatorics",
+      "summary": "Enumerate k, scan the partial permutation, and multiply combinations for each gap of unknown entries.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Each fixed split is counted by multiplying binomial choices for unknown positions in gaps.",
+      "solution_variant": "split-enumeration-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "The object counted is completions of a partial permutation satisfying a shuffle property.",
+      "solution_variant": "split-enumeration-combinatorics"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The easy version directly iterates all possible split positions.",
+      "solution_variant": "split-enumeration-combinatorics"
+    }
+  ]
+}

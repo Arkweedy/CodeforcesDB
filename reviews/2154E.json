@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "E",
+    "title": "No Mind To Think",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "divide and conquer", "greedy", "sortings", "ternary search", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/E",
+      "notes": "Choose odd x once, perform median-replacement operations at most k times, and maximize array sum."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official editorial proves all operations can use the same median, then binary searches the optimal y for each median."
+    }
+  ],
+  "annotation": {
+    "summary": "Maximize the final sum after repeatedly replacing chosen odd-length subsequences by their median.",
+    "constraints": "n is large enough that after sorting, O(n log n) over candidate medians is intended.",
+    "core_idea": "Sort the array. Fix x=2y+1 and median a_i. The best operation with that median raises the smallest y values and lowers the y values just after i. If two operations use different medians, moving both to the larger median is no worse, so an optimum exists with the same median for every operation. For each i, as y grows, marginal gain is monotonically decreasing: newly raised values are larger and newly lowered values are larger. Thus binary search the last positive marginal y using prefix sums.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["same-median exchange argument", "sort before reasoning about subsequences", "monotone marginal gain", "prefix-sum cost evaluation"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "median-binary-search",
+      "summary": "For every sorted median position, binary search the best y because marginal net gain decreases with y.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "median-ternary-search",
+      "summary": "Use unimodality of the gain over y and ternary-search-like checks instead of binary searching the marginal sign.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "For each median, the optimal y is found by binary searching the last positive marginal gain.",
+      "solution_variant": "median-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "The decreasing marginal gain of increasing y is the key property enabling the search.",
+      "solution_variant": "median-binary-search"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Prefix sums evaluate the total raised/lowered contribution for a candidate median and y.",
+      "solution_variant": "median-binary-search"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting makes optimal subsequence choices around a median contiguous in value order.",
+      "solution_variant": "median-binary-search"
+    }
+  ]
+}

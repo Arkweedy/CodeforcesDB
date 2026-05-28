@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "C1",
+    "title": "No Cost Too Great (Easy Version)",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["greedy", "implementation", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/C1",
+      "notes": "Easy version: all operation costs are effectively one, so the answer is only 0, 1, or 2."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official editorial checks common prime divisors in a_i for answer 0 and in a_i+1 for answer 1."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum number of +1 operations needed so that two array elements have gcd greater than 1.",
+    "constraints": "Values are at most about 2e5, so prime divisors can be precomputed by sieve or factored directly in the easy version.",
+    "core_idea": "The answer is never above 2 because two elements can each be made even with at most one increment. Therefore it is enough to test answer 0 by checking whether two numbers share a prime factor, and answer 1 by temporarily replacing one a_i with a_i+1 and checking whether it shares a prime factor with another number.",
+    "complexity": "O(N log log N + n omega(N)) with precomputed prime divisors.",
+    "tricks": ["answer bounded by making two numbers even", "shared prime factor test", "try a_i+1 for one operation"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prime-factor-presence",
+      "summary": "Maintain counts of prime divisors of current numbers, then test shared factors for a_i and a_i+1.",
+      "complexity": "O(N log log N + n omega(N))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/prime-factor-count",
+      "importance": "primary",
+      "evidence": "The solution only needs the set/count of prime divisors appearing among array values.",
+      "solution_variant": "prime-factor-presence"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The target condition is gcd(a_i, a_j)>1, equivalently sharing a prime divisor.",
+      "solution_variant": "prime-factor-presence"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The global optimum is reduced greedily to checking 0, then 1, otherwise 2.",
+      "solution_variant": "prime-factor-presence"
+    }
+  ]
+}

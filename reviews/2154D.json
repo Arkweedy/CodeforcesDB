@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2154,
+    "title": "Codeforces Round 1060 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2154,
+    "index": "D",
+    "title": "Catshock",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dfs and similar", "graphs", "trees", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2154/problem/D",
+      "notes": "Construct an operation sequence to reach vertex n while repeatedly deleting vertices from a tree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147471?locale=en&mobile=true",
+      "notes": "Official tutorial roots the tree at n, uses parity coloring, and repeatedly destroys leaves while maintaining the current parity."
+    }
+  ],
+  "annotation": {
+    "summary": "Produce a valid sequence of movement and deletion operations that ends at vertex n on a tree.",
+    "constraints": "A linear-size operation sequence is required.",
+    "core_idea": "Root the tree at n and bipartition vertices by depth parity. Destroying a leaf never disconnects the remaining tree. Maintain the parity of the current position; before deleting a target leaf, do one or two move operations so that the current vertex has the opposite parity and therefore is not that leaf. Then delete the leaf and update its parent's child count. Repeating this removes all vertices except n.",
+    "complexity": "O(n) operations and O(n) time.",
+    "tricks": ["delete only leaves", "use tree bipartition to avoid deleting current vertex", "maintain leaf buckets by depth parity"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-leaf-deletion",
+      "summary": "Root at n, keep leaves by depth parity, and alternate move/delete operations to remove leaves safely.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for an explicit operation sequence, and the solution constructs it leaf by leaf.",
+      "solution_variant": "parity-leaf-deletion"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The proof uses rooted-tree leaves, parent/child counts, and the fact that deleting a leaf preserves connectivity.",
+      "solution_variant": "parity-leaf-deletion"
+    },
+    {
+      "tag": "algorithm/graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "Tree depth parity is used as a bipartition to guarantee the current vertex is not the deleted leaf.",
+      "solution_variant": "parity-leaf-deletion"
+    },
+    {
+      "tag": "algorithm/graph/dfs",
+      "importance": "secondary",
+      "evidence": "A DFS from n computes parent, depth parity, and child counts.",
+      "solution_variant": "parity-leaf-deletion"
+    }
+  ]
+}
