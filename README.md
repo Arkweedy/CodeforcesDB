@@ -84,6 +84,28 @@ python scripts/ingest_contests.py --start 2170 --end 2178
 
 它不会做题解分析，也不会产出高质量 reviewed tag。official tags 只能作为线索。
 
+## 覆盖状态检查
+
+查看某个 contest id 范围内哪些场次还没进入本地库、哪些只完成了 bootstrap、哪些还待 AI review：
+
+```powershell
+python scripts/list_missing_contests.py --start 2170 --end 2178
+```
+
+只看需要处理的场次：
+
+```powershell
+python scripts/list_missing_contests.py --start 2170 --end 2178 --only-actionable
+```
+
+状态含义：
+
+- `not_in_db`：本地还没有 contest 元数据，需要先跑 `ingest_contests.py`。
+- `unextracted`：contest 已入库，但题目还没完成 bootstrap。
+- `needs_manual_review` / `failed`：需要人工确认或重试 bootstrap。
+- `pending_review`：题目已 bootstrap，但还有 `raw/auto_seeded` 题需要 AI-reviewed 标注。
+- `complete` / `excluded`：默认不需要处理。
+
 ## 查询
 
 按 rating 和 tag 查询：

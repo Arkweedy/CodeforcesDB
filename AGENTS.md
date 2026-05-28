@@ -79,6 +79,14 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 
 无法判断时使用 `needs_manual_review`，不要强行归类。
 
+给定 contest id 范围前，优先运行覆盖状态检查：
+
+```powershell
+python scripts/list_missing_contests.py --start 2170 --end 2178
+```
+
+其中 `not_in_db` / `unextracted` 代表需要先 bootstrap；`pending_review` 代表可以进入 AI-reviewed 标注；`complete` / `excluded` 默认无需处理。
+
 ## Rating 规则
 
 - `problems.rating` 只能使用 Codeforces 官方 rating。

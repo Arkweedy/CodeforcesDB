@@ -11,6 +11,7 @@ from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
 from cfdb.search import search_problems
 from cfdb.tags import descendants, resolve_tag
 from scripts.check_tag_translations import extract_full_tag_translations, missing_translations
+from scripts.list_missing_contests import contest_status_rows
 from scripts.make_review_template import build_template
 
 
@@ -342,6 +343,73 @@ class CfDbTests(unittest.TestCase):
                 self.assertEqual(canonical_problem_uid(conn, "cf_problem:101:C"), "cf_problem:100:A")
                 results = search_problems(conn, tags=["algorithm/dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:100:A"])
+
+    def test_list_missing_contests_reports_coverage_states(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, eligibility_status, extraction_status)
+                    VALUES
+                        (10, 'cf_contest:10', 'Needs Review', 'eligible', 'problems_loaded'),
+                        (11, 'cf_contest:11', 'Queued Contest', 'eligible', 'queued'),
+                        (12, 'cf_contest:12', 'Excluded Contest', 'excluded', 'excluded'),
+                        (14, 'cf_contest:14', 'Complete Contest', 'eligible', 'problems_loaded'),
+                        (15, 'cf_contest:15', 'Manual Check', 'needs_manual_review', 'metadata_loaded'),
+                        (16, 'cf_contest:16', 'Failed Contest', 'eligible', 'failed')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO ingestion_queue(contest_id, status)
+                    VALUES (11, 'queued'), (16, 'failed')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:10:A', 10, 'A', 'Reviewed', 1500, 'official',
+                         'https://codeforces.com/contest/10/problem/A',
+                         'https://codeforces.com/problemset/problem/10/A'),
+                        ('cf_problem:10:B', 10, 'B', 'Pending', 1600, 'official',
+                         'https://codeforces.com/contest/10/problem/B',
+                         'https://codeforces.com/problemset/problem/10/B'),
+                        ('cf_problem:10:C', 10, 'C', 'Too Easy', 1300, 'official',
+                         'https://codeforces.com/contest/10/problem/C',
+                         'https://codeforces.com/problemset/problem/10/C'),
+                        ('cf_problem:14:A', 14, 'A', 'Done', 1800, 'official',
+                         'https://codeforces.com/contest/14/problem/A',
+                         'https://codeforces.com/problemset/problem/14/A')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_annotations(problem_uid, review_status)
+                    VALUES
+                        ('cf_problem:10:A', 'reviewed'),
+                        ('cf_problem:10:B', 'auto_seeded'),
+                        ('cf_problem:10:C', 'auto_seeded'),
+                        ('cf_problem:14:A', 'reviewed')
+                    """
+                )
+
+            rows = {row["contest_id"]: row for row in contest_status_rows(db, 10, 16)}
+            self.assertEqual(rows[10]["status"], "pending_review")
+            self.assertEqual(rows[10]["tracked_problems"], 3)
+            self.assertEqual(rows[10]["reviewed_problems"], 1)
+            self.assertEqual(rows[10]["pending_review"], 1)
+            self.assertEqual(rows[11]["status"], "unextracted")
+            self.assertEqual(rows[12]["status"], "excluded")
+            self.assertEqual(rows[13]["status"], "not_in_db")
+            self.assertEqual(rows[14]["status"], "complete")
+            self.assertEqual(rows[15]["status"], "needs_manual_review")
+            self.assertEqual(rows[16]["status"], "failed")
 
     def test_reviewed_payload_redirects_duplicate_to_canonical(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
