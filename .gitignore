@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Keep data/cfdb.sqlite tracked, but ignore SQLite transient files.
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+.DS_Store
+Thumbs.db
