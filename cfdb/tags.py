@@ -154,6 +154,12 @@ def ensure_tag(conn: sqlite3.Connection, tag_input: TagInput | str) -> str:
                     ELSE excluded.status
                 END,
                 updated_at = CURRENT_TIMESTAMP
+            WHERE COALESCE(excluded.display_name, tags.display_name) IS NOT tags.display_name
+               OR COALESCE(excluded.description, tags.description) IS NOT tags.description
+               OR CASE
+                    WHEN tags.status = 'active' THEN tags.status
+                    ELSE excluded.status
+                  END IS NOT tags.status
             """,
             (
                 prefix,
@@ -180,6 +186,7 @@ def add_alias(conn: sqlite3.Connection, alias: str, tag: str) -> None:
         """
         INSERT INTO tag_aliases(alias, tag) VALUES (?, ?)
         ON CONFLICT(alias) DO UPDATE SET tag = excluded.tag
+        WHERE tag_aliases.tag IS NOT excluded.tag
         """,
         (slugify_tag(alias), canonical),
     )
@@ -253,4 +260,3 @@ def seed_tags(conn: sqlite3.Connection) -> None:
         )
         for alias in meta.get("aliases", []):
             add_alias(conn, alias, tag)
-
