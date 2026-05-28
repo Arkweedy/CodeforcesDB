@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2151,
+    "title": "Codeforces Round 1053 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2151,
+    "index": "C",
+    "title": "Incremental Stay",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["greedy", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2151/problem/C",
+      "notes": "Pick an event day to maximize total stay under alternating arrival/departure effects."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651",
+      "notes": "Official solution precomputes odd/even position sums and tests every possible inserted event day."
+    }
+  ],
+  "annotation": {
+    "summary": "Given sorted days of existing events, choose one extra day that maximizes the total accumulated stay time.",
+    "constraints": "n is large, so each candidate gap must be evaluated in O(1) after prefix preprocessing.",
+    "core_idea": "The contribution of intervals alternates by parity of the event index. If a new event is inserted, all intervals after that point flip parity. Precompute prefix sums of odd and even indexed gaps, then evaluate inserting at each existing point or inside a gap; inside a gap the best day is at one of the two boundary-adjacent positions because the objective is linear there.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["alternating contribution parity", "prefix sums by parity", "check gap boundaries"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-prefix-greedy",
+      "summary": "Precompute odd/even gap contribution prefixes and scan all insertion locations in constant time each.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "The answer for each insertion point is computed from prefix sums of alternating gap contributions.",
+      "solution_variant": "parity-prefix-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Within a gap, only the boundary-adjacent best insertion points need to be checked because the objective changes linearly.",
+      "solution_variant": "parity-prefix-greedy"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The implementation separates inserting before, after, at an existing boundary, and inside each gap.",
+      "solution_variant": "parity-prefix-greedy"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2153,
+    "title": "Codeforces Round 1057 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2153,
+    "index": "E",
+    "title": "Zero Trailing Factorial",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["brute force", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2153/problem/E",
+      "notes": "Find numbers whose factorial-related trailing-zero count meets the required relation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147264",
+      "notes": "Official editorial bounds the search around powers of 5 and uses Legendre-style valuation of factorials."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve a factorial trailing-zero condition by finding all integers whose count of factors of 5 in n! matches the required value.",
+    "constraints": "The target can be large, but the trailing-zero function changes only at multiples of powers of 5, allowing bounded candidate checks.",
+    "core_idea": "Trailing zeroes in n! are v5(n!) = sum floor(n/5^i). This function is monotone and jumps at multiples of powers of 5. Instead of scanning all n, locate the approximate range using powers of 5 or binary search, then brute-check the small set of candidates around the jump boundaries.",
+    "complexity": "O(log answer) candidate generation and checks.",
+    "tricks": ["Legendre factorial valuation", "search near powers-of-five jumps", "bounded candidate brute force"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "factorial-valuation-candidates",
+      "summary": "Use the monotone formula for v5(n!) and check only candidate values around jump points.",
+      "complexity": "O(log answer)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The solution is based on p-adic divisibility counts of n!, specifically the exponent of 5.",
+      "solution_variant": "factorial-valuation-candidates"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "A monotone trailing-zero function can be binary-searched to locate the small candidate interval.",
+      "solution_variant": "factorial-valuation-candidates"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "After locating the interval, only a bounded number of candidates are explicitly tested.",
+      "solution_variant": "factorial-valuation-candidates"
+    }
+  ]
+}

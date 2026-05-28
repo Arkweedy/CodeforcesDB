@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2153,
+    "title": "Codeforces Round 1057 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2153,
+    "index": "D",
+    "title": "Not Alone",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["dp", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2153/problem/D",
+      "notes": "Minimize removals so that every remaining element has another equal element nearby according to the problem's segment rule."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147264",
+      "notes": "Official solution greedily forms disjoint valid groups using last occurrences and a DP over prefix endpoints."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose the maximum number of elements that can remain while satisfying the 'not alone' condition, equivalently minimize deletions.",
+    "constraints": "Total n is up to 2e5, so decisions must be made with one pass and value occurrence tracking.",
+    "core_idea": "A kept block becomes valid when every value that appears in it has appeared at least twice inside the block. While scanning, maintain the current open block and the latest positions of seen values; once a block can be closed, greedily close it because later extensions cannot improve previous prefix choices. A prefix DP keeps the best number of retained elements up to each closure point.",
+    "complexity": "O(n) per test case with hash maps over values.",
+    "tricks": ["close earliest valid block", "track unmatched first occurrences", "prefix DP over block endpoints"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-block-dp",
+      "summary": "Scan the array, close the earliest valid non-alone blocks, and update prefix DP by retained block size.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The final answer is maintained as a prefix DP over possible valid block endpoints.",
+      "solution_variant": "greedy-block-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The scan closes each valid block as early as possible before starting the next independent block.",
+      "solution_variant": "greedy-block-dp"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "The implementation tracks occurrences and currently unmatched values by compressed value maps.",
+      "solution_variant": "greedy-block-dp"
+    }
+  ]
+}

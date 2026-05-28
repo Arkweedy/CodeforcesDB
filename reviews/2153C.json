@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2153,
+    "title": "Codeforces Round 1057 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2153,
+    "index": "C",
+    "title": "Symmetrical Polygons",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "geometry", "greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2153/problem/C",
+      "notes": "Construct centrally symmetric polygons from side lengths or report impossible."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147264",
+      "notes": "Official editorial sorts lengths, pairs equal sides, and checks the polygon inequality for the constructed symmetric polygon."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine whether the given side lengths can form a centrally symmetric polygon, and construct the required ordering when possible.",
+    "constraints": "n and side lengths are large enough that sorting and linear checks are expected.",
+    "core_idea": "A centrally symmetric polygon has each side vector paired with an equal and opposite side, so side lengths must be paired. Sort the lengths, require every pair to be equal, then place one copy of each pair in the first half and the matching copy opposite it. The remaining condition is the standard polygon inequality: the largest side must be strictly smaller than the sum of the others.",
+    "complexity": "O(n log n).",
+    "tricks": ["pair equal side lengths", "opposite side construction", "polygon inequality check"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sort-pair-construct",
+      "summary": "Sort lengths, verify equal pairs, check polygon inequality, and output opposite matched pairs.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The core condition is geometric: centrally symmetric polygons require equal opposite side vectors and must satisfy polygon inequality.",
+      "solution_variant": "sort-pair-construct"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Sorting is used to pair equal side lengths and locate the largest side for the inequality check.",
+      "solution_variant": "sort-pair-construct"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "When the conditions hold, the solution explicitly constructs the side order.",
+      "solution_variant": "sort-pair-construct"
+    }
+  ]
+}

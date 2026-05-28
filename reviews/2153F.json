@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2153,
+    "title": "Codeforces Round 1057 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2153,
+    "index": "F",
+    "title": "Odd Queries on Odd Array",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "brute force", "data structures", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2153/problem/F",
+      "notes": "Answer parity queries on an odd array whose structure forbids alternating x,y,x,y subsequences."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147264",
+      "notes": "Official solution constructs a tree from value intervals, maps array positions to a DFS order, and answers queries using LCA and parity masks."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer range parity queries on an array with a forbidden alternation property by exploiting the induced tree structure of value intervals.",
+    "constraints": "n and q are large, so queries need logarithmic tree preprocessing rather than scanning ranges.",
+    "core_idea": "The condition that no two values alternate as x,y,x,y makes the occurrence intervals laminar: intervals are either disjoint or nested. This laminar family forms a rooted tree. Map each array position to the node/value interval containing it; a query over positions can be decomposed using the LCA of the corresponding tree nodes, and parity information is maintained with xor masks along root paths and ordered child boundaries.",
+    "complexity": "O((n+q) log n) with binary-lifting LCA and ordered child searches.",
+    "tricks": ["laminar intervals from no alternation", "tree built from occurrence nesting", "path parity xor decomposition"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "laminar-tree-lca",
+      "summary": "Construct the laminar interval tree of values, preprocess LCA, and answer parity queries by decomposing paths and boundary children.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The array's forbidden alternation property is transformed into a laminar interval tree.",
+      "solution_variant": "laminar-tree-lca"
+    },
+    {
+      "tag": "algorithm/graph/lca",
+      "importance": "primary",
+      "evidence": "Queries are answered by taking the LCA of the two endpoint nodes in the constructed interval tree.",
+      "solution_variant": "laminar-tree-lca",
+      "description": "Lowest common ancestor preprocessing and queries on rooted trees, including binary lifting or Euler-tour RMQ approaches.",
+      "parent": "algorithm/graph",
+      "created_reason": "LCA is a classic tree-query primitive and should be searchable independently from generic tree tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Parity information over values is combined with xor-style masks along tree paths.",
+      "solution_variant": "laminar-tree-lca"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "The key structural observation is that forbidding x,y,x,y creates nested/disjoint occurrence intervals.",
+      "solution_variant": "laminar-tree-lca"
+    }
+  ]
+}
