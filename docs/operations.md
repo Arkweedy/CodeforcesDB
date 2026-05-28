@@ -92,6 +92,8 @@ python scripts/search.py --include-unrated --tag algorithm/dp
 
 ## WebUI
 
+WebUI 结构说明见 [webui-architecture.md](webui-architecture.md)。
+
 后端：
 
 ```powershell

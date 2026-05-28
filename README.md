@@ -31,7 +31,7 @@ WebUI 是主要使用入口，适合日常检索和浏览。
 本地启动：
 
 ```powershell
-python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
+.venv\Scripts\python.exe -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
 npm.cmd run dev --prefix web
 ```
 
@@ -41,7 +41,7 @@ npm.cmd run dev --prefix web
 
 ```powershell
 npm.cmd run build --prefix web
-python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
+.venv\Scripts\python.exe -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
 ```
 
 ## 数据质量
@@ -70,6 +70,7 @@ trick/maintain-contribution
 - [docs/ai-review-workflow.md](docs/ai-review-workflow.md)：AI-reviewed 标注流程、reviewed JSON 和 skill 使用方式。
 - [docs/database-design.md](docs/database-design.md)：数据库唯一键、rating、contest 过滤、Div.1/Div.2 去重等设计规则。
 - [docs/tagging.md](docs/tagging.md)：tag 层级、importance、evidence、新 tag 标准和翻译同步。
+- [docs/webui-architecture.md](docs/webui-architecture.md)：WebUI 技术栈、前后端连接方式和文件职责。
 - [docs/operations.md](docs/operations.md)：bootstrap、覆盖检查、脚本、测试和维护命令。
 
 ## 当前定位
