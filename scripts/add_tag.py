@@ -13,7 +13,7 @@ from cfdb.tags import TagInput, add_alias, ensure_tag
 def main() -> None:
     parser = argparse.ArgumentParser(description="Add or update a tag in the registry.")
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH), help="SQLite database path.")
-    parser.add_argument("tag", help="Canonical tag path, e.g. algorithm/string/acam.")
+    parser.add_argument("tag", help="Canonical tag path, e.g. string/acam.")
     parser.add_argument("--display-name")
     parser.add_argument("--description")
     parser.add_argument("--status", choices=("candidate", "active", "deprecated"), default="candidate")

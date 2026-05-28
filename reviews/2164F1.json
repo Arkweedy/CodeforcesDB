@@ -43,13 +43,13 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/graph-dp",
+      "tag": "dp/graph-dp",
       "importance": "primary",
       "evidence": "The solution is a DP over tree nodes/children.",
       "solution_variant": "quadratic-tree-dp"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The objects being counted are chains/prefixes in a tree.",
       "solution_variant": "quadratic-tree-dp"

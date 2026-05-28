@@ -56,7 +56,7 @@
       "solution_variant": "gap-range-dp-combinatorics"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The hard solution compresses gap contributions and feasible split ranges into reusable count states rather than enumerating every split/gap pair.",
       "solution_variant": "gap-range-dp-combinatorics"

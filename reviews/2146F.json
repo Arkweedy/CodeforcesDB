@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The final count is computed by DP over compressed restriction blocks and threshold classes.",
       "solution_variant": "compressed-restriction-dp"

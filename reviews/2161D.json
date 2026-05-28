@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/lis-dp",
+      "tag": "dp/lis-dp",
       "importance": "primary",
       "evidence": "The main task is a longest subsequence DP with value/order compatibility constraints.",
       "solution_variant": "sorted-value-fenwick-dp"

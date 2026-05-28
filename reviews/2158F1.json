@@ -55,12 +55,12 @@
       "solution_variant": "small-euler-walk-construction"
     },
     {
-      "tag": "algorithm/graph/euler-trail",
+      "tag": "graph/euler-trail",
       "importance": "secondary",
       "evidence": "The construction is naturally viewed as a walk using graph edges at most once so each edge-coded gcd is unique.",
       "solution_variant": "small-euler-walk-construction",
       "description": "Euler trail/path style constructions or checks where edges must be used exactly once or at most once in a graph walk.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Euler-walk constructions are a standard graph technique and useful to retrieve distinct-edge/gcd construction problems.",
       "status": "candidate"
     }

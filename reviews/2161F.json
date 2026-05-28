@@ -50,13 +50,13 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/mst",
+      "tag": "graph/mst",
       "importance": "primary",
       "evidence": "The quantity being summed is the MST weight of each subset in a complete graph under tree distances.",
       "solution_variant": "nearest-earlier-contribution"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "All distances and the nearest-parent MST property come from the original tree metric.",
       "solution_variant": "nearest-earlier-contribution"

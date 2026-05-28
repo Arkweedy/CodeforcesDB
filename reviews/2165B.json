@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/knapsack-dp",
+      "tag": "dp/knapsack-dp",
       "importance": "primary",
       "evidence": "The answer is counted by a subset-style DP over total selected frequency.",
       "solution_variant": "frequency-knapsack"

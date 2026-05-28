@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/flow",
+      "tag": "graph/flow",
       "importance": "primary",
       "evidence": "The official solution is explicitly based on maxflow/mincut feasibility.",
       "solution_variant": "layered-mincut-coloring"

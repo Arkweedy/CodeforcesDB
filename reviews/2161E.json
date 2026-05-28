@@ -49,7 +49,7 @@
       "solution_variant": "periodic-first-switch-count"
     },
     {
-      "tag": "algorithm/string",
+      "tag": "string",
       "importance": "primary",
       "evidence": "The object is a constrained binary string with wildcard pattern matching.",
       "solution_variant": "periodic-first-switch-count"

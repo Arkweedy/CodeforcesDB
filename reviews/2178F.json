@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/tree-dfs",
+      "tag": "graph/tree-dfs",
       "importance": "primary",
       "evidence": "A DFS computes subtree parity and extracts component sizes.",
       "solution_variant": "white-component-chain-formula"

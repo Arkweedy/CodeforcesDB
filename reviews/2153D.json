@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The final answer is maintained as a prefix DP over possible valid block endpoints.",
       "solution_variant": "greedy-block-dp"

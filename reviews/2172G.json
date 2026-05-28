@@ -43,12 +43,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/string/finite-automaton",
+      "tag": "string/finite-automaton",
       "importance": "primary",
       "evidence": "The solution explicitly constructs a finite automaton over equivalence classes of strings.",
       "solution_variant": "quotient-automaton-matrix",
       "description": "Build or use a deterministic finite automaton that is not specifically an AC automaton.",
-      "parent": "algorithm/string",
+      "parent": "string",
       "created_reason": "Automaton problems should be searchable even when they are not AC automaton or automaton-DP.",
       "status": "candidate"
     },

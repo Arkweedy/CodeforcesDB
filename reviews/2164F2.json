@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/graph-dp",
+      "tag": "dp/graph-dp",
       "importance": "primary",
       "evidence": "The hard version still solves a tree DP over chain-prefix contributions.",
       "solution_variant": "dfs-order-rank-dp"
@@ -66,7 +66,7 @@
       "solution_variant": "dfs-order-rank-dp"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "secondary",
       "evidence": "All states and queries are over rooted-tree chains/subtrees.",
       "solution_variant": "dfs-order-rank-dp"

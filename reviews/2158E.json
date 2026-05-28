@@ -59,7 +59,7 @@
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/connectivity",
+      "tag": "graph/connectivity",
       "importance": "secondary",
       "evidence": "The maintained objects are connected components in the 4-neighbour grid graph.",
       "solution_variant": "versioned-node-dsu"

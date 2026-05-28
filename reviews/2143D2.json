@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The main solution is a subsequence-counting DP over order thresholds.",
       "solution_variant": "fenwick-optimized-two-threshold-dp"

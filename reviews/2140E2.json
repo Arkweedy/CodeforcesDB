@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/bitmask-dp",
+      "tag": "dp/bitmask-dp",
       "importance": "primary",
       "evidence": "The game outcome for each threshold is computed by DP over remaining pile masks.",
       "solution_variant": "threshold-bitmask-counting"

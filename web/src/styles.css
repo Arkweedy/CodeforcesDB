@@ -523,13 +523,6 @@ textarea {
   --tag-text: #475569;
 }
 
-.tag-color-topic {
-  --tag-accent: #d97706;
-  --tag-bg: #fffbeb;
-  --tag-border: #fde68a;
-  --tag-text: #92400e;
-}
-
 .tag-color-fallback {
   --tag-accent: #5b7c99;
   --tag-bg: #edf4f8;

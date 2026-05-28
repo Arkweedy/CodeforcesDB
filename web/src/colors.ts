@@ -11,15 +11,14 @@ export type RatingBand =
   | "legendary";
 
 const TAG_PREFIX_COLORS: Array<[string, string]> = [
-  ["algorithm/transform", "transform"],
-  ["algorithm/string", "string"],
-  ["algorithm/graph", "graph"],
-  ["algorithm/dp", "dp"],
+  ["math/transform", "transform"],
+  ["string", "string"],
+  ["graph", "graph"],
+  ["dp", "dp"],
   ["data-structure", "ds"],
   ["implementation", "implementation"],
   ["paradigm", "paradigm"],
   ["math", "math"],
-  ["topic", "topic"],
   ["trick", "trick"],
   ["algorithm", "algorithm"]
 ];

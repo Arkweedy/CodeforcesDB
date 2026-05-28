@@ -53,12 +53,12 @@
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/tree-dfs",
+      "tag": "graph/tree-dfs",
       "importance": "secondary",
       "evidence": "Queries update the stored recursive tree by DFS over affected subtrees.",
       "solution_variant": "max-decomposition-update-tree",
       "description": "Depth-first traversal over an explicit tree to propagate or collect state.",
-      "parent": "algorithm/graph/tree",
+      "parent": "graph/tree",
       "created_reason": "Tree DFS is common enough to be searchable separately from generic dfs/trees.",
       "status": "candidate"
     },

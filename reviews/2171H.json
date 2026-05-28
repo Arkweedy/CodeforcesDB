@@ -43,12 +43,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/prefix-max-optimization",
+      "tag": "dp/prefix-max-optimization",
       "importance": "primary",
       "evidence": "The central recurrence is a prefix maximum over previous DP states.",
       "solution_variant": "fenwick-prefix-max-dp",
       "description": "Dynamic programming optimized by prefix maximum/minimum aggregates over previous states.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "This differs from prefix-sum DP and is useful for range maximum transition problems.",
       "status": "candidate"
     },

@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The solution counts subsequences by DP over progress in the required visible-record sequence.",
       "solution_variant": "record-sequence-dp"

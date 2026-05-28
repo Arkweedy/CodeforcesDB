@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/bitmask-dp",
+      "tag": "dp/bitmask-dp",
       "importance": "primary",
       "evidence": "The state is a 4-bit mask of which rectangle extrema have already been assigned to kept points.",
       "solution_variant": "four-extrema-bitmask-dp"

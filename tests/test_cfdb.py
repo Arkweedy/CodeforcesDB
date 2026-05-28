@@ -28,8 +28,8 @@ class CfDbTests(unittest.TestCase):
             db = Path(tmp) / "test.sqlite"
             init_db(db)
             with connect(db) as conn:
-                self.assertEqual(resolve_tag(conn, "acam"), "algorithm/string/acam")
-                self.assertIn("algorithm/dp/digit-dp", descendants(conn, "algorithm/dp"))
+                self.assertEqual(resolve_tag(conn, "acam"), "string/acam")
+                self.assertIn("dp/digit-dp", descendants(conn, "dp"))
 
     def test_aggregate_tag_search(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -59,11 +59,11 @@ class CfDbTests(unittest.TestCase):
                     """
                     INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
                     VALUES
-                        ('cf_problem:1:A', 'algorithm/string/acam', 'primary', 'synthetic', 'manual'),
-                        ('cf_problem:1:A', 'algorithm/dp/automaton-dp', 'primary', 'synthetic', 'manual')
+                        ('cf_problem:1:A', 'string/acam', 'primary', 'synthetic', 'manual'),
+                        ('cf_problem:1:A', 'dp/automaton-dp', 'primary', 'synthetic', 'manual')
                     """
                 )
-                results = search_problems(conn, tags=["acam", "algorithm/dp"])
+                results = search_problems(conn, tags=["acam", "dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:1:A"])
 
     def test_or_tag_search_and_favorite_filter(self) -> None:
@@ -96,7 +96,7 @@ class CfDbTests(unittest.TestCase):
                     """
                     INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
                     VALUES
-                        ('cf_problem:1:A', 'algorithm/dp', 'primary', 'synthetic', 'manual'),
+                        ('cf_problem:1:A', 'dp', 'primary', 'synthetic', 'manual'),
                         ('cf_problem:1:B', 'math/geometry', 'primary', 'synthetic', 'manual')
                     """
                 )
@@ -108,7 +108,7 @@ class CfDbTests(unittest.TestCase):
                 )
                 results = search_problems(
                     conn,
-                    tags=["algorithm/dp", "math/geometry"],
+                    tags=["dp", "math/geometry"],
                     tag_mode="or",
                 )
                 self.assertEqual(
@@ -161,7 +161,7 @@ class CfDbTests(unittest.TestCase):
             ],
             "tags": [
                 {
-                    "tag": "algorithm/dp",
+                    "tag": "dp",
                     "importance": "primary",
                     "evidence": "The state transition is the solution core.",
                     "solution_variant": "main",
@@ -183,7 +183,7 @@ class CfDbTests(unittest.TestCase):
                 self.assertEqual(annotation["review_status"], "reviewed")
                 self.assertEqual(annotation["constraints_text"], "n is small enough for DP.")
                 self.assertIn("prefix state", annotation["tricks_json"])
-                results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["algorithm/dp"])
+                results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], [problem_uid])
 
     def test_review_template_includes_luogu_candidate(self) -> None:
@@ -251,14 +251,14 @@ class CfDbTests(unittest.TestCase):
             i18n.write_text(
                 'const FULL_TAG_TEXT_ZH: Record<string, string> = {\n'
                 '  "algorithm": "算法",\n'
-                '  "algorithm/dp": "动态规划"\n'
+                '  "dp": "动态规划"\n'
                 "};\n",
                 encoding="utf-8",
             )
             translated = extract_full_tag_translations(i18n)
-            self.assertEqual(translated, {"algorithm", "algorithm/dp"})
+            self.assertEqual(translated, {"algorithm", "dp"})
             self.assertEqual(
-                missing_translations(["algorithm", "algorithm/dp", "trick/new"], translated),
+                missing_translations(["algorithm", "dp", "trick/new"], translated),
                 ["trick/new"],
             )
 
@@ -333,15 +333,15 @@ class CfDbTests(unittest.TestCase):
                     """
                     INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
                     VALUES
-                        ('cf_problem:100:A', 'algorithm/dp', 'primary', 'div1', 'manual'),
-                        ('cf_problem:101:C', 'algorithm/dp', 'primary', 'div2', 'manual')
+                        ('cf_problem:100:A', 'dp', 'primary', 'div1', 'manual'),
+                        ('cf_problem:101:C', 'dp', 'primary', 'div2', 'manual')
                     """
                 )
 
                 duplicates = mark_division_duplicates(conn)
                 self.assertEqual(len(duplicates), 1)
                 self.assertEqual(canonical_problem_uid(conn, "cf_problem:101:C"), "cf_problem:100:A")
-                results = search_problems(conn, tags=["algorithm/dp"])
+                results = search_problems(conn, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:100:A"])
 
     def test_list_missing_contests_reports_coverage_states(self) -> None:
@@ -470,7 +470,7 @@ class CfDbTests(unittest.TestCase):
             self.assertEqual(tags.status_code, 200)
             self.assertTrue(any(item["tag"] == "algorithm" for item in tags.json()))
 
-            search = client.get("/api/search", params={"tags": "algorithm/dp", "tag_mode": "and"})
+            search = client.get("/api/search", params={"tags": "dp", "tag_mode": "and"})
             self.assertEqual(search.status_code, 200)
             self.assertEqual(search.json()["items"][0]["problem_uid"], "cf_problem:2:B")
 

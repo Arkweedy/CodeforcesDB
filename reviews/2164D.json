@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/string",
+      "tag": "string",
       "importance": "primary",
       "evidence": "The whole problem is a string transformation/matching task.",
       "solution_variant": "rightmost-source-greedy"

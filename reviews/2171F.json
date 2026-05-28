@@ -55,7 +55,7 @@
       "solution_variant": "suffix-max-block-tree"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "secondary",
       "evidence": "The output structure is a tree built by connecting vertices according to the permutation-derived graph condition.",
       "solution_variant": "suffix-max-block-tree"

@@ -53,12 +53,12 @@
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/connectivity",
+      "tag": "graph/connectivity",
       "importance": "secondary",
       "evidence": "The prefix/suffix condition is proved by whether the induced graph can connect across every cut.",
       "solution_variant": "prefix-suffix-cut-test",
       "description": "Reasoning about whether vertices/parts of a graph are connected or can be connected.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "The existing graph tag does not distinguish connectivity feasibility arguments.",
       "status": "candidate"
     }

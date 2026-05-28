@@ -55,7 +55,7 @@
       "solution_variant": "period-three-construction"
     },
     {
-      "tag": "topic/scheduling",
+      "tag": "trick/scheduling",
       "importance": "secondary",
       "evidence": "The output is a repeated schedule of three values designed to avoid local conflicts.",
       "solution_variant": "period-three-construction"

@@ -43,22 +43,22 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/graph-dp",
+      "tag": "dp/graph-dp",
       "importance": "primary",
       "evidence": "The state is a directed edge and transitions follow outgoing graph edges whose endpoint value matches the Fibonacci recurrence.",
       "solution_variant": "sorted-edge-dp",
       "description": "Dynamic programming over graph vertices, edges, paths, or graph-derived states.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "The generic DP tag does not distinguish path/edge DP over graphs.",
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/path-counting",
+      "tag": "graph/path-counting",
       "importance": "primary",
       "evidence": "The answer is the number of valid directed paths, accumulated over edge states.",
       "solution_variant": "sorted-edge-dp",
       "description": "Count paths in a graph under structural or label constraints.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Path counting is a reusable graph subproblem distinct from generic graph traversal.",
       "status": "candidate"
     },

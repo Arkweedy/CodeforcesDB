@@ -66,7 +66,7 @@
       "solution_variant": "inclusion-exclusion-combinatorics"
     },
     {
-      "tag": "algorithm/transform/fft",
+      "tag": "math/transform/fft",
       "importance": "incidental",
       "evidence": "The official metadata lists FFT, but the reviewed reference implementation uses a direct combinatorial formula rather than FFT as the main solution.",
       "solution_variant": "inclusion-exclusion-combinatorics"

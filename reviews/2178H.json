@@ -48,18 +48,18 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/shortest-path",
+      "tag": "graph/shortest-path",
       "importance": "primary",
       "evidence": "Residue transitions are modeled as weighted edges and solved by Dijkstra.",
       "solution_variant": "layered-mod-shortest-path"
     },
     {
-      "tag": "algorithm/graph/layered-graph",
+      "tag": "graph/layered-graph",
       "importance": "primary",
       "evidence": "The solution uses layers for which gift types have been introduced before applying doubling transitions.",
       "solution_variant": "layered-mod-shortest-path",
       "description": "Model extra discrete state dimensions by duplicating graph vertices into layers.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Layered graph modeling is a common graph reduction that should be searchable.",
       "status": "candidate"
     },

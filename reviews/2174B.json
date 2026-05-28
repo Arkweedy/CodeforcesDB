@@ -50,7 +50,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The main solution is a budget/value DP maximizing accumulated prefix-maximum contribution.",
       "solution_variant": "value-budget-dp"
@@ -62,12 +62,12 @@
       "solution_variant": "value-budget-dp"
     },
     {
-      "tag": "algorithm/dp/convex-hull-optimization",
+      "tag": "dp/convex-hull-optimization",
       "importance": "secondary",
       "evidence": "The optimized DP transition is rewritten as a maximum of lines.",
       "solution_variant": "li-chao-optimized-dp",
       "description": "Dynamic programming optimized by convex hull trick, Li Chao tree, or equivalent max/min of linear functions.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "This DP optimization is useful to search separately from ordinary DP.",
       "status": "candidate"
     },

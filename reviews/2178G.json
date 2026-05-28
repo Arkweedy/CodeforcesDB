@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The recurrence computes parity information for chains ending at each newly added chord.",
       "solution_variant": "xor-hashed-parity-dp"

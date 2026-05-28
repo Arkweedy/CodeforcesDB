@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/matching",
+      "tag": "graph/matching",
       "importance": "primary",
       "evidence": "The official tags and solution reduce the construction to pairing compatible terms.",
       "solution_variant": "structured-term-matching"

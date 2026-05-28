@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/digit-dp",
+      "tag": "dp/digit-dp",
       "importance": "primary",
       "evidence": "The bounded case is solved by DP over binary digits and carry/addition usage.",
       "solution_variant": "carry-digit-dp"

@@ -50,13 +50,13 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/string/acam",
+      "tag": "string/acam",
       "importance": "primary",
       "evidence": "The one-group construction is a forbidden-substring avoidance problem solved with Aho-Corasick transitions.",
       "solution_variant": "aho-corasick-balance-dp"
     },
     {
-      "tag": "algorithm/dp/automaton-dp",
+      "tag": "dp/automaton-dp",
       "importance": "primary",
       "evidence": "The DP state combines generated length, automaton state, and current bracket balance.",
       "solution_variant": "aho-corasick-balance-dp"
@@ -74,7 +74,7 @@
       "solution_variant": "aho-corasick-balance-dp"
     },
     {
-      "tag": "algorithm/string/suffix-structures",
+      "tag": "string/suffix-structures",
       "importance": "incidental",
       "evidence": "An alternative implementation tracks forbidden suffixes over stored prefixes, but the core reviewed solution is the automaton DP.",
       "solution_variant": "prefix-suffix-automaton-dp"

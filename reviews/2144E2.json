@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The main recurrence counts subsequences by progress through the required visible-record sequence.",
       "solution_variant": "segment-tree-record-dp"

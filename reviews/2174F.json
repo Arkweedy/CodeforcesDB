@@ -76,13 +76,13 @@
       "status": "candidate"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "secondary",
       "evidence": "After simplifying the EGFs, coefficients over possible exponential exponents are maintained by DP.",
       "solution_variant": "prufer-egf-dp"
     },
     {
-      "tag": "algorithm/transform/fft",
+      "tag": "math/transform/fft",
       "importance": "incidental",
       "evidence": "FFT/NTT is an optional optimization for multiplying many generating functions.",
       "solution_variant": "divide-conquer-ntt"

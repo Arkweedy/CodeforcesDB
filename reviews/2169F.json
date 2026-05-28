@@ -49,7 +49,7 @@
       "solution_variant": "generating-functions-ntt"
     },
     {
-      "tag": "algorithm/transform/fft",
+      "tag": "math/transform/fft",
       "importance": "primary",
       "evidence": "The official implementation uses NTT-style convolution to multiply the depth polynomials efficiently.",
       "solution_variant": "generating-functions-ntt"
@@ -61,7 +61,7 @@
       "solution_variant": "generating-functions-ntt"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "secondary",
       "evidence": "The polynomial product is equivalent to DP over used filler length across depth groups.",
       "solution_variant": "generating-functions-ntt"

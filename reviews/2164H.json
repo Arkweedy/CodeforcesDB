@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/string",
+      "tag": "string",
       "importance": "primary",
       "evidence": "The core objects are palindromic substrings and their interval relations.",
       "solution_variant": "offline-palindrome-pair-counting"

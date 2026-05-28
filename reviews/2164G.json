@@ -54,7 +54,7 @@
       "solution_variant": "recursive-tree-query-reconstruction"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The hidden object and reconstruction invariant are tree-structured.",
       "solution_variant": "recursive-tree-query-reconstruction"

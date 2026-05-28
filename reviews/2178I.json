@@ -48,22 +48,22 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/subset-dp",
+      "tag": "dp/subset-dp",
       "importance": "primary",
       "evidence": "The main algorithm performs DP over states of the smaller bipartition side.",
       "solution_variant": "small-side-ternary-dp",
       "description": "Dynamic programming over subsets or small-state masks.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "Subset DP is a major DP subcategory needed for rating/tag queries.",
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/bipartite-graph",
+      "tag": "graph/bipartite-graph",
       "importance": "primary",
       "evidence": "The crucial structural fact is that the fixed-distance graph on lattice points is bipartite.",
       "solution_variant": "small-side-ternary-dp",
       "description": "Use bipartite graph structure, coloring, or side enumeration.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Bipartite graph structure is a recurring graph subtag distinct from matching/flow.",
       "status": "candidate"
     },

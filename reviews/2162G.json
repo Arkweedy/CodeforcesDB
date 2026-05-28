@@ -49,7 +49,7 @@
       "solution_variant": "inductive-square-tree"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The constructed object is a tree, and the proof is based on edge changes in that tree.",
       "solution_variant": "inductive-square-tree"

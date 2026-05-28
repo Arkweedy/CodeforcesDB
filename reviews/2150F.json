@@ -49,13 +49,13 @@
       "solution_variant": "distance-guided-cycle-construction"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The construction is organized around tree paths and branch attachments.",
       "solution_variant": "distance-guided-cycle-construction"
     },
     {
-      "tag": "algorithm/graph/shortest-path",
+      "tag": "graph/shortest-path",
       "importance": "secondary",
       "evidence": "Distance labels are used to verify or choose safe attachments.",
       "solution_variant": "distance-guided-cycle-construction"

@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The hard solution compresses and updates partition states with DP.",
       "solution_variant": "compressed-envelope-dp"

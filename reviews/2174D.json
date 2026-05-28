@@ -43,22 +43,22 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/mst",
+      "tag": "graph/mst",
       "importance": "primary",
       "evidence": "The solution begins from the MST and uses exchange arguments around non-tree edges.",
       "solution_variant": "mst-exchange-with-path-queries",
       "description": "Minimum spanning tree construction and exchange/cycle arguments.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "MST is a major graph retrieval category not covered by the broad graph tag.",
       "status": "candidate"
     },
     {
-      "tag": "algorithm/graph/heavy-light-decomposition",
+      "tag": "graph/heavy-light-decomposition",
       "importance": "secondary",
       "evidence": "The implementation queries maxima on tree paths and path complements after rooting the MST.",
       "solution_variant": "mst-exchange-with-path-queries",
       "description": "Decompose a tree into chains to answer path queries or updates efficiently.",
-      "parent": "algorithm/graph/tree",
+      "parent": "graph/tree",
       "created_reason": "Tree path-query problems should be searchable separately from generic tree DFS.",
       "status": "candidate"
     },

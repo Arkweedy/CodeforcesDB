@@ -43,12 +43,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/prefix-sum-optimization",
+      "tag": "dp/prefix-sum-optimization",
       "importance": "primary",
       "evidence": "The recurrence sums a contiguous range of previous dp states and is made linear with prefix sums.",
       "solution_variant": "prefix-bound-dp",
       "description": "Dynamic programming where range-sum transitions are optimized using prefix sums or prefix aggregates.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "The existing DP tag is too coarse for range-sum transition optimization.",
       "status": "candidate"
     },

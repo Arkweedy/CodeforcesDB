@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/knapsack-dp",
+      "tag": "dp/knapsack-dp",
       "importance": "primary",
       "evidence": "The solution chooses block sizes whose triangular-number contributions sum to the required complement.",
       "solution_variant": "block-partition-dp"

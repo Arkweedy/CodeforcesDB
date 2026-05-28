@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "communication",
+      "tag": "paradigm/communication",
       "importance": "primary",
       "evidence": "The task is explicitly a communication protocol problem with sender and receiver roles.",
       "solution_variant": "one-row-one-column-protocol"

@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The count is obtained by maintaining DP states over two rank thresholds while scanning the sequence.",
       "solution_variant": "two-threshold-dp"

@@ -50,7 +50,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/knapsack-dp",
+      "tag": "dp/knapsack-dp",
       "importance": "primary",
       "evidence": "The main state tracks a capacity-like count of S-only positions while maximizing B-only positions.",
       "solution_variant": "interval-classification-dp"

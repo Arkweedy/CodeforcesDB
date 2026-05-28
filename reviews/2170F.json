@@ -43,12 +43,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/bitmask-dp",
+      "tag": "dp/bitmask-dp",
       "importance": "primary",
       "evidence": "The main state is subset size and XOR mask, updated for every array element.",
       "solution_variant": "offline-xor-cardinality-dp",
       "description": "Dynamic programming over bitmask-valued states or transitions.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "This is a standard DP subtype needed for queries over small mask spaces.",
       "status": "candidate"
     },

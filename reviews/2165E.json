@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The whole structure is a tree coloring problem and the solution depends on tree centers, leaves, and degrees.",
       "solution_variant": "leaf-peeling-inverted-answer"
@@ -55,7 +55,7 @@
       "solution_variant": "leaf-peeling-inverted-answer"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "secondary",
       "evidence": "The final all-k answer is produced by writing best values for achievable color counts and suffix-minimizing them.",
       "solution_variant": "leaf-peeling-inverted-answer"

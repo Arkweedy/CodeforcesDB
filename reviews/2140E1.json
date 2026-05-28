@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/bitmask-dp",
+      "tag": "dp/bitmask-dp",
       "importance": "primary",
       "evidence": "The state is a remaining-length bitmask, and transitions remove one bit from the mask.",
       "solution_variant": "binary-mask-minimax-dp"

@@ -48,18 +48,18 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "Each residue class is solved with a DP over position, operations, and last state.",
       "solution_variant": "difference-class-dp-knapsack"
     },
     {
-      "tag": "algorithm/dp/knapsack-dp",
+      "tag": "dp/knapsack-dp",
       "importance": "primary",
       "evidence": "Per-class DP tables are combined by distributing the global operation budget.",
       "solution_variant": "difference-class-dp-knapsack",
       "description": "Dynamic programming that combines item/group choices under a budget or capacity.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "Budget-distribution DP is common enough to deserve a searchable subtag.",
       "status": "candidate"
     },

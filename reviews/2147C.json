@@ -55,7 +55,7 @@
       "solution_variant": "zero-run-scan"
     },
     {
-      "tag": "algorithm/string/run-length-encoding",
+      "tag": "string/run-length-encoding",
       "importance": "secondary",
       "evidence": "The condition is naturally expressed in terms of lengths and boundaries of zero-runs.",
       "solution_variant": "zero-run-scan"

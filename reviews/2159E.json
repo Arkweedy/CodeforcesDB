@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/meet-in-the-middle",
+      "tag": "algorithm/search/meet-in-the-middle",
       "importance": "primary",
       "evidence": "The official tags and solution split the exponential search into two halves.",
       "solution_variant": "polynomial-mitm"

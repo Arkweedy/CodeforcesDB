@@ -54,12 +54,12 @@
       "solution_variant": "bridge-block-constructive-cases"
     },
     {
-      "tag": "algorithm/graph/bridge",
+      "tag": "graph/bridge",
       "importance": "primary",
       "evidence": "The construction is organized around exactly b bridge edges and 2-edge-connected blocks.",
       "solution_variant": "bridge-block-constructive-cases",
       "description": "Use graph bridges, bridge trees, or 2-edge-connected components as a central concept.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Bridge/edge-biconnected structure is a common graph subtopic not yet represented.",
       "status": "candidate"
     },

@@ -61,7 +61,7 @@
       "solution_variant": "component-set-sqrt-decomposition"
     },
     {
-      "tag": "algorithm/graph/tree-dfs",
+      "tag": "graph/tree-dfs",
       "importance": "primary",
       "evidence": "A DFS with per-color stacks assigns maximal connected color-component IDs on the tree.",
       "solution_variant": "component-set-sqrt-decomposition"

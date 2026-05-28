@@ -48,13 +48,13 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/euler-trail",
+      "tag": "graph/euler-trail",
       "importance": "primary",
       "evidence": "The problem is reduced to making all vertex degrees even for an Eulerian journey.",
       "solution_variant": "merge-tree-odd-pairing"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The transfer costs are represented and solved on a merge tree.",
       "solution_variant": "merge-tree-odd-pairing"

@@ -55,12 +55,12 @@
       "solution_variant": "run-contribution-greedy"
     },
     {
-      "tag": "algorithm/string/run-length-encoding",
+      "tag": "string/run-length-encoding",
       "importance": "secondary",
       "evidence": "The preprocessing groups consecutive ? positions and accounts for their boundary characters.",
       "solution_variant": "run-contribution-greedy",
       "description": "Techniques that compress or reason over maximal runs of equal characters in a string.",
-      "parent": "algorithm/string",
+      "parent": "string",
       "created_reason": "Existing string tags do not distinguish run/block decomposition, which is the reusable string-specific technique here.",
       "status": "candidate"
     },

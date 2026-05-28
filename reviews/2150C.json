@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The solution stores optimal values for prefixes/positions and transitions between them.",
       "solution_variant": "range-max-dp"

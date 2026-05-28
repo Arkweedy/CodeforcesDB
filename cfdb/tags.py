@@ -8,16 +8,18 @@ from dataclasses import dataclass
 ROOT_TAGS = {
     "algorithm": "Algorithm",
     "data-structure": "Data structure",
+    "dp": "Dynamic programming",
+    "graph": "Graph",
     "math": "Math",
     "paradigm": "Paradigm",
+    "string": "String",
     "trick": "Trick",
     "implementation": "Implementation",
-    "topic": "Topic",
 }
 
 
 OFFICIAL_TAG_MAP = {
-    "2-sat": "algorithm/graph/2-sat",
+    "2-sat": "graph/2-sat",
     "binary search": "algorithm/search/binary-search",
     "bitmasks": "algorithm/bitmask",
     "brute force": "paradigm/brute-force",
@@ -25,54 +27,54 @@ OFFICIAL_TAG_MAP = {
     "combinatorics": "math/combinatorics",
     "constructive algorithms": "paradigm/constructive",
     "data structures": "data-structure",
-    "dfs and similar": "algorithm/graph/dfs",
+    "dfs and similar": "graph/dfs",
     "divide and conquer": "algorithm/divide-and-conquer",
-    "dp": "algorithm/dp",
+    "dp": "dp",
     "dsu": "data-structure/dsu",
     "expression parsing": "implementation/parsing/expression",
-    "fft": "algorithm/transform/fft",
-    "flows": "algorithm/graph/flow",
+    "fft": "math/transform/fft",
+    "flows": "graph/flow",
     "games": "math/game-theory",
     "geometry": "math/geometry",
-    "graph matchings": "algorithm/graph/matching",
-    "graphs": "algorithm/graph",
+    "graph matchings": "graph/matching",
+    "graphs": "graph",
     "greedy": "paradigm/greedy",
     "hashing": "algorithm/hashing",
     "implementation": "implementation",
     "interactive": "paradigm/interactive",
     "math": "math",
     "matrices": "math/linear-algebra/matrix",
-    "meet-in-the-middle": "algorithm/meet-in-the-middle",
+    "meet-in-the-middle": "algorithm/search/meet-in-the-middle",
     "number theory": "math/number-theory",
     "probabilities": "math/probability",
-    "schedules": "topic/scheduling",
-    "shortest paths": "algorithm/graph/shortest-path",
+    "schedules": "trick/scheduling",
+    "shortest paths": "graph/shortest-path",
     "sortings": "algorithm/sorting",
-    "string suffix structures": "algorithm/string/suffix-structures",
-    "strings": "algorithm/string",
+    "string suffix structures": "string/suffix-structures",
+    "strings": "string",
     "ternary search": "algorithm/search/ternary-search",
-    "trees": "algorithm/graph/tree",
+    "trees": "graph/tree",
     "two pointers": "algorithm/two-pointers",
 }
 
 
 COMMON_TAGS = {
-    "algorithm/transform/fwt": {
+    "math/transform/fwt": {
         "display_name": "Fast Walsh-Hadamard transform",
         "description": "Subset or XOR/AND/OR convolution transform techniques.",
         "aliases": ["fwt", "fwht", "fast-walsh-transform", "xor-convolution"],
     },
-    "algorithm/dp/digit-dp": {
+    "dp/digit-dp": {
         "display_name": "Digit DP",
         "description": "Dynamic programming over decimal or binary digit prefixes.",
         "aliases": ["digit dp", "digits-dp", "shuwei-dp"],
     },
-    "algorithm/string/acam": {
+    "string/acam": {
         "display_name": "Aho-Corasick automaton",
         "description": "Multi-pattern string automaton, often combined with DP or graph transitions.",
         "aliases": ["acam", "ac automaton", "aho-corasick", "aho-corasick-automaton"],
     },
-    "algorithm/dp/automaton-dp": {
+    "dp/automaton-dp": {
         "display_name": "Automaton DP",
         "description": "Dynamic programming whose states include an automaton state.",
         "aliases": ["automaton dp", "dfa dp"],

@@ -55,7 +55,7 @@
       "solution_variant": "invariant-construction"
     },
     {
-      "tag": "algorithm/string",
+      "tag": "string",
       "importance": "secondary",
       "evidence": "The object being transformed is a bracket string, and the construction is a linear string construction.",
       "solution_variant": "invariant-construction"

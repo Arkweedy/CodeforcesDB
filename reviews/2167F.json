@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/tree-dfs",
+      "tag": "graph/tree-dfs",
       "importance": "primary",
       "evidence": "A single DFS computes subtree sizes, which determine every rerooted subtree size by edge-side complements.",
       "solution_variant": "subtree-contribution-count"

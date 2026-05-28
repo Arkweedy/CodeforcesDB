@@ -49,7 +49,7 @@
       "solution_variant": "canonical-zero-construction"
     },
     {
-      "tag": "algorithm/string",
+      "tag": "string",
       "importance": "primary",
       "evidence": "The construction relies on binary string structure and maintaining a contiguous equal-character block.",
       "solution_variant": "canonical-zero-construction"

@@ -55,7 +55,7 @@
       "solution_variant": "shape-classification-bruteforce"
     },
     {
-      "tag": "algorithm/graph/connectivity",
+      "tag": "graph/connectivity",
       "importance": "secondary",
       "evidence": "The feasibility condition is about one 4-neighbour connected component, although no graph traversal is needed after classification.",
       "solution_variant": "shape-classification-bruteforce"

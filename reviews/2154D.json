@@ -49,19 +49,19 @@
       "solution_variant": "parity-leaf-deletion"
     },
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The proof uses rooted-tree leaves, parent/child counts, and the fact that deleting a leaf preserves connectivity.",
       "solution_variant": "parity-leaf-deletion"
     },
     {
-      "tag": "algorithm/graph/bipartite-graph",
+      "tag": "graph/bipartite-graph",
       "importance": "secondary",
       "evidence": "Tree depth parity is used as a bipartition to guarantee the current vertex is not the deleted leaf.",
       "solution_variant": "parity-leaf-deletion"
     },
     {
-      "tag": "algorithm/graph/dfs",
+      "tag": "graph/dfs",
       "importance": "secondary",
       "evidence": "A DFS from n computes parent, depth parity, and child counts.",
       "solution_variant": "parity-leaf-deletion"

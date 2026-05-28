@@ -56,12 +56,12 @@
       "solution_variant": "prime-grid-euler-walk"
     },
     {
-      "tag": "algorithm/graph/euler-trail",
+      "tag": "graph/euler-trail",
       "importance": "primary",
       "evidence": "The sequence is obtained from a walk that avoids repeated edges, which is the mechanism that keeps adjacent gcds distinct.",
       "solution_variant": "prime-grid-euler-walk",
       "description": "Euler trail/path style constructions or checks where edges must be used exactly once or at most once in a graph walk.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "Euler-walk constructions are a standard graph technique and useful to retrieve distinct-edge/gcd construction problems.",
       "status": "candidate"
     },

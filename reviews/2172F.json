@@ -54,7 +54,7 @@
       "solution_variant": "prefix-suffix-gcd-mst"
     },
     {
-      "tag": "algorithm/graph/mst",
+      "tag": "graph/mst",
       "importance": "primary",
       "evidence": "The target is a minimum spanning tree of an implicit graph.",
       "solution_variant": "prefix-suffix-gcd-mst"

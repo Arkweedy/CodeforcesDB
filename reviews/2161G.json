@@ -50,12 +50,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/transform/fwt/and-fwt",
+      "tag": "math/transform/fwt/and-fwt",
       "importance": "primary",
       "evidence": "The optimized solution uses AND Fast Walsh-Hadamard Transform to aggregate costs over masks containing required bits.",
       "solution_variant": "and-fwt-batched-greedy",
       "description": "Fast Walsh-Hadamard Transform specialized for subset/superset convolution over bitwise AND masks.",
-      "parent": "algorithm/transform/fwt",
+      "parent": "math/transform/fwt",
       "created_reason": "AND-FWT is a concrete FWT subtype useful for high-rating bitmask aggregation queries.",
       "status": "candidate"
     },

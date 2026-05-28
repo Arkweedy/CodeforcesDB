@@ -48,7 +48,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The official tag and constraints point to a polynomial state DP over the random divisibility process.",
       "solution_variant": "divisibility-random-order-dp"

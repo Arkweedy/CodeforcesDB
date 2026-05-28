@@ -54,7 +54,7 @@
       "solution_variant": "sparse-losing-state-dp"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The solution memoizes game states and transitions, but only along a sparse losing-state sequence.",
       "solution_variant": "sparse-losing-state-dp"

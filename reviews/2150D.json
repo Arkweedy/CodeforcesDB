@@ -43,7 +43,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The main solution counts configurations by dynamic programming over compressed states.",
       "solution_variant": "compressed-combinatorial-dp"

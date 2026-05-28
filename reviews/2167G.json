@@ -50,12 +50,12 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/dp/lis-dp",
+      "tag": "dp/lis-dp",
       "importance": "primary",
       "evidence": "The main reduction is to a maximum-weight nondecreasing subsequence DP.",
       "solution_variant": "weighted-lnds-dp",
       "description": "Dynamic programming for longest or maximum-weight increasing/nondecreasing subsequences and their variants.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "LIS/LNDS-style subsequence DP is a common retrieval category distinct from generic DP.",
       "status": "candidate"
     },

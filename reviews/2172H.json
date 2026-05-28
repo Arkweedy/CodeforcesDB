@@ -54,7 +54,7 @@
       "solution_variant": "permutation-hash-min-rotation"
     },
     {
-      "tag": "algorithm/string/suffix-structures",
+      "tag": "string/suffix-structures",
       "importance": "secondary",
       "evidence": "The task is essentially lexicographic comparison of many suffix/rotation-like strings.",
       "solution_variant": "permutation-hash-min-rotation"

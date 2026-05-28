@@ -43,18 +43,18 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/tree",
+      "tag": "graph/tree",
       "importance": "primary",
       "evidence": "The array's forbidden alternation property is transformed into a laminar interval tree.",
       "solution_variant": "laminar-tree-lca"
     },
     {
-      "tag": "algorithm/graph/lca",
+      "tag": "graph/lca",
       "importance": "primary",
       "evidence": "Queries are answered by taking the LCA of the two endpoint nodes in the constructed interval tree.",
       "solution_variant": "laminar-tree-lca",
       "description": "Lowest common ancestor preprocessing and queries on rooted trees, including binary lifting or Euler-tour RMQ approaches.",
-      "parent": "algorithm/graph",
+      "parent": "graph",
       "created_reason": "LCA is a classic tree-query primitive and should be searchable independently from generic tree tags.",
       "status": "candidate"
     },

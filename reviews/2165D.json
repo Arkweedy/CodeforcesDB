@@ -50,7 +50,7 @@
   ],
   "tags": [
     {
-      "tag": "algorithm/graph/matching",
+      "tag": "graph/matching",
       "importance": "primary",
       "evidence": "The minimum number of subsequences equals n minus a maximum bipartite matching size.",
       "solution_variant": "greedy-bipartite-matching"
@@ -62,13 +62,13 @@
       "solution_variant": "greedy-bipartite-matching"
     },
     {
-      "tag": "algorithm/graph/bipartite-graph",
+      "tag": "graph/bipartite-graph",
       "importance": "secondary",
       "evidence": "The path-cover reduction creates left and right copies of every position.",
       "solution_variant": "greedy-bipartite-matching"
     },
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "secondary",
       "evidence": "The editorial also presents a Hall-theorem DP alternative over grouped positions.",
       "solution_variant": "hall-dp"

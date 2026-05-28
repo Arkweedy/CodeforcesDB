@@ -54,12 +54,12 @@
       "solution_variant": "parity-kadane"
     },
     {
-      "tag": "algorithm/dp/max-subarray",
+      "tag": "dp/max-subarray",
       "importance": "primary",
       "evidence": "The final value is computed by Kadane-style maximum subarray DP from both directions.",
       "solution_variant": "parity-kadane",
       "description": "Kadane-style dynamic programming for maximum subarray sums, including directional best prefix/suffix variants.",
-      "parent": "algorithm/dp",
+      "parent": "dp",
       "created_reason": "Maximum subarray DP is a reusable retrieval category distinct from generic DP and prefix maximum optimization.",
       "status": "candidate"
     },
