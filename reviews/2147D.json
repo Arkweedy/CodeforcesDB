@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "D",
+    "title": "Game on Array",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["games", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/D",
+      "notes": "Players repeatedly choose an existing value x, score its frequency, and decrement all x to x-1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial treats each current frequency block as a pile and always takes the largest available score."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute Alice and Bob's final scores in a game where choosing value x scores its current frequency and moves all x down to x-1.",
+    "constraints": "a_i can be large, but only n distinct occupied levels exist; O(n log n) over frequency blocks is fine.",
+    "core_idea": "Every move chooses one current block of equal values and scores its size; after the move that block merges into the next lower level. Taking a smaller current block while a larger block is available can only give the opponent the larger score, so optimal play is to repeatedly take the largest current block. A max-heap over level frequencies, with merges into lower levels, simulates the game.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["current equal-value block as a pile", "largest-score greedy", "merge block into x-1 after taking"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "max-heap-frequency-game",
+      "summary": "Maintain current frequencies by value, repeatedly pop the largest score block, assign it to the current player, and merge it downward.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The problem is an alternating scoring game and requires proving the optimal move order.",
+      "solution_variant": "max-heap-frequency-game"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The optimal strategy is to always take the currently largest frequency block.",
+      "solution_variant": "max-heap-frequency-game"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "A max-heap implements the repeated choice of the largest current score.",
+      "solution_variant": "max-heap-frequency-game"
+    }
+  ]
+}

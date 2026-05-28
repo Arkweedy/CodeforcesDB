@@ -1,0 +1,72 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "G",
+    "title": "Modular Tetration",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/G",
+      "notes": "Count/compute modular tetration-related values over many queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial decomposes the modular exponent tower using multiplicative orders and divisor enumeration."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve modular tetration queries where exponent towers must be evaluated through changing moduli.",
+    "constraints": "The modulus can be large, but the recursive depth over phi/order chains is small enough with factorization and divisor enumeration.",
+    "core_idea": "For a^e mod m, once gcd(a,m)=1 the exponent can be reduced modulo the multiplicative order of a mod m. If a is not coprime, split prime-power factors and handle the saturated valuation separately, then combine residues. The tetration height is handled recursively on the required exponent modulus. Counting choices introduces combinatorial factors over divisors/order classes.",
+    "complexity": "Polynomial in the number of divisors/factors per query; practically O(tau(m) log m) with precomputed factorization helpers.",
+    "tricks": ["reduce exponent by multiplicative order", "handle non-coprime prime-power valuations", "recursive modulus chain", "enumerate divisor/order classes"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "order-recursive-tetration",
+      "summary": "Evaluate exponent towers recursively modulo multiplicative orders, splitting non-coprime prime powers when necessary.",
+      "complexity": "O(tau(m) log m) style per query",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/multiplicative-order",
+      "importance": "primary",
+      "evidence": "The central reduction is exponent modulo the multiplicative order of the base under the current modulus.",
+      "solution_variant": "order-recursive-tetration",
+      "description": "Use multiplicative orders modulo m to reduce exponents or classify periodic powers.",
+      "parent": "math/number-theory",
+      "created_reason": "Multiplicative order is a reusable number-theory technique, especially in modular exponent/tetration problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "The whole problem is built around modular exponent towers and modulus reduction.",
+      "solution_variant": "order-recursive-tetration",
+      "description": "General modular arithmetic techniques including modular exponentiation, modulus reduction, and congruence manipulation.",
+      "parent": "math/number-theory",
+      "created_reason": "Many number-theory problems use modular arithmetic without fitting a narrower tag like CRT or Mobius.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The editorial counts valid exponent/order classes by divisor enumeration.",
+      "solution_variant": "order-recursive-tetration"
+    }
+  ]
+}

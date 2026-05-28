@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "F",
+    "title": "Exchange Queries",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "data structures", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/F",
+      "notes": "Maintain the answer under exchange queries on two permutations."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1xo5705r",
+      "notes": "Luogu solution treats the state as dominance components over two permutation coordinates and maintains component contribution under swaps."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial emphasizes the same greedy component invariant for exchange updates."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain a combinatorial answer while processing swaps/exchanges in two permutations.",
+    "constraints": "n and q are large, requiring logarithmic-time updates of local component boundaries.",
+    "core_idea": "View every item as a point with coordinates given by its positions/ranks in the two permutations. The reachable/exchange-equivalent regions form dominance components: after sorting by one coordinate, a component continues while the prefix maximum of the other coordinate overlaps the next point. The answer factors over components. A swap changes only O(log n) neighbouring boundaries in the ordered set, so maintain breakpoints and component contributions with balanced sets/Fenwick-like aggregates.",
+    "complexity": "O((n+q) log n).",
+    "tricks": ["two-permutation dominance components", "prefix maximum determines component boundaries", "update only local breakpoints after swaps"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dynamic-dominance-components",
+      "summary": "Maintain ordered components induced by overlapping prefix maxima in the second permutation and update affected boundaries under exchanges.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure",
+      "importance": "primary",
+      "evidence": "The hard part is maintaining ordered component boundaries and contributions under point swaps.",
+      "solution_variant": "dynamic-dominance-components"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "The invariant is expressed through two permutations and dominance intervals.",
+      "solution_variant": "dynamic-dominance-components"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The maintained answer multiplies/sums contributions over independent components.",
+      "solution_variant": "dynamic-dominance-components"
+    }
+  ]
+}

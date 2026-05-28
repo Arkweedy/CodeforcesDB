@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "I2",
+    "title": "Longest Increasing Path (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2147/I2",
+      "notes": "Construct a distance-convex sequence of length 300000 with at most 15000 distinct values."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/CF2147I2",
+      "notes": "Luogu statement mirror confirms the exact hard-version constraints and examples."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a very long sequence with strictly increasing absolute jump lengths while reusing at most 15000 values.",
+    "constraints": "The test is fixed at n=300000,m=15000 and values must fit in [-1e18,1e18].",
+    "core_idea": "Use a block construction. Pick a set of anchor values spaced by rapidly increasing gaps; inside each block, traverse anchors in an order that makes every next jump larger than the previous one, then recycle anchors only after the global jump scale has grown enough. The fixed m=15000 leaves enough anchors to generate 299999 strictly increasing jump lengths within the 1e18 bound.",
+    "complexity": "O(n) output time.",
+    "tricks": ["fixed-test constructive output", "increasing jump-length schedule", "reuse values through block/anchor construction"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "anchor-block-construction",
+      "summary": "Construct many increasing jump lengths from a bounded set of anchor values arranged in carefully ordered blocks.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The hard version is purely an output construction problem for fixed parameters.",
+      "solution_variant": "anchor-block-construction"
+    },
+    {
+      "tag": "math",
+      "importance": "primary",
+      "evidence": "The construction is governed by inequalities on a strictly increasing sequence of distances under value bounds.",
+      "solution_variant": "anchor-block-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The official input has only fixed tests, so the solution can specialize to n=8 and n=300000 cases.",
+      "solution_variant": "anchor-block-construction"
+    }
+  ]
+}

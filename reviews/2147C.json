@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "C",
+    "title": "Rabbits",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dp", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/C",
+      "notes": "Choose directions for rabbits placed in every 0-cell so no rabbit jumps."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial reduces the obstruction to isolated zero-runs between flowers."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a binary line of flowers and empty pots, orient rabbits placed at every empty pot so every rabbit is blocked from moving.",
+    "constraints": "Total n is 2e5, so a single scan over zero-runs is enough.",
+    "core_idea": "A run of at least two rabbits can orient inward so every rabbit is blocked by another rabbit, and a boundary single rabbit can look outside the line. The only impossible local shape is a single zero between two ones: that rabbit must look at a flower on either side and no opposite rabbit can block it. Thus check whether substring 101 occurs.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["classify zero-runs", "only isolated internal zero is bad"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "zero-run-scan",
+      "summary": "Scan all zero-runs and reject exactly a length-one run with a flower on both sides.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "implementation",
+      "importance": "primary",
+      "evidence": "The accepted solution is a direct local-pattern scan with careful boundary cases.",
+      "solution_variant": "zero-run-scan"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The YES proof explicitly orients each feasible zero-run inward or outward.",
+      "solution_variant": "zero-run-scan"
+    },
+    {
+      "tag": "algorithm/string/run-length-encoding",
+      "importance": "secondary",
+      "evidence": "The condition is naturally expressed in terms of lengths and boundaries of zero-runs.",
+      "solution_variant": "zero-run-scan"
+    }
+  ]
+}

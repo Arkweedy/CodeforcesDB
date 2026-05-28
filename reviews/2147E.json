@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "E",
+    "title": "Maximum OR Popcount",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "brute force", "data structures", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/E",
+      "notes": "For each budget b, maximize popcount of the array OR after increment operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial precomputes the minimum cost of achieving each OR bitmask and answers each budget by the best mask within cost."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer many independent budgets: after at most b increments on array elements, maximize the number of set bits in the bitwise OR of the array.",
+    "constraints": "n,q total 1e5 and values are below about 2^31, so the solution works over only 31 bits rather than array values.",
+    "core_idea": "For a target OR mask M, the minimum cost is the sum over bits not yet present of the cheapest way to make some element contain that bit while preserving already demanded higher bits. Because only 31 bits exist, enumerate/relax target masks in bit order, compute the minimum operations needed to realize each popcount, and for each query return the largest popcount whose minimum cost is at most b.",
+    "complexity": "O(n B^2 + q B) or similar with B=31.",
+    "tricks": ["minimum cost to force a bit in the OR", "bitmask state over target OR bits", "answer budgets by precomputed cost frontier"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bitmask-cost-frontier",
+      "summary": "Precompute the cheapest cost needed to reach every possible popcount frontier of OR bits, then answer budgets by upper_bound.",
+      "complexity": "O(n B^2 + q B)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The target object is the set of bits appearing in the global OR.",
+      "solution_variant": "bitmask-cost-frontier"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Bits are considered by marginal cheapest cost, keeping a frontier of attainable popcounts under budget.",
+      "solution_variant": "bitmask-cost-frontier"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "After precomputing minimum costs by popcount, each query can binary search the largest feasible answer.",
+      "solution_variant": "bitmask-cost-frontier"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2147,
+    "title": "Codeforces Global Round 29 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2147,
+    "index": "H",
+    "title": "Maxflow GCD Coloring",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "flows", "graphs"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2147/problem/H",
+      "notes": "Color edges/vertices so gcd constraints match maxflow/mincut values."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147939",
+      "notes": "Official editorial uses max-flow/min-cut structure to construct a coloring satisfying all gcd constraints."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a coloring that realizes required GCD values encoded by maxflow constraints.",
+    "constraints": "The graph size is moderate enough for repeated maxflow or mincut-style construction.",
+    "core_idea": "Model each prime/divisor layer independently. For a fixed layer, vertices/edges requiring divisibility form source/sink constraints, and a feasible separation is exactly a min-cut/max-flow condition. Solving the layered cut instances gives binary decisions for whether each object contains the divisor; combining all layers reconstructs colors whose gcds match the required values.",
+    "complexity": "Polynomial maxflow over divisor layers; roughly O(L * flow(n,m)).",
+    "tricks": ["decompose gcd constraints by divisor/prime layer", "use min-cut as a 0/1 coloring certificate", "combine layers into final numeric colors"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "layered-mincut-coloring",
+      "summary": "For each divisor layer, solve a maxflow/mincut feasibility problem and combine the resulting binary layers into colors.",
+      "complexity": "O(L * maxflow)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/flow",
+      "importance": "primary",
+      "evidence": "The official solution is explicitly based on maxflow/mincut feasibility.",
+      "solution_variant": "layered-mincut-coloring"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The color constraints are GCD constraints and are decomposed by divisor layers.",
+      "solution_variant": "layered-mincut-coloring"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The solution must output an actual coloring assembled from cut decisions.",
+      "solution_variant": "layered-mincut-coloring"
+    }
+  ]
+}
