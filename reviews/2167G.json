@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2167,
+    "title": "Codeforces Round 1062 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2167,
+    "index": "G",
+    "title": "Mukhammadali and the Smooth Array",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2167/problem/G",
+      "notes": "Change array elements with individual costs so the final array becomes nondecreasing, minimizing total cost."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147869",
+      "notes": "Official editorial reduces the minimum modification cost to keeping a maximum-cost nondecreasing subsequence, using O(n^2) DP for the contest constraints."
+    }
+  ],
+  "annotation": {
+    "summary": "Minimize the cost of changing array elements so the remaining unchanged values form a nondecreasing array.",
+    "constraints": "The intended constraints allow quadratic DP; the editorial also mentions a segment-tree optimization for a harder bound.",
+    "core_idea": "Changing an element removes its original value from the order constraint at its cost. Thus maximizing the saved cost is equivalent to choosing a nondecreasing subsequence of original values with maximum total cost. The answer is total_cost minus the maximum-weight nondecreasing subsequence. A DP over previous positions computes the saved cost, and a segment tree can optimize by value if needed.",
+    "complexity": "O(n^2) intended, O(n log n) with value compression and a segment tree.",
+    "tricks": ["keep unchanged subsequence", "minimum deletion cost as maximum saved weight", "weighted nondecreasing subsequence"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "weighted-lnds-dp",
+      "summary": "Compute the maximum total cost of a nondecreasing subsequence and subtract it from the total modification cost.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "segment-tree-weighted-lnds",
+      "summary": "Coordinate-compress values and query prefix maximum saved cost with a segment tree.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/lis-dp",
+      "importance": "primary",
+      "evidence": "The main reduction is to a maximum-weight nondecreasing subsequence DP.",
+      "solution_variant": "weighted-lnds-dp",
+      "description": "Dynamic programming for longest or maximum-weight increasing/nondecreasing subsequences and their variants.",
+      "parent": "algorithm/dp",
+      "created_reason": "LIS/LNDS-style subsequence DP is a common retrieval category distinct from generic DP.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The optimized variant uses segment-tree prefix maximum queries by compressed value.",
+      "solution_variant": "segment-tree-weighted-lnds"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "The minimization is transformed into maximizing saved cost of elements left unchanged.",
+      "solution_variant": "weighted-lnds-dp"
+    }
+  ]
+}

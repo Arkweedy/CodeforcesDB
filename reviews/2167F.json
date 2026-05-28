@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2167,
+    "title": "Codeforces Round 1062 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2167,
+    "index": "F",
+    "title": "Tree, TREE!!!",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["dfs and similar", "dp", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2167/problem/F",
+      "notes": "For every possible root, count vertices whose subtree size is at least k and sum the answers."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147869",
+      "notes": "Official editorial counts each vertex's contribution over all possible roots using subtree sizes from one DFS."
+    }
+  ],
+  "annotation": {
+    "summary": "Over all choices of the root of a tree, sum the number of vertices whose rooted subtree has size at least k.",
+    "constraints": "n is large, so rerooting every root independently is too slow; each vertex's contribution must be counted directly.",
+    "core_idea": "Root the tree once. For a vertex v, when the chosen root lies inside a child subtree of size s, v's rooted subtree has size n-s; otherwise it has size sub[v]. Count how many root choices make this value at least k. A DFS gives every child subtree size, and each directed edge contributes one side size to the relevant count.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["count contribution over all roots", "directed edge side sizes", "single DFS subtree sizes"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "subtree-contribution-count",
+      "summary": "Compute subtree sizes once and count, for each vertex, how many root positions make its rooted subtree large enough.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/tree-dfs",
+      "importance": "primary",
+      "evidence": "A single DFS computes subtree sizes, which determine every rerooted subtree size by edge-side complements.",
+      "solution_variant": "subtree-contribution-count"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The answer is obtained by counting each vertex's contribution over all root choices instead of rerooting explicitly.",
+      "solution_variant": "subtree-contribution-count"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution is a counting argument over possible roots and directed edge-side sizes.",
+      "solution_variant": "subtree-contribution-count"
+    }
+  ]
+}

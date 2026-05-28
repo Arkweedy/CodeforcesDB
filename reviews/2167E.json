@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2167,
+    "title": "Codeforces Round 1062 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2167,
+    "index": "E",
+    "title": "khba Loves to Sleep!",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "geometry", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2167/problem/E",
+      "notes": "Choose new alarm positions on a line while keeping distance from existing positions and the segment boundary."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147869",
+      "notes": "Official editorial binary-searches the minimum distance and greedily places positions; an alternative priority queue splits the largest gaps."
+    }
+  ],
+  "annotation": {
+    "summary": "Place the required number of new points in an interval so that their minimum distance to each other and existing points is maximized.",
+    "constraints": "Coordinates are large but the number of existing and inserted points is moderate, so feasibility by sorted gaps is efficient.",
+    "core_idea": "For a candidate distance d, sort existing points and greedily place new points from left to right, always taking the earliest coordinate at least d away from the previous occupied point and before the next existing point. This feasibility is monotone in d, so binary search the maximum d. After the distance is fixed, run the same greedy placement to output positions.",
+    "complexity": "O((n+k) log X) per test case after sorting.",
+    "tricks": ["monotone distance feasibility", "leftmost greedy placement", "gap-by-gap construction"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-gap-greedy",
+      "summary": "Binary search the minimum distance and greedily place the earliest possible new points in sorted gaps.",
+      "complexity": "O((n+k) log X)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "largest-gap-priority-queue",
+      "summary": "Repeatedly split the current largest gap with a priority queue to construct the same optimal distance.",
+      "complexity": "O((n+k) log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The maximum feasible minimum distance is found by binary searching a monotone predicate.",
+      "solution_variant": "binary-search-gap-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For a fixed distance, placing each new point at the earliest possible coordinate leaves maximal room for later points.",
+      "solution_variant": "binary-search-gap-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Existing points are sorted so gaps can be processed from left to right.",
+      "solution_variant": "binary-search-gap-greedy"
+    }
+  ]
+}
