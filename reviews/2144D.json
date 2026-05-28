@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2144,
+    "title": "Educational Codeforces Round 182 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2144,
+    "index": "D",
+    "title": "Price Tags",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["brute force", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2144/problem/D",
+      "notes": "Choose an integer discount divisor x and maximize new prices minus the cost of printed replacement tags."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147113/en3",
+      "notes": "Official reference code enumerates x and uses frequency prefix sums to count prices with each new ceil(c/x) value."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose a divisor x>1 for all prices, then maximize total discounted prices minus the number of newly printed price tags times y.",
+    "constraints": "c_i<=2e5 and total n<=2e5, so enumeration over the value bound and harmonic bucket ranges is feasible.",
+    "core_idea": "For a fixed x, all original prices c in ((p-1)x, px] become new price p. Frequency prefix sums give the count in each bucket, and the number of tags that must be printed for price p is max(0, new_count[p]-old_count[p]). Enumerating all x and all nonempty ceil-division buckets gives the best income.",
+    "complexity": "O(C log C) per test case where C=max(c_i), plus O(n+C) preprocessing.",
+    "tricks": ["ceil-division buckets", "reuse existing tag counts", "frequency prefix sums"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-divisor-buckets",
+      "summary": "Build value frequencies and prefix sums, enumerate x, and sum every ceil(c/x) bucket's income and printing cost.",
+      "complexity": "O(C log C)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The solution directly enumerates every possible divisor x because prices are bounded by 2e5.",
+      "solution_variant": "enumerate-divisor-buckets"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "Prefix sums over price frequencies are required to count each ceil-division bucket quickly.",
+      "solution_variant": "enumerate-divisor-buckets"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "secondary",
+      "evidence": "For each x, values are grouped by the quotient ceil(c/x), and only these quotient buckets are evaluated.",
+      "solution_variant": "enumerate-divisor-buckets"
+    }
+  ]
+}

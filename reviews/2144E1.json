@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2144,
+    "title": "Educational Codeforces Round 182 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2144,
+    "index": "E1",
+    "title": "Looking at Towers (easy version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2144/problem/E1",
+      "notes": "Count subsequences preserving the set of visible record heights from both left and right under easy constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147113/en3",
+      "notes": "Official editorial lists the same structural solution; the hard-version reference code computes left and right record-preserving counts and combines them at a maximum element."
+    }
+  ],
+  "annotation": {
+    "summary": "Count subsequences whose left-visible and right-visible tower height sets are the same as in the original array.",
+    "constraints": "The easy version has small enough limits for direct DP over the visible-record sequence.",
+    "core_idea": "The maximum height must be selected, and it splits the subsequence into a left part that preserves the left record-height sequence and a right part that preserves the right record-height sequence. Dynamic programming counts ways to scan the array and match each required record while optionally taking elements that do not create a new record. Combining the counts over choices of the maximum position gives the answer.",
+    "complexity": "O(n * |L| + n * |R|) in the easy DP formulation.",
+    "tricks": ["split at a global maximum", "preserve prefix/suffix record heights", "optional non-record elements"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "record-sequence-dp",
+      "summary": "Compute DP counts for subsequences preserving the left and right record sequences, then combine at selected maximum positions.",
+      "complexity": "O(n * |L| + n * |R|)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The solution counts subsequences by DP over progress in the required visible-record sequence.",
+      "solution_variant": "record-sequence-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The task is to count index-subsequences satisfying left/right visibility constraints.",
+      "solution_variant": "record-sequence-dp"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "The preserved objects are exactly prefix maxima from the left and suffix maxima from the right.",
+      "solution_variant": "record-sequence-dp"
+    }
+  ]
+}

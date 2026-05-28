@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2144,
+    "title": "Educational Codeforces Round 182 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2144,
+    "index": "F",
+    "title": "Bracket Groups",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "dp", "string suffix structures", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2144/problem/F",
+      "notes": "Split forbidden bracket strings into the minimum number of groups, each avoided by some regular bracket sequence of length k."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147113/en3",
+      "notes": "Official solutions build either an Aho-Corasick automaton or an equivalent prefix/suffix automaton, run balance DP, and use a two-group fallback construction."
+    }
+  ],
+  "annotation": {
+    "summary": "Partition given bracket strings into the minimum number of groups so that each group has a regular bracket sequence of length k avoiding every string in the group as a substring.",
+    "constraints": "n,k<=50, which allows automaton states from all forbidden strings and DP over length and bracket balance.",
+    "core_idea": "If any forbidden string is \"()\", every nonempty regular bracket sequence contains it, so the answer is impossible. Otherwise, first try to put all strings into one group by building an Aho-Corasick automaton over the forbidden strings and running DP over (length, automaton state, balance) to find a regular sequence of length k that avoids all terminal states. If that fails, two explicit regular sequences are enough: an alternating sequence and a fully nested sequence, with forbidden strings assigned by whether they contain equal adjacent brackets.",
+    "complexity": "O(k^2 * states) for the automaton DP.",
+    "tricks": ["avoid forbidden substrings in an automaton", "balance-constrained DP", "two explicit fallback groups"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "aho-corasick-balance-dp",
+      "summary": "Use Aho-Corasick to avoid all forbidden bracket strings while constructing a balanced regular sequence of length k.",
+      "complexity": "O(k^2 * states)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "prefix-suffix-automaton-dp",
+      "summary": "Equivalent implementation using all forbidden prefixes/suffix checks instead of an explicit Aho-Corasick trie.",
+      "complexity": "O(k^2 * states)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/string/acam",
+      "importance": "primary",
+      "evidence": "The one-group construction is a forbidden-substring avoidance problem solved with Aho-Corasick transitions.",
+      "solution_variant": "aho-corasick-balance-dp"
+    },
+    {
+      "tag": "algorithm/dp/automaton-dp",
+      "importance": "primary",
+      "evidence": "The DP state combines generated length, automaton state, and current bracket balance.",
+      "solution_variant": "aho-corasick-balance-dp"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The required output includes constructing one or two regular bracket sequences and assigning groups.",
+      "solution_variant": "aho-corasick-balance-dp"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The solution separates impossible \"()\", one-group automaton success, and guaranteed two-group fallback cases.",
+      "solution_variant": "aho-corasick-balance-dp"
+    },
+    {
+      "tag": "algorithm/string/suffix-structures",
+      "importance": "incidental",
+      "evidence": "An alternative implementation tracks forbidden suffixes over stored prefixes, but the core reviewed solution is the automaton DP.",
+      "solution_variant": "prefix-suffix-automaton-dp"
+    }
+  ]
+}
