@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2165,
+    "title": "Codeforces Round 1064 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2165,
+    "index": "D",
+    "title": "Path Split",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["graph matchings", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2165/problem/D",
+      "notes": "Partition the sequence into the minimum number of subsequences whose adjacent values differ by exactly 1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148452",
+      "notes": "Official tutorial converts the task to a minimum path cover, then to bipartite matching, and gives a greedy matching proof plus Hall-DP variant."
+    }
+  ],
+  "annotation": {
+    "summary": "Split the sequence into as few subsequences as possible, where consecutive elements inside each subsequence differ by one.",
+    "constraints": "Sum of n is 1e6, so the matching must be solved greedily or with a linear Hall-DP, not with a generic matching algorithm.",
+    "core_idea": "A split into paths is a minimum path cover in the DAG of valid forward transitions i<j and |a_i-a_j|=1. By standard path-cover reduction, the answer is n minus the maximum matching size in the bipartite graph of positions. The graph separates by value parity; processing values from small to large and matching each occurrence to the closest available adjacent-value occurrence preserves optimality by an exchange argument.",
+    "complexity": "O(n log n) with ordered sets or O(n) with grouped positions.",
+    "tricks": ["minimum path cover to bipartite matching", "parity-separated components", "closest-neighbour exchange argument"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-bipartite-matching",
+      "summary": "Match positions of value v greedily to nearest unused positions of value v+1 in the correct direction, do both directions/parities, and subtract matched edges from n.",
+      "complexity": "O(n log n) or O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "hall-dp",
+      "summary": "Use Hall's theorem on parity-separated value groups and DP over suffix choices for each value.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/matching",
+      "importance": "primary",
+      "evidence": "The minimum number of subsequences equals n minus a maximum bipartite matching size.",
+      "solution_variant": "greedy-bipartite-matching"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The accepted main solution greedily chooses closest adjacent-value matches and proves it by exchange.",
+      "solution_variant": "greedy-bipartite-matching"
+    },
+    {
+      "tag": "algorithm/graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "The path-cover reduction creates left and right copies of every position.",
+      "solution_variant": "greedy-bipartite-matching"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "secondary",
+      "evidence": "The editorial also presents a Hall-theorem DP alternative over grouped positions.",
+      "solution_variant": "hall-dp"
+    }
+  ]
+}

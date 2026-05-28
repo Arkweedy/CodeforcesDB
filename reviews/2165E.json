@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2165,
+    "title": "Codeforces Round 1064 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2165,
+    "index": "E",
+    "title": "Rainbow Branch",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dp", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2165/problem/E",
+      "notes": "Color exactly k tree edges and minimize the maximum number of colors on any path, for all k."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148452",
+      "notes": "Official tutorial inverts the answer: for fixed inconvenience d, maximize colors by peeling outer leaf levels and using a diameter-midpoint structure."
+    }
+  ],
+  "annotation": {
+    "summary": "For every number of edge colors k, minimize the maximum number of distinct colors appearing on any tree path.",
+    "constraints": "Total n is 3e5, so answers for all k must be produced in O(n log n) or O(n).",
+    "core_idea": "Invert the query: for a fixed diameter-like inconvenience d, maximize the number of connected color components. Every color can be assumed connected, and the optimum has a center/midpoint structure. For odd d, remove the outermost (d-1)/2 leaf layers; for even d, remove d/2-1 leaf layers and use the maximum degree vertex in the remaining core. A leaf-peeling process maintains remaining degrees and writes the best d for each achievable number of colors, then suffix-minimizes the answer array.",
+    "complexity": "O(n log n) or O(n) per test case.",
+    "tricks": ["invert answer and parameter", "connected color components", "leaf peeling from the outside inward", "diameter-midpoint structure"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "leaf-peeling-inverted-answer",
+      "summary": "Peel leaves layer by layer, track remaining maximum degree, and record candidate inconvenience values for color counts.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The whole structure is a tree coloring problem and the solution depends on tree centers, leaves, and degrees.",
+      "solution_variant": "leaf-peeling-inverted-answer"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The optimal construction pushes colors outward and peels the outer leaf layers greedily for each diameter bound.",
+      "solution_variant": "leaf-peeling-inverted-answer"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "secondary",
+      "evidence": "The final all-k answer is produced by writing best values for achievable color counts and suffix-minimizing them.",
+      "solution_variant": "leaf-peeling-inverted-answer"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The proof describes an optimal coloring shape with connected components around a center/core.",
+      "solution_variant": "leaf-peeling-inverted-answer"
+    }
+  ]
+}

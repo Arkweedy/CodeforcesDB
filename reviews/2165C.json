@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2165,
+    "title": "Codeforces Round 1064 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2165,
+    "index": "C",
+    "title": "Binary Wine",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2165/problem/C",
+      "notes": "For each target xor c, find the minimum increments to make some bounded b_i with xor c possible."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148452",
+      "notes": "Official tutorial checks lexicographic dominance of bit counts against c and greedily fixes deficient high bits."
+    }
+  ],
+  "annotation": {
+    "summary": "For independent queries, minimally increase the capacities a_i so that some 0<=b_i<=a_i can xor to c.",
+    "constraints": "n up to 5e5, q up to 5e4, values below 2^30; only O(log V) to O(log^2 V) work per query after sorting is acceptable.",
+    "core_idea": "A multiset of capacities can realize c iff the vector of per-bit counts is lexicographically at least the binary representation of c from high to low. If a high bit is deficient, increasing one current candidate to the next power boundary is always enough and is no worse than splitting the increase over two numbers. Only the largest O(log V) capacities can matter, so each query simulates the high-to-low greedy on a tiny prefix of sorted a.",
+    "complexity": "O(n log n + q log^2 V), or O(n log n + q log V log log V) with heaps.",
+    "tricks": ["bit-count lexicographic feasibility", "only top O(log V) capacities matter", "repair one deficient bit at a time"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "top-bits-greedy",
+      "summary": "Sort capacities descending, keep the top 30-32 values per query, and scan bits high-to-low while greedily paying for the single needed increase.",
+      "complexity": "O(n log n + q log^2 V)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "heap-optimized-greedy",
+      "summary": "Maintain the relevant maximum candidate with heaps to reduce the per-query logarithmic factor.",
+      "complexity": "O(n log n + q log V log log V)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The feasibility condition and greedy repair are both expressed in terms of high-to-low binary bits.",
+      "solution_variant": "top-bits-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "At the first deficient bit, optimally increase exactly one candidate to satisfy that bit and continue downward.",
+      "solution_variant": "top-bits-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting descending lets the solution keep only the largest O(log V) capacities for every query.",
+      "solution_variant": "top-bits-greedy"
+    }
+  ]
+}

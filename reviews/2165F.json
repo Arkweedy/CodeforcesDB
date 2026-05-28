@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2165,
+    "title": "Codeforces Round 1064 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2165,
+    "index": "F",
+    "title": "Arctic Acquisition",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2165/problem/F",
+      "notes": "Count intervals of a permutation that contain a 21435 pattern as a subsequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/148452",
+      "notes": "Official tutorial reduces to minimal r for each l, enumerates only Left-Right-Min minimal 435 subsequences, and answers the remaining 2D queries with segment trees."
+    }
+  ],
+  "annotation": {
+    "summary": "Count subarrays of a permutation that contain a subsequence with relative order pattern 21435.",
+    "constraints": "Sum of n is 1e6, requiring O(n log n) processing per test case.",
+    "core_idea": "For each left boundary l, it is enough to find the minimum right boundary containing a 21435 pattern. Fixing the 21 part determines the smaller element; then one needs a 435 part with value_3 greater than value_2 and index_4 after index_1. Among 435 subsequences, only Left-Right-Min minimal ones matter. Scanning candidate '3' values from high to low shows that each i has at most one relevant '5': its nearest greater element on the right, and then the '4' is forced. These O(n) candidates reduce the answer to 2D dominance/range maximum queries handled by segment trees.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["split 21435 into 21 plus 435", "minimal 435 subsequences", "nearest greater element restriction", "2D dominance queries"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "minimal-435-scanline",
+      "summary": "Generate O(n) minimal 435 candidates with monotonic nearest-greater/nearest-smaller links, then use segment trees to compute the earliest right endpoint per left boundary.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The reduced problem is answered by range maximum / 2D dominance queries over candidate pattern endpoints.",
+      "solution_variant": "minimal-435-scanline"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The editorial scans by the value of the '3' element from large to small to maintain relevant 435 candidates.",
+      "solution_variant": "minimal-435-scanline"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "The solution exploits nearest greater/smaller structure and relative-order pattern constraints in a permutation.",
+      "solution_variant": "minimal-435-scanline"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Only minimal 435 candidates are kept because any dominated candidate can never improve the earliest right endpoint.",
+      "solution_variant": "minimal-435-scanline"
+    }
+  ]
+}
