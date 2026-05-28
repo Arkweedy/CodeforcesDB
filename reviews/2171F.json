@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "F",
+    "title": "Rae Taylor and Trees (hard version)",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "constructive algorithms", "data structures", "dp", "dsu", "greedy", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/F",
+      "notes": "Hard version asks to output a satisfactory tree if it exists."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial partitions by suffix maxima and connects each block internally and to a previous prefix minimum."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a permutation, either prove no satisfactory tree exists or explicitly output one.",
+    "constraints": "A linear construction is needed over the permutation.",
+    "core_idea": "First use the same prefix-minimum/suffix-maximum cut test as the easy version. If feasible, split the permutation into blocks ending at suffix maximum positions; within each block connect all earlier values to that block's suffix maximum, then connect each block to a previous prefix minimum to make all blocks connected.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["prefix/suffix cut test", "suffix-maximum block decomposition"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-max-block-tree",
+      "summary": "Use suffix maxima as block roots and prefix minima as inter-block connectors.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The hard version requires explicitly constructing the tree edges.",
+      "solution_variant": "suffix-max-block-tree"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "Both the feasibility proof and construction use prefix minima and suffix maxima.",
+      "solution_variant": "suffix-max-block-tree"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "secondary",
+      "evidence": "The output structure is a tree built by connecting vertices according to the permutation-derived graph condition.",
+      "solution_variant": "suffix-max-block-tree"
+    }
+  ]
+}

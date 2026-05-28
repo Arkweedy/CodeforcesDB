@@ -1,0 +1,66 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "D",
+    "title": "Rae Taylor and Trees (easy version)",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "dp", "dsu", "greedy", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/D",
+      "notes": "Easy version asks whether a satisfactory tree/connected structure exists for the permutation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial uses prefix minima and suffix maxima to characterize whether every cut can be crossed."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a permutation, decide whether the required graph/tree connectivity condition can be satisfied.",
+    "constraints": "The decision must be linear or near-linear over the permutation.",
+    "core_idea": "For every cut between prefix and suffix, connectivity is possible iff the minimum value on the left is less than the maximum value on the right. Precompute prefix minima and suffix maxima; a violating cut proves impossible, otherwise the editorial constructs paths crossing every adjacent cut.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["cut characterization", "prefix minimum and suffix maximum"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-suffix-cut-test",
+      "summary": "Check all cuts with prefix minima and suffix maxima.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "The whole feasibility test is the comparison of prefix minima against suffix maxima at every cut.",
+      "solution_variant": "prefix-suffix-cut-test",
+      "description": "Use prefix/suffix minima or maxima to summarize every cut or boundary in an array/permutation.",
+      "parent": "trick",
+      "created_reason": "This cut-summary technique is more specific than generic greedy/data-structure tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/connectivity",
+      "importance": "secondary",
+      "evidence": "The prefix/suffix condition is proved by whether the induced graph can connect across every cut.",
+      "solution_variant": "prefix-suffix-cut-test",
+      "description": "Reasoning about whether vertices/parts of a graph are connected or can be connected.",
+      "parent": "algorithm/graph",
+      "created_reason": "The existing graph tag does not distinguish connectivity feasibility arguments.",
+      "status": "candidate"
+    }
+  ]
+}

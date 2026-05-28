@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2175,
+    "title": "Codeforces Round 1069 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2175,
+    "index": "D",
+    "title": "Wishing Cards",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["dp", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2175/problem/D",
+      "notes": "Same Wishing Cards task as 2174B under the Div.2 contest entry."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149003",
+      "notes": "Official editorial/commentary describes the value/budget DP and optimized linear-transition form."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose b_i <= a_i and total sum <= k to maximize the sum of prefix maximums.",
+    "constraints": "n is large and k is the controlling parameter; the DP state should depend on budget and current maximum value.",
+    "core_idea": "Only the first position that can support each value y matters. Raising the current prefix maximum from j to y at that position adds a suffix contribution, so the problem becomes a DP over total card budget and last chosen maximum value.",
+    "complexity": "O(n + k^3) direct; O(n + k^2 log k) with Li Chao tree optimization.",
+    "tricks": ["first feasible position", "suffix contribution of new maximum"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "value-budget-dp",
+      "summary": "DP on used budget and current maximum card count.",
+      "complexity": "O(n + k^3)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "li-chao-optimized-dp",
+      "summary": "Optimize the transition using line maximum queries.",
+      "complexity": "O(n + k^2 log k)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The accepted approach is a budget/value DP.",
+      "solution_variant": "value-budget-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The transition adds the suffix contribution created by increasing the prefix maximum.",
+      "solution_variant": "value-budget-dp"
+    },
+    {
+      "tag": "algorithm/dp/convex-hull-optimization",
+      "importance": "secondary",
+      "evidence": "The optimized solution treats transitions as line maximum queries.",
+      "solution_variant": "li-chao-optimized-dp"
+    },
+    {
+      "tag": "data-structure/li-chao-tree",
+      "importance": "secondary",
+      "evidence": "A Li Chao tree is a standard way to implement the optimized transition.",
+      "solution_variant": "li-chao-optimized-dp"
+    }
+  ]
+}

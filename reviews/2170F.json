@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2170,
+    "title": "Educational Codeforces Round 185 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2170,
+    "index": "F",
+    "title": "Build XOR on a Segment",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2170/problem/F",
+      "notes": "For each subarray query, find the minimum number of selected elements whose XOR equals x; values are 12-bit and q can be up to 1e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148798",
+      "notes": "Official tutorial code processes queries by right endpoint and maintains dp[length][xor] as the best left boundary."
+    }
+  ],
+  "annotation": {
+    "summary": "For many range queries on a small-valued array, find the smallest subset size inside the range whose XOR is a target value.",
+    "constraints": "n <= 1e4, q <= 1e6, values are in [1, 2^12), so the XOR state space is small but queries must be answered quickly.",
+    "core_idea": "Process positions from left to right and group queries by right endpoint. Maintain a bitmask DP where dp[k][xor] stores the maximum leftmost index from which a k-element subset with that XOR can be formed in the processed prefix. Since the XOR vector space has dimension at most 12, checking lengths up to that bound is enough for each query.",
+    "complexity": "O(n * B * 2^B + q * B) with B = 12.",
+    "tricks": ["offline queries by right endpoint", "store best left boundary in DP state", "bounded XOR dimension"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "offline-xor-cardinality-dp",
+      "summary": "Sweep right endpoints, update subset-size-by-xor DP, and answer whether each target XOR is reachable with left boundary at least l.",
+      "complexity": "O(n * B * 2^B + q * B)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The main state is subset size and XOR mask, updated for every array element.",
+      "solution_variant": "offline-xor-cardinality-dp",
+      "description": "Dynamic programming over bitmask-valued states or transitions.",
+      "parent": "algorithm/dp",
+      "created_reason": "This is a standard DP subtype needed for queries over small mask spaces.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask/xor-subset",
+      "importance": "primary",
+      "evidence": "Queries ask for a subset with a target XOR, and the solution exploits the small XOR mask space.",
+      "solution_variant": "offline-xor-cardinality-dp",
+      "description": "Problems where reachable XOR values of selected subsets are the central state or invariant.",
+      "parent": "algorithm/bitmask",
+      "created_reason": "The generic bitmask tag does not capture subset-XOR reachability/cardinality queries.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "Queries are grouped by right endpoint and answered during a left-to-right sweep.",
+      "solution_variant": "offline-xor-cardinality-dp",
+      "description": "Solve queries or events after reordering/grouping them instead of answering online.",
+      "parent": "paradigm",
+      "created_reason": "Offline processing is a reusable query-solving paradigm not captured by algorithm-specific tags.",
+      "status": "candidate"
+    }
+  ]
+}

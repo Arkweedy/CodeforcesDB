@@ -1,0 +1,72 @@
+{
+  "contest": {
+    "contest_id": 2170,
+    "title": "Educational Codeforces Round 185 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2170,
+    "index": "E",
+    "title": "Binary Strings and Blocks",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "data structures", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2170/problem/E",
+      "notes": "Counts binary strings such that every constrained interval is beautiful; n and m sums are up to 3e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148798",
+      "notes": "Official tutorial code converts constraints into max_left bounds and uses prefix-sum optimized DP."
+    }
+  ],
+  "annotation": {
+    "summary": "Count binary strings of length n for which every given interval can have exactly one block removed so the remaining interval has an odd number of blocks.",
+    "constraints": "Sum of n and m is 3e5, requiring a linear or near-linear DP over positions.",
+    "core_idea": "The beauty condition for an interval translates into a lower bound on the previous split/transition position. For each right endpoint, keep the maximum forbidden-left boundary, then count valid strings ending at each position with a DP whose transition range is a suffix of previous states, answered by prefix sums.",
+    "complexity": "O(n + m) per test case.",
+    "tricks": ["reduce interval constraints to prefix maximum boundary", "range-sum DP transition"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-bound-dp",
+      "summary": "Store max_left[r], propagate prefix maxima, and compute dp[i] from a valid range of earlier split positions using prefix sums.",
+      "complexity": "O(n + m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "The recurrence sums a contiguous range of previous dp states and is made linear with prefix sums.",
+      "solution_variant": "prefix-bound-dp",
+      "description": "Dynamic programming where range-sum transitions are optimized using prefix sums or prefix aggregates.",
+      "parent": "algorithm/dp",
+      "created_reason": "The existing DP tag is too coarse for range-sum transition optimization.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The DP counts binary strings satisfying all interval constraints modulo 998244353.",
+      "solution_variant": "prefix-bound-dp"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "All interval constraints are reduced to a running maximum left boundary before the DP is performed.",
+      "solution_variant": "prefix-bound-dp",
+      "description": "Transform local/range constraints into prefix-style accumulated bounds or prefix aggregates.",
+      "parent": "trick",
+      "created_reason": "This reusable reduction is more specific than a generic implementation or data-structure tag.",
+      "status": "candidate"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "B",
+    "title": "Wishing Cards",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/B",
+      "notes": "Choose bounded card counts b_i with total at most k to maximize the sum of prefix maxima."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149003",
+      "notes": "Official editorial/commentary describes DP on total used cards and current last nonzero maximum, with Li Chao/CHT optimization for the stronger bound."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose b_i <= a_i and total sum <= k to maximize the total of prefix maximums over all positions.",
+    "constraints": "n is large but k is small/moderate, so the optimization should be over card values and total budget rather than over all positions and choices.",
+    "core_idea": "For every possible value y, only its first feasible position p_y where a_i >= y matters; setting a new maximum y at p_y increases all suffix prefix-max values by y minus the previous maximum. This yields a DP over total spent and previous/current maximum value, and the optimized form treats transitions as maximum of lines.",
+    "complexity": "O(n + k^3) for the direct DP; O(n + k^2 log k) with Li Chao tree optimization.",
+    "tricks": ["first feasible position for each value", "DP over values instead of positions", "suffix contribution of raising prefix maximum"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "value-budget-dp",
+      "summary": "Let pos[y] be the first index with a_i >= y and do DP by used budget and current maximum value.",
+      "complexity": "O(n + k^3)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "li-chao-optimized-dp",
+      "summary": "Rewrite transitions as max of linear functions and optimize each budget layer with a Li Chao tree.",
+      "complexity": "O(n + k^2 log k)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The main solution is a budget/value DP maximizing accumulated prefix-maximum contribution.",
+      "solution_variant": "value-budget-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Adding a new maximum y contributes (n - pos[y] + 1) * (y - previous maximum) to the objective.",
+      "solution_variant": "value-budget-dp"
+    },
+    {
+      "tag": "algorithm/dp/convex-hull-optimization",
+      "importance": "secondary",
+      "evidence": "The optimized DP transition is rewritten as a maximum of lines.",
+      "solution_variant": "li-chao-optimized-dp",
+      "description": "Dynamic programming optimized by convex hull trick, Li Chao tree, or equivalent max/min of linear functions.",
+      "parent": "algorithm/dp",
+      "created_reason": "This DP optimization is useful to search separately from ordinary DP.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/li-chao-tree",
+      "importance": "secondary",
+      "evidence": "The optimized variant uses Li Chao trees to maintain transition lines.",
+      "solution_variant": "li-chao-optimized-dp",
+      "description": "Li Chao segment tree for dynamic maximum/minimum queries over lines.",
+      "parent": "data-structure",
+      "created_reason": "Li Chao tree is a specific searchable data structure, distinct from generic data-structure tags.",
+      "status": "candidate"
+    }
+  ]
+}

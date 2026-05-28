@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "G",
+    "title": "Sakura Adachi and Optimal Sequences",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/G",
+      "notes": "Choose operations transforming each a_i into b_i and count optimal operation sequences modulo 1000003."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial fixes the number of doublings, decomposes residual additions by binary bits, and counts orderings with multinomial coefficients."
+    }
+  ],
+  "annotation": {
+    "summary": "Minimize the number of global doubling and per-element addition operations to transform vectors a into b, and count optimal sequences.",
+    "constraints": "Values are bounded enough for bit decomposition and factorial precomputation modulo 1000003.",
+    "core_idea": "The optimal number of global doublings is the maximum feasible common k, i.e. the minimum floor log ratio b_i/a_i. After fixing k, each residual addition decomposes into powers of two according to bits below k plus a final bucket before all doublings. The number of operation sequences is the product of multinomial counts for each stage.",
+    "complexity": "O(n log A + MOD) preprocessing for factorials.",
+    "tricks": ["fix global operation count", "binary residual decomposition", "stage-wise multinomial counting"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-stage-multinomial",
+      "summary": "Choose maximal common doubling count, decompose additions by bit stage, and count permutations with factorials and inverses.",
+      "complexity": "O(n log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "primary",
+      "evidence": "Counting optimal sequences reduces to multinomial coefficients for operations performed at each doubling stage.",
+      "solution_variant": "binary-stage-multinomial",
+      "description": "Counting arrangements of grouped objects using multinomial coefficients or factorial ratios.",
+      "parent": "math/combinatorics",
+      "created_reason": "The broad combinatorics tag does not identify multinomial-counting problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Residual additions below the chosen doubling count are counted by popcount/bit decomposition.",
+      "solution_variant": "binary-stage-multinomial"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The number of doublings is chosen greedily as the maximum feasible common value.",
+      "solution_variant": "binary-stage-multinomial"
+    }
+  ]
+}

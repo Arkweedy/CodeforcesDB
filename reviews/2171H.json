@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "H",
+    "title": "Shiori Miyagi and Maximum Array Score",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "dp", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/H",
+      "notes": "Maximize score over a strictly increasing chosen array with divisibility-based value contribution."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial defines dp over a_i-i, then removes one dimension with a Fenwick tree supporting prefix maximum queries and point max updates."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose a strictly increasing array within bounds to maximize a divisibility-based score.",
+    "constraints": "The naive two-dimensional DP is too large; only positions with nonzero contribution should be updated.",
+    "core_idea": "Let j = a_i - i, which must be nondecreasing for a strictly increasing array. The DP transition asks for the best previous state with offset at most j plus the value contribution v(i,i+j). This is a prefix maximum transition, so a Fenwick tree or segment tree stores max dp values while iterating i and processing useful j values in reverse.",
+    "complexity": "O((m-n) log n log(m-n) + n) per test case.",
+    "tricks": ["transform strict increase into nondecreasing offsets", "skip zero-contribution states", "prefix maximum DP"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "fenwick-prefix-max-dp",
+      "summary": "Optimize dp[i][j]=max_{k<=j}dp[i-1][k]+v(i,i+j) with a Fenwick tree over offsets.",
+      "complexity": "O((m-n) log n log(m-n) + n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/prefix-max-optimization",
+      "importance": "primary",
+      "evidence": "The central recurrence is a prefix maximum over previous DP states.",
+      "solution_variant": "fenwick-prefix-max-dp",
+      "description": "Dynamic programming optimized by prefix maximum/minimum aggregates over previous states.",
+      "parent": "algorithm/dp",
+      "created_reason": "This differs from prefix-sum DP and is useful for range maximum transition problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "The official solution uses a Fenwick tree to support prefix max queries and point max updates.",
+      "solution_variant": "fenwick-prefix-max-dp",
+      "description": "Fenwick tree / Binary Indexed Tree for prefix aggregate queries and point updates.",
+      "parent": "data-structure",
+      "created_reason": "The existing data-structure tag is too broad for searching Fenwick-specific problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "The score contribution v(i,x) counts divisibility exponent-like behavior.",
+      "solution_variant": "fenwick-prefix-max-dp",
+      "description": "Reasoning based on divisibility, multiples, or exponent of divisibility.",
+      "parent": "math/number-theory",
+      "created_reason": "Divisibility appears often without requiring heavier number-theory machinery.",
+      "status": "candidate"
+    }
+  ]
+}

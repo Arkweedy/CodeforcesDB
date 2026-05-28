@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2174,
+    "title": "Codeforces Round 1069 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2174,
+    "index": "C1",
+    "title": "Beautiful Patterns (Easy Version)",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2174/problem/C1",
+      "notes": "Compute the expected square of the number of palindromic subsegments for random colors; easy version has n <= 2000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149003",
+      "notes": "Official tutorial is sparse on the page, but the intended tags and statement point to pairwise expectation over palindromic-subsegment indicators."
+    }
+  ],
+  "annotation": {
+    "summary": "For a random length-n string over m colors, compute the expected square of the number of palindromic substrings.",
+    "constraints": "In the easy version, total n is at most 2000, allowing direct or near-direct enumeration of pairs of substrings with modular probabilities.",
+    "core_idea": "Let correctness be the sum of indicator variables over all substrings being palindromes. Its square expands into a sum over ordered pairs of substrings; for each pair, build the equality constraints induced by both palindrome conditions and add m^{-rank} modulo p. The easy bound permits enumerating the relevant pairs directly.",
+    "complexity": "Polynomial in n for the easy version, using pair enumeration and constraint counting.",
+    "tricks": ["expand square of a count into pairs of indicators", "count equality components induced by palindrome constraints"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "pairwise-indicator-expectation",
+      "summary": "Use linearity of expectation on all ordered pairs of palindromic-substring indicators.",
+      "complexity": "Polynomial for n <= 2000",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "primary",
+      "evidence": "The square of correctness is evaluated by summing probabilities over pairs of indicator variables.",
+      "solution_variant": "pairwise-indicator-expectation",
+      "description": "Use linearity of expectation to sum contributions of indicator variables or pairs of indicators.",
+      "parent": "math/probability",
+      "created_reason": "Expectation problems are common enough to distinguish this from the broad probability tag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Each term counts color assignments satisfying equality constraints.",
+      "solution_variant": "pairwise-indicator-expectation"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "A direct implementation can count equality components induced by palindrome constraints with DSU.",
+      "solution_variant": "pairwise-indicator-expectation"
+    }
+  ]
+}

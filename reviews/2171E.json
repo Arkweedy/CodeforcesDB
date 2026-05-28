@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "E",
+    "title": "Anisphia Wynn Palettia and Good Permutations",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/E",
+      "notes": "Construct a permutation with few bad indices based on gcd relations of adjacent/triple values."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial builds long perfect arrays from even numbers and odd multiples of 3, with a modular-counting bound."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a permutation of 1..n with a bounded number of bad indices related to common divisors.",
+    "constraints": "The construction must work for all n in linear time and meet a constant bad-index bound.",
+    "core_idea": "Group many numbers by guaranteed common divisors: even numbers form pairs around arbitrary fillers, and odd multiples of 3 give another disjoint block. Concatenating these near-perfect blocks covers enough positions that only a constant number of indices can remain bad.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["group by guaranteed divisor", "construct large good blocks", "constant leftover bound"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "divisor-block-construction",
+      "summary": "Partition values into evens, odd multiples of 3, and remaining fillers, then output repeating filler-divisor-divisor blocks.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution is an explicit permutation construction with a proof of the bad-index bound.",
+      "solution_variant": "divisor-block-construction"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "primary",
+      "evidence": "The construction relies on common divisors, especially parity and multiples of 3.",
+      "solution_variant": "divisor-block-construction"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "secondary",
+      "evidence": "Numbers are grouped by shared divisibility classes to force local gcd properties.",
+      "solution_variant": "divisor-block-construction",
+      "description": "Partition numbers by divisibility/common-factor classes to construct or count valid structures.",
+      "parent": "trick",
+      "created_reason": "This recurring number-theoretic construction pattern is not captured by the broad number theory tag alone.",
+      "status": "candidate"
+    }
+  ]
+}

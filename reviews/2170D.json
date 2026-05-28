@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2170,
+    "title": "Educational Codeforces Round 185 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2170,
+    "index": "D",
+    "title": "Almost Roman",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2170/problem/D",
+      "notes": "Queries ask for the minimum value after replacing ? with bounded counts of X, V, I in a string-valued Roman-like scoring rule."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148798",
+      "notes": "Official tutorial code precomputes run effects of ? blocks and answers each query by greedily allocating V/X replacements."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a string over X,V,I,? and many replacement-count queries, minimize the Roman-like string value after assigning all ? within per-letter limits.",
+    "constraints": "Sum of n and q is up to 3e5, so each query must be answered in O(1) or logarithmic time after preprocessing the fixed string.",
+    "core_idea": "Normalize X as V plus a fixed contribution, set all ? to I as a baseline, decompose consecutive ? runs together with adjacent I/V effects, and precompute how many non-I replacements decrease or increase the value. Each query then greedily uses required non-I letters, first consuming replacements that reduce subtractive I interactions.",
+    "complexity": "O(n + q) per test case after run preprocessing.",
+    "tricks": ["baseline all-? as I", "run decomposition around ? blocks", "query contribution formula"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "run-contribution-greedy",
+      "summary": "Precompute aggregate contribution classes of ? runs and answer each query from the number of forced V/X replacements.",
+      "complexity": "O(n + q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The solution is driven by maintaining the delta from a fixed all-I baseline and applying precomputed contribution buckets per query.",
+      "solution_variant": "run-contribution-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For each query, the required non-I replacements are greedily assigned to the most beneficial run-effect classes first.",
+      "solution_variant": "run-contribution-greedy"
+    },
+    {
+      "tag": "algorithm/string/run-length-encoding",
+      "importance": "secondary",
+      "evidence": "The preprocessing groups consecutive ? positions and accounts for their boundary characters.",
+      "solution_variant": "run-contribution-greedy",
+      "description": "Techniques that compress or reason over maximal runs of equal characters in a string.",
+      "parent": "algorithm/string",
+      "created_reason": "Existing string tags do not distinguish run/block decomposition, which is the reusable string-specific technique here.",
+      "status": "candidate"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The mathematical idea is simple after preprocessing, but correct handling of boundaries and query counts is implementation-heavy.",
+      "solution_variant": "run-contribution-greedy"
+    }
+  ]
+}

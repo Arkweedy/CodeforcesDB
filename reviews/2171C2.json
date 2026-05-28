@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2171,
+    "title": "Codeforces Round 1065 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2171,
+    "index": "C2",
+    "title": "Renako Amaori and XOR Game (hard version)",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "games", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2171/problem/C2",
+      "notes": "Hard version of the two-player XOR game."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148567",
+      "notes": "Official editorial reduces the hard version to the most significant bit of the XOR of all numbers."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine the winner of a two-player game where each pair contributes to final XOR scores.",
+    "constraints": "The input size is linear, so the game outcome must be derived from an invariant rather than simulated over strategies.",
+    "core_idea": "The XOR of all 2n numbers is invariant and equals the XOR difference between final scores. If it is zero the game ties; otherwise the most significant set bit determines the comparison, and the last pair whose two values differ in that bit decides which player can force the win.",
+    "complexity": "O(n log A) per test case.",
+    "tricks": ["XOR invariant", "highest differing bit decides winner", "last effective move"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "highest-bit-game-invariant",
+      "summary": "Compute global XOR, find its highest set bit, then locate the last pair that differs on this bit to decide the winner.",
+      "complexity": "O(n log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The task is solved by proving which player controls the final decisive move under optimal play.",
+      "solution_variant": "highest-bit-game-invariant"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The winner is determined by the XOR invariant and the most significant set bit.",
+      "solution_variant": "highest-bit-game-invariant"
+    },
+    {
+      "tag": "trick/highest-differing-bit",
+      "importance": "secondary",
+      "evidence": "Only the highest set bit of the final XOR matters for comparing scores.",
+      "solution_variant": "highest-bit-game-invariant",
+      "description": "Use the most significant differing bit to decide ordering, winner, or lexicographic/numeric comparison.",
+      "parent": "trick",
+      "created_reason": "This recurring bitwise comparison trick is more specific than the generic bitmask tag.",
+      "status": "candidate"
+    }
+  ]
+}
