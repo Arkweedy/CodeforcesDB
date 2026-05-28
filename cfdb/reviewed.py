@@ -5,6 +5,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
+from .dedup import canonical_problem_uid
 from .normalize import normalize_problem_key, contest_uid
 from .tags import TagInput, add_alias, ensure_tag, resolve_tag, slugify_tag
 
@@ -202,6 +203,15 @@ def _upsert_contest(conn: sqlite3.Connection, contest: dict[str, Any]) -> None:
 
 def _upsert_problem(conn: sqlite3.Connection, problem: dict[str, Any]) -> str:
     contest_id, index, problem_uid, canonical_url, problemset_url = _canonical_problem_ref(problem)
+    target_uid = canonical_problem_uid(conn, problem_uid)
+    if target_uid != problem_uid:
+        for source_type, url in (("alias_contest", canonical_url), ("alias_problemset", problemset_url)):
+            conn.execute(
+                "INSERT OR IGNORE INTO problem_sources(problem_uid, source_type, url) VALUES (?, ?, ?)",
+                (target_uid, source_type, url),
+            )
+        return target_uid
+
     rating_status = problem.get("rating_status", "official" if problem.get("rating") is not None else "unknown")
     rating = problem.get("rating") if rating_status == "official" else None
     official_tags = _as_list(problem.get("official_tags"), "problem.official_tags")

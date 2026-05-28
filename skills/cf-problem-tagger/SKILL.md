@@ -21,18 +21,29 @@ This skill is the primary workflow for adding high-quality Codeforces problem ta
 For every reviewed problem:
 
 1. Normalize identity by `contest_id + index`; URL is never identity.
-2. Read the statement and constraints.
-3. Check normal solution sources when available: Codeforces editorial, Luogu, reliable blogs, accepted code, or your own derivation.
-4. Write the decisive idea, not just a vague category.
-5. Record materially different solution variants.
-6. Assign tags with importance:
+2. Check whether the problem is a Div.1/Div.2 overlap alias. If the same round has both Div.1 and Div.2 entries, and the problem title appears in both, the Div.1 entry is canonical. Treat the Div.2 entry only as an alias/source.
+3. Read the statement and constraints.
+4. Check normal solution sources when available: Codeforces editorial, Luogu, reliable blogs, accepted code, or your own derivation.
+5. Write the decisive idea, not just a vague category.
+6. Record materially different solution variants.
+7. Assign tags with importance:
    - `primary`: essential to the main solution.
    - `secondary`: important supporting technique.
    - `incidental`: implementation detail that should not match default search.
-7. Every `primary` tag must have evidence.
-8. Apply the reviewed JSON with repository scripts and verify search results.
+8. Every `primary` tag must have evidence.
+9. Apply the reviewed JSON with repository scripts and verify search results.
 
 If sources are missing or the solution is inferred, lower `confidence` and say so in source notes.
+
+## Div.1 / Div.2 Overlap Rule
+
+Some Codeforces rounds have simultaneous Div.1 and Div.2 contests with shared problems, for example Div.1 A equals Div.2 C/D. These must not appear as separate searchable problems.
+
+- If both Div.1 and Div.2 contain the same problem title in the same round/start time, the Div.1 problem is canonical.
+- The Div.2 problem remains only as an alias/source URL.
+- Do not create a separate reviewed result for the Div.2 alias.
+- If a user asks to review the Div.2 entry, resolve it to the Div.1 canonical problem before writing tags.
+- Store or preserve Div.2 URLs as alias sources so either URL can still be traced back.
 
 ## Tag Rules
 

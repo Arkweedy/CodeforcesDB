@@ -21,10 +21,12 @@ def _problem_set_for_tag(
     imp_placeholders = ",".join("?" for _ in imp)
     rows = conn.execute(
         f"""
-        SELECT DISTINCT problem_uid
-        FROM problem_tags
-        WHERE tag IN ({placeholders})
-          AND importance IN ({imp_placeholders})
+        SELECT DISTINCT pt.problem_uid
+        FROM problem_tags pt
+        JOIN problems p ON p.problem_uid = pt.problem_uid
+        WHERE pt.tag IN ({placeholders})
+          AND pt.importance IN ({imp_placeholders})
+          AND (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
         """,
         (*expanded, *imp),
     ).fetchall()
@@ -63,6 +65,7 @@ def search_problems(
         FROM problems p
         JOIN contests c ON c.contest_id = p.contest_id
         {where_sql}
+        {"AND" if where_sql else "WHERE"} (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
         """,
         params,
     ).fetchall()
@@ -137,4 +140,3 @@ def format_text(results: list[dict[str, object]], show_tags: bool = False) -> st
 
 def format_json(results: list[dict[str, object]]) -> str:
     return json.dumps(results, ensure_ascii=False, indent=2)
-

@@ -137,3 +137,14 @@ $env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
 - 测试通过。
 - 没有 `__pycache__`、`.pytest_cache` 或 SQLite 临时文件。
 - `git status --short` 中没有无关用户改动被混入。
+
+## Div.1 / Div.2 重题归并规则
+
+Codeforces 同一轮有时会同时开 Div.1 和 Div.2，且共享部分题目。维护数据库时必须去重：
+
+- 同一轮、同一开始时间、Div.1/Div.2 两边同名的题目视为同一道题。
+- canonical problem 永远选择 Div.1 入口。
+- Div.2 入口只能作为 alias/source 保存，不应进入默认查询结果，也不应进入 pending review 列表。
+- 如果用户要求 review Div.2 的重复入口，先解析到 Div.1 canonical problem，再写 annotation、solution variants 和 tags。
+- 不要为 Div.2 alias 单独创建高质量 reviewed tag；否则聚合查询会重复计数。
+- 抽取后运行或确认 `mark_division_duplicates()`，已有库可用 `python scripts/dedupe_division_duplicates.py` 重新扫描。

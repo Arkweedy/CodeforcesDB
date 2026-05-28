@@ -226,3 +226,21 @@ $env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
 ```
 
 所有 Markdown 和 JSON 文件都应使用 UTF-8。
+
+## Div.1 / Div.2 重题归并
+
+同一轮 Codeforces 如果同时举办 Div.1 和 Div.2，且两边出现同名题目，则认为这是同一道题的不同入口。
+
+规则：
+
+- Div.1 入口作为 canonical problem。
+- Div.2 入口只保留为 alias/source，不作为独立题目参与默认查询。
+- `scripts/ingest_contests.py` 会在抽取后自动标记这类重题。
+- `scripts/search.py`、`scripts/list_pending_reviews.py` 和 reviewed JSON 写库流程默认只处理 canonical problem。
+- 如果对 Div.2 alias 生成模板或写入 reviewed JSON，会解析到 Div.1 canonical problem。
+
+可手动重新扫描已有数据库：
+
+```powershell
+python scripts/dedupe_division_duplicates.py
+```

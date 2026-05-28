@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from cfdb.db import connect, init_db
+from cfdb.dedup import canonical_problem_uid, mark_division_duplicates
 from cfdb.normalize import parse_problem_ref
 from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
 from cfdb.search import search_problems
@@ -168,6 +169,92 @@ class CfDbTests(unittest.TestCase):
             with connect(db) as conn:
                 with self.assertRaises(ReviewedPayloadError):
                     apply_reviewed_payload(conn, payload)
+
+    def test_div1_div2_overlap_prefers_div1_in_search(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, start_time_seconds, eligibility_status, extraction_status)
+                    VALUES
+                        (100, 'cf_contest:100', 'Codeforces Round 50 (Div. 1)', 12345, 'eligible', 'problems_loaded'),
+                        (101, 'cf_contest:101', 'Codeforces Round 50 (Div. 2)', 12345, 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:100:A', 100, 'A', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/100/problem/A',
+                         'https://codeforces.com/problemset/problem/100/A'),
+                        ('cf_problem:101:C', 101, 'C', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/101/problem/C',
+                         'https://codeforces.com/problemset/problem/101/C')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
+                    VALUES
+                        ('cf_problem:100:A', 'algorithm/dp', 'primary', 'div1', 'manual'),
+                        ('cf_problem:101:C', 'algorithm/dp', 'primary', 'div2', 'manual')
+                    """
+                )
+
+                duplicates = mark_division_duplicates(conn)
+                self.assertEqual(len(duplicates), 1)
+                self.assertEqual(canonical_problem_uid(conn, "cf_problem:101:C"), "cf_problem:100:A")
+                results = search_problems(conn, tags=["algorithm/dp"])
+                self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:100:A"])
+
+    def test_reviewed_payload_redirects_duplicate_to_canonical(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["contest"] = {"contest_id": 101, "title": "Codeforces Round 50 (Div. 2)"}
+            payload["problem"]["contest_id"] = 101
+            payload["problem"]["index"] = "C"
+            payload["problem"]["title"] = "Shared Problem"
+
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, start_time_seconds, eligibility_status, extraction_status)
+                    VALUES
+                        (100, 'cf_contest:100', 'Codeforces Round 50 (Div. 1)', 12345, 'eligible', 'problems_loaded'),
+                        (101, 'cf_contest:101', 'Codeforces Round 50 (Div. 2)', 12345, 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:100:A', 100, 'A', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/100/problem/A',
+                         'https://codeforces.com/problemset/problem/100/A'),
+                        ('cf_problem:101:C', 101, 'C', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/101/problem/C',
+                         'https://codeforces.com/problemset/problem/101/C')
+                    """
+                )
+                mark_division_duplicates(conn)
+                problem_uid = apply_reviewed_payload(conn, payload)
+                self.assertEqual(problem_uid, "cf_problem:100:A")
+                annotation = conn.execute(
+                    "SELECT review_status FROM problem_annotations WHERE problem_uid = ?",
+                    ("cf_problem:100:A",),
+                ).fetchone()
+                self.assertEqual(annotation["review_status"], "reviewed")
 
 
 if __name__ == "__main__":

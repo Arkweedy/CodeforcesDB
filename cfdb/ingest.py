@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from .codeforces import CodeforcesClient
+from .dedup import mark_division_duplicates
 from .eligibility import classify_contest
 from .normalize import normalize_problem_key, contest_uid
 from .tags import TagInput, ensure_tag, map_official_tag
@@ -292,6 +293,7 @@ def ingest_contest(
         """,
         (contest_id,),
     )
+    mark_division_duplicates(conn)
     return {"contest_id": contest_id, "status": "done", "problems": problem_count}
 
 

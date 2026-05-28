@@ -44,7 +44,7 @@ def main() -> None:
             print(f"applied {label} from {path}")
 
     if not args.no_auto_commit:
-        labels = sorted(applied)
+        labels = sorted(set(applied))
         subject = f"review CF problems {labels[0]}-{labels[-1]} ({len(labels)} problems)"
         body = "\n".join(
             [
@@ -57,4 +57,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -9,17 +9,27 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from cfdb.codeforces import CodeforcesClient
 from cfdb.db import DEFAULT_DB_PATH, connect, init_db
+from cfdb.dedup import canonical_problem_count, mark_division_duplicates
 from cfdb.git_utils import commit_paths
 from cfdb.ingest import find_contest_meta, ingest_contest, upsert_ingestion_range
 
 
-def auto_commit_database(db_path: str, start: int, end: int, results: list[dict[str, Any]]) -> None:
+def auto_commit_database(
+    db_path: str,
+    start: int,
+    end: int,
+    results: list[dict[str, Any]],
+    problem_count: int | None = None,
+    duplicate_count: int = 0,
+) -> None:
     script_root = Path(__file__).resolve().parents[1]
     lo, hi = sorted((start, end))
     done = sum(1 for item in results if item["status"] == "done")
     skipped = sum(1 for item in results if item["status"] == "skipped")
     failed = sum(1 for item in results if item["status"] == "failed")
-    problems = sum(int(item.get("problems", 0)) for item in results if item["status"] == "done")
+    problems = problem_count
+    if problems is None:
+        problems = sum(int(item.get("problems", 0)) for item in results if item["status"] == "done")
     subject = f"ingest CF contests {lo}-{hi} ({problems} problems)"
     body = "\n".join(
         [
@@ -28,6 +38,7 @@ def auto_commit_database(db_path: str, start: int, end: int, results: list[dict[
             f"Contests skipped: {skipped}",
             f"Contests failed: {failed}",
             f"Problems ingested: {problems}",
+            f"Div1/Div2 duplicates aliased: {duplicate_count}",
         ]
     )
     commit_paths([Path(db_path)], subject, body, script_root)
@@ -49,6 +60,8 @@ def main() -> None:
     contests = client.contest_list(gym=False)
 
     results: list[dict[str, Any]] = []
+    canonical_count = 0
+    duplicate_count = 0
     with connect(args.db) as conn:
         upsert_ingestion_range(conn, args.start, args.end)
         for contest_id in range(min(args.start, args.end), max(args.start, args.end) + 1):
@@ -83,9 +96,12 @@ def main() -> None:
                 )
                 print(f"{contest_id}: failed: {exc}")
                 results.append({"contest_id": contest_id, "status": "failed", "problems": 0, "error": str(exc)})
+        duplicates = mark_division_duplicates(conn)
+        duplicate_count = len(duplicates)
+        canonical_count = canonical_problem_count(conn, args.start, args.end)
 
     if not args.no_auto_commit:
-        auto_commit_database(args.db, args.start, args.end, results)
+        auto_commit_database(args.db, args.start, args.end, results, canonical_count, duplicate_count)
 
 
 if __name__ == "__main__":

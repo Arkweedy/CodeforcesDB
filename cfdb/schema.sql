@@ -39,9 +39,21 @@ CREATE TABLE IF NOT EXISTS problems (
     problemset_url TEXT NOT NULL,
     official_tags_json TEXT NOT NULL DEFAULT '[]',
     estimated_rating INTEGER,
+    canonical_problem_uid TEXT,
+    dedupe_status TEXT NOT NULL DEFAULT 'canonical',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (contest_id, problem_index)
+);
+
+CREATE TABLE IF NOT EXISTS problem_aliases (
+    alias_problem_uid TEXT PRIMARY KEY,
+    canonical_problem_uid TEXT NOT NULL REFERENCES problems(problem_uid) ON DELETE CASCADE,
+    alias_contest_id INTEGER NOT NULL,
+    alias_problem_index TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS problem_sources (

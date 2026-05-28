@@ -44,6 +44,15 @@ def migrate_db(conn: sqlite3.Connection) -> None:
     if "tricks_json" not in annotation_columns:
         conn.execute("ALTER TABLE problem_annotations ADD COLUMN tricks_json TEXT NOT NULL DEFAULT '[]'")
 
+    problem_columns = _columns(conn, "problems")
+    if "canonical_problem_uid" not in problem_columns:
+        conn.execute("ALTER TABLE problems ADD COLUMN canonical_problem_uid TEXT")
+    if "dedupe_status" not in problem_columns:
+        conn.execute("ALTER TABLE problems ADD COLUMN dedupe_status TEXT NOT NULL DEFAULT 'canonical'")
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_problems_canonical ON problems(canonical_problem_uid, dedupe_status)"
+    )
+
 
 def init_db(path: str | Path = DEFAULT_DB_PATH, seed: bool = True) -> None:
     with connect(path) as conn:
