@@ -7,7 +7,7 @@
 ## 能做什么
 
 - 按 rating 范围筛题，例如 `1500~2300`、`2500~2900`。
-- 按层级 tag 筛题，例如 `动态规划 / 数位 DP`、`变换 / FWT`、`数据结构 / 单调栈`。
+- 按层级 tag 筛题，例如 `动态规划 / 数位 DP`、`数学 / 变换 / FWT`、`数据结构 / 单调栈`。
 - 多 tag 组合查询，例如 `AC 自动机 + DP`。
 - 查看题目的核心思路、trick、复杂度、solution variants、来源链接和 tag evidence。
 - 打开题目链接直接跳转到 Codeforces。
@@ -98,8 +98,8 @@ npm.cmd run build --prefix web
 因此这里的 tag 会比 Codeforces official tags 更细，例如：
 
 ```text
-algorithm/transform/fwt/and-fwt
-algorithm/dp/digit-dp
+math/transform/fwt/and-fwt
+dp/digit-dp
 data-structure/monotonic-stack
 math/inclusion-exclusion/minmax
 trick/maintain-contribution

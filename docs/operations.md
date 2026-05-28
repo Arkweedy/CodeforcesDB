@@ -85,9 +85,9 @@ python scripts/apply_review_batch.py reviews/2170A.json reviews/2170B.json
 示例：
 
 ```powershell
-python scripts/search.py --rating 2500 2900 --tag algorithm/transform/fwt --show-tags
-python scripts/search.py --tag algorithm/string/acam --tag algorithm/dp
-python scripts/search.py --include-unrated --tag algorithm/dp
+python scripts/search.py --rating 2500 2900 --tag math/transform/fwt --show-tags
+python scripts/search.py --tag string/acam --tag dp
+python scripts/search.py --include-unrated --tag dp
 ```
 
 ## WebUI

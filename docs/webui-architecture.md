@@ -189,7 +189,7 @@ saveUserState(problemUid, favorite, note)
 这里负责把前端状态转换成 URL query params。比如多个 tag 会重复追加：
 
 ```text
-?tags=algorithm/dp&tags=algorithm/string/acam
+?tags=dp&tags=string/acam
 ```
 
 ### `types.ts`
@@ -215,7 +215,7 @@ Stats
 tag 查询仍使用英文路径，例如：
 
 ```text
-algorithm/transform/fwt/and-fwt
+math/transform/fwt/and-fwt
 ```
 
 中文只是显示层：
@@ -253,9 +253,9 @@ unrated     neutral
 tag 颜色按最长前缀匹配，例如：
 
 ```text
-algorithm/dp          -> dp
-algorithm/string      -> string
-algorithm/transform   -> transform
+dp          -> dp
+string      -> string
+math/transform   -> transform
 data-structure        -> ds
 math                  -> math
 trick                 -> trick

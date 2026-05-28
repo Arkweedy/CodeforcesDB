@@ -99,7 +99,7 @@ https://www.luogu.com.cn/problem/solution/CF{contest_id}{index}
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "DP 状态设计和转移是主解法核心。",
       "solution_variant": "main"
@@ -113,7 +113,7 @@ https://www.luogu.com.cn/problem/solution/CF{contest_id}{index}
 ```json
 {
   "description": "清晰定义。",
-  "parent": "algorithm/dp",
+  "parent": "dp",
   "created_reason": "为什么值得成为可复用 tag。",
   "status": "candidate"
 }

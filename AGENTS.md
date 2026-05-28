@@ -11,11 +11,11 @@
 典型查询目标：
 
 ```text
-2500~2900 + algorithm/transform/fwt
-1500~2300 + algorithm/dp/digit-dp
+2500~2900 + math/transform/fwt
+1500~2300 + dp/digit-dp
 1900 + paradigm/constructive
 2300 + data-structure/monotonic-stack
-algorithm/string/acam + algorithm/dp
+string/acam + dp
 ```
 
 数据库不追求完整收录所有 Codeforces 活动。语言限定赛、娱乐赛、启发式优化赛、特殊测试场等应排除或标记人工审核。
@@ -88,7 +88,7 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 - 娱乐赛，例如 `April Fools Day Contest`。
 - 启发式、优化、challenge、marathon 类比赛。
 - 明显不是标准 AC 判题目标的比赛。
-- 非标准通信/测试场，除非用户明确要求纳入。
+- 非标准测试场或特殊活动，除非用户明确要求纳入。
 
 无法判断时使用 `needs_manual_review`，不要强行归类。
 
@@ -105,9 +105,9 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 tag 是动态层级体系，不是封闭集合：
 
 ```text
-algorithm/string/acam
-algorithm/dp/automaton-dp
-algorithm/transform/fwt
+string/acam
+dp/automaton-dp
+math/transform/fwt
 data-structure/monotonic-stack
 math/inclusion-exclusion/minmax
 trick/maintain-contribution

@@ -62,9 +62,9 @@ When creating a new tag, also keep the WebUI translation in sync. Add a Chinese 
 
 Good examples:
 
-- `algorithm/dp/digit-dp`
-- `algorithm/string/acam`
-- `algorithm/transform/fwt`
+- `dp/digit-dp`
+- `string/acam`
+- `math/transform/fwt`
 - `data-structure/monotonic-stack`
 - `math/inclusion-exclusion/minmax`
 - `trick/maintain-contribution`
@@ -72,7 +72,7 @@ Good examples:
 Bad examples:
 
 - `trick/put-largest-at-position-three`
-- `topic/red-blue-array-from-sample`
+- `trick/red-blue-array-from-sample`
 - `algorithm/use-vector-and-sort`
 
 ## Repository Commands
@@ -104,7 +104,7 @@ python scripts/apply_review_batch.py reviews/
 Validate searches:
 
 ```powershell
-python scripts/search.py --tag algorithm/dp --tag paradigm/greedy --show-tags
+python scripts/search.py --tag dp --tag paradigm/greedy --show-tags
 ```
 
 ## Reviewed JSON Shape
@@ -167,7 +167,7 @@ python scripts/search.py --tag algorithm/dp --tag paradigm/greedy --show-tags
   ],
   "tags": [
     {
-      "tag": "algorithm/dp",
+      "tag": "dp",
       "importance": "primary",
       "evidence": "The state design and transition are the core of the solution.",
       "solution_variant": "main"

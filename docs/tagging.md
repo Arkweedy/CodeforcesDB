@@ -9,16 +9,16 @@ tag 是动态层级路径，不是封闭集合。
 示例：
 
 ```text
-algorithm/string/acam
-algorithm/dp/automaton-dp
-algorithm/transform/fwt
-algorithm/transform/fwt/and-fwt
+string/acam
+dp/automaton-dp
+math/transform/fwt
+math/transform/fwt/and-fwt
 data-structure/monotonic-stack
 math/inclusion-exclusion/minmax
 trick/maintain-contribution
 ```
 
-父 tag 查询应包含子 tag。例如查询 `algorithm/transform/fwt` 应命中 `algorithm/transform/fwt/and-fwt`。
+父 tag 查询应包含子 tag。例如查询 `math/transform/fwt` 应命中 `math/transform/fwt/and-fwt`。
 
 ## Importance
 
@@ -61,12 +61,12 @@ reviewed JSON 中应提供：
 
 ```json
 {
-  "tag": "algorithm/transform/fwt/and-fwt",
+  "tag": "math/transform/fwt/and-fwt",
   "importance": "primary",
   "evidence": "使用 AND FWT 聚合 mask 超集贡献。",
   "solution_variant": "and-fwt-batched-greedy",
   "description": "Fast Walsh-Hadamard Transform specialized for subset/superset convolution over bitwise AND masks.",
-  "parent": "algorithm/transform/fwt",
+  "parent": "math/transform/fwt",
   "created_reason": "AND-FWT is a concrete FWT subtype useful for high-rating bitmask aggregation queries.",
   "status": "candidate"
 }
@@ -95,9 +95,9 @@ This is FWT.
 示例：
 
 ```text
-AC automaton -> algorithm/string/acam
-digit dp -> algorithm/dp/digit-dp
-FWHT -> algorithm/transform/fwt
+AC automaton -> string/acam
+digit dp -> dp/digit-dp
+FWHT -> math/transform/fwt
 ```
 
 ## WebUI 翻译同步
@@ -122,12 +122,12 @@ WebUI 中 tag 颜色按最长前缀匹配。
 
 大类示例：
 
-- `algorithm/dp`：蓝色。
+- `dp`：蓝色。
 - `math`：浅绿。
 - `data-structure`：黄色。
-- `algorithm/graph`：靛紫。
-- `algorithm/string`：青绿。
-- `algorithm/transform`：玫紫。
+- `graph`：靛紫。
+- `string`：青绿。
+- `math/transform`：玫紫。
 - `paradigm`：橙色。
 - `trick`：粉色。
 - `implementation`：灰色。
