@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2163,
+    "title": "Codeforces Round 1063 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2163,
+    "index": "E",
+    "title": "Plegma",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "communication", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2163/problem/E",
+      "notes": "Communication problem over a binary grid: sender transmits one row and one column, receiver determines the grid's connectivity bit."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148239",
+      "notes": "Official editorial classifies the first column as all-0, all-1, or mixed, and chooses the transmitted row/column accordingly."
+    }
+  ],
+  "annotation": {
+    "summary": "Design a two-party communication protocol that lets the receiver decide the grid's connectivity answer from one row and one column.",
+    "constraints": "Only one full row and one full column can be transmitted, so the protocol must use a structural certificate rather than the whole grid.",
+    "core_idea": "Use the first column as the anchor. If it contains both 0 and 1, the sender can choose a row whose first cell is opposite to the desired answer and send the first column; the receiver compares that row's first bit with the column to infer the answer. If the first column is uniform, send that column when it already certifies the desired value, otherwise find a column containing the opposite bit and send it with any row. Receiver only needs to check whether the column contains a bit different from the row's first bit.",
+    "complexity": "O(n^2) sender-side search, O(n) receiver-side check.",
+    "tricks": ["first-column case analysis", "row first bit as reference", "certificate column with mixed/opposite bit"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "one-row-one-column-protocol",
+      "summary": "Choose a row and column based on whether the first column is uniform or mixed, then let the receiver compare against the row's first bit.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "communication",
+      "importance": "primary",
+      "evidence": "The task is explicitly a communication protocol problem with sender and receiver roles.",
+      "solution_variant": "one-row-one-column-protocol"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "The protocol splits on whether the first column is all 0, all 1, or mixed.",
+      "solution_variant": "one-row-one-column-protocol"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "The grid values are binary, but the main idea is the communication certificate rather than bitmask operations.",
+      "solution_variant": "one-row-one-column-protocol"
+    }
+  ]
+}

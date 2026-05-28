@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2163,
+    "title": "Codeforces Round 1063 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2163,
+    "index": "C",
+    "title": "Monopati",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp", "math", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2163/problem/C",
+      "notes": "Count value intervals [l,r] such that the induced 2 by n binary grid has a down-right path of ones."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148239",
+      "notes": "Official editorial proves minimal feasible r_l is monotone in l and maintains deactivated cells in both rows."
+    }
+  ],
+  "annotation": {
+    "summary": "Count all value ranges [l,r] for which cells with values inside the range contain a valid down-right path in a 2-row grid.",
+    "constraints": "There are 2n possible values, so O(n^2) range checks are too slow; a monotone two-pointer sweep is intended.",
+    "core_idea": "For fixed l, if [l,r] is good then any larger r is also good, and the minimum good r_l is nondecreasing as l increases. Sweep l and r with two pointers while activating/deactivating cells by value. In a 2-row grid, a path exists iff the first inactive top-row column lies strictly after the last inactive bottom-row column plus one, with endpoints active.",
+    "complexity": "O(n log n) per test case using ordered sets.",
+    "tricks": ["monotone minimum right endpoint", "2-row path condition by blocking cells", "activate values by sliding value range"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "value-range-two-pointers",
+      "summary": "Maintain active cells for the current value interval and use ordered sets of inactive cells to test path existence.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "The answer is counted by sweeping l and monotonically increasing the minimal feasible r.",
+      "solution_variant": "value-range-two-pointers"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The path check can be supported by ordered sets or segment-tree-like min/max active position structures.",
+      "solution_variant": "value-range-two-pointers"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "After finding each minimal r_l, the count adds all larger endpoints for that l.",
+      "solution_variant": "value-range-two-pointers"
+    }
+  ]
+}

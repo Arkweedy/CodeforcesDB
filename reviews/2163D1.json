@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2163,
+    "title": "Codeforces Round 1063 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2163,
+    "index": "D1",
+    "title": "Diadrash (Easy Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "divide and conquer", "implementation", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2163/problem/D1",
+      "notes": "Interactive easy version: find the maximum MEX among given ranges with a larger query budget."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148239",
+      "notes": "Official easy solution removes contained ranges, detects the half containing position of 0, and queries only ranges that can contain it."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively discover the maximum MEX over a set of ranges in a hidden permutation, using the easy-version query budget.",
+    "constraints": "The budget is about n/2 queries, so the solution can still query many filtered ranges but not all q naively.",
+    "core_idea": "A range contained in another is useless because its MEX cannot exceed the larger range's MEX. After keeping only maximal ranges, query [1,n/2] to learn whether value 0 lies in the left or right half. Any range not containing that half cannot contain 0 and is useless; the remaining ranges are at most ceil(n/2), so query them and take the maximum.",
+    "complexity": "O(n) preprocessing and O(n/2) interactive queries.",
+    "tricks": ["remove contained ranges", "locate half containing zero", "query only ranges that can contain zero"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "filtered-range-query",
+      "summary": "Keep maximal ranges, determine the half containing value 0, and query every remaining candidate range.",
+      "complexity": "O(n) plus O(n/2) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is an interactive query strategy over hidden permutation ranges.",
+      "solution_variant": "filtered-range-query"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "primary",
+      "evidence": "Ranges fully contained in other ranges are discarded before querying.",
+      "solution_variant": "filtered-range-query"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "After filtering, the easy version directly queries all remaining candidate ranges.",
+      "solution_variant": "filtered-range-query"
+    }
+  ]
+}

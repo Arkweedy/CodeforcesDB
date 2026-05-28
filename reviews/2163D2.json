@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2163,
+    "title": "Codeforces Round 1063 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2163,
+    "index": "D2",
+    "title": "Diadrash (Hard Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "interactive", "math", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2163/problem/D2",
+      "notes": "Interactive hard version with a logarithmic query budget."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148239",
+      "notes": "Official hard solution uses MEX([l,r])=min(MEX([1,r]),MEX([l,n])) and binary searches sorted maximal ranges."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively find the maximum MEX among ranges with only logarithmically many queries.",
+    "constraints": "The hard query budget requires binary search over the remaining candidate ranges.",
+    "core_idea": "After removing contained ranges, the candidate ranges sorted by left endpoint have increasing right endpoints. For a range [l,r], MEX([l,r]) equals min(MEX([1,r]), MEX([l,n])). Prefix MEX is nondecreasing in r and suffix MEX is nonincreasing in l, so comparing these two queried values tells which side of the candidate list can still contain the optimum. Binary search over the candidate ranges, querying prefix and suffix MEX at each midpoint.",
+    "complexity": "O(log n) interactive queries after O(q+n) filtering.",
+    "tricks": ["prefix-suffix MEX decomposition", "binary search over non-contained ranges", "monotone prefix and suffix MEX"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-suffix-mex-binary-search",
+      "summary": "Filter contained ranges, then binary search the candidate list using prefix/suffix MEX comparisons.",
+      "complexity": "O(log n) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is a query strategy for a hidden permutation.",
+      "solution_variant": "prefix-suffix-mex-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The candidate range list is searched by comparing prefix and suffix MEX values at midpoints.",
+      "solution_variant": "prefix-suffix-mex-binary-search"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "A range MEX is converted to the minimum of prefix and suffix MEX queries.",
+      "solution_variant": "prefix-suffix-mex-binary-search"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2163,
+    "title": "Codeforces Round 1063 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2163,
+    "index": "B",
+    "title": "Siga ta Kymata",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2163/problem/B",
+      "notes": "Choose interval operations over a permutation to make selected positions become 1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148239",
+      "notes": "Official editorial identifies the four impossible positions and shows five intervals around positions of min and max are sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct at most five operations to turn exactly the requested binary positions to 1, or report impossible.",
+    "constraints": "Only a constant number of operations is allowed, so the construction must use global permutation extrema.",
+    "core_idea": "Endpoints and the positions of the minimum and maximum permutation values can never be made 1, giving the only impossibility condition. If all requested 1s avoid those four positions, let mn and mx be positions of values 1 and n. The five intervals (1,mn), (1,mx), (mn,n), (mx,n), and (mn,mx) cover every other position while respecting the operation's value-between-endpoints rule.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["identify invariant impossible positions", "use min/max positions as operation endpoints", "constant-size interval cover"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "five-interval-construction",
+      "summary": "Check the four forbidden positions, then output the five intervals using the min and max positions.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution outputs a fixed set of at most five operations that covers all possible allowed targets.",
+      "solution_variant": "five-interval-construction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "Positions 1, n, pos(1), and pos(n) are invariantly impossible to turn into 1.",
+      "solution_variant": "five-interval-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The implementation first rejects the four impossible target positions before using the universal construction.",
+      "solution_variant": "five-interval-construction"
+    }
+  ]
+}
