@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2155,
+    "title": "Codeforces Round 1056 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2155,
+    "index": "D",
+    "title": "Batteries",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "graph matchings", "graphs", "interactive", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2155/problem/D",
+      "notes": "Interactive problem: find two working batteries with a bounded number of pair queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147174",
+      "notes": "Official proof places batteries on a cycle and uses the pigeonhole principle to bound the distance between two working ones."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a pair of working batteries through interactive queries under a guarantee on the number of working batteries.",
+    "constraints": "The query budget is bounded by floor(n^2/a), where a is the number of working batteries.",
+    "core_idea": "Place the n batteries around a cycle. If a batteries work, the a circular gaps between consecutive working batteries sum to n, so one gap has length at most floor(n/a). Query every pair of positions at circular distance 1, then 2, and so on up to floor(n/a); one of these pairs must be two consecutive working batteries.",
+    "complexity": "At most n*floor(n/a) interactive queries.",
+    "tricks": ["pigeonhole on circular gaps", "query all small cyclic distances", "interactive constructive strategy"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cyclic-distance-query",
+      "summary": "For each distance up to floor(n/a), query all pairs at that cyclic distance until a working pair is found.",
+      "complexity": "O(n^2/a) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The problem is solved by adaptively outputting pair queries and stopping when the judge confirms a working pair.",
+      "solution_variant": "cyclic-distance-query"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The query guarantee follows from a pigeonhole argument over a circular partition into gaps between working batteries.",
+      "solution_variant": "cyclic-distance-query"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The algorithm brute-forces every pair at all small cyclic distances up to the proven bound.",
+      "solution_variant": "cyclic-distance-query"
+    }
+  ]
+}

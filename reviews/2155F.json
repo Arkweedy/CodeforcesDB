@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2155,
+    "title": "Codeforces Round 1056 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2155,
+    "index": "F",
+    "title": "Juan's Colorful Tree",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dfs and similar", "dsu", "graphs", "meet-in-the-middle", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2155/problem/F",
+      "notes": "For each tree-path query, count colors that appear in every node's color set on the path."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147174",
+      "notes": "Official editorial converts path intersections to intersections of color-component ID sets at the two endpoints, then balances small-set intersection with heavy-node precomputation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/147090",
+      "notes": "Additional discussion of the sqrt bound for iterating over the smaller endpoint set across deduplicated queries."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer tree path queries asking how many colors are present in every node on the path.",
+    "constraints": "n,q,s are up to 3e5, so explicitly intersecting all color sets along a path is impossible.",
+    "core_idea": "For each color, its vertices induce several connected components. Assign an ID to every maximal color component, and let D_u be the set of component IDs containing node u. A color appears on every node of path u-v iff u and v belong to the same color component, so the query answer is |D_u intersection D_v|. For small endpoint sets, intersect sorted component-ID lists with two pointers; for heavy endpoints, precompute all answers from that endpoint. Choosing threshold around sqrt(s) balances total work.",
+    "complexity": "O((n+q+s) sqrt(s)) with O(s+n sqrt(s)) memory.",
+    "tricks": ["color components convert path intersection to endpoint intersection", "heavy-light by set size", "two-pointer sorted-set intersection"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "component-set-sqrt-decomposition",
+      "summary": "Build color-component ID sets for each node, precompute heavy endpoint intersections, and use two pointers for light endpoints.",
+      "complexity": "O((n+q+s) sqrt(s))",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "small-set-query-bound",
+      "summary": "Alternative implementation iterates the smaller endpoint set for deduplicated queries using the same min-size sum bound.",
+      "complexity": "O(s sqrt(q)) style bound",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "The official solution chooses a threshold B and treats large endpoint sets with precomputation and small ones with direct intersection.",
+      "solution_variant": "component-set-sqrt-decomposition"
+    },
+    {
+      "tag": "algorithm/graph/tree-dfs",
+      "importance": "primary",
+      "evidence": "A DFS with per-color stacks assigns maximal connected color-component IDs on the tree.",
+      "solution_variant": "component-set-sqrt-decomposition"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "Light queries intersect two sorted component-ID lists with two pointers.",
+      "solution_variant": "component-set-sqrt-decomposition"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "The key reduction replaces each color's connected regions by component IDs, turning a path-wide intersection into an endpoint set intersection.",
+      "solution_variant": "component-set-sqrt-decomposition"
+    }
+  ]
+}

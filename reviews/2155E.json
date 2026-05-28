@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2155,
+    "title": "Codeforces Round 1056 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2155,
+    "index": "E",
+    "title": "Mimo & Yuyu",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["games", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2155/problem/E",
+      "notes": "Impartial game with tokens in columns; players choose tokens and spawn lower-column tokens according to the rule."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147174",
+      "notes": "Official editorial reduces the game to parity of token counts in columns: column 2 for n=1, and all columns >=2 for n>=2."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine the winner of a finite token-spawning game on columns.",
+    "constraints": "Only the parity of occupied columns matters, so k token coordinates can be processed directly.",
+    "core_idea": "The game always terminates because the vector of column counts decreases lexicographically. For n=1, a token in column c contributes 2^(c-2) future moves, so only tokens in column 2 affect the winner's parity. For n>=2, a position is losing exactly when every column i>=2 has even token count; if some highest odd column exists, the current player can choose a move that makes all relevant parities even for the opponent.",
+    "complexity": "O(k) per test case using parity toggles.",
+    "tricks": ["finite game by lexicographic descent", "parity-only state", "highest odd column winning move"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-game",
+      "summary": "Toggle the parity of relevant columns and decide the winner by whether any relevant parity is odd.",
+      "complexity": "O(k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The solution classifies losing and winning states of an impartial finite game.",
+      "solution_variant": "parity-game"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The only relevant state information is the parity vector of token counts in columns >=2.",
+      "solution_variant": "parity-game"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "When a highest odd column exists, the winning move greedily fixes parities below it to hand over a losing state.",
+      "solution_variant": "parity-game"
+    }
+  ]
+}

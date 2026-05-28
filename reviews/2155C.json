@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2155,
+    "title": "Codeforces Round 1056 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2155,
+    "index": "C",
+    "title": "The Ancient Wizards' Capes",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["brute force", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2155/problem/C",
+      "notes": "Count how many cape orientations can produce the observed visible-wizard counts."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147174",
+      "notes": "Official editorial shows adjacent visible counts determine all orientations up to the first wizard's choice."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the number of visible wizards from each position, count the possible left/right cape orientations that match it.",
+    "constraints": "n is large, so all possible orientations cannot be enumerated, but the structure leaves only two candidates.",
+    "core_idea": "Moving from i to i+1 only changes the visibility of wizards i and i+1, so adjacent visible counts can differ by at most 1. Moreover, whether a_i and a_{i+1} are equal or differ determines whether the two adjacent capes have opposite or equal directions. Thus fixing the first wizard's direction determines the entire orientation; try both possibilities and simulate the visible counts to validate.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["adjacent difference constraint", "two possible global assignments", "validate by simulation"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-orientations-check",
+      "summary": "Construct the two possible orientation arrays determined by the first cape and verify each against the observed counts.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "After the structural observation, only two global orientation candidates remain and both are checked directly.",
+      "solution_variant": "two-orientations-check"
+    },
+    {
+      "tag": "implementation",
+      "importance": "primary",
+      "evidence": "The main work is correctly constructing and validating the visibility simulation for the two candidates.",
+      "solution_variant": "two-orientations-check"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Adjacent count differences constrain whether neighboring capes must be equal or opposite.",
+      "solution_variant": "two-orientations-check"
+    }
+  ]
+}
