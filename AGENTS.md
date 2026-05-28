@@ -74,6 +74,7 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 - `ingest_contests.py` 的自动提交只代表 metadata/bootstrap，不代表 AI review 完成。
 - 自动 DB 提交只应 stage 数据库文件。
 - 代码、文档、schema、review payload 修改应单独手动 commit。
+- 远程仓库已绑定；每次成功 commit 后应顺手 `git push` 当前分支，除非用户明确要求暂不 push。
 - 如需禁用自动提交，使用 `--no-auto-commit`。
 - 不要把无关用户改动混入提交；尤其注意 `data/cfdb.sqlite` 可能因 SQLite 打开/验证产生二进制状态变化。
 
