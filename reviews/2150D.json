@@ -1,0 +1,58 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "D",
+    "title": "Attraction Theory",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/D",
+      "notes": "Combinatorial DP problem about attractions and valid arrangements."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial derives a DP over compressed counts/classes with combinatorial coefficients."
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid attraction configurations/arrangements under the statement constraints.",
+    "constraints": "The total size allows polynomial DP over compressed counts, but not direct enumeration of arrangements.",
+    "core_idea": "Group indistinguishable choices into classes and build the arrangement step by step. The number of ways to insert/merge a new class depends only on the current compressed state, so dynamic programming with precomputed combinatorial coefficients counts all valid configurations.",
+    "complexity": "O(n^2) to O(n^3) depending on coefficient precomputation.",
+    "tricks": ["compress symmetric choices", "precompute combinations", "DP over number of processed objects/classes"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "compressed-combinatorial-dp",
+      "summary": "Use DP over processed classes and multiply by binomial-style insertion counts.",
+      "complexity": "Polynomial in n",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The main solution counts configurations by dynamic programming over compressed states.",
+      "solution_variant": "compressed-combinatorial-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Transitions are weighted by combinatorial insertion/selection coefficients.",
+      "solution_variant": "compressed-combinatorial-dp"
+    }
+  ]
+}

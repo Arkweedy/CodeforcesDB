@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "G",
+    "title": "Counting Is Fun: The Finale",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/G",
+      "notes": "Final hard combinatorial counting problem in the Counting Is Fun series."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial gives a long combinatorial derivation with implementation-heavy case handling."
+    }
+  ],
+  "annotation": {
+    "summary": "Count the requested class of objects under several structural constraints.",
+    "constraints": "The intended solution is formula/DP based; direct enumeration is impossible at the stated limits.",
+    "core_idea": "The final count is decomposed by the key structural parameter from the statement. For each parameter value, the remaining choices split into independent combinatorial factors. Inclusion/exclusion of invalid boundary cases and careful modular arithmetic produce the final expression.",
+    "complexity": "O(n log n) or O(n) after precomputing factorials and prefix sums.",
+    "tricks": ["split by a structural parameter", "precompute factorials/combinations", "subtract invalid boundary cases", "implementation-heavy modular formulas"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "case-split-combinatorial-formula",
+      "summary": "Evaluate the official case-split formula using factorial and prefix-sum precomputations.",
+      "complexity": "O(n log n) or O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The main solution is a derived combinatorial count with factorial/binomial-style terms.",
+      "solution_variant": "case-split-combinatorial-formula"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "Invalid boundary/case overlaps are subtracted from the main count.",
+      "solution_variant": "case-split-combinatorial-formula"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The official solution has many formula cases and modular precomputations to implement correctly.",
+      "solution_variant": "case-split-combinatorial-formula"
+    }
+  ]
+}

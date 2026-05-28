@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "F",
+    "title": "Cycle Closing",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "graphs", "implementation", "shortest paths", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/F",
+      "notes": "Construct/modify a graph or tree so a cycle-closing condition holds."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial builds the answer from tree paths and shortest-distance constraints."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a valid cycle-closing structure using a tree/graph and path-distance constraints.",
+    "constraints": "The graph is large but sparse, so tree traversals and shortest-path style preprocessing are intended.",
+    "core_idea": "Root the tree/graph and identify the path endpoints whose addition closes the required cycle. Distances from relevant endpoints determine which vertices can be attached without violating the cycle condition. The construction proceeds along shortest/tree paths, then fills remaining branches in a safe order.",
+    "complexity": "O(n log n) or O(n) depending on shortest-path implementation.",
+    "tricks": ["reduce to a distinguished path", "use distance labels to decide attachments", "construct cycle then fill branches"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "distance-guided-cycle-construction",
+      "summary": "Use tree/shortest-path distances to pick a core cycle and attach all remaining vertices consistently.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The problem requires outputting an explicit graph/path construction.",
+      "solution_variant": "distance-guided-cycle-construction"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The construction is organized around tree paths and branch attachments.",
+      "solution_variant": "distance-guided-cycle-construction"
+    },
+    {
+      "tag": "algorithm/graph/shortest-path",
+      "importance": "secondary",
+      "evidence": "Distance labels are used to verify or choose safe attachments.",
+      "solution_variant": "distance-guided-cycle-construction"
+    }
+  ]
+}

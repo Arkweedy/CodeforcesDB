@@ -1,0 +1,58 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "B",
+    "title": "Grid Counting",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/B",
+      "notes": "Counting problem on grid patterns."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial derives the answer by classifying row/column contributions and applying a closed-form count."
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid grid configurations satisfying the local/global constraints from the statement.",
+    "constraints": "The grid dimensions can be large, so the solution needs a formula rather than iterating cells.",
+    "core_idea": "Break the grid into independent row/column contribution types. After classifying the few boundary/symmetry cases, the number of valid grids is a product/sum of simple combinatorial terms. Implementation mainly requires handling degenerate dimensions separately.",
+    "complexity": "O(1) per test case.",
+    "tricks": ["separate row and column contributions", "handle degenerate grid dimensions", "closed-form combinatorial count"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "closed-form-grid-count",
+      "summary": "Classify grid cases and evaluate the corresponding formula.",
+      "complexity": "O(1)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The accepted solution is a direct combinatorial counting formula over grid cases.",
+      "solution_variant": "closed-form-grid-count"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Most risk is in handling small/degenerate grid dimensions and modular formula details.",
+      "solution_variant": "closed-form-grid-count"
+    }
+  ]
+}

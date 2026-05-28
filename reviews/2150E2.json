@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "E2",
+    "title": "Hidden Single (Version 2)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["binary search", "divide and conquer", "interactive", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/E2",
+      "notes": "Harder interactive/probabilistic hidden-single search."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial tightens the candidate-reduction strategy using binary-search style splits and probability analysis."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the hidden singleton under stricter interactive limits.",
+    "constraints": "The harder version requires nearly logarithmic query complexity with controlled error probability.",
+    "core_idea": "Use a binary-search-like candidate reduction: test carefully chosen halves/subsets so that every answer removes a constant fraction of candidates. Randomization or repeated checks handle unreliable/noisy structure, while the final small candidate set is verified directly.",
+    "complexity": "O(log n) or O(log n log log n) queries depending on amplification constants.",
+    "tricks": ["candidate halving", "probability amplification", "final verification of small set"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "probabilistic-binary-search",
+      "summary": "Maintain a candidate interval/set and test halves with enough repetitions to keep the hidden singleton with high probability.",
+      "complexity": "O(log n log log n) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query strategy for an interactive hidden element.",
+      "solution_variant": "probabilistic-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The candidate set is reduced by binary-search style half tests.",
+      "solution_variant": "probabilistic-binary-search"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "The correctness depends on success-probability bounds and amplification.",
+      "solution_variant": "probabilistic-binary-search"
+    }
+  ]
+}

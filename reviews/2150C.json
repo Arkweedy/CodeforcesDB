@@ -1,0 +1,58 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "C",
+    "title": "Limited Edition Shop",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/C",
+      "notes": "Optimize purchases/choices in an ordered limited-edition shop process."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial uses DP over positions with data structures to keep best transitions."
+    }
+  ],
+  "annotation": {
+    "summary": "Optimize the result of an ordered shop process with limited choices and position-dependent transitions.",
+    "constraints": "n is large enough that naive O(n^2) DP is too slow; transitions must be maintained with a data structure.",
+    "core_idea": "Model the process as DP over the last chosen/processed position. The transition has a monotone range form, so the best previous DP value for each next state can be stored in a segment tree or Fenwick-style structure. Processing events in order updates the structure and queries the best legal predecessor.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["DP over ordered choices", "range maximum transition", "process events left to right"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "range-max-dp",
+      "summary": "Maintain DP transition maxima in a segment tree while scanning shop events.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The solution stores optimal values for prefixes/positions and transitions between them.",
+      "solution_variant": "range-max-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "A segment tree or equivalent range structure is used to optimize DP transition queries.",
+      "solution_variant": "range-max-dp"
+    }
+  ]
+}

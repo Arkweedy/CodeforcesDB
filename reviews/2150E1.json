@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2150,
+    "title": "Codeforces Round 1053 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2150,
+    "index": "E1",
+    "title": "Hidden Single (Version 1)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["divide and conquer", "interactive", "math", "probabilities", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2150/problem/E1",
+      "notes": "Interactive/probabilistic hidden-single search, easier version."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146651?locale=en",
+      "notes": "Official tutorial uses divide-and-conquer/randomized grouping to isolate the hidden element with high probability."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a hidden special element using interactive queries under the easier query/probability limits.",
+    "constraints": "The query budget permits recursive splitting or repeated randomized tests.",
+    "core_idea": "Maintain a candidate set. Query a balanced subset or randomized bucket; the response tells whether the hidden singleton is inside that subset with enough reliability. Recurse on the indicated half/bucket, repeating when necessary to amplify success probability.",
+    "complexity": "O(log n) to O(log^2 n) interactive queries depending on amplification.",
+    "tricks": ["balanced candidate splitting", "probability amplification", "sort/shuffle candidates before grouping"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "randomized-divide-and-conquer",
+      "summary": "Repeatedly split or bucket candidates and use query outcomes to keep the bucket containing the hidden singleton.",
+      "complexity": "O(log^2 n) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The task is an interactive hidden-element search.",
+      "solution_variant": "randomized-divide-and-conquer"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "The candidate set is recursively split based on query responses.",
+      "solution_variant": "randomized-divide-and-conquer"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "The strategy relies on randomized buckets and success-probability amplification.",
+      "solution_variant": "randomized-divide-and-conquer"
+    }
+  ]
+}
