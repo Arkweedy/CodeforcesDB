@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2143,
+    "title": "Codeforces Round 1051 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2143,
+    "index": "F",
+    "title": "Increasing Xor",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "data structures", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2143/problem/F",
+      "notes": "Queries ask whether a subarray can be transformed into a strictly increasing sequence using prefix-to-current xor operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147165/en5",
+      "notes": "Official reference code builds xor bases for prefixes from each left endpoint and greedily advances the smallest achievable value above the previous one."
+    }
+  ],
+  "annotation": {
+    "summary": "For many subarray queries, decide whether allowed xor operations can make the subarray strictly increasing.",
+    "constraints": "Values fit in about 20 bits and q,n are large, so each left endpoint must be preprocessed with bit-level linear basis operations.",
+    "core_idea": "For a fixed left endpoint, the value achievable at position r is any xor-subset value in the linear span of elements seen from the left endpoint through r. To make the sequence increasing, greedily choose the minimum achievable value that is greater than the previous chosen value; if no such value exists the current r is beyond the feasible prefix. Maintaining an xor basis with order/statistics over subset-xor values lets us compute the next chosen value and precompute the maximum valid right endpoint for every left endpoint.",
+    "complexity": "O(n * B^2 + q) to O(n * B^3 + q) depending on basis implementation, with B about 20.",
+    "tricks": ["xor linear span of a prefix", "greedy smallest feasible next value", "precompute maximum valid right endpoint"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-basis-greedy-precompute",
+      "summary": "For each left endpoint, extend a xor basis, greedily compute the smallest reachable value above the previous one, and record the last feasible right endpoint.",
+      "complexity": "O(n * B^2 + q) to O(n * B^3 + q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/xor-basis",
+      "importance": "primary",
+      "evidence": "The allowed xor operations are modeled as membership and order queries in a binary linear basis of prefix values.",
+      "solution_variant": "xor-basis-greedy-precompute",
+      "description": "Binary linear basis techniques for representing xor spans, testing representability, and optimizing/querying subset-xor values.",
+      "parent": "math/linear-algebra",
+      "created_reason": "Xor basis is a standard reusable technique that is more specific than generic bitmask or linear algebra tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For a fixed subarray, choosing the smallest reachable value greater than the previous chosen value is the optimal feasibility strategy.",
+      "solution_variant": "xor-basis-greedy-precompute"
+    },
+    {
+      "tag": "algorithm/bitmask/xor-subset",
+      "importance": "secondary",
+      "evidence": "Every achievable value is a subset xor from the current prefix basis.",
+      "solution_variant": "xor-basis-greedy-precompute"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "Queries are answered after precomputing the maximum feasible right endpoint for each left endpoint.",
+      "solution_variant": "xor-basis-greedy-precompute"
+    }
+  ]
+}

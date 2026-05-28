@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2143,
+    "title": "Codeforces Round 1051 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2143,
+    "index": "D2",
+    "title": "Inversion Graph Coloring (Hard Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "combinatorics", "data structures", "dp", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2143/problem/D2",
+      "notes": "Hard version keeps the same inversion-graph bipartiteness condition with larger n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147165/en5",
+      "notes": "Official reference code optimizes the two-threshold DP using Fenwick trees over the second threshold."
+    }
+  ],
+  "annotation": {
+    "summary": "Count subsequences whose inversion graph is bipartite for the harder constraints.",
+    "constraints": "n is large enough that the easy cubic DP must be optimized; O(n^2 log n) style value-state aggregation is acceptable.",
+    "core_idea": "Use the same structural fact as the easy version: selected subsequences must avoid a strictly decreasing subsequence of length 3. The DP state is still the pair of thresholds (current maximum, largest second element in a decreasing pair), but transitions that sum over many prior states are aggregated with Fenwick trees, turning the counting recurrence into range-sum queries and updates.",
+    "complexity": "O(n^2 log n) per test case.",
+    "tricks": ["avoid decreasing triple", "two-threshold state compression", "range-sum optimized DP"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "fenwick-optimized-two-threshold-dp",
+      "summary": "Maintain the two-threshold subsequence DP with Fenwick trees to aggregate valid previous states.",
+      "complexity": "O(n^2 log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The main solution is a subsequence-counting DP over order thresholds.",
+      "solution_variant": "fenwick-optimized-two-threshold-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "Fenwick trees are required to make the hard-version DP transitions efficient enough.",
+      "solution_variant": "fenwick-optimized-two-threshold-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The quantity counted is the number of valid subsequences satisfying a graph/order-pattern constraint.",
+      "solution_variant": "fenwick-optimized-two-threshold-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "Bipartiteness of the inversion graph is solved through an equivalent forbidden decreasing-triple structure.",
+      "solution_variant": "fenwick-optimized-two-threshold-dp"
+    }
+  ]
+}

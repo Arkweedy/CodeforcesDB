@@ -213,6 +213,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm/transform/fft": "FFT",
   "algorithm/transform/fwt": "FWT",
   "algorithm/two-pointers": "双指针",
+  "communication": "通信题",
   "data-structure": "数据结构",
   "data-structure/dsu": "并查集",
   "data-structure/dsu/next-pointer": "next 指针并查集",
@@ -238,6 +239,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/inclusion-exclusion/minmax": "Min-Max 容斥",
   "math/linear-algebra": "线性代数",
   "math/linear-algebra/matrix": "矩阵",
+  "math/linear-algebra/xor-basis": "异或线性基",
   "math/number-theory": "数论",
   "math/number-theory/chinese-remainder-theorem": "中国剩余定理",
   "math/number-theory/divisibility": "整除",
@@ -298,6 +300,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "classify-overlap": "重叠分类",
   "combinatorics": "组合数学",
   "component-decomposition": "分量分解",
+  "communication": "通信题",
   "connectivity": "连通性",
   "constructive": "构造",
   "convert-to-prefix": "转为前缀",
@@ -391,6 +394,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "trick": "技巧",
   "two-pointers": "双指针",
   "xor-hashing": "异或哈希",
+  "xor-basis": "异或线性基",
   "xor-subset": "异或子集"
 };
 

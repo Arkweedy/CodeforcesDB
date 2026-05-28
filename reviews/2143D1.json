@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2143,
+    "title": "Codeforces Round 1051 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2143,
+    "index": "D1",
+    "title": "Inversion Graph Coloring (Easy Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "data structures", "dp", "greedy", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2143/problem/D1",
+      "notes": "Easy version asks for the number of subsequences whose inversion graph is bipartite under smaller constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147165/en5",
+      "notes": "Official reference code ranks equal values carefully and uses DP over two order-statistic thresholds."
+    }
+  ],
+  "annotation": {
+    "summary": "Count subsequences of an array whose inversion graph can be colored with two colors.",
+    "constraints": "The easy version permits a polynomial DP over value-rank states after coordinate normalization.",
+    "core_idea": "Permutation graphs are perfect, so an inversion graph is bipartite iff it has no triangle; in sequence terms this is equivalent to selecting no strictly decreasing subsequence of length 3. Process elements in order and keep the largest selected value plus the largest value that has already become the second element of a decreasing pair. A new value below that second threshold would create a decreasing triple and is forbidden.",
+    "complexity": "O(n^3) in the straightforward easy-version DP.",
+    "tricks": ["bipartite inversion graph equals no decreasing triple", "two-threshold subsequence state", "rank transform for equal values"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-threshold-dp",
+      "summary": "DP over subsequences by the current maximum selected rank and the best second-rank of any decreasing pair.",
+      "complexity": "O(n^3)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The count is obtained by maintaining DP states over two rank thresholds while scanning the sequence.",
+      "solution_variant": "two-threshold-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The task is a subsequence-counting problem under an avoidance constraint.",
+      "solution_variant": "two-threshold-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "The core graph condition is converted into an order-pattern condition: avoiding a length-3 decreasing subsequence.",
+      "solution_variant": "two-threshold-dp"
+    }
+  ]
+}

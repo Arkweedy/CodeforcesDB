@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2143,
+    "title": "Codeforces Round 1051 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2143,
+    "index": "E",
+    "title": "Make Good",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "math", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2143/problem/E",
+      "notes": "Operations replace a neighboring unequal pair with an equal pair; the goal is to transform a parenthesis string into a regular bracket sequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/147165/en5",
+      "notes": "Official reference code computes an alternating signed balance invariant and directly constructs a target regular bracket sequence when possible."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether a bracket string can be transformed into a regular bracket sequence by repeatedly changing adjacent different brackets into equal brackets, and construct one if possible.",
+    "constraints": "n is large, so the answer must be based on a linear invariant and direct construction.",
+    "core_idea": "The operation preserves an alternating signed balance of the string. Any reachable regular bracket sequence must have the same invariant, which gives a necessary condition. That condition is also sufficient: construct a regular bracket sequence with the required alternating balance by placing one outer pair, a controlled number of alternating pairs inside it, and the remaining pairs afterward; handle the all-closing extreme as a special construction.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["alternating signed invariant", "construct target string from invariant", "special all-closing case"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "invariant-construction",
+      "summary": "Check the preserved alternating balance and build a regular bracket sequence with that balance.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "After deriving the invariant, the solution explicitly constructs a valid target bracket sequence.",
+      "solution_variant": "invariant-construction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The reachability condition is the alternating signed balance preserved by every allowed operation.",
+      "solution_variant": "invariant-construction"
+    },
+    {
+      "tag": "algorithm/string",
+      "importance": "secondary",
+      "evidence": "The object being transformed is a bracket string, and the construction is a linear string construction.",
+      "solution_variant": "invariant-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The construction needs a separate treatment for the extreme case where the invariant forces all closing positions in the template.",
+      "solution_variant": "invariant-construction"
+    }
+  ]
+}
