@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2176,
+    "title": "Codeforces Round 1070 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2176,
+    "index": "D",
+    "title": "Fibonacci Paths",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp", "graphs", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2176/problem/D",
+      "notes": "Count directed simple paths whose vertex values form a generalized Fibonacci sequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149154",
+      "notes": "Official editorial defines DP on directed edges, processes edges by decreasing endpoint-value sum, and stores maps keyed by next required value."
+    }
+  ],
+  "annotation": {
+    "summary": "Count directed paths of length at least two where each next vertex value is the sum of the previous two values.",
+    "constraints": "n,m are large enough that O(m^2) transition over adjacent edge pairs is too slow.",
+    "core_idea": "Treat each directed edge (u,v) as the first two values of a Fibonacci path. Longer transitions require an edge (v,w) with a_w = a_u + a_v. Because edge sums strictly increase along a valid path, process edges in decreasing a_u+a_v and maintain for each vertex a map from needed/ending value to the number of continuations.",
+    "complexity": "O(m log m) using maps after sorting edges.",
+    "tricks": ["edge-state DP", "topological order by increasing Fibonacci sums", "map continuations by required value"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-edge-dp",
+      "summary": "Sort edges by a_u+a_v descending and update dp[u][a_v] from dp[v][a_u+a_v] plus the single-edge path.",
+      "complexity": "O(m log m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/graph-dp",
+      "importance": "primary",
+      "evidence": "The state is a directed edge and transitions follow outgoing graph edges whose endpoint value matches the Fibonacci recurrence.",
+      "solution_variant": "sorted-edge-dp",
+      "description": "Dynamic programming over graph vertices, edges, paths, or graph-derived states.",
+      "parent": "algorithm/dp",
+      "created_reason": "The generic DP tag does not distinguish path/edge DP over graphs.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/path-counting",
+      "importance": "primary",
+      "evidence": "The answer is the number of valid directed paths, accumulated over edge states.",
+      "solution_variant": "sorted-edge-dp",
+      "description": "Count paths in a graph under structural or label constraints.",
+      "parent": "algorithm/graph",
+      "created_reason": "Path counting is a reusable graph subproblem distinct from generic graph traversal.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Edges are processed in decreasing endpoint-value sum so dependent states are already computed.",
+      "solution_variant": "sorted-edge-dp"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "For each vertex, continuations are looked up by the required next value.",
+      "solution_variant": "sorted-edge-dp",
+      "description": "Hash map or ordered map keyed state compression for sparse value lookups.",
+      "parent": "data-structure",
+      "created_reason": "Sparse keyed lookup is more specific than the broad data-structure tag.",
+      "status": "candidate"
+    }
+  ]
+}

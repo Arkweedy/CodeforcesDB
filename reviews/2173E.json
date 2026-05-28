@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2173,
+    "title": "Codeforces Round 1068 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2173,
+    "index": "E",
+    "title": "Shiro's Mirror Duel",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "interactive", "probabilities", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2173/problem/E",
+      "notes": "Interactive problem that repeatedly tries to place mirrored extreme elements correctly."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1068",
+      "notes": "Writeup describes fixing 0 and n-1, then recursively solving the middle; expected about 5 queries reduce n by 2."
+    }
+  ],
+  "annotation": {
+    "summary": "In an interactive mirror process, use randomized/expected-query steps to place boundary elements and shrink the unresolved interval.",
+    "constraints": "The strategy must satisfy the query budget in expectation/high probability rather than compute a deterministic offline answer.",
+    "core_idea": "First wait until 0 reaches its correct side. Then while trying to place n-1, a failure has a mirrored symmetry that guarantees the next action places either 0 or n-1 correctly. Thus in expected constant queries both extremes are fixed, reducing the problem size by 2; recursively solve the middle.",
+    "complexity": "Expected O(n) queries with a constant factor fitting the limit.",
+    "tricks": ["fix both extremes then recurse", "mirror symmetry after failure", "expected constant progress"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "expected-extreme-fixing",
+      "summary": "Repeatedly fix 0 and n-1 using mirror symmetry and recurse on the middle interval.",
+      "complexity": "Expected O(n) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is a query strategy for an interactive process.",
+      "solution_variant": "expected-extreme-fixing"
+    },
+    {
+      "tag": "math/probability/expected-progress",
+      "importance": "primary",
+      "evidence": "The query budget is argued by expected constant progress per two fixed elements.",
+      "solution_variant": "expected-extreme-fixing",
+      "description": "Analyze an algorithm by showing each phase makes expected progress, often under randomized or interactive feedback.",
+      "parent": "math/probability",
+      "created_reason": "This is more specific than the broad probabilities tag and useful for randomized/interactive strategies.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The algorithm explicitly constructs a strategy by fixing extremes and recursing inward.",
+      "solution_variant": "expected-extreme-fixing"
+    }
+  ]
+}

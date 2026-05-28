@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2176,
+    "title": "Codeforces Round 1070 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2176,
+    "index": "F",
+    "title": "Omega Numbers",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "dp", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2176/problem/F",
+      "notes": "Sum powers of omega(a_i a_j) over unordered pairs, where omega is the number of distinct prime factors."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149154",
+      "notes": "Official editorial uses omega(xy)=omega(x)+omega(y)-omega(gcd(x,y)) and counts pairs by gcd with multiples DP and subtraction over multiples."
+    }
+  ],
+  "annotation": {
+    "summary": "For an array, compute a sum over pairs involving the k-th power of the number of distinct prime factors of the product.",
+    "constraints": "Values are bounded, and omega(x) is at most 6 under the constraints, so states over omega sums are tiny while gcd values range over all divisors.",
+    "core_idea": "Use omega(xy)=omega(x)+omega(y)-omega(gcd(x,y)). Count ordered pairs grouped by exact gcd g and by omega(x)+omega(y). First count numbers divisible by each g and each omega value, then perform a multiples Möbius-style subtraction from large g down to obtain exact-gcd pair counts. Sum (sumLen-omega(g))^k over those counts.",
+    "complexity": "O(maxA log maxA * K^2) with small K <= 6.",
+    "tricks": ["omega product identity", "exact gcd by subtracting multiples", "small omega-state dimension"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "gcd-multiple-dp",
+      "summary": "Count pairs by exact gcd and omega-sum using divisor multiples and subtract counts of larger gcd multiples.",
+      "complexity": "O(maxA log maxA * K^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "gcd-convolution",
+      "summary": "Alternative solution groups values by omega and applies GCD convolution/zeta-Möbius transforms.",
+      "complexity": "O(K^2 * maxA log maxA)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/mobius",
+      "importance": "primary",
+      "evidence": "Exact gcd counts are obtained by subtracting contributions of larger multiples, the standard divisor Möbius/inclusion-exclusion pattern.",
+      "solution_variant": "gcd-multiple-dp",
+      "description": "Möbius inversion or equivalent subtract-over-multiples inclusion-exclusion on divisors.",
+      "parent": "math/number-theory",
+      "created_reason": "Möbius/divisor inversion is a common advanced number-theory technique worth searching directly.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/gcd-convolution",
+      "importance": "secondary",
+      "evidence": "The editorial comments also describe a GCD convolution alternative over omega classes.",
+      "solution_variant": "gcd-convolution",
+      "description": "Convolution over gcd or divisor lattice, usually implemented with zeta/Möbius transforms on multiples.",
+      "parent": "math/number-theory",
+      "created_reason": "GCD convolution is a specific transform technique useful for locating advanced number-theory problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/prime-factor-count",
+      "importance": "primary",
+      "evidence": "The core identity and all states depend on omega(x), the number of distinct prime factors.",
+      "solution_variant": "gcd-multiple-dp",
+      "description": "Use counts of distinct or total prime factors as states, weights, or invariants.",
+      "parent": "math/number-theory",
+      "created_reason": "Prime-factor-count problems are more specific than general number theory.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution counts valid unordered/ordered pairs across divisor and omega classes.",
+      "solution_variant": "gcd-multiple-dp"
+    }
+  ]
+}

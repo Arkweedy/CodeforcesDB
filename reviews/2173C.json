@@ -1,0 +1,73 @@
+{
+  "contest": {
+    "contest_id": 2173,
+    "title": "Codeforces Round 1068 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2173,
+    "index": "C",
+    "title": "Kanade's Perfect Multiples",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "greedy", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2173/problem/C",
+      "notes": "Find the minimum complete set B for an array A under divisor and multiple closure rules."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/149622/diff/en9/en10?locale=en",
+      "notes": "Official editorial states that the smallest unfinished element must be chosen, then all its multiples up to k must appear in A."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1068",
+      "notes": "Independent writeup explains processing unique A in ascending order and marking multiples already covered."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the smallest complete divisor set B, or report impossibility.",
+    "constraints": "Values are bounded by k, so checking multiples of chosen base elements is feasible with marking/skipping.",
+    "core_idea": "After deduplicating A, scan values ascending. If a value is already a multiple of a previously chosen b, it is covered. Otherwise it must be included in B, because no smaller divisor in A can cover it; then every positive multiple of this value up to k must occur in A, or no complete set exists. Mark all such multiples as covered.",
+    "complexity": "Roughly proportional to the number of checked multiples/divisor incidences, fast enough under the constraints.",
+    "tricks": ["smallest uncovered element is forced", "mark multiples as covered", "closure condition by multiples"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ascending-forced-bases",
+      "summary": "Process values in increasing order, greedily choose each uncovered value and verify all multiples exist.",
+      "complexity": "O(sum over chosen b of k/b) with set lookups",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "Both rules are about divisors and multiples, and the proof uses the smallest uncovered divisor structure.",
+      "solution_variant": "ascending-forced-bases"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The smallest uncovered value is forced into B, so the ascending greedy choice is optimal.",
+      "solution_variant": "ascending-forced-bases"
+    },
+    {
+      "tag": "trick/mark-multiples",
+      "importance": "secondary",
+      "evidence": "The implementation verifies and marks all multiples of each chosen base.",
+      "solution_variant": "ascending-forced-bases",
+      "description": "Iterate over multiples of selected values to mark coverage, count constraints, or propagate number-theory states.",
+      "parent": "trick",
+      "created_reason": "Multiple-marking appears often in divisor-closure and sieve-like constructive problems.",
+      "status": "candidate"
+    }
+  ]
+}

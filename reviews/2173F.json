@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2173,
+    "title": "Codeforces Round 1068 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2173,
+    "index": "F",
+    "title": "Isla's Memory Thresholds",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "divide and conquer", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2173/problem/F",
+      "notes": "Simulate/reset movement under monotone memory thresholds for many queries."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1068",
+      "notes": "Writeup uses monotonicity of reset distance, groups ranges where distance is constant, and applies binary/exponential search to jump repeated steps."
+    },
+    {
+      "source_type": "luogu",
+      "url": "https://www.luogu.com.cn/article/rtvx04kj",
+      "notes": "Luogu solution source for the same problem, used as an additional reference."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer threshold-process queries by jumping over many identical-distance simulation steps.",
+    "constraints": "Direct step-by-step simulation can be linear per query, so the number of distinct jump distances must be exploited.",
+    "core_idea": "Because the threshold array is monotone, the distance advanced before reset is monotone and has only about sqrt(N) distinct relevant values. For a query, repeatedly find the current jump distance, then binary/exponential search how many times that same distance can be applied before the distance changes, batching those moves.",
+    "complexity": "About O(sqrt(N) log N) per query, with exponential-search variants improving constants.",
+    "tricks": ["group constant jump distances", "batch simulation steps", "exponential search on monotone predicate"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sqrt-batched-simulation",
+      "summary": "Use monotonicity to group equal jump distances and advance by many steps at once.",
+      "complexity": "O(sqrt(N) log N) per query",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "The analysis relies on the number of distinct jump distances being about sqrt(N), enabling batched simulation.",
+      "solution_variant": "sqrt-batched-simulation",
+      "description": "Split or group work by square-root bounds, block sizes, or number of distinct values.",
+      "parent": "algorithm",
+      "created_reason": "Square-root decomposition/grouping is a major technique not represented by the current tag set.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Binary or exponential search finds the next distance and how many times it remains valid.",
+      "solution_variant": "sqrt-batched-simulation"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "primary",
+      "evidence": "The core speedup is replacing repeated single steps by grouped jumps with the same distance.",
+      "solution_variant": "sqrt-batched-simulation",
+      "description": "Accelerate a process by grouping many identical or monotone simulation steps into one transition.",
+      "parent": "trick",
+      "created_reason": "This recurring simulation optimization is not captured by generic brute force or binary search tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The grouping relies on jump distances changing monotonically.",
+      "solution_variant": "sqrt-batched-simulation",
+      "description": "Exploit monotone behavior of functions, thresholds, or states to search or group transitions.",
+      "parent": "trick",
+      "created_reason": "Monotonicity is a broad but useful retrieval tag for binary-search and batching problems.",
+      "status": "candidate"
+    }
+  ]
+}

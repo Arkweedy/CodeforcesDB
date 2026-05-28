@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2176,
+    "title": "Codeforces Round 1070 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2176,
+    "index": "E",
+    "title": "Remove at the lowest cost",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dfs and similar", "dp", "dsu", "greedy", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2176/problem/E",
+      "notes": "Maintain the minimum removal cost as selected costs are set to zero over time."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149154",
+      "notes": "Official editorial defines a recursive function around interval maxima, saves the recursion as a tree, and updates affected subtrees when costs become zero."
+    }
+  ],
+  "annotation": {
+    "summary": "Given arrays of values and removal costs, output the minimum total removal cost initially and after each query that sets one cost to zero.",
+    "constraints": "n is large, so recomputing the optimal removal process after every query is impossible.",
+    "core_idea": "The optimal removal structure is recursive around maximum elements of an interval: maxima split the interval and at least one outside/maximum cost controls each segment. This recursion forms a tree of responsibility for which elements pay which removal cost. A query that sets c_i to zero only affects the subtree where i belongs as a relevant maximum/killer, so DFS/DSU-style skipping updates each node at most once.",
+    "complexity": "O(n log n) or near-linear after building the max-recursion tree, plus amortized O(n) over all zeroing updates.",
+    "tricks": ["recursive decomposition by interval maxima", "build an auxiliary responsibility tree", "amortized subtree activation"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "max-decomposition-update-tree",
+      "summary": "Build the recursive maximum-decomposition tree of removal costs and process zero-cost queries by traversing newly affected subtrees once.",
+      "complexity": "O(n log n) preprocessing plus amortized O(n) query work",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer/cartesian-tree",
+      "importance": "primary",
+      "evidence": "The optimal structure is the recursive decomposition of intervals by maximum elements, equivalent to a Cartesian-tree-like hierarchy.",
+      "solution_variant": "max-decomposition-update-tree",
+      "description": "Use min/max Cartesian tree or equivalent interval-extremum recursion to represent array structure.",
+      "parent": "algorithm/divide-and-conquer",
+      "created_reason": "This captures a common array decomposition pattern that generic divide-and-conquer does not identify.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "Queries update the stored recursive tree by DFS over affected subtrees.",
+      "solution_variant": "max-decomposition-update-tree",
+      "description": "Depth-first traversal over an explicit tree to propagate or collect state.",
+      "parent": "algorithm/graph/tree",
+      "created_reason": "Tree DFS is common enough to be searchable separately from generic dfs/trees.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/dsu/next-pointer",
+      "importance": "secondary",
+      "evidence": "Affected nodes can be skipped after they are zeroed/processed, giving amortized query time.",
+      "solution_variant": "max-decomposition-update-tree",
+      "description": "Disjoint-set or next-pointer structure used to skip already processed positions/nodes.",
+      "parent": "data-structure/dsu",
+      "created_reason": "The DSU tag is too broad for amortized skip-pointer updates.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "Each affected tree node is visited only the first time its responsible cost becomes zero.",
+      "solution_variant": "max-decomposition-update-tree",
+      "description": "Design updates so each element/node is deleted, activated, or processed at most once.",
+      "parent": "trick",
+      "created_reason": "This amortization pattern recurs across data-structure update problems.",
+      "status": "candidate"
+    }
+  ]
+}

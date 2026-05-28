@@ -1,0 +1,68 @@
+{
+  "contest": {
+    "contest_id": 2173,
+    "title": "Codeforces Round 1068 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2173,
+    "index": "D",
+    "title": "Taiga's Carry Chains",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "brute force", "dp", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2173/problem/D",
+      "notes": "Minimize popcount-related carry behavior after adding powers of two a limited number of times."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1068",
+      "notes": "Writeup observes carry count as popcount decreases; for large k popcount can be reduced to 1, otherwise solve k <= 30 with digit DP."
+    }
+  ],
+  "annotation": {
+    "summary": "After at most k additions of powers of two to n, minimize the resulting popcount/carry-chain objective.",
+    "constraints": "Large k has a direct lowbit-greedy outcome; the remaining hard case has k <= 30 and can be handled by bit DP.",
+    "core_idea": "A carry operation corresponds to decreasing popcount. Repeatedly adding the current lowbit can merge set bits, and when k is large enough the number can be made a power of two. For small k, process bits with a digit DP that tracks how many additions have been used and the carry/popcount effect.",
+    "complexity": "O(k * log n * small_state) for k <= 30; O(log n) for the large-k shortcut.",
+    "tricks": ["carry as popcount decrease", "large-k shortcut to power of two", "bit DP over additions"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "carry-digit-dp",
+      "summary": "Use the lowbit shortcut for large k and digit DP over binary bits for the bounded-k case.",
+      "complexity": "O(k log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/digit-dp",
+      "importance": "primary",
+      "evidence": "The bounded case is solved by DP over binary digits and carry/addition usage.",
+      "solution_variant": "carry-digit-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The key invariant is binary popcount and carry behavior under adding powers of two.",
+      "solution_variant": "carry-digit-dp"
+    },
+    {
+      "tag": "trick/popcount-invariant",
+      "importance": "secondary",
+      "evidence": "Carries are interpreted as moments when popcount decreases.",
+      "solution_variant": "carry-digit-dp",
+      "description": "Use popcount changes or parity of set bits as the main invariant.",
+      "parent": "trick",
+      "created_reason": "Popcount-based invariants are common in bitwise DP and games.",
+      "status": "candidate"
+    }
+  ]
+}
