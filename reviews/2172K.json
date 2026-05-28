@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "K",
+    "title": "Kindergarten Homework",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["implementation", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/K",
+      "notes": "Count straight-line grid expressions evaluating to each queried value."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2172K",
+      "notes": "Statement mirror used to confirm expression grammar, grid constraints, and target limit."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2172/problem/K",
+      "notes": "No full public editorial was located during this pass; parsing/pruning tags come from constraints and expression grammar."
+    }
+  ],
+  "annotation": {
+    "summary": "For each target value, count valid arithmetic expressions that appear along any row, column, or diagonal in either direction of a grid.",
+    "constraints": "n*m <= 3e4, q <= 1e5, target values <= 1e6; expressions with large numbers/products can be pruned quickly.",
+    "core_idea": "Enumerate all straight lines in the eight directions and scan candidate substrings that can still evaluate to at most 1e6. Maintain expression values with multiplication precedence by tracking current sum and current product term, and count finished values in a hash table for O(1) query answers.",
+    "complexity": "Roughly O(cells * bounded_expression_length * directions) due to value pruning.",
+    "tricks": ["bounded expression enumeration by value limit", "online parse with multiplication precedence", "hash counts for target queries"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bounded-grid-expression-parser",
+      "summary": "Enumerate straight-line substrings and parse valid expressions while pruning values above the query limit.",
+      "complexity": "Pruned enumeration over 8 directions",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "implementation/parsing/expression",
+      "importance": "primary",
+      "evidence": "The core task is validating and evaluating arithmetic expressions with operator precedence.",
+      "solution_variant": "bounded-grid-expression-parser"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The intended approach enumerates grid directions/substrings but relies on tight pruning.",
+      "solution_variant": "bounded-grid-expression-parser"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "Computed expression values are accumulated in a value-to-count map for queries.",
+      "solution_variant": "bounded-grid-expression-parser"
+    },
+    {
+      "tag": "algorithm/string",
+      "importance": "secondary",
+      "evidence": "Expressions are contiguous strings extracted from grid lines.",
+      "solution_variant": "bounded-grid-expression-parser"
+    }
+  ]
+}

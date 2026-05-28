@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "F",
+    "title": "Cluster Computing System",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["graphs", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/F",
+      "notes": "Minimum spanning tree in a complete interval-GCD graph."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/rys3x1it",
+      "notes": "Writeup proves each vertex only needs to connect toward endpoint 1 or endpoint n using prefix/suffix GCD."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/tmdh0uje",
+      "notes": "Alternative Luogu solution with the same prefix/suffix GCD construction."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum cost to connect all positions when edge cost is the GCD of the interval between two endpoints.",
+    "constraints": "n up to 2e5, so building the complete graph is impossible.",
+    "core_idea": "Adding more elements to an interval cannot increase its GCD. Therefore, for any internal vertex the cheapest useful edge goes to one of the two endpoints, using prefix or suffix GCD. Connecting every internal vertex to the cheaper endpoint edge plus one endpoint-to-endpoint edge forms an MST.",
+    "complexity": "O(n log A) for prefix/suffix GCD computation.",
+    "tricks": ["GCD monotonicity under interval expansion", "star-to-endpoints MST structure", "prefix/suffix GCD"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-suffix-gcd-mst",
+      "summary": "Use prefix/suffix GCD values as the only necessary MST edges.",
+      "complexity": "O(n log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Each vertex is connected using the locally cheapest endpoint-side GCD edge.",
+      "solution_variant": "prefix-suffix-gcd-mst"
+    },
+    {
+      "tag": "algorithm/graph/mst",
+      "importance": "primary",
+      "evidence": "The target is a minimum spanning tree of an implicit graph.",
+      "solution_variant": "prefix-suffix-gcd-mst"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The cost structure and proof rely on interval GCD monotonicity.",
+      "solution_variant": "prefix-suffix-gcd-mst",
+      "description": "Use greatest-common-divisor properties as a core algorithmic ingredient.",
+      "parent": "math/number-theory",
+      "created_reason": "Many number-theory tasks use GCD without fitting divisibility, mobius, or convolution subtags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "The only needed edge costs are prefix and suffix GCDs.",
+      "solution_variant": "prefix-suffix-gcd-mst"
+    }
+  ]
+}

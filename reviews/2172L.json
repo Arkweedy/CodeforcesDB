@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "L",
+    "title": "Maximum Color Segment",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["dp", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/L",
+      "notes": "Maximize number of color segments after limited length-k flips."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/qdqxm385",
+      "notes": "Writeup transforms the string by adjacent XOR differences, splits by residue modulo k, and merges per-class DP by knapsack."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/r5pfyx2t",
+      "notes": "Alternative writeup emphasizes difference transform, independent residue classes, and grouped knapsack optimization."
+    }
+  ],
+  "annotation": {
+    "summary": "After at most m flips of length k in a binary string, maximize the number of color segments.",
+    "constraints": "n around 3000, so O(nm) DP is acceptable but naive state over the whole string is not.",
+    "core_idea": "The number of segments equals the count of adjacent differences. Flipping [i,i+k) only toggles two boundary difference positions, so positions with the same index modulo k become independent chains where an operation toggles adjacent bits. Compute for each residue class the best gain for each number of operations, then combine classes with group knapsack.",
+    "complexity": "O(nm) after splitting by residue classes.",
+    "tricks": ["difference transform of segment count", "split by modulo k", "group knapsack over residue classes"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "difference-class-dp-knapsack",
+      "summary": "Convert to adjacent-difference bits, solve each modulo-k chain by DP, and combine operation budgets.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "Each residue class is solved with a DP over position, operations, and last state.",
+      "solution_variant": "difference-class-dp-knapsack"
+    },
+    {
+      "tag": "algorithm/dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "Per-class DP tables are combined by distributing the global operation budget.",
+      "solution_variant": "difference-class-dp-knapsack",
+      "description": "Dynamic programming that combines item/group choices under a budget or capacity.",
+      "parent": "algorithm/dp",
+      "created_reason": "Budget-distribution DP is common enough to deserve a searchable subtag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "primary",
+      "evidence": "The key insight is converting segment count to adjacent XOR differences so a range flip changes two positions.",
+      "solution_variant": "difference-class-dp-knapsack",
+      "description": "Transform an array/string to adjacent differences so range operations become endpoint operations.",
+      "parent": "trick",
+      "created_reason": "Difference transforms are a recurring trick distinct from prefix-sum conversion.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "incidental",
+      "evidence": "The grouping is by residue modulo k rather than divisor; this tag should not be matched by default.",
+      "solution_variant": "difference-class-dp-knapsack"
+    }
+  ]
+}

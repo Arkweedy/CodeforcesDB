@@ -1,0 +1,73 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "I",
+    "title": "Birthday",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["geometry"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/I",
+      "notes": "Cut a circular cake by a line so all strawberries remain on one side and the smaller piece is maximized."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2172I",
+      "notes": "Chinese statement mirror used to confirm geometry and constraints."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2172/problem/I",
+      "notes": "No detailed editorial was located during this pass; convex-hull/support-line reduction is self-derived from the half-plane condition."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the largest possible smaller circular segment after cutting a disk while keeping all points in the other piece.",
+    "constraints": "n up to 2e5; only the convex hull of strawberries can matter.",
+    "core_idea": "A valid cut is a line whose one closed half-plane contains the convex hull of all strawberries. To maximize the smaller circular segment, place such a supporting/separating line as close to the center as possible. If a line through the center can keep all points on one side, the answer is half the circle; otherwise use the closest supporting line of the convex hull and convert its distance from the center to a circular-segment area.",
+    "complexity": "O(n log n) for convex hull plus rotating/edge scan.",
+    "tricks": ["reduce points to convex hull", "supporting line closest to origin", "circular segment area formula"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "convex-hull-support-line",
+      "summary": "Compute the closest valid supporting/separating line for the point convex hull, then evaluate segment area.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The whole solution is a planar geometry reduction to support lines and circular segments.",
+      "solution_variant": "convex-hull-support-line"
+    },
+    {
+      "tag": "math/geometry/convex-hull",
+      "importance": "primary",
+      "evidence": "Only the convex hull of strawberry points constrains feasible cuts.",
+      "solution_variant": "convex-hull-support-line",
+      "description": "Use the convex hull of planar points for geometry optimization or feasibility.",
+      "parent": "math/geometry",
+      "created_reason": "Convex hull is a major geometry subtopic needed for precise search.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "incidental",
+      "evidence": "The area computation is a formula after the geometric reduction, not a prefix transformation.",
+      "solution_variant": "convex-hull-support-line"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "H",
+    "title": "Shuffling Cards with Problem Solver 68!",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["hashing", "string suffix structures", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/H",
+      "notes": "Choose a cut before repeated perfect riffle shuffles to get the lexicographically smallest final deck."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/YipChipqwq/p/-/CF2172H",
+      "notes": "Writeup/code uses the permutation structure of perfect riffles and rolling-hash comparison of candidate rotations."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/x6w5edxz",
+      "notes": "Alternative explanation groups positions into blocks after t mod k riffles and compares candidates by hashing."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a deck of size 2^k, choose a cyclic cut so that after t perfect riffle shuffles the final string is lexicographically minimum.",
+    "constraints": "n is large but power-of-two structured; all possible cuts cannot be compared character-by-character.",
+    "core_idea": "The perfect riffle acts as a bit rotation/permutation on positions and has period k, so only t mod k matters. Precompute where each original position moves. Then compare final strings from different cuts using rolling hashes and binary-search/LCP, or maintain block hashes implied by the permutation structure, to find the lexicographically smallest cut.",
+    "complexity": "O(n log n) with rolling-hash comparisons.",
+    "tricks": ["riffle as bit-rotation permutation", "compare cuts by LCP hashes", "period t mod k"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "permutation-hash-min-rotation",
+      "summary": "Reduce repeated riffles to a fixed permutation and use hashes to compare all cyclic cuts.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/hashing",
+      "importance": "primary",
+      "evidence": "Candidate cuts are compared by rolling-hash/LCP queries instead of direct O(n) comparison.",
+      "solution_variant": "permutation-hash-min-rotation"
+    },
+    {
+      "tag": "algorithm/string/suffix-structures",
+      "importance": "secondary",
+      "evidence": "The task is essentially lexicographic comparison of many suffix/rotation-like strings.",
+      "solution_variant": "permutation-hash-min-rotation"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "LCP between two candidate cuts can be found by binary searching the first differing position with hashes.",
+      "solution_variant": "permutation-hash-min-rotation"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "The key reduction is recognizing the riffle permutation as periodic/bit-rotational.",
+      "solution_variant": "permutation-hash-min-rotation",
+      "description": "Exploit a special permutation form or period to avoid simulating repeated operations.",
+      "parent": "trick",
+      "created_reason": "Permutation-structure reductions recur in constructive and string transformation tasks.",
+      "status": "candidate"
+    }
+  ]
+}

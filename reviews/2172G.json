@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "G",
+    "title": "Gene Editor",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/G",
+      "notes": "Count strings after repeated rewrite/equivalence constraints in a gene-editing process."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19756048",
+      "notes": "Writeup constructs a finite automaton by expanding unknown successors and merging states implied by AA, BBB, and s relations, then exponentiates the transition matrix."
+    }
+  ],
+  "annotation": {
+    "summary": "Count length-k binary/gene strings reaching a target equivalence class under rewrite-like gene editing rules.",
+    "constraints": "k can be large, but the quotient automaton has at most about 100 states, so matrix exponentiation is intended.",
+    "core_idea": "Build the quotient automaton from the empty string. Whenever a transition is missing, add it; whenever two strings are equivalent by the given rewrite patterns, merge their automaton states with DSU. After stabilization, every character transition is known on each equivalence class. The number of length-k strings ending in the target class is obtained by exponentiating the automaton transition matrix.",
+    "complexity": "O(S^3 log k) for S automaton states after DSU quotienting.",
+    "tricks": ["construct quotient automaton", "merge equivalent states", "matrix exponentiation over automaton transitions"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quotient-automaton-matrix",
+      "summary": "Construct a small quotient automaton with DSU merges and count walks by matrix exponentiation.",
+      "complexity": "O(S^3 log k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/string/finite-automaton",
+      "importance": "primary",
+      "evidence": "The solution explicitly constructs a finite automaton over equivalence classes of strings.",
+      "solution_variant": "quotient-automaton-matrix",
+      "description": "Build or use a deterministic finite automaton that is not specifically an AC automaton.",
+      "parent": "algorithm/string",
+      "created_reason": "Automaton problems should be searchable even when they are not AC automaton or automaton-DP.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "Equivalent automaton states are merged repeatedly during construction.",
+      "solution_variant": "quotient-automaton-matrix"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "primary",
+      "evidence": "Counting length-k strings is done by transition-matrix exponentiation.",
+      "solution_variant": "quotient-automaton-matrix"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "The large string space is compressed into equivalence classes.",
+      "solution_variant": "quotient-automaton-matrix",
+      "description": "Compress a large state space by identifying equivalent states before running DP/counting.",
+      "parent": "trick",
+      "created_reason": "Quotienting states is a reusable technique in automata, graph, and DP problems.",
+      "status": "candidate"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "B",
+    "title": "Buses",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/B",
+      "notes": "Bus-walking optimization with faster buses and ordered intervals."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/zhm0725/p/19412552",
+      "notes": "Independent writeup changes reference frame and describes repeatedly taking the next reachable bus segment."
+    }
+  ],
+  "annotation": {
+    "summary": "Minimize arrival time when a person can walk and board faster buses moving toward the destination.",
+    "constraints": "The number of buses is large enough that simulating every possible transfer naively is not intended.",
+    "core_idea": "Switch to a reference frame where buses become horizontal segments and the walking trajectory is a line. The optimal strategy is greedy: keep moving toward the destination and board the reachable bus segment that advances the trajectory earliest/farthest, then continue from the bus endpoint. Sorting/querying candidate segments by the derived line-intersection inequality supports this process.",
+    "complexity": "O(n log n) with sorting and ordered candidate queries.",
+    "tricks": ["reference-frame transform", "line-segment reachability inequality", "greedily board the next useful bus"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "time-space-greedy",
+      "summary": "Represent walking and buses in an s-t diagram and greedily jump to the next intersecting bus segment.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The algorithm repeatedly takes the next useful bus once it becomes reachable.",
+      "solution_variant": "time-space-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Buses must be ordered/indexed to find the next intersecting segment efficiently.",
+      "solution_variant": "time-space-greedy"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "The core interpretation uses line and segment intersections in a transformed coordinate system.",
+      "solution_variant": "time-space-greedy"
+    }
+  ]
+}

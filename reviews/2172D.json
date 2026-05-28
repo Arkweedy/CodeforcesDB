@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "D",
+    "title": "Divisor Card Game",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/D",
+      "notes": "Expected final ownership counts in a random-order divisor game."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2172D",
+      "notes": "English/Chinese statement mirror used to confirm the process and constraints."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2172/problem/D",
+      "notes": "No full public editorial was located during this pass; tags are based on the official tags plus a derivation from the random-order divisibility process."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute each student's expected final number of cards when initially undealt cards are revealed in random order and won according to divisibility rules.",
+    "constraints": "n <= 600, suggesting polynomial DP over cards/subsets of divisor relationships rather than simulation over all reveal orders.",
+    "core_idea": "A revealed card can be won only by a currently owned multiple, and newly won cards can later serve as multiples for their divisors. The random order over undealt cards turns ownership propagation on the divisibility DAG into a probability DP: process dependency sets/combinatorial orders and add each card's ownership probability by linearity of expectation.",
+    "complexity": "Polynomial in n with divisibility preprocessing; exact implementation depends on the chosen DP state.",
+    "tricks": ["random reveal order as topological probability", "ownership propagation on divisibility DAG", "linearity of expectation over final owned cards"],
+    "confidence": "low",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "divisibility-random-order-dp",
+      "summary": "Precompute divisor/multiple relations and use DP/combinatorial probabilities to assign ownership expectation.",
+      "complexity": "Polynomial for n <= 600",
+      "confidence": "low",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The official tag and constraints point to a polynomial state DP over the random divisibility process.",
+      "solution_variant": "divisibility-random-order-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The expected values depend on counting relative reveal orders in the divisibility dependency graph.",
+      "solution_variant": "divisibility-random-order-dp"
+    },
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "secondary",
+      "evidence": "Final expected counts can be decomposed into ownership probabilities for individual cards.",
+      "solution_variant": "divisibility-random-order-dp"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "All transitions are determined by divisibility among card values.",
+      "solution_variant": "divisibility-random-order-dp"
+    }
+  ]
+}

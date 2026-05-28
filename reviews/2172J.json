@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "J",
+    "title": "Sliding Tiles",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["data structures", "divide and conquer", "dsu"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/J",
+      "notes": "Sliding tiles with barriers; compute accumulated column answers after operations."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/k8mojx5y",
+      "notes": "Sweep-line writeup maintains row states after inserting barriers and blocks using Fenwick and historical segment tree structures."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain the effect of sliding tiles around inserted barriers and aggregate how many tiles end in each column.",
+    "constraints": "n up to several hundred thousand, so each update must touch only logarithmic data-structure nodes rather than all tiles between barriers.",
+    "core_idea": "Scan rows from top to bottom and maintain, for each current barrier interval, how many blocks occupy the leading positions after sliding. Inserting a barrier splits an interval and rewrites prefix counts in the two new intervals; inserting a block sets one position in the appropriate interval. Fenwick trees and historical/range-sum segment structures maintain counts and accumulated column answers.",
+    "complexity": "O(n log n).",
+    "tricks": ["sweep rows", "split barrier intervals", "range prefix assignment/count aggregation"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sweep-line-interval-data-structures",
+      "summary": "Process events by row, split intervals at barriers, and maintain prefix occupancy with Fenwick/segment trees.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The solution scans events row by row and updates the active interval structure.",
+      "solution_variant": "sweep-line-interval-data-structures",
+      "description": "Process geometric or ordered events in one direction while maintaining active state.",
+      "parent": "paradigm",
+      "created_reason": "Sweep line is a reusable paradigm not represented by current tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "Fenwick trees maintain counts/ranks inside barrier intervals.",
+      "solution_variant": "sweep-line-interval-data-structures"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "A range/historical segment tree maintains accumulated column sums under range assignments.",
+      "solution_variant": "sweep-line-interval-data-structures",
+      "description": "Use segment tree variants for range queries, range updates, persistence, or historical sums.",
+      "parent": "data-structure",
+      "created_reason": "Segment tree is a core data structure category missing from the tag hierarchy.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "The official tag indicates DSU-style interval/next-pointer maintenance can be part of the implementation.",
+      "solution_variant": "sweep-line-interval-data-structures"
+    }
+  ]
+}

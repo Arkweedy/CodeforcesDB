@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "C",
+    "title": "Circles Are Far from Each Other",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/C",
+      "notes": "Circle nesting/layout optimization with collinear centers."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19756048",
+      "notes": "Writeup binary-searches the answer and greedily maintains concentric-circle groups using deques."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2172C",
+      "notes": "Chinese statement mirror, useful for checking the geometric constraints."
+    }
+  ],
+  "annotation": {
+    "summary": "Place sorted-radius circles with collinear centers and nesting constraints to maximize the minimum distance between different circles.",
+    "constraints": "n up to 1e5 and l up to 200; the answer is rational/real-like, so feasibility is tested by binary search.",
+    "core_idea": "For a guessed minimum gap D, feasible layouts have the structure of several disjoint concentric-circle groups. Processing radii from small to large, groups whose outer radius is at most r_i-D are interchangeable for future containment. Greedily match mandatory contained circles first and track available/unavailable groups with deques; then verify the total collinear diameter budget.",
+    "complexity": "O(n log precision) or O(n log n) depending on rational handling.",
+    "tricks": ["binary search answer", "concentric group structure", "greedy matching of containable groups"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-greedy-groups",
+      "summary": "Check a candidate gap by greedily assigning circles into concentric groups.",
+      "complexity": "O(n) per check",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The maximum feasible circle gap is found by binary searching the answer.",
+      "solution_variant": "binary-search-greedy-groups"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The feasibility check greedily matches available concentric groups when processing radii.",
+      "solution_variant": "binary-search-greedy-groups"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The solution relies on the geometry of nested collinear circles and distance between circumferences.",
+      "solution_variant": "binary-search-greedy-groups"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "Feasibility is monotone in the guessed minimum gap.",
+      "solution_variant": "binary-search-greedy-groups"
+    }
+  ]
+}

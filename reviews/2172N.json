@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2172,
+    "title": "2025-2026 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2172,
+    "index": "N",
+    "title": "New Kingdom",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "graphs", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2172/problem/N",
+      "notes": "Construct a simple connected graph with exactly k odd-degree vertices and b bridges."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/ddxrS/p/19244519",
+      "notes": "Writeup builds graphs from 2-edge-connected components, cycles, stars, and chains with case analysis."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Hstry/articles/19719613",
+      "notes": "Alternative notes classify cases by comparing b+1 and k."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a simple connected graph on n vertices with exactly k odd-degree vertices and exactly b bridges, or prove impossible.",
+    "constraints": "Total n up to 1e5 and output edges up to 5n, so the construction must be explicit and linear.",
+    "core_idea": "By the handshaking lemma k must be even. Contracting 2-edge-connected components turns the bridge structure into a tree with b+1 components. Use cycles as bridge-free components, stars/chains to create required bridge leaves, and add chords inside a large cycle to create extra odd-degree vertices when k is larger than the number forced by bridges. Small cases such as n=2, b=n-2, or a 3-cycle with required chords need separate handling to keep the graph simple.",
+    "complexity": "O(n) output construction.",
+    "tricks": ["bridge-block tree construction", "handshaking parity obstruction", "case split on b+1 versus k"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bridge-block-constructive-cases",
+      "summary": "Construct cycles as 2-edge-connected blocks and connect them by bridges according to the desired bridge count and odd-degree count.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The problem asks for an explicit graph and the solution is a case-based construction.",
+      "solution_variant": "bridge-block-constructive-cases"
+    },
+    {
+      "tag": "algorithm/graph/bridge",
+      "importance": "primary",
+      "evidence": "The construction is organized around exactly b bridge edges and 2-edge-connected blocks.",
+      "solution_variant": "bridge-block-constructive-cases",
+      "description": "Use graph bridges, bridge trees, or 2-edge-connected components as a central concept.",
+      "parent": "algorithm/graph",
+      "created_reason": "Bridge/edge-biconnected structure is a common graph subtopic not yet represented.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The handshaking lemma gives the parity feasibility condition on k.",
+      "solution_variant": "bridge-block-constructive-cases"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The construction splits into b=0, b+1>k, b+1=k, and b+1<k cases plus corner cases.",
+      "solution_variant": "bridge-block-constructive-cases",
+      "description": "A solution where correctness depends on a small number of structural cases and boundary cases.",
+      "parent": "trick",
+      "created_reason": "Many constructive problems are best retrieved by their required case analysis.",
+      "status": "candidate"
+    }
+  ]
+}
