@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2149,
+    "title": "Codeforces Round 1054 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2149,
+    "index": "F",
+    "title": "Nezuko in the Clearing",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "math", "ternary search"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2149/problem/F",
+      "notes": "A character alternates walking and resting under a health budget; find the minimum time to cover distance d."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146738",
+      "notes": "Official editorial checks a proposed number of rests with a triangular-cost formula and binary-searches the answer."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum time to walk distance d when consecutive walking steps have increasing health cost and resting recovers health.",
+    "constraints": "h and d are large, so simulating every step is impossible; only the number and length of walking blocks should be considered.",
+    "core_idea": "If there are r rests, the walk is split into r+1 blocks. For fixed r, the optimal distribution of walking steps is as balanced as possible because the cost of a block of length x is triangular, x(x+1)/2, a convex function. This gives a monotone feasibility test for whether r rests can cover d under health h, so binary search the minimum r and return d+r time.",
+    "complexity": "O(log d * log d) or O(log d) with closed-form block length computation.",
+    "tricks": ["triangular walking cost", "balanced block distribution", "monotone feasibility in number of rests"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-rests",
+      "summary": "Binary search the number of rests; for each value, compute the maximum distance coverable by optimally balanced walking blocks.",
+      "complexity": "O(log^2 d)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "ternary-search-block-length",
+      "summary": "Equivalent approach optimizing over the common block length using the convexity of triangular costs.",
+      "complexity": "O(log d)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The official solution binary-searches the minimum number of rests using a monotone feasibility check.",
+      "solution_variant": "binary-search-rests"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "If a certain number of rests is enough, any larger number of rests is also enough.",
+      "solution_variant": "binary-search-rests"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The walking cost per block is a triangular-number sum and the optimum uses balanced block sizes.",
+      "solution_variant": "binary-search-rests"
+    },
+    {
+      "tag": "algorithm/search/ternary-search",
+      "importance": "incidental",
+      "evidence": "Ternary search is an alternative way to optimize the convex block-length expression, but binary search on rests is the main reviewed solution.",
+      "solution_variant": "ternary-search-block-length"
+    }
+  ]
+}

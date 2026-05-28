@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2149,
+    "title": "Codeforces Round 1054 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2149,
+    "index": "E",
+    "title": "Hidden Knowledge of the Ancients",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2149/problem/E",
+      "notes": "Count subsegments where some value appears between k and floor(len/2) times."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146738",
+      "notes": "Official editorial derives the answer by subtracting segments with frequency below k and uses the fact that two such high-frequency values cannot coexist."
+    }
+  ],
+  "annotation": {
+    "summary": "Count subarrays in which at least one value occurs at least k times but not more than half of the subarray length.",
+    "constraints": "Total n is up to 2e5, so the number of invalid/valid windows must be counted with moving pointers.",
+    "core_idea": "A value satisfying cnt*2<=len and cnt>=k is unique enough that windows can be handled by its kth occurrence. Count all subarrays with some value appearing at least k times, then subtract subarrays where the only such heavy value occupies more than half the length. Occurrence position lists and two pointers maintain the minimal left/right extension around kth occurrences.",
+    "complexity": "O(n) to O(n log n) per test case depending on occurrence-list implementation.",
+    "tricks": ["count by kth occurrence", "subtract majority-too-large windows", "two pointers over occurrence lists"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "occurrence-list-two-pointers",
+      "summary": "Group positions by value, count windows around kth occurrences, and use two pointers to remove windows where that value is a strict majority.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "The solution scans occurrence positions with moving boundaries to count valid and over-majority windows.",
+      "solution_variant": "occurrence-list-two-pointers"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "primary",
+      "evidence": "The main counting step separates windows with enough occurrences from those where that same value is too dominant.",
+      "solution_variant": "occurrence-list-two-pointers"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "Positions are grouped by compressed value or hash-map buckets before running per-value scans.",
+      "solution_variant": "occurrence-list-two-pointers"
+    }
+  ]
+}

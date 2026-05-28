@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2149,
+    "title": "Codeforces Round 1054 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2149,
+    "index": "G",
+    "title": "Buratsuta 3",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "divide and conquer", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2149/problem/G",
+      "notes": "For each range query, output all values whose frequency is more than one third of the range length."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146738",
+      "notes": "Official editorial presents both randomized candidate sampling and a deterministic Misra-Gries/segment-tree solution."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer range queries asking for every value appearing more than |range|/3 times.",
+    "constraints": "n,q are large, and each query can have at most two valid answers, so only a constant number of candidates should be verified.",
+    "core_idea": "Use the Misra-Gries majority-vote algorithm with capacity 2: merging two summaries preserves all elements that could exceed one third frequency. Build a segment tree whose node stores the two Misra-Gries candidates for that segment, merge summaries along the query range, then verify each candidate's true frequency by binary searching its occurrence-position list.",
+    "complexity": "O(log n) candidate retrieval plus O(log n) verification per candidate.",
+    "tricks": ["at most two one-third majorities", "mergeable Misra-Gries summaries", "verify candidates by occurrence lists"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "misra-gries-segment-tree",
+      "summary": "Store two Misra-Gries candidates per segment-tree node, merge them for a query, and verify candidates with occurrence lists.",
+      "complexity": "O(log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "random-sampling",
+      "summary": "Sample several random positions from the range and verify their frequencies; probabilistic but simpler.",
+      "complexity": "O(samples * log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/majority-vote/misra-gries",
+      "importance": "primary",
+      "evidence": "The deterministic solution stores and merges Misra-Gries summaries with two candidates to preserve all >len/3 elements.",
+      "solution_variant": "misra-gries-segment-tree",
+      "description": "Generalized majority-vote algorithm that keeps k-1 counters to find all elements with frequency greater than n/k; also useful as a mergeable range summary.",
+      "parent": "algorithm/majority-vote",
+      "created_reason": "Range majority and heavy-hitter problems are a recurring category not captured by generic data-structure tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "Segment tree merging is used to obtain the Misra-Gries summary for any query range.",
+      "solution_variant": "misra-gries-segment-tree"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Candidate frequencies are verified by lower_bound/upper_bound on occurrence-position lists.",
+      "solution_variant": "misra-gries-segment-tree"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "incidental",
+      "evidence": "The randomized sampling solution is an alternative, but the deterministic reviewed solution does not depend on probability.",
+      "solution_variant": "random-sampling"
+    }
+  ]
+}
