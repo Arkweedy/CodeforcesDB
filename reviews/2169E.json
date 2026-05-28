@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2169,
+    "title": "Educational Codeforces Round 184 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2169,
+    "index": "E",
+    "title": "Points Selection",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["dp", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2169/problem/E",
+      "notes": "Alice removes a nonempty proper subset of points, gains removed costs, and Bob minimizes the bounding rectangle perimeter of the remaining points."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148390",
+      "notes": "Official code uses a 4-bit DP over which bounding-box extremal coordinates of the remaining points have been fixed."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/yljmim9f",
+      "notes": "Used to confirm the key property that Bob only needs at most four remaining points determining min/max x/y."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the optimal score when Alice can remove points for cost and Bob chooses the minimum axis-aligned bounding rectangle around the remaining points.",
+    "constraints": "Total n is 3e5, but the rectangle perimeter depends only on four extremal coordinates.",
+    "core_idea": "Bob's rectangle is determined by min x, max x, min y, and max y of the remaining points, so the remaining set can be represented by at most four witness points. Alice gets the cost of all removed points, so keeping a point loses its cost but may contribute to one or more of the four extremal coordinates. A 4-bit DP processes points and decides which subset of the four extrema each kept point realizes; skipped points contribute their cost to Alice.",
+    "complexity": "O(n * 3^4) per test case.",
+    "tricks": ["bounding box determined by four extrema", "4-bit state over chosen extrema", "remove-cost versus perimeter contribution"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "four-extrema-bitmask-dp",
+      "summary": "DP over the four bounding-box extrema, assigning each kept point to a nonempty subset of still-uncovered extrema.",
+      "complexity": "O(n * 3^4)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The state is a 4-bit mask of which rectangle extrema have already been assigned to kept points.",
+      "solution_variant": "four-extrema-bitmask-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The payoff depends on the perimeter of an axis-aligned bounding rectangle determined by extremal coordinates.",
+      "solution_variant": "four-extrema-bitmask-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "An arbitrary remaining point set is reduced to the four-coordinate extremal witness state.",
+      "solution_variant": "four-extrema-bitmask-dp"
+    }
+  ]
+}

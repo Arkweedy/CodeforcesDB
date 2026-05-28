@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2169,
+    "title": "Educational Codeforces Round 184 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2169,
+    "index": "D1",
+    "title": "Removal of a Sequence (Easy Version)",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "implementation", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2169/problem/D1",
+      "notes": "Easy version repeatedly removes every y-th remaining number from the natural sequence, with small x."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148390",
+      "notes": "Official reference code binary-searches the answer and simulates the surviving count for x deletion rounds."
+    }
+  ],
+  "annotation": {
+    "summary": "After repeating the deletion of every y-th remaining number x times, find the original value at position k in the surviving sequence or report that it does not exist.",
+    "constraints": "In the easy version, x is small enough to simulate the survivor-count transform for each binary-search midpoint.",
+    "core_idea": "For a proposed original prefix length m, the number of survivors after one operation is cnt - floor(cnt/y); applying this x times gives how many numbers among 1..m remain. This survivor count is monotone in m, so binary search the largest m with survivors before the k-th position still not exceeding k, which yields the k-th surviving original number.",
+    "complexity": "O(x log 1e12) per test case.",
+    "tricks": ["survivor count transform", "monotone kth survivor predicate", "binary search on original value"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-survivor-count",
+      "summary": "Binary search the original value and simulate the number of survivors in its prefix after x rounds.",
+      "complexity": "O(x log 1e12)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The k-th survivor is located by binary searching the original prefix length with enough survivors.",
+      "solution_variant": "binary-search-survivor-count"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "Each deletion round removes floor(cnt/y) positions, a divisibility/counting transform by multiples of y.",
+      "solution_variant": "binary-search-survivor-count"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The survivor count in a prefix is monotone in the original prefix length.",
+      "solution_variant": "binary-search-survivor-count"
+    }
+  ]
+}

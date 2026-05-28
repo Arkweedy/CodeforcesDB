@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2169,
+    "title": "Educational Codeforces Round 184 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2169,
+    "index": "D2",
+    "title": "Removal of a Sequence (Hard Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["binary search", "divide and conquer", "greedy", "implementation", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2169/problem/D2",
+      "notes": "Hard version raises x to 1e12, so simulating every deletion round is impossible."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148390",
+      "notes": "Official reference code advances k through many identical reverse-deletion steps at once using quotient grouping."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the k-th remaining natural number after x rounds of deleting every y-th remaining element, with x up to 1e12.",
+    "constraints": "x,y,k can be 1e12, so the easy binary search with O(x) check is too slow.",
+    "core_idea": "Invert the deletion process on the desired rank k. One reverse step maps a surviving rank k to k + floor((k-1)/(y-1)), because every block of y-1 survivors had one deleted number inserted before it. The value of floor((k-1)/(y-1)) stays constant for a range of steps, so group many reverse steps together and add cnt*cur to k. If y=1 or k exceeds 1e12, the answer is -1.",
+    "complexity": "O(number of quotient changes), logarithmic-ish in k for practical bounds.",
+    "tricks": ["reverse survivor-rank transform", "group equal quotient steps", "overflow bound check"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "grouped-reverse-rank",
+      "summary": "Repeatedly undo deletion rounds on rank k, batching consecutive rounds where floor((k-1)/(y-1)) is constant.",
+      "complexity": "O(log k) style grouped loop",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "primary",
+      "evidence": "The hard solution groups many rounds with the same quotient floor((k-1)/(y-1)) instead of iterating all x rounds.",
+      "solution_variant": "grouped-reverse-rank"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The reverse process greedily applies the maximum number of currently identical quotient steps before recomputing.",
+      "solution_variant": "grouped-reverse-rank"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "The rank transform is based on floor division by y-1 and multiples removed every y positions.",
+      "solution_variant": "grouped-reverse-rank"
+    }
+  ]
+}

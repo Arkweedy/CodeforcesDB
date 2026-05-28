@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2169,
+    "title": "Educational Codeforces Round 184 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2169,
+    "index": "F",
+    "title": "Subsequence Problem",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "fft", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2169/problem/F",
+      "notes": "Count arrays c of length n over [1,m] that contain every beautiful choice array as a subsequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148390",
+      "notes": "Official reference code builds one polynomial for each possible required position depth up to 5 and multiplies them with NTT."
+    }
+  ],
+  "annotation": {
+    "summary": "Count length-n arrays over [1,m] that contain every array formed by choosing one element from each given small set as a subsequence.",
+    "constraints": "n is up to 2e5, m is huge, each required set has size at most 5, and the total required length is at most n.",
+    "core_idea": "The mandatory part of any perfect array must be able to realize all choices from the k sets in order. Since each set size is at most 5, group positions by depth i: how many sets contain an i-th choice. For each depth, the extra filler elements before that depth have a generating function whose coefficient counts ways to distribute unused elements with colors not reserved by earlier choices. The final count is the product of these small-depth generating functions, multiplied by factorials for the internal order of choices in each set; polynomial multiplications are done with NTT under 998244353.",
+    "complexity": "O(n log n) from multiplying truncated polynomials.",
+    "tricks": ["group requirements by choice depth", "ordinary generating function for fillers", "truncate polynomial product to n"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "generating-functions-ntt",
+      "summary": "Build one polynomial per depth 0..5, multiply them with NTT, and take the coefficient for the remaining free positions.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/generating-function",
+      "importance": "primary",
+      "evidence": "The solution represents choices for extra filler positions as generating functions and extracts one coefficient.",
+      "solution_variant": "generating-functions-ntt"
+    },
+    {
+      "tag": "algorithm/transform/fft",
+      "importance": "primary",
+      "evidence": "The official implementation uses NTT-style convolution to multiply the depth polynomials efficiently.",
+      "solution_variant": "generating-functions-ntt"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The count uses stars-and-bars/binomial coefficients and factorial factors for the required subsequence choices.",
+      "solution_variant": "generating-functions-ntt"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "secondary",
+      "evidence": "The polynomial product is equivalent to DP over used filler length across depth groups.",
+      "solution_variant": "generating-functions-ntt"
+    }
+  ]
+}
