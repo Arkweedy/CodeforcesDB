@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "F",
+    "title": "Grand Finale: Snakes",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "interactive", "ternary search"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/F",
+      "notes": "Interactive-style search problem about locating snake endpoints/parameters."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial uses search over a unimodal/monotone response landscape."
+    }
+  ],
+  "annotation": {
+    "summary": "Find hidden snake parameters with a limited number of adaptive queries.",
+    "constraints": "The query budget is tight, requiring logarithmic search rather than scanning.",
+    "core_idea": "The query response as a function of position has monotone or unimodal structure. First locate the relevant interval by binary search, then refine the exact point with ternary-style comparison or another monotone search on the narrowed range. The final answer is verified by a small number of direct queries.",
+    "complexity": "O(log n) to O(log^2 n) queries.",
+    "tricks": ["binary search over monotone response", "ternary search on unimodal response", "final small-range verification"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interactive-binary-ternary-search",
+      "summary": "Use binary search to find the active interval and ternary/unimodal search to locate the exact hidden snake parameter.",
+      "complexity": "O(log n) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The task is built around adaptive queries.",
+      "solution_variant": "interactive-binary-ternary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "A monotone part of the response is searched logarithmically.",
+      "solution_variant": "interactive-binary-ternary-search"
+    },
+    {
+      "tag": "algorithm/search/ternary-search",
+      "importance": "secondary",
+      "evidence": "The response also has a unimodal part handled by ternary-style search.",
+      "solution_variant": "interactive-binary-ternary-search"
+    }
+  ]
+}

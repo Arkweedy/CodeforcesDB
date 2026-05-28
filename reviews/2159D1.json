@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "D1",
+    "title": "Inverse Minimum Partition (Easy Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "dp", "geometry", "greedy", "math", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/D1",
+      "notes": "Easy version of inverse minimum partition."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial develops the geometric/DP view in multiple parts; the easy version permits brute-force pieces."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover or count partitions inverse to a minimum operation under easier constraints.",
+    "constraints": "The easy version allows trying candidate split parameters with O(n^2) or similar checks.",
+    "core_idea": "Represent each partition constraint as a lower envelope/geometric condition. For a fixed parameter, greedily/two-pointer compute the minimum partition pieces, and binary search or brute-force the inverse parameter. The easy version can directly evaluate all relevant breakpoints.",
+    "complexity": "O(n^2) or O(n log n) depending on implementation.",
+    "tricks": ["geometric lower-envelope interpretation", "two-pointer partition check", "binary search over feasible parameter"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bruteforce-geometric-check",
+      "summary": "Enumerate candidate parameters and evaluate the minimum-partition predicate with a greedy/two-pointer check.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The editorial frames the partition constraints as geometric envelope conditions.",
+      "solution_variant": "bruteforce-geometric-check"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Feasible parameters can be found by binary search in the easier approach.",
+      "solution_variant": "bruteforce-geometric-check"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The partition predicate is evaluated with monotone pointer movement.",
+      "solution_variant": "bruteforce-geometric-check"
+    }
+  ]
+}

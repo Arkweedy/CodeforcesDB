@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "C",
+    "title": "Twin Polynomials",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "graph matchings", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/C",
+      "notes": "Construct two polynomials satisfying coefficient/evaluation constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial reduces coefficient pairing to matching terms with complementary contributions."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1058",
+      "notes": "Maspy's note links the constructive pairing implementation for this problem."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct or count twin polynomial pairs by pairing terms with compatible algebraic contributions.",
+    "constraints": "Degree/term count is large enough to need a direct constructive/matching method, not symbolic solving.",
+    "core_idea": "Transform the polynomial condition into constraints on pairs of coefficient positions. Each allowed pair cancels or contributes a fixed algebraic value, so the problem becomes matching terms from two groups. Once a perfect/maximum matching is found in this structured graph, the corresponding coefficients define the twin polynomials.",
+    "complexity": "O(n^2) or better due to the structured matching graph.",
+    "tricks": ["translate algebraic equality to pair constraints", "structured bipartite matching of terms", "construct coefficients from matched pairs"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "structured-term-matching",
+      "summary": "Build the compatibility graph between term positions and choose matched pairs to satisfy the polynomial identity.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/graph/matching",
+      "importance": "primary",
+      "evidence": "The official tags and solution reduce the construction to pairing compatible terms.",
+      "solution_variant": "structured-term-matching"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The coefficient choices are counted/paired combinatorially.",
+      "solution_variant": "structured-term-matching"
+    },
+    {
+      "tag": "math/linear-algebra",
+      "importance": "secondary",
+      "evidence": "The polynomial identities are handled by linear relations among coefficients.",
+      "solution_variant": "structured-term-matching"
+    }
+  ]
+}

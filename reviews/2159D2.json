@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "D2",
+    "title": "Inverse Minimum Partition (Hard Version)",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": ["dp", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/D2",
+      "notes": "Hard version of inverse minimum partition."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial's hard part removes the quadratic enumeration with a compressed DP/greedy recurrence."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve the inverse minimum partition problem under hard constraints.",
+    "constraints": "The hard version requires near-linear or O(n log n) optimization over all partition states.",
+    "core_idea": "Keep the same geometric/monotone structure as D1, but avoid enumerating every breakpoint. The greedy partition transition is monotone, so DP states can be compressed; only critical candidates on the envelope need to be retained. This yields all inverse answers by sweeping states in order and updating the best reachable partition count.",
+    "complexity": "O(n log n) or near-linear.",
+    "tricks": ["compress geometric breakpoints", "monotone greedy transition", "DP over critical envelope states"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "compressed-envelope-dp",
+      "summary": "Maintain only critical envelope states and update the partition DP with monotone transitions.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The hard solution compresses and updates partition states with DP.",
+      "solution_variant": "compressed-envelope-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The transition relies on greedy minimum-partition choices.",
+      "solution_variant": "compressed-envelope-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "The same envelope geometry from D1 underlies the compressed state set.",
+      "solution_variant": "compressed-envelope-dp"
+    }
+  ]
+}

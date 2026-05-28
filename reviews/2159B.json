@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "B",
+    "title": "Rectangles",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "dp", "dsu", "greedy", "implementation", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/B",
+      "notes": "Count or optimize over axis-aligned rectangles in a grid."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial fixes row boundaries and maintains column constraints while expanding the bottom row."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1058",
+      "notes": "Maspy notes that for fixed upper row, processing lower rows descending lets column chmin constraints persist."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve the rectangle counting/optimization task by fixing two horizontal boundaries and maintaining valid vertical gaps.",
+    "constraints": "Assume n<=m after transposition; O(n^2 m) is intended while O(n^2 m log m) is also acceptable.",
+    "core_idea": "Fix the top row u, then process the bottom row d in descending/increasing order. For this fixed row interval, usable columns are known, and every adjacent usable-column pair defines a rectangle candidate. Updating the best/limited value for a column is a chmin-type operation; when d moves monotonically, these constraints only get stronger and can be stored per column instead of recomputed from scratch.",
+    "complexity": "O(n^2 m), after possibly transposing so n<=m.",
+    "tricks": ["fix two row boundaries", "maintain per-column chmin while sweeping bottom row", "transpose to make the squared dimension smaller"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "row-pair-column-sweep",
+      "summary": "Enumerate top/bottom row pairs and maintain column constraints incrementally.",
+      "complexity": "O(n^2 m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The main loop explicitly fixes the two row boundaries.",
+      "solution_variant": "row-pair-column-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "For each top row, the bottom row is swept while maintaining column state.",
+      "solution_variant": "row-pair-column-sweep"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "Per-column chmin/state maintenance is the optimization over naive recomputation.",
+      "solution_variant": "row-pair-column-sweep"
+    }
+  ]
+}

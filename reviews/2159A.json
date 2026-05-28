@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "A",
+    "title": "MAD Interactive Problem",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "implementation", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/A",
+      "notes": "Non-interactive version of an interactive-style pairing problem."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial builds the two occurrences of each value in two passes."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1058",
+      "notes": "Maspy explains finding second appearances using first-appearance set, then first appearances using second-appearance set."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover paired values using queries against sets of known first/second occurrences.",
+    "constraints": "The intended number of queries is linear in n.",
+    "core_idea": "Maintain I as positions known to be first occurrences. Query I union {i}; if the returned value is nonzero, i is the second occurrence of that value, otherwise i is a new first occurrence. After all second occurrences are known, repeat symmetrically with the set of second occurrences to identify first occurrences.",
+    "complexity": "O(n) queries / O(n) time in the non-interactive version.",
+    "tricks": ["two-pass recovery", "use all first occurrences as a detector", "then use all second occurrences symmetrically"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-pass-occurrence-recovery",
+      "summary": "First identify every second occurrence, then identify first occurrences by querying against the second-occurrence set.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution explicitly reconstructs the paired positions in two deterministic passes.",
+      "solution_variant": "two-pass-occurrence-recovery"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The main risk is maintaining first/second occurrence sets and output order.",
+      "solution_variant": "two-pass-occurrence-recovery"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "incidental",
+      "evidence": "The problem is styled after an interactive process, but the submitted version uses standard I/O.",
+      "solution_variant": "two-pass-occurrence-recovery"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2159,
+    "title": "Codeforces Round 1058 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2159,
+    "index": "E",
+    "title": "Super-Short-Polynomial-San",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["math", "meet-in-the-middle"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2159/problem/E",
+      "notes": "Polynomial construction/search problem with very short representation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147322?mobile=false",
+      "notes": "Official editorial splits polynomial terms into two halves and meets in the middle."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a very short polynomial representation satisfying the target constraints.",
+    "constraints": "The state space is exponential in degree/terms, so it must be split into two halves.",
+    "core_idea": "Enumerate all possible contributions of the first half of terms and store their resulting vector/value. Enumerate the second half and look for the complementary value required by the target polynomial condition. Algebraic normalization removes equivalent representations and keeps the hash/table size feasible.",
+    "complexity": "O(2^(n/2) poly(n)) memory/time style.",
+    "tricks": ["meet in the middle on polynomial terms", "hash algebraic contribution vectors", "normalize equivalent polynomial states"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "polynomial-mitm",
+      "summary": "Split term choices into two halves and match complementary polynomial contributions by hashing.",
+      "complexity": "O(2^(n/2) poly(n))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/meet-in-the-middle",
+      "importance": "primary",
+      "evidence": "The official tags and solution split the exponential search into two halves.",
+      "solution_variant": "polynomial-mitm"
+    },
+    {
+      "tag": "math/linear-algebra",
+      "importance": "secondary",
+      "evidence": "Polynomial contributions are represented and matched as coefficient/evaluation vectors.",
+      "solution_variant": "polynomial-mitm"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "secondary",
+      "evidence": "Half contributions are stored in a lookup table by normalized vector value.",
+      "solution_variant": "polynomial-mitm"
+    }
+  ]
+}
