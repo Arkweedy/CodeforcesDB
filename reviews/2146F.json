@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2146,
+    "title": "Codeforces Round 1052 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2146,
+    "index": "F",
+    "title": "Bubble Sort",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2146/problem/F",
+      "notes": "Count permutations whose prefix bubble-sort round counts satisfy m interval restrictions."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146648",
+      "notes": "Official hints derive the prefix bubble-sort count as previous greater elements and the reference code compresses restriction endpoints and k-values into a DP."
+    }
+  ],
+  "annotation": {
+    "summary": "Count permutations such that the number of prefixes whose bubble-sort round count is at most each queried k lies inside given intervals.",
+    "constraints": "n can be 1e6 but m<=1000 and sum m^2<=1e6, so only restriction endpoints and k-values can be DP states.",
+    "core_idea": "For position x, the bubble-sort rounds needed for prefix x equals the number of earlier positions i<x with p_i>p_x. Instead of counting permutations directly, sort the relevant restriction endpoints and k thresholds. The DP state tracks the current compressed threshold class for the processed block of positions. Closed combinatorial factors count how many choices inside a block keep the prefix-round value within a threshold interval, and each restriction narrows the allowed threshold class at its endpoint.",
+    "complexity": "O(m^2 + m log m) per test case after O(n) factorial precomputation.",
+    "tricks": ["bubble-sort rounds as inversion count per prefix element", "compress restriction endpoints and thresholds", "block combinatorial transition"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "compressed-restriction-dp",
+      "summary": "Compress all relevant prefix endpoints and k thresholds, then run DP over threshold classes with binomial/falling-factorial transition counts.",
+      "complexity": "O(m^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The final count is computed by DP over compressed restriction blocks and threshold classes.",
+      "solution_variant": "compressed-restriction-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "Transitions use factorial/binomial formulas to count many permutations represented by a compressed state.",
+      "solution_variant": "compressed-restriction-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "The huge n-dimensional permutation process is reduced to states over at most O(m) relevant endpoints and k-values.",
+      "solution_variant": "compressed-restriction-dp"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2146,
+    "title": "Codeforces Round 1052 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2146,
+    "index": "D1",
+    "title": "Max Sum OR (Easy Version)",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "constructive algorithms", "divide and conquer", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2146/problem/D1",
+      "notes": "Easy version asks to permute [l,r] with l=0 and maximize sum of bitwise OR with the original order."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146648",
+      "notes": "Official hints use the upper bound x|y <= x+y and pair values with complements 2^k-1-x."
+    }
+  ],
+  "annotation": {
+    "summary": "Reorder the array [0,n] to maximize the sum of a_i | b_i and output one optimal permutation.",
+    "constraints": "The easy version has l=0, so the interval is a prefix [0,n] and can be paired greedily from the largest value.",
+    "core_idea": "For any pair x,y, x|y <= x+y, so the total sum is at most the sum of all elements in both arrays. Equality holds exactly when x&y=0 for every pair. For a full range from 0, pairing x with the available complement (2^k-1)-x for the smallest all-ones mask covering x creates pairs with disjoint bits, achieving the upper bound.",
+    "complexity": "O(n log n) or O(n) with a simple available-set implementation.",
+    "tricks": ["OR upper bound by pair sum", "pair with all-ones complement", "construct from largest values"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "all-ones-complement-greedy",
+      "summary": "Process values from high to low and pair each unpaired value with its complement under the current all-ones mask.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The construction is based on disjoint binary bits and complements under masks of the form 2^k-1.",
+      "solution_variant": "all-ones-complement-greedy"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires outputting an explicit optimal permutation, built by complement pairing.",
+      "solution_variant": "all-ones-complement-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Processing from the largest remaining value chooses the only complement that can keep x&y=0 at the current mask level.",
+      "solution_variant": "all-ones-complement-greedy"
+    }
+  ]
+}

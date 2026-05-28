@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2146,
+    "title": "Codeforces Round 1052 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2146,
+    "index": "D2",
+    "title": "Max Sum OR (Hard Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "constructive algorithms", "divide and conquer", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2146/problem/D2",
+      "notes": "Hard version permits any interval 0<=l<=r<2^30 and asks for an optimal reordered copy."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146648",
+      "notes": "Official solution recursively splits at the highest differing bit and pairs values across the split; it also describes an alternative reversed-bit binary trie greedy."
+    }
+  ],
+  "annotation": {
+    "summary": "For an arbitrary integer interval [l,r], permute one copy to maximize the sum of bitwise OR with the fixed ordered copy.",
+    "constraints": "The total interval length is up to 2e5, but values are up to 2^30, so the construction must recurse over bits rather than over value universe.",
+    "core_idea": "At each highest bit where the current interval contains both 0 and 1, pair as many numbers as possible across that split so the high bit contributes to every paired OR. The optimal partner around the split t is 2t-1-x, which mirrors lower bits and keeps the paired values as bit-disjoint as possible. Any unpaired prefix or suffix becomes the same problem on lower bits.",
+    "complexity": "O((r-l+1) log V).",
+    "tricks": ["highest differing bit split", "mirror pairing around split", "recursive leftover intervals"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "highest-bit-divide-and-conquer",
+      "summary": "Recursively split the interval by the current bit and mirror-pair values across the first 0/1 boundary.",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "reversed-bit-trie-greedy",
+      "summary": "Insert reversed-bit values into a binary trie and greedily choose the opposite bit when possible for each fixed index.",
+      "complexity": "O(n log V)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "Optimality is reasoned bit by bit, especially at the highest differing bit of the interval.",
+      "solution_variant": "highest-bit-divide-and-conquer"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "After cross-pairing at the current bit split, the remaining prefix and suffix are solved recursively on lower bits.",
+      "solution_variant": "highest-bit-divide-and-conquer"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The algorithm must output the actual reordered array, not only the maximum sum.",
+      "solution_variant": "highest-bit-divide-and-conquer"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The alternative trie construction greedily picks the opposite bit whenever a remaining number exists.",
+      "solution_variant": "reversed-bit-trie-greedy"
+    }
+  ]
+}

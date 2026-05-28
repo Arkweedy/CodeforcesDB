@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2146,
+    "title": "Codeforces Round 1052 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2146,
+    "index": "E",
+    "title": "Yet Another MEX Problem",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "data structures", "divide and conquer", "greedy", "hashing"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2146/problem/E",
+      "notes": "For each prefix ending position, maximize subarray weight where weight counts elements greater than the subarray MEX."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146648",
+      "notes": "Official hints enumerate the missing value x, choose l after the last occurrence of x, and maintain all candidate x values with a segment tree."
+    }
+  ],
+  "annotation": {
+    "summary": "For every right endpoint, find the maximum subarray weight, where weight is the number of elements greater than the subarray MEX.",
+    "constraints": "n is up to 3e5, so all possible MEX candidates must be maintained together while sweeping the right endpoint.",
+    "core_idea": "For a candidate missing value x, among subarrays ending at r that do not contain x, the best left endpoint is immediately after the last occurrence of x. The score for x is then the number of elements greater than x since that last occurrence. Sweep r from left to right: the new value a[r] increases the score of all x<a[r], while x=a[r] stops being absent and its candidate score is reset to reflect the new last occurrence. A lazy segment tree stores all candidate scores and returns their maximum.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["enumerate candidate missing value", "last occurrence defines best left endpoint", "range increment plus point reset"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "candidate-mex-segment-tree",
+      "summary": "Sweep the right endpoint and maintain each possible missing value's best score with range add and point reset.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The solution needs lazy range increments over candidate MEX values and global maximum queries.",
+      "solution_variant": "candidate-mex-segment-tree"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Each new array element contributes +1 to a whole range of candidate missing values, while its own candidate is reset.",
+      "solution_variant": "candidate-mex-segment-tree"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The best left boundary for a candidate x is tracked by the moving last occurrence of x.",
+      "solution_variant": "candidate-mex-segment-tree"
+    }
+  ]
+}
