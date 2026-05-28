@@ -1,325 +1,77 @@
 # Codeforces AI-Reviewed 题目数据库
 
-这是一个本地 SQLite 题目数据库，用来按 rating、算法、数据结构、题型、trick 等条件快速检索 Codeforces 题目。
+这是一个本地 Codeforces 题目数据库，用来按难度、算法、数据结构、题型和 trick 快速定位训练题。
 
-**主流程不是自动爬取 tag，而是 AI-reviewed 逐题分析。** Codex agent 需要阅读题面、查常见题解来源、必要时自行推导，再写入 reviewed JSON。脚本只负责校验、写库、查询和提交。
+数据库的核心不是搬运 Codeforces official tags，而是保存经过 AI-reviewed 分析后的题目信息：题意摘要、核心观察、复杂度、解法变体、证据来源，以及细粒度层级 tag。
 
-默认数据库：
+## 能做什么
 
-```text
-data/cfdb.sqlite
-```
+- 按 rating 范围筛题，例如 `1500~2300`、`2500~2900`。
+- 按层级 tag 筛题，例如 `动态规划 / 数位 DP`、`变换 / FWT`、`数据结构 / 单调栈`。
+- 多 tag 组合查询，例如 `AC 自动机 + DP`。
+- 查看题目的核心思路、trick、复杂度、solution variants、来源链接和 tag evidence。
+- 打开题目链接直接跳转到 Codeforces。
+- 给题目做本地收藏和备注。
+- 自动隐藏 Div.1 / Div.2 重复题的 alias，默认只显示 canonical problem。
 
-## 主流程：AI-reviewed 标注
+## WebUI
 
-1. 列出待 review 题：
+WebUI 是主要使用入口，适合日常检索和浏览。
 
-```powershell
-python scripts/list_pending_reviews.py --limit 20
-```
+主要界面能力：
 
-2. 生成单题 reviewed JSON 模板：
+- 左侧按层级选择 tag。
+- 通过 rating、rating status、tag 组合方式筛选题目。
+- 支持中文 / English 切换。
+- 题目按钮和 rating badge 使用 Codeforces 难度色段。
+- tag chip 按算法大类配色。
+- 题目详情抽屉展示完整 annotation、solution variants、sources、aliases、tag evidence。
+- 收藏和备注只属于个人使用状态，不会改动 AI-reviewed tags。
 
-```powershell
-python scripts/make_review_template.py 2170E --out reviews/2170E.json
-```
-
-3. Codex agent 使用 `cf-problem-tagger` skill 分析题目：
-
-- 读题面和约束。
-- 查 Codeforces editorial、Luogu、可靠博客或 accepted code。
-- 模板中的 `reference_candidates` 只是候选来源；例如 Luogu 题解页只有实际参考后才移动到 `sources`。
-- 推导核心解法、复杂度和 trick。
-- 决定 `primary / secondary / incidental` tag。
-- 为每个 `primary` tag 写 evidence。
-
-4. 写入一题：
-
-```powershell
-python scripts/apply_reviewed_problem.py reviews/2170E.json
-```
-
-5. 批量写入并自动提交数据库：
-
-```powershell
-python scripts/apply_review_batch.py reviews/
-```
-
-批量提交信息会包含 reviewed 范围和题目数，例如：
-
-```text
-review CF problems 2170A-2170F (6 problems)
-```
-
-## Skill
-
-仓库内 skill：
-
-```text
-skills/cf-problem-tagger/SKILL.md
-```
-
-该 skill 也应同步到 Codex 全局 skills 目录：
-
-```text
-C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
-```
-
-后续你可以通过对话或定时任务唤醒 Codex agent，让它使用 `$cf-problem-tagger` 对指定范围逐题分析并入库。
-
-## Bootstrap：基础元数据抽取
-
-旧脚本 `scripts/ingest_contests.py` 只用于 bootstrap contest/problem 元数据：
-
-```powershell
-python scripts/ingest_contests.py --start 2170 --end 2178
-```
-
-它会：
-
-- 从 Codeforces API 获取 contest/problem/rating/official tags。
-- 跳过官方 rating 低于 `1400` 的题。
-- 排除语言限定、娱乐赛、启发式优化赛等非 ICPC 风格比赛。
-- 把 official tags 映射成候选层级 tag，并标记为 `auto_seeded`。
-
-它不会做题解分析，也不会产出高质量 reviewed tag。official tags 只能作为线索。
-
-## 覆盖状态检查
-
-查看某个 contest id 范围内哪些场次还没进入本地库、哪些只完成了 bootstrap、哪些还待 AI review：
-
-```powershell
-python scripts/list_missing_contests.py --start 2170 --end 2178
-```
-
-只看需要处理的场次：
-
-```powershell
-python scripts/list_missing_contests.py --start 2170 --end 2178 --only-actionable
-```
-
-状态含义：
-
-- `not_in_db`：本地还没有 contest 元数据，需要先跑 `ingest_contests.py`。
-- `unextracted`：contest 已入库，但题目还没完成 bootstrap。
-- `needs_manual_review` / `failed`：需要人工确认或重试 bootstrap。
-- `pending_review`：题目已 bootstrap，但还有 `raw/auto_seeded` 题需要 AI-reviewed 标注。
-- `complete` / `excluded`：默认不需要处理。
-
-## 查询
-
-按 rating 和 tag 查询：
-
-```powershell
-python scripts/search.py --rating 1500 2300 --tag algorithm/dp --show-tags
-```
-
-多个 `--tag` 表示 AND 查询：
-
-```powershell
-python scripts/search.py --tag algorithm/string/acam --tag algorithm/dp
-```
-
-排除某类 tag：
-
-```powershell
-python scripts/search.py --tag algorithm/dp --exclude data-structure/segment-tree
-```
-
-查询未评分或无评分题：
-
-```powershell
-python scripts/search.py --include-unrated --tag algorithm/dp
-python scripts/search.py --rating-status pending_cf_rating
-```
-
-## 唯一键
-
-contest 和 problem 使用稳定唯一键：
-
-```text
-contest_uid = cf_contest:{contest_id}
-problem_uid = cf_problem:{contest_id}:{index}
-```
-
-下面两个 URL 必须归一到同一题：
-
-```text
-https://codeforces.com/problemset/problem/2231/A
-https://codeforces.com/contest/2231/problem/A
-```
-
-归一结果：
-
-```text
-contest_id = 2231
-index = A
-problem_uid = cf_problem:2231:A
-canonical_url = https://codeforces.com/contest/2231/problem/A
-problemset_url = https://codeforces.com/problemset/problem/2231/A
-```
-
-## Reviewed JSON
-
-核心字段：
-
-```json
-{
-  "contest": {
-    "contest_id": 2170,
-    "title": "Educational Codeforces Round 185 (Rated for Div. 2)"
-  },
-  "problem": {
-    "contest_id": 2170,
-    "index": "E",
-    "title": "Binary Strings and Blocks",
-    "rating": 2100,
-    "rating_status": "official",
-    "official_tags": ["dp", "combinatorics"]
-  },
-  "sources": [
-    {
-      "source_type": "statement",
-      "url": "https://codeforces.com/contest/2170/problem/E",
-      "notes": "题面与约束。"
-    },
-    {
-      "source_type": "luogu_solution",
-      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
-      "notes": "用于交叉确认解法。"
-    }
-  ],
-  "reference_candidates": [
-    {
-      "source_type": "luogu_solution",
-      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
-      "notes": "候选来源；只有实际参考后才移动到 sources。"
-    }
-  ],
-  "annotation": {
-    "summary": "题意摘要。",
-    "constraints": "关键约束。",
-    "core_idea": "核心转化或关键观察。",
-    "complexity": "O(...)",
-    "tricks": ["关键技巧"],
-    "confidence": "high",
-    "review_status": "reviewed"
-  },
-  "solution_variants": [
-    {
-      "name": "main",
-      "summary": "主解法。",
-      "complexity": "O(...)",
-      "confidence": "high",
-      "is_primary": true
-    }
-  ],
-  "tags": [
-    {
-      "tag": "algorithm/dp",
-      "importance": "primary",
-      "evidence": "DP 状态设计和转移是主解法核心。",
-      "solution_variant": "main"
-    }
-  ]
-}
-```
-
-## Rating 规则
-
-- `problems.rating` 只能写 Codeforces 官方 rating。
-- `rating_status = official` 时必须有整数 rating。
-- 没有官方 rating 时使用 `pending_cf_rating`、`no_cf_rating` 或 `unknown`。
-- 人工估分只能放在独立字段，不能参与默认 rating 查询。
-- 默认拒绝官方 rating `< 1400` 的题。
-
-## Tag 规则
-
-tag 是动态层级路径：
-
-```text
-algorithm/string/acam
-algorithm/dp/automaton-dp
-algorithm/transform/fwt
-data-structure/monotonic-stack
-math/inclusion-exclusion/minmax
-trick/maintain-contribution
-```
-
-新增 tag 默认是 `candidate`，必须提供：
-
-- `description`
-- `parent` 或 `parents`
-- `created_reason`
-
-新增 tag 后应同步维护 WebUI 中文翻译：
-
-```powershell
-python scripts/check_tag_translations.py
-```
-
-如果暂不补翻译，需要确认前端 fallback 显示可接受。
-
-## 测试
-
-建议禁用 pycache：
-
-```powershell
-$env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
-```
-
-所有 Markdown 和 JSON 文件都应使用 UTF-8。
-
-## Div.1 / Div.2 重题归并
-
-同一轮 Codeforces 如果同时举办 Div.1 和 Div.2，且两边出现同名题目，则认为这是同一道题的不同入口。
-
-规则：
-
-- Div.1 入口作为 canonical problem。
-- Div.2 入口只保留为 alias/source，不作为独立题目参与默认查询。
-- `scripts/ingest_contests.py` 会在抽取后自动标记这类重题。
-- `scripts/search.py`、`scripts/list_pending_reviews.py` 和 reviewed JSON 写库流程默认只处理 canonical problem。
-- 如果对 Div.2 alias 生成模板或写入 reviewed JSON，会解析到 Div.1 canonical problem。
-
-可手动重新扫描已有数据库：
-
-```powershell
-python scripts/dedupe_division_duplicates.py
-```
-
-## WebUI 查询
-
-本仓库提供本地 WebUI，用于分层选择 tag、组合 rating 条件、查看题目详情，以及保存个人收藏和备注。
-
-安装依赖：
-
-```powershell
-python -m pip install -r requirements.txt
-npm.cmd install --prefix web
-```
-
-开发模式：
+本地启动：
 
 ```powershell
 python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
 npm.cmd run dev --prefix web
 ```
 
-打开 Vite 输出的本地地址即可使用。开发模式下前端会把 `/api` 代理到 FastAPI。
+然后打开前端命令输出中的本地地址。开发模式下，前端会把 `/api` 请求代理到 FastAPI。
 
-构建并由 FastAPI 托管：
+构建后也可以直接由 FastAPI 托管前端：
 
 ```powershell
 npm.cmd run build --prefix web
 python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
 ```
 
-WebUI 行为：
+## 数据质量
 
-- 默认只查询 canonical problem，不显示 Div.2 重复 alias。
-- 默认 rating status 为 `official`，importance 为 `primary + secondary`。
-- 多个 tag 可切换 `AND` 或 `OR`。
-- 题目主按钮只显示 `id + title`，点击跳转 Codeforces。
-- 详情抽屉显示 annotation、tags、solution variants、sources、aliases。
-- 收藏和备注写入 `problem_user_state`，不会修改 AI-reviewed tags。
+每道高质量入库题都应经过 AI-reviewed 流程：
+
+- 阅读题面和约束。
+- 参考 Codeforces editorial、Luogu、可靠博客或 accepted code。
+- 必要时自行推导。
+- 写明核心思路、trick、复杂度和证据。
+- 区分 `primary / secondary / incidental` tag。
+
+因此这里的 tag 会比 Codeforces official tags 更细，例如：
+
+```text
+algorithm/transform/fwt/and-fwt
+algorithm/dp/digit-dp
+data-structure/monotonic-stack
+math/inclusion-exclusion/minmax
+trick/maintain-contribution
+```
+
+## 文档职责
+
+- [AGENTS.md](AGENTS.md)：给后续 Codex agent / 脚本维护者看的执行规则、约束和职责。
+- [docs/ai-review-workflow.md](docs/ai-review-workflow.md)：AI-reviewed 标注流程、reviewed JSON 和 skill 使用方式。
+- [docs/database-design.md](docs/database-design.md)：数据库唯一键、rating、contest 过滤、Div.1/Div.2 去重等设计规则。
+- [docs/tagging.md](docs/tagging.md)：tag 层级、importance、evidence、新 tag 标准和翻译同步。
+- [docs/operations.md](docs/operations.md)：bootstrap、覆盖检查、脚本、测试和维护命令。
+
+## 当前定位
+
+这个仓库偏向 ICPC 风格训练题，不追求完整收录所有 Codeforces 活动。语言限定赛、娱乐赛、启发式优化赛、非标准交互/测试场等会被排除或标记人工审核。
