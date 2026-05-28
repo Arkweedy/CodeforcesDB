@@ -10,6 +10,8 @@ from cfdb.normalize import parse_problem_ref
 from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
 from cfdb.search import search_problems
 from cfdb.tags import descendants, resolve_tag
+from scripts.check_tag_translations import extract_full_tag_translations, missing_translations
+from scripts.make_review_template import build_template
 
 
 class CfDbTests(unittest.TestCase):
@@ -182,6 +184,82 @@ class CfDbTests(unittest.TestCase):
                 self.assertIn("prefix state", annotation["tricks_json"])
                 results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["algorithm/dp"])
                 self.assertEqual([item["problem_uid"] for item in results], [problem_uid])
+
+    def test_review_template_includes_luogu_candidate(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, eligibility_status, extraction_status)
+                    VALUES (2170, 'cf_contest:2170', 'Synthetic Contest', 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url, official_tags_json
+                    )
+                    VALUES (
+                        'cf_problem:2170:E', 2170, 'E', 'Template Problem', 2100, 'official',
+                        'https://codeforces.com/contest/2170/problem/E',
+                        'https://codeforces.com/problemset/problem/2170/E',
+                        '["dp"]'
+                    )
+                    """
+                )
+
+            template = build_template(str(db), "2170E")
+            candidates = template["reference_candidates"]
+            self.assertEqual(candidates[0]["source_type"], "luogu_solution")
+            self.assertEqual(
+                candidates[0]["url"],
+                "https://www.luogu.com.cn/problem/solution/CF2170E",
+            )
+
+    def test_reviewed_payload_accepts_luogu_solution_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["sources"].append(
+                {
+                    "source_type": "luogu_solution",
+                    "url": "https://www.luogu.com.cn/problem/solution/CF2B",
+                    "notes": "Used as an additional solution cross-check.",
+                }
+            )
+            with connect(db) as conn:
+                problem_uid = apply_reviewed_payload(conn, payload)
+                row = conn.execute(
+                    """
+                    SELECT notes
+                    FROM problem_sources
+                    WHERE problem_uid = ? AND source_type = 'luogu_solution'
+                    """,
+                    (problem_uid,),
+                ).fetchone()
+                self.assertIsNotNone(row)
+                self.assertIn("cross-check", row["notes"])
+
+    def test_tag_translation_checker_reports_missing_full_tags(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            i18n = Path(tmp) / "i18n.ts"
+            i18n.write_text(
+                'const FULL_TAG_TEXT_ZH: Record<string, string> = {\n'
+                '  "algorithm": "算法",\n'
+                '  "algorithm/dp": "动态规划"\n'
+                "};\n",
+                encoding="utf-8",
+            )
+            translated = extract_full_tag_translations(i18n)
+            self.assertEqual(translated, {"algorithm", "algorithm/dp"})
+            self.assertEqual(
+                missing_translations(["algorithm", "algorithm/dp", "trick/new"], translated),
+                ["trick/new"],
+            )
 
     def test_reviewed_payload_rejects_primary_without_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

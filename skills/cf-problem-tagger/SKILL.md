@@ -35,6 +35,8 @@ For every reviewed problem:
 
 If sources are missing or the solution is inferred, lower `confidence` and say so in source notes.
 
+Templates may include `reference_candidates`, including Luogu solution pages such as `https://www.luogu.com.cn/problem/solution/CF2231F`. Treat these as suggestions only: move a candidate into `sources` only after actually consulting it.
+
 ## Div.1 / Div.2 Overlap Rule
 
 Some Codeforces rounds have simultaneous Div.1 and Div.2 contests with shared problems, for example Div.1 A equals Div.2 C/D. These must not appear as separate searchable problems.
@@ -55,6 +57,8 @@ New tags must include:
 - `parent` or `parents`: where it fits in the hierarchy.
 - `created_reason`: why existing tags are insufficient.
 - `status`: usually `candidate`.
+
+When creating a new tag, also keep the WebUI translation in sync. Add a Chinese display name in `web/src/i18n.ts`, or run `python scripts/check_tag_translations.py` and explicitly record that the fallback display is acceptable for now.
 
 Good examples:
 
@@ -129,6 +133,18 @@ python scripts/search.py --tag algorithm/dp --tag paradigm/greedy --show-tags
       "source_type": "editorial",
       "url": "https://codeforces.com/blog/entry/...",
       "notes": "Used to confirm the main solution."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
+      "notes": "Used as an additional solution-source cross-check."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
+      "notes": "Candidate source; move into sources only if consulted."
     }
   ],
   "annotation": {

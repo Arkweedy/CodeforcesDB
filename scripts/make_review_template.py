@@ -12,6 +12,10 @@ from cfdb.dedup import canonical_problem_uid
 from cfdb.normalize import parse_problem_ref
 
 
+def luogu_solution_url(contest_id: int, problem_index: str) -> str:
+    return f"https://www.luogu.com.cn/problem/solution/CF{contest_id}{problem_index}"
+
+
 def build_template(db_path: str, problem_ref: str) -> dict[str, object]:
     init_db(db_path)
     key = parse_problem_ref(problem_ref)
@@ -49,6 +53,13 @@ def build_template(db_path: str, problem_ref: str) -> dict[str, object]:
                 "source_type": "statement",
                 "url": row["canonical_url"],
                 "notes": "题面与约束。",
+            }
+        ],
+        "reference_candidates": [
+            {
+                "source_type": "luogu_solution",
+                "url": luogu_solution_url(int(row["contest_id"]), str(row["problem_index"])),
+                "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。",
             }
         ],
         "annotation": {

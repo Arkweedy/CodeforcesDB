@@ -42,6 +42,7 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 
 - 读取题面和约束。
 - 优先查 Codeforces editorial、Luogu、可靠博客、accepted code；资料不足时自行推导并降低 confidence。
+- `make_review_template.py` 会生成 Luogu `reference_candidates`；候选来源只有实际参考后才应移动到 reviewed JSON 的 `sources`。
 - 写出题意摘要、核心转化或关键观察、复杂度、tricks。
 - 区分 `primary / secondary / incidental` tag。
 - 每个 `primary` tag 必须有 evidence。
@@ -109,6 +110,14 @@ trick/maintain-contribution
 - `primary` tag 必须有 evidence。
 
 新增 tag 默认使用 `candidate`。
+
+创建新 tag 后还应维护 WebUI 中文翻译。运行：
+
+```powershell
+python scripts/check_tag_translations.py
+```
+
+若脚本报告缺失，优先补 `web/src/i18n.ts`；如果暂不补，需确认 fallback 英文路径显示可接受。
 
 ## Codeforces API 注意事项
 

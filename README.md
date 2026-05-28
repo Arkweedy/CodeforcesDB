@@ -28,6 +28,7 @@ python scripts/make_review_template.py 2170E --out reviews/2170E.json
 
 - 读题面和约束。
 - 查 Codeforces editorial、Luogu、可靠博客或 accepted code。
+- 模板中的 `reference_candidates` 只是候选来源；例如 Luogu 题解页只有实际参考后才移动到 `sources`。
 - 推导核心解法、复杂度和 trick。
 - 决定 `primary / secondary / incidental` tag。
 - 为每个 `primary` tag 写 evidence。
@@ -159,6 +160,18 @@ problemset_url = https://codeforces.com/problemset/problem/2231/A
       "source_type": "statement",
       "url": "https://codeforces.com/contest/2170/problem/E",
       "notes": "题面与约束。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
+      "notes": "用于交叉确认解法。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2170E",
+      "notes": "候选来源；只有实际参考后才移动到 sources。"
     }
   ],
   "annotation": {
@@ -216,6 +229,14 @@ trick/maintain-contribution
 - `description`
 - `parent` 或 `parents`
 - `created_reason`
+
+新增 tag 后应同步维护 WebUI 中文翻译：
+
+```powershell
+python scripts/check_tag_translations.py
+```
+
+如果暂不补翻译，需要确认前端 fallback 显示可接受。
 
 ## 测试
 
