@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2162,
+    "title": "Codeforces Round 1059 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2162,
+    "index": "E",
+    "title": "Beautiful Palindromes",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "schedules"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2162/problem/E",
+      "notes": "Construct k appended values so no unwanted palindromic subarray is created."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147242",
+      "notes": "Official editorial shows that repeating three suitable distinct values cyclically is sufficient, with small case handling."
+    }
+  ],
+  "annotation": {
+    "summary": "Append k values to avoid creating additional palindromic subarrays under the problem's beauty condition.",
+    "constraints": "k can be large, so the construction must be periodic rather than chosen one by one.",
+    "core_idea": "A length-3 cycle x,y,z,x,y,z,... with three distinct values avoids length-2 and length-3 palindromic patterns inside the appended tail. Choose the three values so they also do not interact badly with the existing suffix; if the direct last-three choice is blocked, replace one value by a spare distinct value. Then output the cycle for k steps.",
+    "complexity": "O(n+k) output time.",
+    "tricks": ["period-3 construction", "avoid short palindromic patterns", "small case replacement value"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "period-three-construction",
+      "summary": "Pick three safe distinct values and repeat them cyclically for all k appended positions.",
+      "complexity": "O(n+k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution directly constructs the appended sequence using a safe period-3 pattern.",
+      "solution_variant": "period-three-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The construction greedily chooses a small set of safe values instead of optimizing over the full sequence.",
+      "solution_variant": "period-three-construction"
+    },
+    {
+      "tag": "topic/scheduling",
+      "importance": "secondary",
+      "evidence": "The output is a repeated schedule of three values designed to avoid local conflicts.",
+      "solution_variant": "period-three-construction"
+    }
+  ]
+}

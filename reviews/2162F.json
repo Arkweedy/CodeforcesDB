@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2162,
+    "title": "Codeforces Round 1059 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2162,
+    "index": "F",
+    "title": "Beautiful Intervals",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2162/problem/F",
+      "notes": "Construct a permutation minimizing the mex of the set of mex values over given intervals."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147242",
+      "notes": "Official editorial proves mex(M)<=2 via subsequence [0,2,1], then handles the cases where mex(M)=0 or mex(M)=1 is possible."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://ggeta.com/codeforces/codeforces-round-1059-div.-3/f.-beautiful-intervals/",
+      "notes": "Additional solution note matches the three-case construction from the official editorial."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a permutation of 0..n-1 that minimizes the mex of all interval mex values.",
+    "constraints": "n,m are large enough that the construction must be based on interval boundary properties, not search over permutations.",
+    "core_idea": "Putting [0,2,1] as a subsequence ensures any interval containing both 0 and 1 also contains 2, so mex(M) is at most 2. To get mex(M)=0, all intervals must share a common point where 0 can be placed. To get mex(M)=1, place 0 next to 1 at a point that is not simultaneously an interval end and the next interval start, ensuring every interval containing 0 also contains 1. If neither condition holds, use the [0,2,1] fallback.",
+    "complexity": "O(n+m) per test case.",
+    "tricks": ["force mex 2 absent with 0-2-1", "common intersection for mex 0", "boundary test for adjacent 0 and 1"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-case-permutation-construction",
+      "summary": "Try a common-point construction for mex 0, then adjacent 0/1 for mex 1, otherwise place 0,2,1 as a subsequence.",
+      "complexity": "O(n+m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The problem is solved by explicitly placing the values 0,1,2 according to interval boundary cases.",
+      "solution_variant": "three-case-permutation-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "The solution separates mex(M)=0, mex(M)=1, and fallback mex(M)=2 constructions.",
+      "solution_variant": "three-case-permutation-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The algorithm explicitly detects common intersection and forbidden boundary positions before falling back.",
+      "solution_variant": "three-case-permutation-construction"
+    }
+  ]
+}

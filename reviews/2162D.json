@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2162,
+    "title": "Codeforces Round 1059 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2162,
+    "index": "D",
+    "title": "Beautiful Permutation",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2162/problem/D",
+      "notes": "Interactive task: identify the modified subarray endpoints using range-sum queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147242",
+      "notes": "Official editorial compares prefix sums of the hidden permutation and the beautiful array, then uses one total-sum query to derive r after finding l."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively find the segment [l,r] where the hidden array differs from the permutation by +1 on that segment.",
+    "constraints": "The query budget is below 40, so a logarithmic number of prefix queries is required.",
+    "core_idea": "For any prefix i, the queried sum of the modified array is larger than the permutation prefix sum iff i has reached the left endpoint l. This gives a monotone predicate, so binary search l using paired prefix queries. The whole-array sum difference equals r-l+1, hence r is recovered after l is known.",
+    "complexity": "O(log n) interactive queries.",
+    "tricks": ["prefix-sum comparison", "monotone left endpoint predicate", "derive length from total sum"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interactive-prefix-binary-search",
+      "summary": "Binary search the first prefix whose modified sum exceeds the permutation prefix, then infer the right endpoint from total sum difference.",
+      "complexity": "O(log n) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is centered on choosing adaptive range-sum queries under a strict query budget.",
+      "solution_variant": "interactive-prefix-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The left endpoint is found by binary searching a monotone prefix-sum comparison.",
+      "solution_variant": "interactive-prefix-binary-search"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "The queried values are prefix sums, and the proof compares permutation and modified prefix sums.",
+      "solution_variant": "interactive-prefix-binary-search"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2162,
+    "title": "Codeforces Round 1059 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2162,
+    "index": "H",
+    "title": "Beautiful Problem",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2162/problem/H",
+      "notes": "For every possible x, decide whether constraints over intervals allow all values in each interval to be on one side of x."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147242",
+      "notes": "Official editorial removes contained intervals, sorts by endpoints, and runs DP over assigning intervals to small/big classes with overlap lengths."
+    }
+  ],
+  "annotation": {
+    "summary": "For each candidate value x, decide if the array can be rearranged so every constrained interval lies entirely below x or entirely above x.",
+    "constraints": "n is around 3000 in the official implementation, allowing O(n^2) DP over processed intervals and type-1 position count.",
+    "core_idea": "Each constrained interval must be assigned to S (values <=x) or B (values >=x). Remove intervals contained in another interval; after sorting the remaining intervals by left endpoint, right endpoints are also increasing. DP over intervals records how many positions are covered only by S and the maximum number covered only by B, accounting for intersections between consecutive intervals. Then each x is feasible if the counts of values below and above x fit into the available S-only and B-only capacities, with free positions absorbing the rest.",
+    "complexity": "O(n^2) per test case.",
+    "tricks": ["remove contained intervals", "classify positions by S/B interval coverage", "DP over overlap lengths"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interval-classification-dp",
+      "summary": "Assign sorted non-contained intervals to small/big classes and DP by total small-only coverage and last class.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "position-dp-by-coverage-left-bound",
+      "summary": "Alternative DP over positions using the earliest index sharing a covering interval.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "The main state tracks a capacity-like count of S-only positions while maximizing B-only positions.",
+      "solution_variant": "interval-classification-dp"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "primary",
+      "evidence": "The solution classifies positions by whether they are covered by S-intervals, B-intervals, both, or neither.",
+      "solution_variant": "interval-classification-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Contained intervals are removed and the remaining intervals are sorted so only consecutive intersections matter in the DP.",
+      "solution_variant": "interval-classification-dp"
+    }
+  ]
+}

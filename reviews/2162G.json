@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2162,
+    "title": "Codeforces Round 1059 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2162,
+    "index": "G",
+    "title": "Beautiful Tree",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "math", "probabilities", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2162/problem/G",
+      "notes": "Construct a tree whose edge product sum is a perfect square."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/147242",
+      "notes": "Official editorial gives a base construction for n=5 and an induction that preserves S=n^2."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a tree on n labeled vertices such that the sum of u*v over all edges is a perfect square.",
+    "constraints": "The construction must output n-1 edges in O(n), with small n handled separately.",
+    "core_idea": "For n=5, the path 5-1-2-3-4 has edge-product sum 25=n^2. To extend a construction from n to n+1 while keeping the target (n+1)^2, add edge (1,n+1), remove (1,n), and add (2,n), increasing the sum by 2n+1. Repeating this yields a fixed pattern for all n>=5, while n<5 is handled by hardcoded answers or impossibility.",
+    "complexity": "O(n) output time.",
+    "tricks": ["inductive edge-rewiring construction", "target square n^2", "hardcode small n"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "inductive-square-tree",
+      "summary": "Use the n=5 base tree and extend by rewiring one edge so the edge-product sum increases by 2n+1.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution outputs an explicit tree pattern satisfying the square-sum condition.",
+      "solution_variant": "inductive-square-tree"
+    },
+    {
+      "tag": "algorithm/graph/tree",
+      "importance": "primary",
+      "evidence": "The constructed object is a tree, and the proof is based on edge changes in that tree.",
+      "solution_variant": "inductive-square-tree"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The induction maintains the invariant that the edge-product sum equals n^2.",
+      "solution_variant": "inductive-square-tree"
+    }
+  ]
+}
