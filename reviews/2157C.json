@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "C",
+    "title": "Meximum Array 2",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/C",
+      "notes": "Construct an array satisfying interval min/mex constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial classifies positions by whether they are inside min intervals and mex intervals."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy explains the four position classes and the periodic i mod k filling for mex-only positions."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct an array satisfying all range minimum and mex constraints.",
+    "constraints": "n,q are large; the construction must be near-linear after interval marking.",
+    "core_idea": "Classify each position by whether it lies inside a minimum constraint interval and/or a mex constraint interval. Min-only positions can safely be k, both-type positions can be k+1, and irrelevant positions are arbitrary. The hard class is mex-only; filling these positions cyclically as 0,1,...,k-1 ensures every long enough mex interval can see a full residue set.",
+    "complexity": "O((n+q) log n) or O(n+q) with difference arrays.",
+    "tricks": ["classify positions by interval coverage", "periodic fill by i mod k", "use large sentinel values for min-covered positions"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "coverage-classification-construction",
+      "summary": "Mark min/mex interval coverage, assign fixed sentinel values by class, and fill mex-only cells periodically.",
+      "complexity": "O(n+q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly assigning values according to interval coverage classes.",
+      "solution_variant": "coverage-classification-construction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "primary",
+      "evidence": "The main work is marking interval coverage and assigning the four position classes without off-by-one mistakes.",
+      "solution_variant": "coverage-classification-construction"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "secondary",
+      "evidence": "Positions are classified by overlap of min-interval coverage and mex-interval coverage.",
+      "solution_variant": "coverage-classification-construction"
+    }
+  ]
+}

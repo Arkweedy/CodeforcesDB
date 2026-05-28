@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "F",
+    "title": "Git Gud",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "divide and conquer", "math", "ternary search"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/F",
+      "notes": "Construct a low-cost sequence of operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial constructs operations by choosing a base and grouping residues."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy discusses trying bases and finding a good balance around base 63..120."
+    }
+  ],
+  "annotation": {
+    "summary": "Output a sequence of operations with total cost below the required bound.",
+    "constraints": "The output budget is tight enough that naive binary-base constructions are too expensive.",
+    "core_idea": "Use a base-b construction. In each round, group numbers by residues modulo b^t and apply short operations that force them to the next multiple of b^t. Increasing b reduces the average length of each operation but changes the fixed penalties; trying a range of b values finds one below the cost limit.",
+    "complexity": "O(n log_b n) generated operations plus brute-force search over a small base range.",
+    "tricks": ["base-b residue grouping", "trade operation length against fixed penalty", "small brute-force search over base"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "base-search-construction",
+      "summary": "Try several bases, generate residue-group operations, and output the first construction within budget.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution is an explicit operation schedule construction.",
+      "solution_variant": "base-search-construction"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The base parameter is found by trying a moderate finite range.",
+      "solution_variant": "base-search-construction"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "Operations are organized by residues and multiples of powers of the chosen base.",
+      "solution_variant": "base-search-construction"
+    }
+  ]
+}

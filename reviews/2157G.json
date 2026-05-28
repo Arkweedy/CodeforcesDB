@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "G",
+    "title": "Isaac's Queries",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "brute force", "constructive algorithms", "dfs and similar", "divide and conquer", "dp", "greedy", "interactive", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/G",
+      "notes": "Interactive query task about recovering bitwise information."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial recovers bits group by group with adaptive queries."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy describes determining the high bit groups using potentialized union-find and recursing to lower bits inside groups."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover enough hidden bitwise information through adaptive comparison queries.",
+    "constraints": "The query budget is small, so each query must split candidates by high bits efficiently.",
+    "core_idea": "First determine the most significant bit groups. Query endpoints and compare other elements to a far endpoint; equality/difference of the high bit induces parity constraints, which can be maintained as a potentialized union-find. After splitting by bit 29, recurse inside each group for bit 28 and below. Random/probabilistic estimates justify that the expected group sizes and query costs fit the limit.",
+    "complexity": "Interactive query budget around O(n log V) with small constants.",
+    "tricks": ["recover bits from high to low", "potentialized union-find for parity/equality constraints", "divide-and-conquer on groups"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bitwise-group-interactive",
+      "summary": "Split candidates by high-bit equality constraints using interactive queries and recurse on lower bits in each group.",
+      "complexity": "O(n log V) queries with small constants",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query strategy.",
+      "solution_variant": "bitwise-group-interactive"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The hidden information is recovered bit by bit from the most significant bit downward.",
+      "solution_variant": "bitwise-group-interactive"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "Potentialized union-find maintains equality/parity relations inferred from queries.",
+      "solution_variant": "bitwise-group-interactive"
+    }
+  ]
+}

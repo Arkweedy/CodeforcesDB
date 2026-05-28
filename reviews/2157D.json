@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "D",
+    "title": "Billion Players Game",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "greedy", "math", "sortings", "ternary search", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/D",
+      "notes": "Choose rewards around a variable x and optimize the worst-case outcome."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial separates x-a_i and a_i-x choices and handles p<=q / q<=p cases."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy notes that choosing both sides for an index is equivalent to doing nothing, leading to independent sorted prefix choices."
+    }
+  ],
+  "annotation": {
+    "summary": "Maximize a worst-case score involving choices of |x-a_i| contributions.",
+    "constraints": "n is large enough that after sorting, only prefix/suffix aggregate calculations are intended.",
+    "core_idea": "Although absolute values appear, each i independently contributes either x-a_i, a_i-x, both, or neither, and choosing both is equivalent to not changing the optimum. If p terms of the first type and q terms of the second type are chosen, the worst x is one endpoint depending on whether p<=q or q<=p. Therefore sort a, precompute prefix/suffix sums, and maximize f(p)+g(q) under the two cases.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["split absolute value into two independent choices", "endpoint worst case based on p versus q", "prefix/suffix sums after sorting"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-prefix-suffix-optimization",
+      "summary": "Sort values, precompute prefix/suffix sums, and optimize the two cases p<=q and q<=p.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "The optimal selected values for each side are prefixes/suffixes after sorting.",
+      "solution_variant": "sorted-prefix-suffix-optimization"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "Scores f(p) and g(q) are evaluated from prefix/suffix aggregate sums.",
+      "solution_variant": "sorted-prefix-suffix-optimization"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "For fixed counts, the chosen a_i are greedily the smallest/largest values after sorting.",
+      "solution_variant": "sorted-prefix-suffix-optimization"
+    }
+  ]
+}

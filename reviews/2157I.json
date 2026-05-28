@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "I",
+    "title": "Hyper Smawk Bros",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["dp", "games"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/I",
+      "notes": "Game DP problem with a forbidden move per state."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial analyzes losing states and sparse transitions."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy describes the losing-state sequence a_i with a_{i+1} in {a_i+M+1,a_i+M+2} and memoized checking of O(1) candidate moves."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve a subtraction-style impartial game with one forbidden move depending on the state.",
+    "constraints": "N and M are large enough that ordinary O(NM) game DP is impossible.",
+    "core_idea": "Classify states by how many winning moves they have: 0, 1, or at least 2. Losing states form a sparse increasing sequence a_i. For odd M, the next losing state is either a_i+M+1 or a_i+M+2; this follows because all states in between can move to a_i, while at the boundary only one special move may remain. Thus enumerate losing states rather than all transitions. To decide between the two candidates, memoized recursion only needs O(1) relevant moves because most moves are refuted by nearby losing states.",
+    "complexity": "Roughly O(number of losing states * small candidate count), practical O(N/M) per M after preprocessing.",
+    "tricks": ["losing states are sparse", "next losing state differs by M+1 or M+2", "store 0/1/2+ winning move count", "memoize only O(1) relevant candidates"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sparse-losing-state-dp",
+      "summary": "Generate the sparse sequence of losing states and use memoized game checks to choose between the two possible next gaps.",
+      "complexity": "Near O(N/M) per M in practice",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The problem is an impartial game solved by classifying losing and winning states.",
+      "solution_variant": "sparse-losing-state-dp"
+    },
+    {
+      "tag": "algorithm/dp",
+      "importance": "primary",
+      "evidence": "The solution memoizes game states and transitions, but only along a sparse losing-state sequence.",
+      "solution_variant": "sparse-losing-state-dp"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The losing-state sequence has constrained increasing gaps M+1 or M+2.",
+      "solution_variant": "sparse-losing-state-dp"
+    }
+  ]
+}

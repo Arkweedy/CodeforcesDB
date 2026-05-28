@@ -1,0 +1,69 @@
+{
+  "contest": {
+    "contest_id": 2157,
+    "title": "Codeforces Round 1066 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2157,
+    "index": "E",
+    "title": "Adjusting Drones",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "dp", "dsu", "greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2157/problem/E",
+      "notes": "Repeatedly adjust duplicate drone heights/values and answer when all frequencies become small enough."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/148657",
+      "notes": "Official tutorial observes monotonicity of the maximum frequency and binary-searches time."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1066",
+      "notes": "Maspy describes simulating only the frequency histogram and batching t steps from the right."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum number of adjustment steps until every value frequency is at most k.",
+    "constraints": "The value range and number of operations are large, so direct step simulation is too slow.",
+    "core_idea": "The process depends only on the frequency histogram, not on individual identities. If a value has frequency greater than k, the excess units move to the right; the maximum frequency is monotone non-increasing with time. Binary search the answer t, and for a fixed t simulate the batched movement greedily from right to left: excess either lands in a zero-frequency slot within t distance, or shifts exactly t positions right.",
+    "complexity": "O(V log answer) with coordinate/value compression.",
+    "tricks": ["simulate frequency histogram instead of elements", "binary search time by monotonicity", "batch t steps from right to left"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "batched-histogram-binary-search",
+      "summary": "Binary search the number of steps and test feasibility by greedily moving excess frequency mass in a histogram.",
+      "complexity": "O(V log answer)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The monotone maximum-frequency property allows binary search over the number of steps.",
+      "solution_variant": "batched-histogram-binary-search"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The check moves excess mass from the right greedily to the nearest available place or t positions forward.",
+      "solution_variant": "batched-histogram-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The maximum frequency never increases under the process, making the decision predicate monotone.",
+      "solution_variant": "batched-histogram-binary-search"
+    }
+  ]
+}
