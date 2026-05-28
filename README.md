@@ -28,6 +28,47 @@ WebUI 是主要使用入口，适合日常检索和浏览。
 - 题目详情抽屉展示完整 annotation、solution variants、sources、aliases、tag evidence。
 - 收藏和备注只属于个人使用状态，不会改动 AI-reviewed tags。
 
+## 给朋友试用
+
+推荐方式是把仓库 push 到 Git 远端，让朋友直接 clone。`data/cfdb.sqlite` 是被 git 跟踪的业务数据，因此 clone 后会自带当前数据库。
+
+依赖不会随仓库一起提交：
+
+```text
+.venv/
+web/node_modules/
+web/dist/
+```
+
+朋友需要本机安装：
+
+- Python 3.11+。
+- Node.js 20+，或至少能运行当前 Vite/React 工具链的 Node 版本。
+- Git。
+
+Windows PowerShell 快速启动：
+
+```powershell
+git clone <repo-url>
+cd Codeforces
+
+py -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+npm.cmd ci --prefix web
+npm.cmd run build --prefix web
+
+.venv\Scripts\python.exe -m uvicorn cfdb.web_app:app --host 127.0.0.1 --port 8765
+```
+
+然后打开：
+
+```text
+http://127.0.0.1:8765
+```
+
+更多打包、zip 分发和未来公网部署注意事项见 [docs/sharing-and-deployment.md](docs/sharing-and-deployment.md)。
+
 本地启动：
 
 ```powershell
@@ -71,6 +112,7 @@ trick/maintain-contribution
 - [docs/database-design.md](docs/database-design.md)：数据库唯一键、rating、contest 过滤、Div.1/Div.2 去重等设计规则。
 - [docs/tagging.md](docs/tagging.md)：tag 层级、importance、evidence、新 tag 标准和翻译同步。
 - [docs/webui-architecture.md](docs/webui-architecture.md)：WebUI 技术栈、前后端连接方式和文件职责。
+- [docs/sharing-and-deployment.md](docs/sharing-and-deployment.md)：给朋友试用、zip 打包、依赖安装和公网部署注意事项。
 - [docs/operations.md](docs/operations.md)：bootstrap、覆盖检查、脚本、测试和维护命令。
 
 ## 当前定位

@@ -28,6 +28,7 @@ algorithm/string/acam + algorithm/dp
 - `docs/database-design.md`：唯一键、rating、contest 过滤、Div.1/Div.2 去重。
 - `docs/tagging.md`：tag 层级、新 tag 标准、evidence 和前端翻译同步。
 - `docs/webui-architecture.md`：WebUI 技术栈、前后端接口、文件职责和扩展方式。
+- `docs/sharing-and-deployment.md`：试用分发、依赖安装、zip 打包、公网部署注意事项。
 - `docs/operations.md`：bootstrap、覆盖检查、维护脚本、测试命令。
 
 ## 最重要原则

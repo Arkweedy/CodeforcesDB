@@ -93,6 +93,7 @@ python scripts/search.py --include-unrated --tag algorithm/dp
 ## WebUI
 
 WebUI 结构说明见 [webui-architecture.md](webui-architecture.md)。
+试用分发与部署说明见 [sharing-and-deployment.md](sharing-and-deployment.md)。
 
 后端：
 
