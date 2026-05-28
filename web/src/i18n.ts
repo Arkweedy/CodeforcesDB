@@ -1,0 +1,491 @@
+import type { Importance, RatingStatus, Stats } from "./types";
+
+export type Locale = "zh" | "en";
+
+export const DEFAULT_LOCALE: Locale = "zh";
+const STORAGE_KEY = "cfdb.locale";
+
+type UiKey =
+  | "aliases"
+  | "annotation"
+  | "codeforces"
+  | "complexity"
+  | "confidence"
+  | "constraints"
+  | "contest"
+  | "coreIdea"
+  | "empty"
+  | "favorite"
+  | "favorites"
+  | "importance"
+  | "loading"
+  | "note"
+  | "personal"
+  | "problem"
+  | "problemset"
+  | "rating"
+  | "ratingMax"
+  | "ratingMin"
+  | "ratingStatus"
+  | "save"
+  | "search"
+  | "solutionVariants"
+  | "sources"
+  | "status"
+  | "tags"
+  | "text";
+
+const UI_TEXT: Record<Locale, Record<UiKey, string>> = {
+  zh: {
+    aliases: "别名入口",
+    annotation: "题目分析",
+    codeforces: "Codeforces",
+    complexity: "复杂度",
+    confidence: "可信度",
+    constraints: "约束",
+    contest: "比赛",
+    coreIdea: "核心思路",
+    empty: "没有匹配题目。",
+    favorite: "收藏",
+    favorites: "收藏",
+    importance: "重要性",
+    loading: "加载中",
+    note: "备注",
+    personal: "个人",
+    problem: "题目",
+    problemset: "题库入口",
+    rating: "评分",
+    ratingMax: "最高分",
+    ratingMin: "最低分",
+    ratingStatus: "评分状态",
+    save: "保存",
+    search: "搜索",
+    solutionVariants: "解法",
+    sources: "来源",
+    status: "状态",
+    tags: "标签",
+    text: "文本"
+  },
+  en: {
+    aliases: "Aliases",
+    annotation: "Annotation",
+    codeforces: "Codeforces",
+    complexity: "Complexity",
+    confidence: "Confidence",
+    constraints: "Constraints",
+    contest: "Contest",
+    coreIdea: "Core Idea",
+    empty: "No matching problems.",
+    favorite: "Favorite",
+    favorites: "Favorites",
+    importance: "Importance",
+    loading: "Loading",
+    note: "Note",
+    personal: "Personal",
+    problem: "Problem",
+    problemset: "Problemset",
+    rating: "Rating",
+    ratingMax: "Rating max",
+    ratingMin: "Rating min",
+    ratingStatus: "Rating Status",
+    save: "Save",
+    search: "Search",
+    solutionVariants: "Solution Variants",
+    sources: "Sources",
+    status: "Status",
+    tags: "Tags",
+    text: "Text"
+  }
+};
+
+const IMPORTANCE_TEXT: Record<Locale, Record<Importance, string>> = {
+  zh: {
+    primary: "主标签",
+    secondary: "次标签",
+    incidental: "附带"
+  },
+  en: {
+    primary: "Primary",
+    secondary: "Secondary",
+    incidental: "Incidental"
+  }
+};
+
+const RATING_STATUS_TEXT: Record<Locale, Record<RatingStatus, string>> = {
+  zh: {
+    official: "官方评分",
+    pending_cf_rating: "等待 CF 评分",
+    no_cf_rating: "无 CF 评分",
+    unknown: "未知"
+  },
+  en: {
+    official: "Official",
+    pending_cf_rating: "Pending CF rating",
+    no_cf_rating: "No CF rating",
+    unknown: "Unknown"
+  }
+};
+
+const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
+  zh: {
+    "accepted-code": "通过代码",
+    "auto-seeded": "自动种子",
+    auto_seeded: "自动种子",
+    blog: "博客",
+    candidate: "候选",
+    "div1-div2-overlap": "Div.1/Div.2 重题",
+    editorial: "题解",
+    high: "高",
+    low: "低",
+    main: "主解法",
+    medium: "中",
+    reviewed: "已复核",
+    secondary: "次解法",
+    statement: "题面"
+  },
+  en: {
+    "accepted-code": "Accepted code",
+    "auto-seeded": "Auto seeded",
+    auto_seeded: "Auto seeded",
+    blog: "Blog",
+    candidate: "Candidate",
+    "div1-div2-overlap": "Div.1/Div.2 overlap",
+    editorial: "Editorial",
+    high: "High",
+    low: "Low",
+    main: "Main",
+    medium: "Medium",
+    reviewed: "Reviewed",
+    secondary: "Secondary",
+    statement: "Statement"
+  }
+};
+
+const RATING_TITLE_TEXT: Record<Locale, Array<[number, string]>> = {
+  zh: [
+    [3000, "传奇特级大师"],
+    [2600, "国际特级大师"],
+    [2400, "特级大师"],
+    [2300, "国际大师"],
+    [2100, "大师"],
+    [1900, "专家候选"],
+    [1600, "高手"],
+    [1400, "专家"],
+    [1200, "入门"],
+    [0, "新手"]
+  ],
+  en: [
+    [3000, "Legendary Grandmaster"],
+    [2600, "International Grandmaster"],
+    [2400, "Grandmaster"],
+    [2300, "International Master"],
+    [2100, "Master"],
+    [1900, "Candidate Master"],
+    [1600, "Expert"],
+    [1400, "Specialist"],
+    [1200, "Pupil"],
+    [0, "Newbie"]
+  ]
+};
+
+const FULL_TAG_TEXT_ZH: Record<string, string> = {
+  "algorithm": "算法",
+  "algorithm/bitmask": "位掩码",
+  "algorithm/bitmask/xor-subset": "异或子集",
+  "algorithm/divide-and-conquer": "分治",
+  "algorithm/divide-and-conquer/cartesian-tree": "笛卡尔树",
+  "algorithm/dp": "动态规划",
+  "algorithm/dp/automaton-dp": "自动机 DP",
+  "algorithm/dp/bitmask-dp": "状压 DP",
+  "algorithm/dp/convex-hull-optimization": "斜率优化 DP",
+  "algorithm/dp/digit-dp": "数位 DP",
+  "algorithm/dp/graph-dp": "图上 DP",
+  "algorithm/dp/knapsack-dp": "背包 DP",
+  "algorithm/dp/prefix-max-optimization": "前缀最大值优化",
+  "algorithm/dp/prefix-sum-optimization": "前缀和优化",
+  "algorithm/dp/subset-dp": "子集 DP",
+  "algorithm/graph": "图论",
+  "algorithm/graph/2-sat": "2-SAT",
+  "algorithm/graph/bipartite-graph": "二分图",
+  "algorithm/graph/bridge": "桥",
+  "algorithm/graph/connectivity": "连通性",
+  "algorithm/graph/dfs": "DFS",
+  "algorithm/graph/flow": "网络流",
+  "algorithm/graph/heavy-light-decomposition": "树链剖分",
+  "algorithm/graph/layered-graph": "分层图",
+  "algorithm/graph/matching": "匹配",
+  "algorithm/graph/mst": "最小生成树",
+  "algorithm/graph/path-counting": "路径计数",
+  "algorithm/graph/shortest-path": "最短路",
+  "algorithm/graph/tree": "树",
+  "algorithm/graph/tree-dfs": "树上 DFS",
+  "algorithm/hashing": "哈希",
+  "algorithm/meet-in-the-middle": "折半搜索",
+  "algorithm/prefix-sums": "前缀和",
+  "algorithm/search": "搜索",
+  "algorithm/search/binary-search": "二分",
+  "algorithm/search/ternary-search": "三分",
+  "algorithm/sorting": "排序",
+  "algorithm/sqrt-decomposition": "分块",
+  "algorithm/string": "字符串",
+  "algorithm/string/acam": "AC 自动机",
+  "algorithm/string/finite-automaton": "有限自动机",
+  "algorithm/string/run-length-encoding": "游程编码",
+  "algorithm/string/suffix-structures": "后缀结构",
+  "algorithm/transform": "变换",
+  "algorithm/transform/fft": "FFT",
+  "algorithm/transform/fwt": "FWT",
+  "algorithm/two-pointers": "双指针",
+  "data-structure": "数据结构",
+  "data-structure/dsu": "并查集",
+  "data-structure/dsu/next-pointer": "next 指针并查集",
+  "data-structure/fenwick-tree": "树状数组",
+  "data-structure/hash-map": "哈希表",
+  "data-structure/li-chao-tree": "李超线段树",
+  "data-structure/monotonic-stack": "单调栈",
+  "data-structure/segment-tree": "线段树",
+  "implementation": "实现",
+  "implementation/parsing": "解析",
+  "implementation/parsing/expression": "表达式解析",
+  "math": "数学",
+  "math/combinatorics": "组合数学",
+  "math/combinatorics/multinomial": "多项式系数",
+  "math/combinatorics/permutation-counting": "排列计数",
+  "math/combinatorics/prufer-sequence": "Prüfer 序列",
+  "math/game-theory": "博弈论",
+  "math/generating-function": "生成函数",
+  "math/generating-function/egf": "指数生成函数",
+  "math/geometry": "几何",
+  "math/geometry/convex-hull": "凸包",
+  "math/inclusion-exclusion": "容斥",
+  "math/inclusion-exclusion/minmax": "Min-Max 容斥",
+  "math/linear-algebra": "线性代数",
+  "math/linear-algebra/matrix": "矩阵",
+  "math/number-theory": "数论",
+  "math/number-theory/chinese-remainder-theorem": "中国剩余定理",
+  "math/number-theory/divisibility": "整除",
+  "math/number-theory/gcd": "GCD",
+  "math/number-theory/gcd-convolution": "GCD 卷积",
+  "math/number-theory/mobius": "莫比乌斯",
+  "math/number-theory/prime-factor-count": "质因子计数",
+  "math/probability": "概率",
+  "math/probability/expected-progress": "期望推进",
+  "math/probability/linearity-of-expectation": "期望线性性",
+  "paradigm": "范式",
+  "paradigm/brute-force": "暴力",
+  "paradigm/constructive": "构造",
+  "paradigm/greedy": "贪心",
+  "paradigm/interactive": "交互",
+  "paradigm/offline": "离线",
+  "paradigm/sweep-line": "扫描线",
+  "topic": "主题",
+  "topic/scheduling": "调度",
+  "trick": "技巧",
+  "trick/amortized-delete-once": "均摊一次删除",
+  "trick/batch-simulation": "批量模拟",
+  "trick/case-analysis": "分类讨论",
+  "trick/classify-overlap": "重叠分类",
+  "trick/component-decomposition": "分量分解",
+  "trick/convert-to-prefix": "转为前缀",
+  "trick/decision-tree": "决策树",
+  "trick/difference-transform": "差分转化",
+  "trick/group-by-divisor": "按因子分组",
+  "trick/handle-special-case": "特判处理",
+  "trick/highest-differing-bit": "最高不同位",
+  "trick/invariant": "不变量",
+  "trick/maintain-contribution": "维护贡献",
+  "trick/mark-multiples": "标记倍数",
+  "trick/monotonicity": "单调性",
+  "trick/permutation-structure": "排列结构",
+  "trick/popcount-invariant": "popcount 不变量",
+  "trick/prefix-suffix-extrema": "前后缀极值",
+  "trick/quotient-state-space": "商状态空间",
+  "trick/xor-hashing": "异或哈希"
+};
+
+const SEGMENT_TEXT_ZH: Record<string, string> = {
+  "2-sat": "2-SAT",
+  "acam": "AC 自动机",
+  "algorithm": "算法",
+  "automaton-dp": "自动机 DP",
+  "batch-simulation": "批量模拟",
+  "binary-search": "二分",
+  "bipartite-graph": "二分图",
+  "bitmask": "位掩码",
+  "bitmask-dp": "状压 DP",
+  "bridge": "桥",
+  "brute-force": "暴力",
+  "cartesian-tree": "笛卡尔树",
+  "case-analysis": "分类讨论",
+  "chinese-remainder-theorem": "中国剩余定理",
+  "classify-overlap": "重叠分类",
+  "combinatorics": "组合数学",
+  "component-decomposition": "分量分解",
+  "connectivity": "连通性",
+  "constructive": "构造",
+  "convert-to-prefix": "转为前缀",
+  "convex-hull": "凸包",
+  "convex-hull-optimization": "斜率优化",
+  "data-structure": "数据结构",
+  "decision-tree": "决策树",
+  "dfs": "DFS",
+  "digit-dp": "数位 DP",
+  "difference-transform": "差分转化",
+  "divide-and-conquer": "分治",
+  "divisibility": "整除",
+  "dp": "动态规划",
+  "dsu": "并查集",
+  "egf": "指数生成函数",
+  "expected-progress": "期望推进",
+  "expression": "表达式",
+  "fenwick-tree": "树状数组",
+  "fft": "FFT",
+  "finite-automaton": "有限自动机",
+  "flow": "网络流",
+  "fwt": "FWT",
+  "game-theory": "博弈论",
+  "gcd": "GCD",
+  "gcd-convolution": "GCD 卷积",
+  "generating-function": "生成函数",
+  "geometry": "几何",
+  "graph": "图论",
+  "graph-dp": "图上 DP",
+  "greedy": "贪心",
+  "group-by-divisor": "按因子分组",
+  "handle-special-case": "特判",
+  "hash-map": "哈希表",
+  "hashing": "哈希",
+  "heavy-light-decomposition": "树链剖分",
+  "highest-differing-bit": "最高不同位",
+  "implementation": "实现",
+  "inclusion-exclusion": "容斥",
+  "interactive": "交互",
+  "invariant": "不变量",
+  "knapsack-dp": "背包 DP",
+  "layered-graph": "分层图",
+  "li-chao-tree": "李超线段树",
+  "linear-algebra": "线性代数",
+  "linearity-of-expectation": "期望线性性",
+  "maintain-contribution": "维护贡献",
+  "mark-multiples": "标记倍数",
+  "matching": "匹配",
+  "math": "数学",
+  "matrix": "矩阵",
+  "meet-in-the-middle": "折半搜索",
+  "minmax": "Min-Max",
+  "mobius": "莫比乌斯",
+  "monotonic-stack": "单调栈",
+  "monotonicity": "单调性",
+  "mst": "最小生成树",
+  "multinomial": "多项式系数",
+  "next-pointer": "next 指针",
+  "number-theory": "数论",
+  "offline": "离线",
+  "paradigm": "范式",
+  "parsing": "解析",
+  "path-counting": "路径计数",
+  "permutation-counting": "排列计数",
+  "permutation-structure": "排列结构",
+  "popcount-invariant": "popcount 不变量",
+  "prefix-max-optimization": "前缀最大值优化",
+  "prefix-suffix-extrema": "前后缀极值",
+  "prefix-sum-optimization": "前缀和优化",
+  "prefix-sums": "前缀和",
+  "prime-factor-count": "质因子计数",
+  "probability": "概率",
+  "prufer-sequence": "Prüfer 序列",
+  "quotient-state-space": "商状态空间",
+  "run-length-encoding": "游程编码",
+  "scheduling": "调度",
+  "search": "搜索",
+  "segment-tree": "线段树",
+  "shortest-path": "最短路",
+  "sorting": "排序",
+  "sqrt-decomposition": "分块",
+  "string": "字符串",
+  "subset-dp": "子集 DP",
+  "suffix-structures": "后缀结构",
+  "sweep-line": "扫描线",
+  "ternary-search": "三分",
+  "topic": "主题",
+  "transform": "变换",
+  "tree": "树",
+  "tree-dfs": "树上 DFS",
+  "trick": "技巧",
+  "two-pointers": "双指针",
+  "xor-hashing": "异或哈希",
+  "xor-subset": "异或子集"
+};
+
+export function readStoredLocale(): Locale {
+  if (typeof window === "undefined") return DEFAULT_LOCALE;
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  return stored === "en" || stored === "zh" ? stored : DEFAULT_LOCALE;
+}
+
+export function writeStoredLocale(locale: Locale): void {
+  window.localStorage.setItem(STORAGE_KEY, locale);
+}
+
+export function ui(locale: Locale, key: UiKey): string {
+  return UI_TEXT[locale][key];
+}
+
+export function importanceLabel(locale: Locale, importance: Importance): string {
+  return IMPORTANCE_TEXT[locale][importance];
+}
+
+export function ratingStatusLabel(locale: Locale, status: RatingStatus): string {
+  return RATING_STATUS_TEXT[locale][status];
+}
+
+export function valueLabel(locale: Locale, value: string): string {
+  const normalized = value.toLowerCase().replace(/ /g, "-").replace(/_/g, "-");
+  return GENERIC_VALUE_TEXT[locale][value] ?? GENERIC_VALUE_TEXT[locale][normalized] ?? prettifyToken(value);
+}
+
+export function tagLabel(locale: Locale, tag: string, mode: "leaf" | "path" = "leaf"): string {
+  if (locale === "en") {
+    return mode === "leaf" ? prettifyToken(lastSegment(tag)) : tag;
+  }
+
+  const exact = FULL_TAG_TEXT_ZH[tag];
+  if (exact) return exact;
+
+  const segments = tag.split("/");
+  if (mode === "leaf") {
+    return SEGMENT_TEXT_ZH[lastSegment(tag)] ?? prettifyToken(lastSegment(tag));
+  }
+  return segments
+    .map((segment) => SEGMENT_TEXT_ZH[segment] ?? prettifyToken(segment))
+    .join(" / ");
+}
+
+export function ratingText(
+  locale: Locale,
+  rating: number | null,
+  status: RatingStatus
+): string {
+  if (rating === null || status !== "official") return ratingStatusLabel(locale, status);
+  const title = RATING_TITLE_TEXT[locale].find(([floor]) => rating >= floor)?.[1];
+  return `${rating} · ${title ?? ratingStatusLabel(locale, status)}`;
+}
+
+export function statsText(locale: Locale, stats: Stats): string {
+  if (locale === "zh") {
+    return `${stats.canonical_problems} 道题 / ${stats.tags} 个标签 / ${stats.favorites} 个收藏`;
+  }
+  return `${stats.canonical_problems} problems / ${stats.tags} tags / ${stats.favorites} favorites`;
+}
+
+export function shownText(locale: Locale, count: number): string {
+  return locale === "zh" ? `显示 ${count} 道` : `${count} shown`;
+}
+
+function lastSegment(tag: string): string {
+  return tag.split("/").slice(-1)[0] ?? tag;
+}
+
+function prettifyToken(value: string): string {
+  return value.replace(/[-_]/g, " ");
+}

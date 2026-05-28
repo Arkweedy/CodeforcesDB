@@ -40,6 +40,8 @@ textarea {
 
 .filter-header,
 .topbar,
+.topbar-tools,
+.language-toggle,
 .result-main,
 .drawer-header,
 .drawer-actions,
@@ -129,6 +131,16 @@ textarea {
   font-weight: 700;
 }
 
+.segmented.compact {
+  grid-template-columns: repeat(2, auto);
+  min-width: 112px;
+  padding: 3px;
+}
+
+.segmented.compact button {
+  padding: 6px 10px;
+}
+
 .switch-row,
 .check-row {
   color: #334e68;
@@ -149,9 +161,6 @@ textarea {
 
 .tag-chip {
   align-items: center;
-  background: #d9e2ec;
-  color: #243b53;
-  display: inline-flex;
   gap: 6px;
   max-width: 100%;
   padding: 6px 8px;
@@ -178,6 +187,12 @@ textarea {
 
 .tag-name {
   overflow-wrap: anywhere;
+}
+
+.tag-tree-token {
+  justify-self: start;
+  min-width: 0;
+  padding: 3px 7px;
 }
 
 .tag-count {
@@ -247,6 +262,17 @@ textarea {
   margin: 0;
 }
 
+.topbar-tools {
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.language-toggle {
+  color: #486581;
+  gap: 8px;
+}
+
 .topbar-status {
   gap: 8px;
 }
@@ -292,10 +318,10 @@ textarea {
   gap: 6px;
 }
 
-.rating,
+.rating-badge,
 .mini-tag,
 .favorite-mark,
-.tricks span,
+.trick-token,
 .variant-card span {
   border-radius: 999px;
   display: inline-flex;
@@ -303,15 +329,61 @@ textarea {
   padding: 4px 8px;
 }
 
-.rating {
-  background: #e0f2f1;
-  color: #134e4a;
+.rating-badge {
+  align-items: center;
+  background: var(--rating-bg);
+  border: 1px solid var(--rating-border);
+  color: var(--rating-text);
   font-weight: 700;
 }
 
-.mini-tag {
-  background: #edf2f7;
-  color: #334e68;
+.rating-unrated {
+  --rating-bg: #f8fafc;
+  --rating-border: #cbd5e1;
+  --rating-text: #475569;
+  border-style: dashed;
+}
+
+.rating-gray {
+  --rating-bg: #f1f5f9;
+  --rating-border: #cbd5e1;
+  --rating-text: #334155;
+}
+
+.rating-cyan {
+  --rating-bg: #dff8f6;
+  --rating-border: #81e6d9;
+  --rating-text: #115e59;
+}
+
+.rating-blue {
+  --rating-bg: #e8f1ff;
+  --rating-border: #93c5fd;
+  --rating-text: #1d4ed8;
+}
+
+.rating-violet {
+  --rating-bg: #f1e8ff;
+  --rating-border: #c4b5fd;
+  --rating-text: #6d28d9;
+}
+
+.rating-orange {
+  --rating-bg: #fff1dc;
+  --rating-border: #fdba74;
+  --rating-text: #b45309;
+}
+
+.rating-red {
+  --rating-bg: #ffe4e6;
+  --rating-border: #fca5a5;
+  --rating-text: #dc2626;
+}
+
+.rating-legendary {
+  --rating-bg: #fee2e2;
+  --rating-border: #ef4444;
+  --rating-text: #7f1d1d;
 }
 
 .favorite-mark {
@@ -319,6 +391,114 @@ textarea {
   background: #fff7cc;
   color: #7c5e10;
   gap: 4px;
+}
+
+.tag-token {
+  --tag-accent: #64748b;
+  --tag-bg: #f1f5f9;
+  --tag-border: #cbd5e1;
+  --tag-text: #334155;
+  align-items: center;
+  background: var(--tag-bg);
+  border: 1px solid var(--tag-border);
+  border-radius: 999px;
+  color: var(--tag-text);
+  display: inline-flex;
+  gap: 6px;
+  line-height: 1.25;
+}
+
+.tag-token::before {
+  background: var(--tag-accent);
+  border-radius: 999px;
+  content: "";
+  flex: 0 0 auto;
+  height: 6px;
+  width: 6px;
+}
+
+.tag-color-algorithm {
+  --tag-accent: #64748b;
+  --tag-bg: #f1f5f9;
+  --tag-border: #cbd5e1;
+  --tag-text: #334155;
+}
+
+.tag-color-dp {
+  --tag-accent: #3b82f6;
+  --tag-bg: #e8f1ff;
+  --tag-border: #bfdbfe;
+  --tag-text: #1d4ed8;
+}
+
+.tag-color-math {
+  --tag-accent: #22c55e;
+  --tag-bg: #ecfdf3;
+  --tag-border: #bbf7d0;
+  --tag-text: #166534;
+}
+
+.tag-color-ds {
+  --tag-accent: #eab308;
+  --tag-bg: #fff8db;
+  --tag-border: #fde68a;
+  --tag-text: #854d0e;
+}
+
+.tag-color-graph {
+  --tag-accent: #6366f1;
+  --tag-bg: #eef2ff;
+  --tag-border: #c7d2fe;
+  --tag-text: #3730a3;
+}
+
+.tag-color-string {
+  --tag-accent: #14b8a6;
+  --tag-bg: #e6fffb;
+  --tag-border: #99f6e4;
+  --tag-text: #0f766e;
+}
+
+.tag-color-transform {
+  --tag-accent: #d946ef;
+  --tag-bg: #fdf2ff;
+  --tag-border: #f0abfc;
+  --tag-text: #a21caf;
+}
+
+.tag-color-paradigm {
+  --tag-accent: #f97316;
+  --tag-bg: #fff7ed;
+  --tag-border: #fed7aa;
+  --tag-text: #c2410c;
+}
+
+.tag-color-trick {
+  --tag-accent: #ec4899;
+  --tag-bg: #fdf2f8;
+  --tag-border: #fbcfe8;
+  --tag-text: #be185d;
+}
+
+.tag-color-implementation {
+  --tag-accent: #64748b;
+  --tag-bg: #f8fafc;
+  --tag-border: #d9e2ec;
+  --tag-text: #475569;
+}
+
+.tag-color-topic {
+  --tag-accent: #d97706;
+  --tag-bg: #fffbeb;
+  --tag-border: #fde68a;
+  --tag-text: #92400e;
+}
+
+.tag-color-fallback {
+  --tag-accent: #5b7c99;
+  --tag-bg: #edf4f8;
+  --tag-border: #c7dce8;
+  --tag-text: #334e68;
 }
 
 .drawer {
@@ -409,6 +589,10 @@ textarea {
   overflow-wrap: anywhere;
 }
 
+.fact-grid .rating-badge {
+  justify-self: start;
+}
+
 .detail-section {
   display: grid;
   gap: 10px;
@@ -441,9 +625,10 @@ textarea {
   gap: 6px;
 }
 
-.tricks span {
-  background: #efe9f7;
-  color: #3d2c56;
+.trick-token {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
 }
 
 .tag-groups {
@@ -471,6 +656,11 @@ textarea {
 
 .tag-evidence strong {
   overflow-wrap: anywhere;
+}
+
+.detail-tag-token {
+  font-weight: 700;
+  padding: 4px 8px;
 }
 
 .tag-evidence span {

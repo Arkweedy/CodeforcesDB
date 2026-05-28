@@ -2,6 +2,7 @@ import {
   ChevronRight,
   ExternalLink,
   Info,
+  Languages,
   Loader2,
   Save,
   Search,
@@ -27,6 +28,20 @@ import type {
   TagMode,
   TagNode
 } from "./types";
+import { ratingClassName, tagTokenClassName } from "./colors";
+import {
+  importanceLabel,
+  ratingStatusLabel,
+  ratingText,
+  readStoredLocale,
+  shownText,
+  statsText,
+  tagLabel,
+  ui,
+  valueLabel,
+  writeStoredLocale,
+  type Locale
+} from "./i18n";
 
 const RATING_STATUSES: RatingStatus[] = [
   "official",
@@ -42,22 +57,20 @@ function toggleValue<T>(values: T[], value: T): T[] {
     : [...values, value];
 }
 
-function shortTag(tag: string): string {
-  return tag.split("/").slice(-1)[0].replace(/-/g, " ");
-}
-
 function byImportance(tags: ProblemTag[], importance: Importance): ProblemTag[] {
   return tags.filter((tag) => tag.importance === importance);
 }
 
 function TagTreeItem({
   node,
+  locale,
   selectedTags,
   expanded,
   onToggleExpanded,
   onToggleSelected
 }: {
   node: TagNode;
+  locale: Locale;
   selectedTags: string[];
   expanded: Set<string>;
   onToggleExpanded: (tag: string) => void;
@@ -88,7 +101,9 @@ function TagTreeItem({
             checked={isSelected}
             onChange={() => onToggleSelected(node.tag)}
           />
-          <span className="tag-name">{node.display_name}</span>
+          <span className={tagTokenClassName(node.tag, "tag-tree-token")} title={node.tag}>
+            <span className="tag-name">{tagLabel(locale, node.tag)}</span>
+          </span>
           <span className="tag-count">{node.problem_count}</span>
         </label>
       </div>
@@ -98,6 +113,7 @@ function TagTreeItem({
             <TagTreeItem
               key={`${node.tag}:${child.tag}`}
               node={child}
+              locale={locale}
               selectedTags={selectedTags}
               expanded={expanded}
               onToggleExpanded={onToggleExpanded}
@@ -112,12 +128,14 @@ function TagTreeItem({
 
 function FilterPanel({
   tagTree,
+  locale,
   params,
   expanded,
   setParams,
   setExpanded
 }: {
   tagTree: TagNode[];
+  locale: Locale;
   params: SearchParams;
   expanded: Set<string>;
   setParams: (next: SearchParams) => void;
@@ -135,11 +153,11 @@ function FilterPanel({
     <aside className="filters">
       <div className="filter-header">
         <Search size={18} />
-        <span>Search</span>
+        <span>{ui(locale, "search")}</span>
       </div>
 
       <label className="field">
-        <span>Text</span>
+        <span>{ui(locale, "text")}</span>
         <input
           value={params.query}
           onChange={(event) => setParams({ ...params, query: event.target.value })}
@@ -149,7 +167,7 @@ function FilterPanel({
 
       <div className="rating-grid">
         <label className="field">
-          <span>Rating min</span>
+          <span>{ui(locale, "ratingMin")}</span>
           <input
             value={params.ratingMin}
             inputMode="numeric"
@@ -159,7 +177,7 @@ function FilterPanel({
           />
         </label>
         <label className="field">
-          <span>Rating max</span>
+          <span>{ui(locale, "ratingMax")}</span>
           <input
             value={params.ratingMax}
             inputMode="numeric"
@@ -190,11 +208,11 @@ function FilterPanel({
             setParams({ ...params, favoriteOnly: !params.favoriteOnly })
           }
         />
-        <span>Favorites</span>
+        <span>{ui(locale, "favorites")}</span>
       </label>
 
       <section className="check-section">
-        <h2>Rating Status</h2>
+        <h2>{ui(locale, "ratingStatus")}</h2>
         {RATING_STATUSES.map((status) => (
           <label key={status} className="check-row">
             <input
@@ -207,13 +225,13 @@ function FilterPanel({
                 })
               }
             />
-            <span>{status}</span>
+            <span>{ratingStatusLabel(locale, status)}</span>
           </label>
         ))}
       </section>
 
       <section className="check-section">
-        <h2>Importance</h2>
+        <h2>{ui(locale, "importance")}</h2>
         {IMPORTANCE_VALUES.map((importance) => (
           <label key={importance} className="check-row">
             <input
@@ -226,7 +244,7 @@ function FilterPanel({
                 })
               }
             />
-            <span>{importance}</span>
+            <span>{importanceLabel(locale, importance)}</span>
           </label>
         ))}
       </section>
@@ -236,10 +254,11 @@ function FilterPanel({
           {params.tags.map((tag) => (
             <button
               key={tag}
-              className="tag-chip"
+              className={tagTokenClassName(tag, "tag-chip")}
+              title={tag}
               onClick={() => setSelectedTags(params.tags.filter((item) => item !== tag))}
             >
-              {tag}
+              {tagLabel(locale, tag, "path")}
               <X size={13} />
             </button>
           ))}
@@ -247,11 +266,12 @@ function FilterPanel({
       ) : null}
 
       <section className="tag-tree">
-        <h2>Tags</h2>
+        <h2>{ui(locale, "tags")}</h2>
         {tagTree.map((node) => (
           <TagTreeItem
             key={node.tag}
             node={node}
+            locale={locale}
             selectedTags={params.tags}
             expanded={expanded}
             onToggleExpanded={toggleExpanded}
@@ -265,9 +285,11 @@ function FilterPanel({
 
 function ProblemResult({
   problem,
+  locale,
   onOpen
 }: {
   problem: SearchProblem;
+  locale: Locale;
   onOpen: (problemUid: string) => void;
 }) {
   const visibleTags = problem.tags
@@ -290,15 +312,21 @@ function ProblemResult({
         </button>
       </div>
       <div className="result-meta">
-        <span className="rating">{problem.rating ?? problem.rating_status}</span>
+        <span className={ratingClassName(problem.rating, problem.rating_status)}>
+          {ratingText(locale, problem.rating, problem.rating_status)}
+        </span>
         {problem.favorite ? (
           <span className="favorite-mark">
-            <Star size={14} fill="currentColor" /> favorite
+            <Star size={14} fill="currentColor" /> {ui(locale, "favorite")}
           </span>
         ) : null}
         {visibleTags.map((tag) => (
-          <span key={`${problem.problem_uid}:${tag.tag}:${tag.importance}`} className="mini-tag">
-            {shortTag(tag.tag)}
+          <span
+            key={`${problem.problem_uid}:${tag.tag}:${tag.importance}`}
+            className={tagTokenClassName(tag.tag, "mini-tag")}
+            title={tag.tag}
+          >
+            {tagLabel(locale, tag.tag)}
           </span>
         ))}
       </div>
@@ -315,7 +343,7 @@ function DetailSection({ title, children }: { title: string; children: ReactNode
   );
 }
 
-function TagsByImportance({ tags }: { tags: ProblemTag[] }) {
+function TagsByImportance({ tags, locale }: { tags: ProblemTag[]; locale: Locale }) {
   return (
     <div className="tag-groups">
       {IMPORTANCE_VALUES.map((importance) => {
@@ -323,12 +351,14 @@ function TagsByImportance({ tags }: { tags: ProblemTag[] }) {
         if (!group.length) return null;
         return (
           <div key={importance} className="tag-group">
-            <h4>{importance}</h4>
+            <h4>{importanceLabel(locale, importance)}</h4>
             {group.map((tag) => (
               <div key={`${tag.tag}:${tag.source}:${tag.importance}`} className="tag-evidence">
                 <div>
-                  <strong>{tag.tag}</strong>
-                  <span>{tag.source}</span>
+                  <strong className={tagTokenClassName(tag.tag, "detail-tag-token")} title={tag.tag}>
+                    {tagLabel(locale, tag.tag, "path")}
+                  </strong>
+                  <span>{valueLabel(locale, tag.source)}</span>
                 </div>
                 {tag.evidence ? <p>{tag.evidence}</p> : null}
               </div>
@@ -342,6 +372,7 @@ function TagsByImportance({ tags }: { tags: ProblemTag[] }) {
 
 function DetailDrawer({
   detail,
+  locale,
   loading,
   saving,
   note,
@@ -352,6 +383,7 @@ function DetailDrawer({
   onClose
 }: {
   detail: ProblemDetail | null;
+  locale: Locale;
   loading: boolean;
   saving: boolean;
   note: string;
@@ -365,8 +397,8 @@ function DetailDrawer({
     <aside className={`drawer ${detail || loading ? "open" : ""}`}>
       <div className="drawer-header">
         <div>
-          <span className="eyebrow">{detail?.label ?? "Problem"}</span>
-          <h2>{detail?.title ?? "Loading"}</h2>
+          <span className="eyebrow">{detail?.label ?? ui(locale, "problem")}</span>
+          <h2>{detail?.title ?? ui(locale, "loading")}</h2>
         </div>
         <button className="icon-button" onClick={onClose}>
           <X size={18} />
@@ -383,80 +415,84 @@ function DetailDrawer({
         <div className="drawer-content">
           <div className="drawer-actions">
             <a href={detail.canonical_url} target="_blank" rel="noreferrer" className="small-link">
-              Codeforces <ExternalLink size={14} />
+              {ui(locale, "codeforces")} <ExternalLink size={14} />
             </a>
             <a href={detail.problemset_url} target="_blank" rel="noreferrer" className="small-link">
-              Problemset <ExternalLink size={14} />
+              {ui(locale, "problemset")} <ExternalLink size={14} />
             </a>
           </div>
 
           <div className="fact-grid">
             <div>
-              <span>Rating</span>
-              <strong>{detail.rating ?? detail.rating_status}</strong>
+              <span>{ui(locale, "rating")}</span>
+              <strong className={ratingClassName(detail.rating, detail.rating_status)}>
+                {ratingText(locale, detail.rating, detail.rating_status)}
+              </strong>
             </div>
             <div>
-              <span>Contest</span>
+              <span>{ui(locale, "contest")}</span>
               <strong>{detail.contest_title}</strong>
             </div>
             <div>
-              <span>Status</span>
-              <strong>{detail.annotation.review_status}</strong>
+              <span>{ui(locale, "status")}</span>
+              <strong>{valueLabel(locale, detail.annotation.review_status)}</strong>
             </div>
             <div>
-              <span>Confidence</span>
-              <strong>{detail.annotation.confidence}</strong>
+              <span>{ui(locale, "confidence")}</span>
+              <strong>{valueLabel(locale, detail.annotation.confidence)}</strong>
             </div>
           </div>
 
-          <DetailSection title="Personal">
+          <DetailSection title={ui(locale, "personal")}>
             <label className="switch-row">
               <input
                 type="checkbox"
                 checked={favorite}
                 onChange={() => setFavorite(!favorite)}
               />
-              <span>Favorite</span>
+              <span>{ui(locale, "favorite")}</span>
             </label>
             <textarea
               value={note}
               onChange={(event) => setNote(event.target.value)}
               rows={4}
-              placeholder="Note"
+              placeholder={ui(locale, "note")}
             />
             <button className="save-button" onClick={onSave} disabled={saving}>
               {saving ? <Loader2 className="spin" size={16} /> : <Save size={16} />}
-              Save
+              {ui(locale, "save")}
             </button>
           </DetailSection>
 
-          <DetailSection title="Annotation">
+          <DetailSection title={ui(locale, "annotation")}>
             <p>{detail.annotation.summary}</p>
             <dl className="detail-list">
-              <dt>Constraints</dt>
+              <dt>{ui(locale, "constraints")}</dt>
               <dd>{detail.annotation.constraints}</dd>
-              <dt>Core Idea</dt>
+              <dt>{ui(locale, "coreIdea")}</dt>
               <dd>{detail.annotation.core_idea}</dd>
-              <dt>Complexity</dt>
+              <dt>{ui(locale, "complexity")}</dt>
               <dd>{detail.annotation.complexity}</dd>
             </dl>
             <div className="tricks">
               {detail.annotation.tricks.map((trick) => (
-                <span key={trick}>{trick}</span>
+                <span key={trick} className="trick-token" title={trick}>
+                  {trick}
+                </span>
               ))}
             </div>
           </DetailSection>
 
-          <DetailSection title="Tags">
-            <TagsByImportance tags={detail.tags} />
+          <DetailSection title={ui(locale, "tags")}>
+            <TagsByImportance tags={detail.tags} locale={locale} />
           </DetailSection>
 
-          <DetailSection title="Solution Variants">
+          <DetailSection title={ui(locale, "solutionVariants")}>
             {detail.solution_variants.map((variant) => (
               <div key={variant.variant_name} className="variant-card">
                 <div>
-                  <strong>{variant.variant_name}</strong>
-                  {variant.is_primary ? <span>primary</span> : null}
+                  <strong>{valueLabel(locale, variant.variant_name)}</strong>
+                  {variant.is_primary ? <span>{importanceLabel(locale, "primary")}</span> : null}
                 </div>
                 <p>{variant.summary}</p>
                 <small>{variant.complexity}</small>
@@ -464,11 +500,11 @@ function DetailDrawer({
             ))}
           </DetailSection>
 
-          <DetailSection title="Sources">
+          <DetailSection title={ui(locale, "sources")}>
             <div className="source-list">
               {detail.sources.map((source) => (
                 <a key={`${source.source_type}:${source.url}`} href={source.url} target="_blank" rel="noreferrer">
-                  <span>{source.source_type}</span>
+                  <span>{valueLabel(locale, source.source_type)}</span>
                   <ExternalLink size={14} />
                 </a>
               ))}
@@ -476,12 +512,12 @@ function DetailDrawer({
           </DetailSection>
 
           {detail.aliases.length ? (
-            <DetailSection title="Aliases">
+            <DetailSection title={ui(locale, "aliases")}>
               {detail.aliases.map((alias) => (
                 <div key={alias.alias_problem_uid} className="alias-row">
                   {alias.alias_contest_id}
                   {alias.alias_problem_index}
-                  <span>{alias.reason}</span>
+                  <span>{valueLabel(locale, alias.reason)}</span>
                 </div>
               ))}
             </DetailSection>
@@ -500,6 +536,7 @@ export function App() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [locale, setLocaleState] = useState<Locale>(() => readStoredLocale());
   const [expanded, setExpanded] = useState<Set<string>>(
     new Set(["algorithm", "data-structure", "math", "paradigm", "trick"])
   );
@@ -516,6 +553,11 @@ export function App() {
   const [detail, setDetail] = useState<ProblemDetail | null>(null);
   const [note, setNote] = useState("");
   const [favorite, setFavorite] = useState(false);
+
+  const setLocale = (nextLocale: Locale) => {
+    setLocaleState(nextLocale);
+    writeStoredLocale(nextLocale);
+  };
 
   useEffect(() => {
     Promise.all([fetchTags(), fetchStats()])
@@ -541,9 +583,9 @@ export function App() {
   }, [params]);
 
   const summary = useMemo(() => {
-    if (!stats) return "Loading";
-    return `${stats.canonical_problems} problems / ${stats.tags} tags / ${stats.favorites} favorites`;
-  }, [stats]);
+    if (!stats) return ui(locale, "loading");
+    return statsText(locale, stats);
+  }, [locale, stats]);
 
   const openDetail = (problemUid: string) => {
     setDetail(null);
@@ -580,6 +622,7 @@ export function App() {
     <div className="app-shell">
       <FilterPanel
         tagTree={tagTree}
+        locale={locale}
         params={params}
         expanded={expanded}
         setParams={setParams}
@@ -588,12 +631,28 @@ export function App() {
       <main className="content">
         <header className="topbar">
           <div>
-            <h1>Codeforces DB</h1>
+            <h1>{locale === "zh" ? "Codeforces 题库" : "Codeforces DB"}</h1>
             <p>{summary}</p>
           </div>
-          <div className="topbar-status">
-            {loading ? <Loader2 className="spin" size={18} /> : null}
-            <span>{results.length} shown</span>
+          <div className="topbar-tools">
+            <div className="language-toggle" aria-label="Language">
+              <Languages size={16} />
+              <div className="segmented compact">
+                {(["zh", "en"] as Locale[]).map((item) => (
+                  <button
+                    key={item}
+                    className={locale === item ? "active" : ""}
+                    onClick={() => setLocale(item)}
+                  >
+                    {item === "zh" ? "中文" : "EN"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="topbar-status">
+              {loading ? <Loader2 className="spin" size={18} /> : null}
+              <span>{shownText(locale, results.length)}</span>
+            </div>
           </div>
         </header>
 
@@ -601,16 +660,22 @@ export function App() {
 
         <section className="results">
           {results.map((problem) => (
-            <ProblemResult key={problem.problem_uid} problem={problem} onOpen={openDetail} />
+            <ProblemResult
+              key={problem.problem_uid}
+              problem={problem}
+              locale={locale}
+              onOpen={openDetail}
+            />
           ))}
           {!loading && !results.length ? (
-            <div className="empty-state">No matching problems.</div>
+            <div className="empty-state">{ui(locale, "empty")}</div>
           ) : null}
         </section>
       </main>
 
       <DetailDrawer
         detail={detail}
+        locale={locale}
         loading={detailLoading}
         saving={saving}
         note={note}
