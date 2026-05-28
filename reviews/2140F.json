@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2140,
+    "title": "Codeforces Round 1049 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2140,
+    "index": "F",
+    "title": "Sum Minimisation",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2140/problem/F",
+      "notes": "Operation decreases the y smallest selected elements where y is the selected sum modulo the selected set size."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146218",
+      "notes": "Official reference code tests a terminal congruence condition, with a special n>23 equality shortcut, then tests the state after decrementing the smallest element once."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a modulo-based decrement operation on arbitrary subsets, find the minimum achievable total sum or report that the sum can decrease indefinitely.",
+    "constraints": "n can be up to 1e6 and values up to 1e9, so the answer must be characterized by global modular invariants rather than simulation.",
+    "core_idea": "A finite minimum is reached only when every subset size operation has zero remainder effect: the total sum is divisible by n, and all elements have the same residue modulo every k from 2 to n-1. For n>23 this residue condition forces equality within the value range used by the solution. The official solution checks whether the current sorted array is terminal; otherwise it decrements the smallest element once and checks again. If neither state is terminal, some positive-remainder operation remains and the sum can be decreased without bound.",
+    "complexity": "O(n log n + n * min(n, 23)) per test case.",
+    "tricks": ["terminal congruence condition", "n>23 equality shortcut", "one-decrement check"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "congruence-terminal-test",
+      "summary": "Sort the array, test the modular terminal condition for the current state and after one decrement of the minimum element; otherwise output -1.",
+      "complexity": "O(n log n + n * min(n, 23))",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The terminal-state test is expressed through divisibility of the total sum and equal residues modulo all subset sizes.",
+      "solution_variant": "congruence-terminal-test"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The solution classifies finite answers by a global invariant-like terminal congruence condition rather than by simulating operations.",
+      "solution_variant": "congruence-terminal-test"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting identifies the element to decrement in the single fallback check and fixes tie order for the operation's smallest-elements rule.",
+      "solution_variant": "congruence-terminal-test"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "The implementation separates n>23 because checking all moduli is replaced by the stronger all-equal condition.",
+      "solution_variant": "congruence-terminal-test"
+    }
+  ]
+}

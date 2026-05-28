@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2140,
+    "title": "Codeforces Round 1049 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2140,
+    "index": "D",
+    "title": "A Cruel Segment's Thesis",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["data structures", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2140/problem/D",
+      "notes": "Segments are paired to create extra marked segments, and the objective is maximum total segment length."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146218",
+      "notes": "Official reference code sorts by l+r, selects half of the segments by this key, and handles the odd leftover by scanning split candidates."
+    }
+  ],
+  "annotation": {
+    "summary": "Pair unmarked segments to create extra marked segments and maximize the final total length of original and created segments.",
+    "constraints": "Sum of n over tests is at most 2e5, requiring sorting plus linear postprocessing.",
+    "core_idea": "The original segment lengths are fixed. For each created segment, one chosen interval supplies a left endpoint and the other supplies a right endpoint, so for an even number of intervals the pairing value is maximized by choosing exactly n/2 intervals with minimum l+r to act as left-side suppliers and the rest as right-side suppliers. For odd n, one interval is left unpaired; sorting by l+r lets us scan the possible leftover around the split and keep the best correction.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": ["separate fixed and created contribution", "select half by l+r", "odd leftover correction"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sort-by-endpoint-sum",
+      "summary": "Add the fixed original lengths, sort intervals by l+r, choose the lower half as left suppliers, and scan the odd case's unpaired interval.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "The decisive ordering is by l+r; after sorting, the optimal half split and odd leftover corrections are computed directly.",
+      "solution_variant": "sort-by-endpoint-sum"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The optimal construction greedily assigns intervals with smallest l+r to the side that pays l instead of gaining r.",
+      "solution_variant": "sort-by-endpoint-sum"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The formula isolates the fixed original length contribution and only optimizes the extra contribution from created segments.",
+      "solution_variant": "sort-by-endpoint-sum"
+    }
+  ]
+}

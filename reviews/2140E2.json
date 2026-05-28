@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2140,
+    "title": "Codeforces Round 1049 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2140,
+    "index": "E2",
+    "title": "Prime Gaming (Hard Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "dp", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2140/problem/E2",
+      "notes": "Hard version keeps n<=20 but raises m to 1e6, so configurations cannot be enumerated by value."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146218",
+      "notes": "Official reference code reuses the binary minimax DP and counts winning masks by popcount to aggregate over all possible thresholds."
+    }
+  ],
+  "annotation": {
+    "summary": "For pile values in [1,m], sum the optimal final remaining value over all configurations under the same deletion game.",
+    "constraints": "n<=20, sum of 2^n<=2^20, and sum of m<=1e6. Bitmask DP over n is allowed, but enumerating m^n configurations is impossible.",
+    "core_idea": "For any threshold k, whether the final value is at least k depends only on the binary mask of piles with value at least k. Run the same minimax bitmask DP as the easy version and count how many winning masks have each popcount r. A mask with r positions above threshold k represents (k-1)^(n-r) * (m-k+1)^r configurations, so summing these counts over k reconstructs the total final value.",
+    "complexity": "O(2^n * n * k_good + n*m) per test case after grouping masks by popcount.",
+    "tricks": ["threshold decomposition", "count masks by popcount", "reuse binary game DP"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "threshold-bitmask-counting",
+      "summary": "Run binary minimax DP once, group winning masks by popcount, and use threshold counting to aggregate all m-valued configurations.",
+      "complexity": "O(2^n * n * k_good + n*m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The game outcome for each threshold is computed by DP over remaining pile masks.",
+      "solution_variant": "threshold-bitmask-counting"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The hard-version lift relies on counting how many original configurations correspond to each winning binary mask popcount.",
+      "solution_variant": "threshold-bitmask-counting"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The DP is still a minimax deletion game with Alice maximizing and Bob minimizing the final value.",
+      "solution_variant": "threshold-bitmask-counting"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "All m-valued configurations are reduced to binary threshold masks, so many value assignments share the same game state.",
+      "solution_variant": "threshold-bitmask-counting"
+    }
+  ]
+}

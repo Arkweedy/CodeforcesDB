@@ -1,0 +1,64 @@
+{
+  "contest": {
+    "contest_id": 2140,
+    "title": "Codeforces Round 1049 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2140,
+    "index": "C",
+    "title": "Ultimate Value",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "games", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2140/problem/C",
+      "notes": "Defines an alternating-sum objective plus swap cost; Alice can end or swap first, and Bob can end immediately after."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146218",
+      "notes": "Official reference code checks the initial value, same-parity distance gain, and opposite-parity swap deltas with maintained parity minima."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array and a game where each move can either stop or swap two positions while adding distance to cost, compute the optimal final alternating-sum value.",
+    "constraints": "Sum of n over tests is at most 2e5, so the optimal first move must be evaluated in linear time.",
+    "core_idea": "Bob can stop after Alice's first swap, so Alice only needs to maximize the initial alternating sum after at most one beneficial swap. Same-parity swaps only add distance, while opposite-parity swaps change the alternating sum by twice the moved values plus distance; maintain the best previous even/odd expression to test every right endpoint.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["game collapses to one move", "parity sign transform", "maintain best parity expression"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "one-swap-parity-greedy",
+      "summary": "Compute the baseline alternating sum, then scan positions while maintaining minimum expressions for previous even and odd positions to maximize the one-swap delta.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The key game observation is that Bob's ability to end immediately reduces the minimax game to Alice choosing no swap or exactly one first swap.",
+      "solution_variant": "one-swap-parity-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "After the game collapse, Alice greedily takes the maximum candidate delta among same-parity distance gains and opposite-parity swap gains.",
+      "solution_variant": "one-swap-parity-greedy"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The scan keeps the minimum even/odd transformed contribution so each possible second endpoint is evaluated in O(1).",
+      "solution_variant": "one-swap-parity-greedy"
+    }
+  ]
+}

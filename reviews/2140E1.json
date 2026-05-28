@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2140,
+    "title": "Codeforces Round 1049 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2140,
+    "index": "E1",
+    "title": "Prime Gaming (Easy Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2140/problem/E1",
+      "notes": "Easy version has n<=20, m<=2, and asks for the sum of the optimal final pile value over all configurations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146218",
+      "notes": "Official reference code performs minimax DP over bitmasks after removing a chosen good position."
+    }
+  ],
+  "annotation": {
+    "summary": "For every binary pile configuration, compute the final remaining pile value under optimal deletion play and sum those values.",
+    "constraints": "n<=20, m<=2, and the sum of 2^n over tests is at most 2^20, so enumerating masks is intended.",
+    "core_idea": "With m=2, a configuration is a bitmask indicating whether each pile has value 2 instead of 1. Define DP[player][length][mask] as whether the final pile can be value 2 under optimal play from that state. Removing a good index deletes one bit and flips turn; Alice ORs over legal removals while Bob ANDs over them. The answer is the sum of 1+win(mask) over all masks.",
+    "complexity": "O(2^n * n * k) in the direct form, within the given total 2^n bound.",
+    "tricks": ["delete one bit from a mask", "minimax OR/AND transition", "binary-value state compression"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-mask-minimax-dp",
+      "summary": "Represent each configuration as a bitmask and run minimax DP over all masks of each remaining length.",
+      "complexity": "O(2^n * n * k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The state is a remaining-length bitmask, and transitions remove one bit from the mask.",
+      "solution_variant": "binary-mask-minimax-dp"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The DP transition is a minimax game: Alice takes OR over possible removals while Bob takes AND.",
+      "solution_variant": "binary-mask-minimax-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Configurations and deletion of a pile are encoded as bit operations on masks.",
+      "solution_variant": "binary-mask-minimax-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The final answer aggregates the DP result over all binary configurations.",
+      "solution_variant": "binary-mask-minimax-dp"
+    }
+  ]
+}
