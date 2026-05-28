@@ -6,6 +6,7 @@ from pathlib import Path
 
 from cfdb.db import connect, init_db
 from cfdb.normalize import parse_problem_ref
+from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
 from cfdb.search import search_problems
 from cfdb.tags import descendants, resolve_tag
 
@@ -60,6 +61,113 @@ class CfDbTests(unittest.TestCase):
                 )
                 results = search_problems(conn, tags=["acam", "algorithm/dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:1:A"])
+
+    def reviewed_payload(self) -> dict[str, object]:
+        return {
+            "contest": {"contest_id": 2, "title": "Synthetic Contest"},
+            "problem": {
+                "contest_id": 2,
+                "index": "B",
+                "title": "Reviewed DP",
+                "rating": 1800,
+                "rating_status": "official",
+                "official_tags": ["dp"],
+            },
+            "sources": [
+                {
+                    "source_type": "statement",
+                    "url": "https://codeforces.com/contest/2/problem/B",
+                    "notes": "Statement and constraints.",
+                },
+                {
+                    "source_type": "editorial",
+                    "url": "https://codeforces.com/blog/entry/example",
+                    "notes": "Confirms the DP transition.",
+                },
+            ],
+            "annotation": {
+                "summary": "Synthetic reviewed problem.",
+                "constraints": "n is small enough for DP.",
+                "core_idea": "Build a DP over prefixes.",
+                "complexity": "O(n^2)",
+                "tricks": ["prefix state"],
+                "confidence": "high",
+                "review_status": "reviewed",
+            },
+            "solution_variants": [
+                {
+                    "name": "main",
+                    "summary": "Prefix DP.",
+                    "complexity": "O(n^2)",
+                    "confidence": "high",
+                    "is_primary": True,
+                }
+            ],
+            "tags": [
+                {
+                    "tag": "algorithm/dp",
+                    "importance": "primary",
+                    "evidence": "The state transition is the solution core.",
+                    "solution_variant": "main",
+                }
+            ],
+        }
+
+    def test_reviewed_payload_can_create_problem(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                problem_uid = apply_reviewed_payload(conn, self.reviewed_payload())
+                self.assertEqual(problem_uid, "cf_problem:2:B")
+                annotation = conn.execute(
+                    "SELECT review_status, constraints_text, tricks_json FROM problem_annotations WHERE problem_uid = ?",
+                    (problem_uid,),
+                ).fetchone()
+                self.assertEqual(annotation["review_status"], "reviewed")
+                self.assertEqual(annotation["constraints_text"], "n is small enough for DP.")
+                self.assertIn("prefix state", annotation["tricks_json"])
+                results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["algorithm/dp"])
+                self.assertEqual([item["problem_uid"] for item in results], [problem_uid])
+
+    def test_reviewed_payload_rejects_primary_without_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["tags"][0]["evidence"] = ""
+            with connect(db) as conn:
+                with self.assertRaises(ReviewedPayloadError):
+                    apply_reviewed_payload(conn, payload)
+
+    def test_reviewed_payload_rejects_new_tag_without_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["tags"] = [
+                {
+                    "tag": "trick/synthetic-new-observation",
+                    "importance": "primary",
+                    "evidence": "This observation is the solution core.",
+                    "description": "A synthetic reusable observation.",
+                    "created_reason": "Existing tags are too broad.",
+                    "solution_variant": "main",
+                }
+            ]
+            with connect(db) as conn:
+                with self.assertRaises(ReviewedPayloadError):
+                    apply_reviewed_payload(conn, payload)
+
+    def test_reviewed_payload_rejects_low_rating(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["problem"]["rating"] = 1300
+            with connect(db) as conn:
+                with self.assertRaises(ReviewedPayloadError):
+                    apply_reviewed_payload(conn, payload)
 
 
 if __name__ == "__main__":

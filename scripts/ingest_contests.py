@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -10,47 +9,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from cfdb.codeforces import CodeforcesClient
 from cfdb.db import DEFAULT_DB_PATH, connect, init_db
+from cfdb.git_utils import commit_paths
 from cfdb.ingest import find_contest_meta, ingest_contest, upsert_ingestion_range
-
-
-def run_git(args: list[str], cwd: Path, check: bool = True) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        ["git", *args],
-        cwd=cwd,
-        check=check,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-
-def git_repo_root(cwd: Path) -> Path | None:
-    result = run_git(["rev-parse", "--show-toplevel"], cwd, check=False)
-    if result.returncode != 0:
-        return None
-    return Path(result.stdout.strip()).resolve()
 
 
 def auto_commit_database(db_path: str, start: int, end: int, results: list[dict[str, Any]]) -> None:
     script_root = Path(__file__).resolve().parents[1]
-    repo_root = git_repo_root(script_root)
-    if repo_root is None:
-        print("auto-commit skipped: not inside a git repository")
-        return
-
-    db_resolved = Path(db_path).resolve()
-    try:
-        relative_db = db_resolved.relative_to(repo_root)
-    except ValueError:
-        print(f"auto-commit skipped: database is outside repository: {db_resolved}")
-        return
-
-    run_git(["add", "--", str(relative_db)], repo_root)
-    diff = run_git(["diff", "--cached", "--quiet", "--", str(relative_db)], repo_root, check=False)
-    if diff.returncode == 0:
-        print("auto-commit skipped: database has no staged changes")
-        return
-
     lo, hi = sorted((start, end))
     done = sum(1 for item in results if item["status"] == "done")
     skipped = sum(1 for item in results if item["status"] == "skipped")
@@ -66,26 +30,7 @@ def auto_commit_database(db_path: str, start: int, end: int, results: list[dict[
             f"Problems ingested: {problems}",
         ]
     )
-    commit = run_git(
-        [
-            "-c",
-            "user.name=Codex",
-            "-c",
-            "user.email=codex@example.local",
-            "commit",
-            "-m",
-            subject,
-            "-m",
-            body,
-        ],
-        repo_root,
-        check=False,
-    )
-    if commit.returncode != 0:
-        print("auto-commit failed:")
-        print(commit.stderr.strip())
-        return
-    print(commit.stdout.strip())
+    commit_paths([Path(db_path)], subject, body, script_root)
 
 
 def main() -> None:

@@ -32,8 +32,22 @@ def connect(path: str | Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
     return conn
 
 
+def _columns(conn: sqlite3.Connection, table: str) -> set[str]:
+    rows = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    return {row["name"] for row in rows}
+
+
+def migrate_db(conn: sqlite3.Connection) -> None:
+    annotation_columns = _columns(conn, "problem_annotations")
+    if "constraints_text" not in annotation_columns:
+        conn.execute("ALTER TABLE problem_annotations ADD COLUMN constraints_text TEXT")
+    if "tricks_json" not in annotation_columns:
+        conn.execute("ALTER TABLE problem_annotations ADD COLUMN tricks_json TEXT NOT NULL DEFAULT '[]'")
+
+
 def init_db(path: str | Path = DEFAULT_DB_PATH, seed: bool = True) -> None:
     with connect(path) as conn:
         conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+        migrate_db(conn)
         if seed:
             seed_tags(conn)

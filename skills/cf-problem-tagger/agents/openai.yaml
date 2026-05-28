@@ -1,0 +1,7 @@
+interface:
+  display_name: "CF Problem Tagger"
+  short_description: "AI-review Codeforces problems and assign fine-grained tags"
+  default_prompt: "Use $cf-problem-tagger to review Codeforces problems, determine primary algorithms/tricks from statements and solution sources, and write reviewed JSON into the local database."
+
+policy:
+  allow_implicit_invocation: true

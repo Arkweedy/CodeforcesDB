@@ -1,39 +1,87 @@
-# Codeforces 题目数据库
+# Codeforces AI-Reviewed 题目数据库
 
 这是一个本地 SQLite 题目数据库，用来按 rating、算法、数据结构、题型、trick 等条件快速检索 Codeforces 题目。
 
-当前数据库默认路径：
+**主流程不是自动爬取 tag，而是 AI-reviewed 逐题分析。** Codex agent 需要阅读题面、查常见题解来源、必要时自行推导，再写入 reviewed JSON。脚本只负责校验、写库、查询和提交。
+
+默认数据库：
 
 ```text
 data/cfdb.sqlite
 ```
 
-## 快速开始
+## 主流程：AI-reviewed 标注
 
-初始化数据库和基础 tag registry：
+1. 列出待 review 题：
 
 ```powershell
-python scripts/init_db.py
+python scripts/list_pending_reviews.py --limit 20
 ```
 
-抽取一段 contest：
+2. 生成单题 reviewed JSON 模板：
+
+```powershell
+python scripts/make_review_template.py 2170E --out reviews/2170E.json
+```
+
+3. Codex agent 使用 `cf-problem-tagger` skill 分析题目：
+
+- 读题面和约束。
+- 查 Codeforces editorial、Luogu、可靠博客或 accepted code。
+- 推导核心解法、复杂度和 trick。
+- 决定 `primary / secondary / incidental` tag。
+- 为每个 `primary` tag 写 evidence。
+
+4. 写入一题：
+
+```powershell
+python scripts/apply_reviewed_problem.py reviews/2170E.json
+```
+
+5. 批量写入并自动提交数据库：
+
+```powershell
+python scripts/apply_review_batch.py reviews/
+```
+
+批量提交信息会包含 reviewed 范围和题目数，例如：
+
+```text
+review CF problems 2170A-2170F (6 problems)
+```
+
+## Skill
+
+仓库内 skill：
+
+```text
+skills/cf-problem-tagger/SKILL.md
+```
+
+该 skill 也应同步到 Codex 全局 skills 目录：
+
+```text
+C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
+```
+
+后续你可以通过对话或定时任务唤醒 Codex agent，让它使用 `$cf-problem-tagger` 对指定范围逐题分析并入库。
+
+## Bootstrap：基础元数据抽取
+
+旧脚本 `scripts/ingest_contests.py` 只用于 bootstrap contest/problem 元数据：
 
 ```powershell
 python scripts/ingest_contests.py --start 2170 --end 2178
 ```
 
-抽取脚本默认会：
+它会：
 
+- 从 Codeforces API 获取 contest/problem/rating/official tags。
 - 跳过官方 rating 低于 `1400` 的题。
-- 使用 Codeforces 官方 rating；没有官方 rating 时不会自行估分。
-- 应用非 ICPC 风格比赛排除规则。
-- 抽取结束后自动提交 `data/cfdb.sqlite`，commit message 会写明抽取范围和题目数。
+- 排除语言限定、娱乐赛、启发式优化赛等非 ICPC 风格比赛。
+- 把 official tags 映射成候选层级 tag，并标记为 `auto_seeded`。
 
-如果只想抽取但不自动 commit：
-
-```powershell
-python scripts/ingest_contests.py --start 2170 --end 2178 --no-auto-commit
-```
+它不会做题解分析，也不会产出高质量 reviewed tag。official tags 只能作为线索。
 
 ## 查询
 
@@ -55,23 +103,23 @@ python scripts/search.py --tag algorithm/string/acam --tag algorithm/dp
 python scripts/search.py --tag algorithm/dp --exclude data-structure/segment-tree
 ```
 
-查询未评分或无评分题时需要显式指定：
+查询未评分或无评分题：
 
 ```powershell
 python scripts/search.py --include-unrated --tag algorithm/dp
 python scripts/search.py --rating-status pending_cf_rating
 ```
 
-## 唯一键与 URL 归一化
+## 唯一键
 
-contest 和 problem 都使用稳定唯一键：
+contest 和 problem 使用稳定唯一键：
 
 ```text
 contest_uid = cf_contest:{contest_id}
 problem_uid = cf_problem:{contest_id}:{index}
 ```
 
-下面两个入口会归一到同一道题：
+下面两个 URL 必须归一到同一题：
 
 ```text
 https://codeforces.com/problemset/problem/2231/A
@@ -88,79 +136,45 @@ canonical_url = https://codeforces.com/contest/2231/problem/A
 problemset_url = https://codeforces.com/problemset/problem/2231/A
 ```
 
-## Rating 策略
+## Reviewed JSON
 
-`problems.rating` 只存 Codeforces 官方 rating。默认 rating 查询只匹配：
-
-```text
-rating_status = official
-```
-
-其他状态：
-
-```text
-pending_cf_rating  # 新题暂无 rating，等待 CF 更新
-no_cf_rating       # 长期无 CF rating，例如部分 ICPC mirror
-unknown            # 抽取失败或信息不完整
-```
-
-如果以后需要人工估分，只能写入独立字段 `estimated_rating`，不得混入默认 rating 查询。
-
-## Tag 体系
-
-tag 是动态维护的层级路径，不是封闭枚举：
-
-```text
-algorithm/string/acam
-algorithm/dp/automaton-dp
-algorithm/transform/fwt
-data-structure/monotonic-stack
-math/inclusion-exclusion/minmax
-paradigm/constructive
-trick/maintain-contribution
-```
-
-tag registry 存在 SQLite 表中：
-
-```text
-tags
-tag_edges
-tag_aliases
-```
-
-查询父 tag 会包含子 tag，alias 会自动归一化。新增 tag 默认应为 `candidate`，review 后再改成 `active`。
-
-## 人工细化题目标签
-
-项目内置了 tagger skill 规程：
-
-```text
-skills/cf-problem-tagger/SKILL.md
-```
-
-人工 review 后，用 JSON 文件更新题目 annotation、solution variants 和精细 tag：
-
-```powershell
-python scripts/tag_problem.py annotations/2170E.json
-```
-
-JSON 形状：
+核心字段：
 
 ```json
 {
-  "problem": "2170E",
+  "contest": {
+    "contest_id": 2170,
+    "title": "Educational Codeforces Round 185 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2170,
+    "index": "E",
+    "title": "Binary Strings and Blocks",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["dp", "combinatorics"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2170/problem/E",
+      "notes": "题面与约束。"
+    }
+  ],
   "annotation": {
     "summary": "题意摘要。",
+    "constraints": "关键约束。",
     "core_idea": "核心转化或关键观察。",
-    "complexity": "O(n log n)",
+    "complexity": "O(...)",
+    "tricks": ["关键技巧"],
     "confidence": "high",
     "review_status": "reviewed"
   },
   "solution_variants": [
     {
       "name": "main",
-      "summary": "主流解法概述。",
-      "complexity": "O(n log n)",
+      "summary": "主解法。",
+      "complexity": "O(...)",
       "confidence": "high",
       "is_primary": true
     }
@@ -169,40 +183,46 @@ JSON 形状：
     {
       "tag": "algorithm/dp",
       "importance": "primary",
-      "evidence": "状态设计和转移是主解法核心。",
-      "source": "manual",
+      "evidence": "DP 状态设计和转移是主解法核心。",
       "solution_variant": "main"
     }
   ]
 }
 ```
 
-## 常用维护命令
+## Rating 规则
 
-列出 eligible 但尚未完成抽取的 contest：
+- `problems.rating` 只能写 Codeforces 官方 rating。
+- `rating_status = official` 时必须有整数 rating。
+- 没有官方 rating 时使用 `pending_cf_rating`、`no_cf_rating` 或 `unknown`。
+- 人工估分只能放在独立字段，不能参与默认 rating 查询。
+- 默认拒绝官方 rating `< 1400` 的题。
 
-```powershell
-python scripts/list_unextracted_contests.py
+## Tag 规则
+
+tag 是动态层级路径：
+
+```text
+algorithm/string/acam
+algorithm/dp/automaton-dp
+algorithm/transform/fwt
+data-structure/monotonic-stack
+math/inclusion-exclusion/minmax
+trick/maintain-contribution
 ```
 
-手动加入或更新 tag：
+新增 tag 默认是 `candidate`，必须提供：
 
-```powershell
-python scripts/add_tag.py algorithm/string/acam --status active --alias acam
-```
+- `description`
+- `parent` 或 `parents`
+- `created_reason`
 
-运行测试：
+## 测试
+
+建议禁用 pycache：
 
 ```powershell
 $env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
 ```
 
-## 当前 demo 数据
-
-已抽取范围：
-
-```text
-contest/2170 ~ contest/2178
-```
-
-其中 `2177 ICPC 2025 Online Winter Challenge powered by Huawei` 被排除，因为它属于启发式/优化 challenge，不适合作为 ICPC 风格题库数据。
+所有 Markdown 和 JSON 文件都应使用 UTF-8。

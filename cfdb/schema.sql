@@ -57,8 +57,10 @@ CREATE TABLE IF NOT EXISTS problem_sources (
 CREATE TABLE IF NOT EXISTS problem_annotations (
     problem_uid TEXT PRIMARY KEY REFERENCES problems(problem_uid) ON DELETE CASCADE,
     summary TEXT,
+    constraints_text TEXT,
     core_idea TEXT,
     complexity TEXT,
+    tricks_json TEXT NOT NULL DEFAULT '[]',
     confidence TEXT NOT NULL DEFAULT 'low'
         CHECK (confidence IN ('low', 'medium', 'high')),
     review_status TEXT NOT NULL DEFAULT 'raw'
@@ -148,4 +150,3 @@ CREATE INDEX IF NOT EXISTS idx_problem_tags_tag
 
 CREATE INDEX IF NOT EXISTS idx_problem_tags_problem
     ON problem_tags(problem_uid, importance);
-
