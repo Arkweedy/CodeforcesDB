@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2218,
+    "title": "Codeforces Round 1090 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2218,
+    "index": "G",
+    "title": "The 67th Iteration of \"Counting is Fun\"",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2218/problem/G",
+      "notes": "题面：给定每个人坐下的时间 b，统计有多少数组 a 能生成该过程；sum n <= 2e5，模数 676767677。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/152678?locale=en",
+      "notes": "Codeforces 社区题解按 b 的时间顺序处理，利用邻居首次坐下时间和每轮已坐下人数给出每个 a_i 的可选范围。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2218G",
+      "notes": "洛谷候选页面用于交叉定位该题；主要推导仍以题面和 Codeforces 社区题解为准。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一排人最终坐下时间 b_i，要求统计有多少种社恐值数组 a 能让过程恰好在这些时间坐下。",
+    "constraints": "多测，sum n <= 2e5；每个时间 0..m-1 至少出现一次，需要线性按时间分组处理。",
+    "core_idea": "预先统计 s_t 为时间 t 结束后已经坐下的人数。对 b_i=0 的人，必须 a_i=0。对时间 t>0 坐下的人，先找其左右邻居中最早坐下时间 nb，若没有邻居在 t 前坐下则无解。若 t=nb+1，则它之前没坐下可以完全归因于邻居条件尚未满足，所以 a_i 可在 1..s_{t-1} 中任选；否则邻居条件更早就满足了，它必须是等待人数门槛，因此 a_i 必须在 s_{t-2}+1..s_{t-1}。各位置的 a_i 选择只由 b 的全局计数和邻居时间决定，彼此独立，答案为所有可选范围大小的乘积。",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "按坐下时间批次统计前缀人数",
+      "用邻居首次坐下时间区分卡邻居条件还是卡人数条件",
+      "把每个 a_i 的可选范围独立相乘"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "time-bucket-independent-count",
+      "summary": "按 b_i 分桶，计算每个时间前的已坐人数；对每个位置根据邻居最早坐下时间求 a_i 的可选区间并乘起来。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "最终答案是每个位置可选 a_i 数量的乘积，核心是计数而非构造。",
+      "solution_variant": "time-bucket-independent-count"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "primary",
+      "evidence": "过程按离散时间批次同时发生，需要按 b_i 的时间分组模拟可坐下条件。",
+      "solution_variant": "time-bucket-independent-count"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "s_t 表示到时间 t 已坐下人数，是由 b 的频次前缀和得到的。",
+      "solution_variant": "time-bucket-independent-count"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "每个 a_i 被限制在 1..s_{t-1} 或 s_{t-2}+1..s_{t-1} 的区间中，区间为空则无贡献。",
+      "solution_variant": "time-bucket-independent-count"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "需要处理边界邻居、t=0、t=1 时的前缀人数和特殊模数。",
+      "solution_variant": "time-bucket-independent-count"
+    }
+  ]
+}

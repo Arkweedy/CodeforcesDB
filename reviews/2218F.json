@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2218,
+    "title": "Codeforces Round 1090 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2218,
+    "index": "F",
+    "title": "The 67th Tree Problem",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2218/problem/F",
+      "notes": "题面：构造根为 1 的树，使偶数子树大小结点数为 x、奇数子树大小结点数为 y；sum(x+y) <= 2e5。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/152678?locale=en",
+      "notes": "Codeforces 社区题解给出必要条件 x<=y 和链加挂叶子的构造。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2218F",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 x,y，构造一棵 x+y 个结点、根为 1 的树，使恰有 x 个结点子树大小为偶数、y 个结点子树大小为奇数；无解输出 NO。",
+    "constraints": "多测，sum(x+y) <= 2e5，需要线性输出边。",
+    "core_idea": "任意偶数子树结点至少有一个孩子，沿着它的子树可以配出一个奇数子树结点，因此必须 x<=y。若 x=0，则所有子树都要为奇数，只有 y 为奇数时可用星形树。若 x>0，先建一条长度 2x 的链，链上子树大小奇偶交替，正好有 x 个偶数和 x 个奇数；剩余 y-x 个叶子若为偶数个挂到根 1，若为奇数个挂到结点 2，使链上奇偶数量保持目标，再输出边。",
+    "complexity": "O(x+y) per test case",
+    "tricks": [
+      "用链让子树大小奇偶交替",
+      "按剩余叶子数量奇偶选择挂点保持计数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "chain-with-extra-leaves",
+      "summary": "必要条件 x<=y；x=0 时特判奇数星形，否则建 2x 链并把 y-x 个额外叶子按奇偶挂到 1 或 2。",
+      "complexity": "O(x+y)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "任务本身是构造满足指定奇偶子树计数的树，主解给出显式链+叶子构造。",
+      "solution_variant": "chain-with-extra-leaves"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "可行性和挂叶子位置完全由子树大小奇偶以及剩余叶子数奇偶决定。",
+      "solution_variant": "chain-with-extra-leaves"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "构造对象是有根树，核心量是每个结点的子树大小。",
+      "solution_variant": "chain-with-extra-leaves"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "secondary",
+      "evidence": "链作为基础骨架，额外叶子按规则接入形成可输出的结构。",
+      "solution_variant": "chain-with-extra-leaves"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "实现需要处理 x=0、y-x 奇偶和输出边下标。",
+      "solution_variant": "chain-with-extra-leaves"
+    }
+  ]
+}
