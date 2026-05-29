@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2119, "title": "Codeforces Round 1035 (Div. 2)"},
+  "problem": {"contest_id": 2119, "index": "F", "title": "Volcanic Eruptions", "rating": 3300, "rating_status": "official", "official_tags": ["dfs and similar", "dp", "greedy", "shortest paths", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2119/problem/F", "notes": "题面与约束：树上行走，遇到火山喷发边/点会改变方向，需要求多组路径代价或可达最优值。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144473", "notes": "官方题解确认任何掉头都可以归一到从根边 (1,1) 重新进入，并从所有可用边做最近距离 DP。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/54otjmyz", "notes": "Luogu 题解确认：将路径中的转向替换为先回到根附近边，再从最近的未失效边继续；树上多源最短路/DP 预处理最近合法边。"}
+  ],
+  "annotation": {
+    "summary": "树上有与火山喷发相关的限制，行走过程中可在某些边上掉头。要求在所有限制下求每个查询/状态的最小代价。",
+    "constraints": "n 大且多测，需要树上 O(n log n) 或 O(n) 级预处理；不能对每次掉头枚举整条路径。",
+    "core_idea": "把复杂的掉头行为规范化：若一条路线在某处掉头，等价地可以先回到根侧的特殊边/状态 (1,1)，再从某条仍可用的边重新进入，额外代价由树上距离表达。于是对每条边需要知道离它最近的可作为重新进入点的边。以所有合法边为源，在树的边状态图上做多源最短路/DP，得到最近源及代价；随后每个查询只需比较不掉头的直接方案与一次规范化掉头后的方案。局部贪心选择最近合法边是正确的，因为所有额外代价都以树距离可加方式出现。",
+    "complexity": "O(n log n) with priority queue or O(n) on the tree-state graph if transitions are processed carefully",
+    "tricks": ["把任意掉头归一为经过根侧特殊状态", "多源最短路预处理最近合法边", "查询时只比较直接走和规范化掉头"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": ["3300 题；当前标注依据官方题解和 Luogu 题解的高层结构，若后续用于教学，可再补 accepted code 级别的实现细节。"]
+  },
+  "solution_variants": [
+    {"name": "normalized-turnaround-multisource-shortest-path", "summary": "将掉头选择归一为从特殊根状态重新进入，并对所有边状态做多源最短路得到最近可用进入点。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/shortest-path", "importance": "primary", "evidence": "主预处理是在树的边状态图上从多个源求最近合法边的最短距离。", "solution_variant": "normalized-turnaround-multisource-shortest-path"},
+    {"tag": "graph/tree", "importance": "primary", "evidence": "所有距离、路径和掉头规范化都依赖树上唯一路径结构。", "solution_variant": "normalized-turnaround-multisource-shortest-path"},
+    {"tag": "dp/tree-dp", "importance": "secondary", "evidence": "也可把最近合法边信息视为树上 reroot/向上向下传递的 DP。", "solution_variant": "normalized-turnaround-multisource-shortest-path"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "规范化后每个边状态只需选择最近合法进入点，即局部最近源最优。", "solution_variant": "normalized-turnaround-multisource-shortest-path"},
+    {"tag": "trick/reverse-process", "importance": "secondary", "evidence": "从所有可能重新进入点反向传播到查询边，比正向枚举掉头点更容易。", "solution_variant": "normalized-turnaround-multisource-shortest-path"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2119, "title": "Codeforces Round 1035 (Div. 2)"},
+  "problem": {"contest_id": 2119, "index": "D", "title": "Token Removing", "rating": 2100, "rating_status": "official", "official_tags": ["combinatorics", "dp", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2119/problem/D", "notes": "题面与约束：有 n 个罐子，第 i 个罐子初始有 i 个 token；给出每步随机选择罐子的规则，问最终移除序列等于给定排列的概率。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144473", "notes": "官方题解确认反向处理排列，用 DP 维护当前还可能被选择的罐子数量，并乘组合概率。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ad7j4kep", "notes": "Luogu 题解确认将“第 i 个罐子剩余 token 数”转成当前排列后缀中的计数 DP。"}
+  ],
+  "annotation": {
+    "summary": "随机过程每次按规则选择一个仍有 token 的罐子并移除一个 token。给定一个罐子编号排列，求所有 token 完全移除时首次变空顺序等于该排列的概率。",
+    "constraints": "n 级别较大，需要 O(n^2) 或优化后的组合 DP；模 998244353 下计算概率。",
+    "core_idea": "正向看每个罐子何时首次归零很难，反向看给定变空顺序：当处理排列后缀时，某些罐子已经被要求在更晚时刻变空，它们在之前必须至少保留一个 token。用 DP[j] 表示当前阶段仍有 j 个“保护 token/未归零限制”的方案权重，加入一个新罐子时按其容量和当前可选罐子数转移。每一步乘上随机选择概率的逆元，最终得到排列作为变空顺序的概率。",
+    "complexity": "O(n^2)",
+    "tricks": ["反向处理给定的移除顺序", "用状态表示仍需保持非空的罐子数", "概率转移在模数下用逆元表示"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "reverse-counting-dp", "summary": "按目标排列从后向前加入罐子，DP 统计满足后缀变空顺序限制的概率权重。", "complexity": "O(n^2)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/counting-dp", "importance": "primary", "evidence": "主解通过 DP 统计满足给定后缀顺序限制的方案/概率权重。", "solution_variant": "reverse-counting-dp", "description": "以方案数、概率权重或组合计数为状态值的动态规划，目标是统计满足约束的对象数量或概率。", "parent": "dp", "created_reason": "Token Removing 的检索重点是计数/概率型 DP，而不是普通最优化 DP；该细分可复用于组合计数题。", "status": "candidate"},
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "概率计算建立在排列顺序、保留 token 个数和组合计数转移上。", "solution_variant": "reverse-counting-dp"},
+    {"tag": "trick/reverse-process", "importance": "secondary", "evidence": "按给定变空顺序反向加入罐子后，限制关系才变成可局部转移的 DP。", "solution_variant": "reverse-counting-dp"},
+    {"tag": "math/probability", "importance": "secondary", "evidence": "答案是随机过程产生指定排列的概率，转移需要乘选择概率。", "solution_variant": "reverse-counting-dp"}
+  ]
+}

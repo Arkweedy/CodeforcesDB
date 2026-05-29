@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2119, "title": "Codeforces Round 1035 (Div. 2)"},
+  "problem": {"contest_id": 2119, "index": "E", "title": "And Constraint", "rating": 2600, "rating_status": "official", "official_tags": ["bitmasks", "dp", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2119/problem/E", "notes": "题面与约束：构造/计数满足一系列 AND 约束的整数序列，要求按字典序或最大值目标优化。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144473", "notes": "官方题解确认逐 bit 贪心尝试答案，并用有限状态 DP 检查当前前缀 bit 约束是否可满足。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/te2603as", "notes": "Luogu 题解确认：高位到低位枚举候选，状态记录当前 AND 约束是否已经被某一位满足/违反。"}
+  ],
+  "annotation": {
+    "summary": "给定若干按位 AND 相关限制，要求构造满足限制的对象并优化其数值。",
+    "constraints": "值域按二进制位处理；每一位的可行性需要快速判定，不能暴力枚举所有数。",
+    "core_idea": "按位从高到低决定答案。尝试把当前位设为更优值后，需要判断是否存在低位补全满足所有 AND 约束。由于 AND 约束对每一位独立，但不同约束之间共享变量，可用小状态 DP 记录某个前缀下每条约束目前是否已经被确定满足、仍需低位补救，或已经冲突。若可行则保留当前位的贪心选择，否则回退。这样把全局构造拆成若干次 bit-level feasibility DP。",
+    "complexity": "O(B * poly(n)) where B is number of bits",
+    "tricks": ["高位到低位贪心构造", "AND 约束按 bit 独立检查", "用 DP 判定低位是否仍可补全"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "bitwise-greedy-with-feasibility-dp", "summary": "逐位尝试答案，并在每次尝试后运行状态 DP 检查已有 bit 选择是否可被低位补全。", "complexity": "O(B * poly(n))", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/bitmask/bitwise-greedy", "importance": "primary", "evidence": "主流程从高位到低位决定答案，每位都尝试保留最优选择。", "solution_variant": "bitwise-greedy-with-feasibility-dp"},
+    {"tag": "dp/finite-state-dp", "importance": "primary", "evidence": "可行性检查只需要记录每个约束在当前 bit 前缀下的有限状态。", "solution_variant": "bitwise-greedy-with-feasibility-dp"},
+    {"tag": "algorithm/bitmask", "importance": "secondary", "evidence": "所有限制按二进制位拆分处理。", "solution_variant": "bitwise-greedy-with-feasibility-dp"},
+    {"tag": "trick/invariant", "importance": "secondary", "evidence": "DP 状态维护的是当前高位前缀是否仍可能被低位补全这一不变量。", "solution_variant": "bitwise-greedy-with-feasibility-dp"}
+  ]
+}
