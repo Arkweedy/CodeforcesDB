@@ -243,6 +243,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "implementation/parsing/expression": "表达式解析",
   "math": "数学",
   "math/combinatorics": "组合数学",
+  "math/combinatorics/binomial-identity": "二项式恒等式",
   "math/combinatorics/multinomial": "多项式系数",
   "math/combinatorics/permutation-counting": "排列计数",
   "math/combinatorics/prufer-sequence": "Prüfer 序列",
@@ -302,6 +303,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/prefix-suffix-extrema": "前后缀极值",
   "trick/quotient-state-space": "商状态空间",
   "trick/state-augmentation": "状态增强",
+  "trick/symmetry": "对称性",
   "trick/tight-loose-state": "紧/松状态",
   "trick/xor-hashing": "异或哈希"
 };
@@ -315,6 +317,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "bfs": "BFS",
   "binary-lifting": "倍增",
   "binary-search": "二分",
+  "binomial-identity": "二项式恒等式",
   "bipartite-graph": "二分图",
   "bitmask": "位掩码",
   "bitmask-dp": "状压 DP",
@@ -432,6 +435,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "subset-dp": "子集 DP",
   "suffix-structures": "后缀结构",
   "sweep-line": "扫描线",
+  "symmetry": "对称性",
   "ternary-search": "三分",
   "tight-loose-state": "紧/松状态",
   "transform": "变换",

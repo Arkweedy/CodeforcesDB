@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "G",
+    "title": "Balance",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/G",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the subsequence-balance coefficient formula and the four-state amortized structure for tracking middle deletions."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180G",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain a dynamically transformed sequence and after each operation output the sum of balance values over all nonempty subsequences.",
+    "constraints": "The number of operations is large and type 2 can double the sequence length, so neither the sequence nor all subsequences can be represented explicitly.",
+    "core_idea": "First prove a global combinatorial identity: over all subsequences of a fixed length, symmetry of a subsequence and its reversal makes every array element have the same coefficient, so the total balance of all subsequences depends only on current length n and current sum S. The coefficient can be precomputed/updated with binomial identities. Then maintain only n, S, and the value removed by each middle-deletion operation. Since type 2 inserts the same value into every gap, the middle value can be tracked through a small four-state recursive/stack structure; each stored block is advanced or removed amortized O(1) times.",
+    "complexity": "O(q log MOD) or O(q) with precomputed inverses, depending on coefficient implementation.",
+    "tricks": [
+      "subsequence reversal symmetry",
+      "answer depends only on length and sum",
+      "implicit sequence with middle tracker"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Use the combinatorial coefficient to answer from (n, sum), while an amortized four-state structure supplies the middle element removed by type 1 operations.",
+      "complexity": "O(q log MOD) or O(q) after precomputation",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "The answer formula sums coefficients over all subsequence lengths and simplifies with binomial identities.",
+      "solution_variant": "main",
+      "description": "Use algebraic identities involving binomial coefficients to collapse a sum, recurrence, or counting expression.",
+      "parent": "math/combinatorics",
+      "created_reason": "This is more specific than generic combinatorics and useful for problems whose main step is simplifying binomial sums.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "Pairing subsequences with their reversals makes each original element contribute equally to the global balance sum.",
+      "solution_variant": "main",
+      "description": "Exploit symmetry, reversal, complement, or paired configurations to equalize contributions or simplify counting.",
+      "parent": "trick",
+      "created_reason": "The decisive proof is a symmetry argument not captured by broad math/combinatorics tags.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "primary",
+      "evidence": "The implicit middle tracker advances through stored blocks so each block/state is removed or updated only a constant number of times.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "The huge sequence is represented by a small recursive state instead of explicit positions.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The output is a sum over all subsequences collapsed through counting coefficients.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The hard part after the formula is carefully maintaining the implicit sequence state through updates.",
+      "solution_variant": "main"
+    }
+  ]
+}
