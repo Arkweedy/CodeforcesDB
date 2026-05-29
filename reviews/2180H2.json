@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "H2",
+    "title": "Bug Is Feature (Conditional Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "games"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/H2",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the transformation to x -> x-1 or floor(x/2), the trailing-zero characterization of zero Grundy states, and interval counting."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180H2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Determine the winner of the conditional version of the same impartial-game sum, where each series can be normalized to a one-dimensional state.",
+    "constraints": "Large value intervals require counting Grundy classes over ranges in logarithmic time.",
+    "core_idea": "Normalize a series by d=b-a and replace an upper bound x with x'=floor((x-a)/d). The game becomes a one-dimensional impartial game with moves x -> x-1 and x -> floor(x/2), ending at x=2. Its Grundy numbers have a bit-pattern characterization: g(x)=0 exactly when x has an odd number of trailing zero bits, while nonzero values alternate between 1 and 2. Count how many values in a transformed interval produce each Grundy value, adjust for boundary blocks with different multiplicities in the original interval, and XOR the parity of counts across all series.",
+    "complexity": "O(n log V) per test case.",
+    "tricks": [
+      "normalize to quotient coordinate",
+      "trailing-zero Grundy classification",
+      "range count by bit pattern"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Transform each original interval to quotient states, count parities of Grundy 0/1/2 over the quotient interval, and XOR the resulting contribution.",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "The solution computes Grundy values for each independent game and XORs their range contributions.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/bitmask/lowbit",
+      "importance": "primary",
+      "evidence": "The zero Grundy states are characterized by the parity of the trailing-zero count in binary.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "The original arithmetic-progression state is reduced to the quotient x'=floor((x-a)/d).",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "The nonzero Grundy values alternate, allowing range contributions to be counted by parity.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "secondary",
+      "evidence": "The problem is an impartial game winner decision after normalization.",
+      "solution_variant": "main"
+    }
+  ]
+}

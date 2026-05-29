@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "H1",
+    "title": "Bug Is Feature (Unconditional Version)",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": [
+      "games"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/H1",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the Sprague-Grundy decomposition, normalization to (q,k), period 2^(k+1), and prefix-XOR computation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180H1",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Determine the winner of a disjoint sum of impartial games defined by arithmetic-progressions and an interval of possible upper bounds.",
+    "constraints": "The intervals and values can be large, so each game must be reduced to logarithmic-time Grundy range XOR instead of enumerating all upper bounds.",
+    "core_idea": "By Sprague-Grundy, XOR the contribution of each independent series. Normalize one game by shifting a to 0; because the three numbers form an arithmetic progression, the state can be represented by remaining slack t and step d. Writing d=2^k D with D odd and q=floor(t/D), the Grundy number depends only on (q,k). Its recurrence reduces to two mex terms, and for fixed k the sequence in q is periodic with period 2^(k+1). Therefore the XOR over a large interval is reduced to boundary odd-length blocks plus a prefix-XOR function f(u,k), computed recursively in O(k).",
+    "complexity": "O(n log V) per test case.",
+    "tricks": [
+      "Sprague-Grundy disjoint sum",
+      "normalize arithmetic progression state",
+      "periodic Grundy prefix XOR"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Map each interval to q-blocks under d=2^kD, handle boundary blocks by parity, and compute full q-ranges with recursive periodic prefix XOR of Grundy values.",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "The winner is decided by XORing the Grundy values of independent series.",
+      "solution_variant": "main",
+      "description": "Use Sprague-Grundy numbers and xor-sum for impartial combinatorial games.",
+      "parent": "math/game-theory",
+      "created_reason": "Generic game theory is too broad for impartial-game xor-sum problems.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "For fixed k, g(q,k) is periodic with period 2^(k+1), enabling logarithmic prefix XOR.",
+      "solution_variant": "main",
+      "description": "Exploit periodic or eventually periodic behavior of states, sequences, or DP values.",
+      "parent": "trick",
+      "created_reason": "Periodicity is a common decisive reduction and should be searchable separately.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "Range XOR of Grundy values is answered as prefix_grundy(r,k) xor prefix_grundy(l-1,k).",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "The original parameters collapse to the quotient state (q,k).",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/bitmask/lowbit",
+      "importance": "secondary",
+      "evidence": "The exponent k is obtained from the power of two dividing d.",
+      "solution_variant": "main"
+    }
+  ]
+}
