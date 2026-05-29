@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2124,
+    "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2124,
+    "index": "H",
+    "title": "Longest Good Subsequence",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": ["dp", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2124/problem/H",
+      "notes": "题面：给定序列 a，good 序列定义为存在一个 permutation p，使每个位置 i 的值等于前缀 p_1..p_i 的 minimum；求最长 good subsequence。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/145016/en12?locale=en",
+      "notes": "官方题解给出 good 序列刻画：b_i=x 等价于 b_x=x 且区间 [x,i] 内最小值至少 x；随后用区间 DP 递推最长子序列。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/onlyblues/p/19037258",
+      "notes": "中文题解交叉确认按值 x 切分首段、递归区间 DP，并用最早合法端点贪心优化转移。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2124H",
+      "notes": "Checked candidate direction; no usable consulted Luogu solution content was found, so omitted from sources."
+    }
+  ],
+  "annotation": {
+    "summary": "从 a 中选出最长子序列 b，使 b 能作为某个 permutation 的所有前缀最小值序列。",
+    "constraints": "高 rating 大数据，需要利用 good 序列的结构做区间 DP，不能枚举所有子序列。",
+    "core_idea": "先刻画 good 序列：若 b_i=x，则必须有锚点 b_x=x，且从 x 到 i 的所有值都至少为 x；反过来满足这些局部条件即可构造对应 permutation。于是对值域/位置区间做 DP：考虑区间 (i,j) 内允许的最小值层级，从当前最小可用值 x 找到能形成一段的最早位置，再把左右/内部子问题拆开递推，取最长拼接。",
+    "complexity": "O(n^2) style interval DP in the intended solution.",
+    "tricks": ["characterize prefix-minimum sequences", "anchor b_x=x", "split interval by first feasible segment"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": "3400 题，主结构已由官方题解确认；建议主 agent 复核 good 序列刻画的充分性证明，以及区间 DP 下标定义是否与最终实现一致。"
+  },
+  "solution_variants": [
+    {
+      "name": "good-sequence-interval-dp",
+      "summary": "用 b_i=x 的锚点/区间最小值刻画 good 序列，再在区间上递推最长可取子序列。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "greedy-first-endpoint-optimization",
+      "summary": "每一层选择最早能完成当前值段的位置，减少候选转移并保持最优。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/interval-dp",
+      "importance": "primary",
+      "evidence": "主算法把序列可选范围拆成区间子问题，并在区间内按最小值层级递推最长答案。",
+      "solution_variant": "good-sequence-interval-dp"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "b_i=x 的合法性由区间 [x,i] 的最小值至少为 x 和锚点 b_x=x 决定。",
+      "solution_variant": "good-sequence-interval-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "优化转移时使用最早可行端点来代表当前值段，不损失后续区间选择。",
+      "solution_variant": "greedy-first-endpoint-optimization"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "incidental",
+      "evidence": "题目定义涉及 permutation 前缀最小值序列，但主算法不做排列计数。",
+      "solution_variant": "good-sequence-interval-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "incidental",
+      "evidence": "官方标签包含 trees，可能来自 good 序列与构造结构的解释；主解法检索价值更集中在区间 DP。",
+      "solution_variant": "good-sequence-interval-dp"
+    }
+  ]
+}

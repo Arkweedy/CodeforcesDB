@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2124,
+    "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2124,
+    "index": "F1",
+    "title": "Appending Permutations (Easy Version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2124/problem/F1",
+      "notes": "题面与约束：每次追加一个排列，给定最终数组 a，统计不同操作序列；easy version 中 n <= 100。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/145016/en12?locale=en",
+      "notes": "官方题解确认从当前位置找第一个 permutation 段、用 last maximum 去除重复计数，以及 easy 的 O(n^4) DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2124F1",
+      "notes": "Checked candidate URL direction; exact page was not accessible/usable as a consulted solution source, so it is not included in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "给定数组 a，统计能把空数组通过若干次“追加一个排列”得到 a 的不同操作序列数。",
+    "constraints": "Easy version: n <= 100，可接受多项式 DP；需要对重复分割计数做规范化。",
+    "core_idea": "一个操作段必须是某个长度 len 的排列，也就是该段元素集合为 1..len。直接枚举分割会重复计数，因为相邻若干 permutation 段可能合并成另一种合法追加解释。官方规范化为：从当前位置 i 出发，只考虑第一个合法 permutation 段，并用该段内最后一次出现当前最大值的位置限制下一段起点，从而保证每种操作序列只被计一次。",
+    "complexity": "O(n^4) for the easy DP; optimized formulation can be O(n^2).",
+    "tricks": ["first valid permutation segment", "last maximum as canonical split boundary", "deduplicate equivalent partitions"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-permutation-segment-dp",
+      "summary": "令 dp[i] 表示处理到位置 i 的方案数；枚举从 i 开始的第一个 permutation 段和后续可接起点，用 last maximum 约束转移避免重复。",
+      "complexity": "O(n^4)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "suffix-sum-optimized-dp",
+      "summary": "将 hard version 的累积和优化套到同一规范化 DP 上，把同类转移批量求和。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "主解以位置为状态统计合法追加操作序列数量，转移累加方案数。",
+      "solution_variant": "canonical-permutation-segment-dp"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "每个块必须是排列，核心是在排列分段约束下计数而不是只判定存在性。",
+      "solution_variant": "canonical-permutation-segment-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "合法段由值域 1..len 的排列结构决定，last maximum 也是利用排列段结构去重。",
+      "solution_variant": "canonical-permutation-segment-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "Easy version 可直接枚举段端点和下一段起点完成规范化 DP。",
+      "solution_variant": "canonical-permutation-segment-dp"
+    }
+  ]
+}

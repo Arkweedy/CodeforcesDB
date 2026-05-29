@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2124,
+    "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2124,
+    "index": "I",
+    "title": "Lexicographic Partition",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "math", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2124/problem/I",
+      "notes": "题面：给定序列 x，判断是否存在 permutation p 使其 lexicographic partition 结果为 x，并构造 p。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/145016/en12?locale=en",
+      "notes": "官方题解先反推 p 到 x 的算法，再将 x 解释为树上深度序列；每个深度 d+1 的点必须接到之前深度 d 的点，且需维护字典序分区约束。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/onlyblues/p/19037258",
+      "notes": "中文题解交叉确认深度树构造、按层连父亲、以及从树生成排列的构造框架。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2124I",
+      "notes": "Checked candidate direction; no usable consulted Luogu solution content was found, so omitted from sources."
+    }
+  ],
+  "annotation": {
+    "summary": "给定目标数组 x，判断它是否可能是某个 permutation 在 lexicographic partition 规则下得到的结果，并在可能时构造一个 permutation。",
+    "constraints": "高 rating 构造题，需要线性或近线性检查 x 的结构并输出排列；不能搜索排列。",
+    "core_idea": "先研究给定 p 如何得到 x：每次取当前段中决定字典序的首个下降/分裂点，递归得到一组层级。反过来，合法 x 可以视为一棵有根树的深度序列：x_i 表示点 i 的深度，深度 1 的点作根层，深度 d+1 的点必须挂到某个更早出现的深度 d 点下，并满足分区递归的先后约束。构造时按深度维护可用父亲集合，建立树后再用 DFS/后序规则生成满足 lexicographic partition 的 permutation。",
+    "complexity": "O(n log n) or O(n) depending on parent-set implementation.",
+    "tricks": ["invert the partition process", "interpret x as tree depths", "construct permutation by DFS order"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": "3500 题，已重建核心树深度解释，但具体父亲选择规则和 DFS 输出顺序需要主 agent 对照官方代码/accepted code 再复核，避免把必要的字典序约束弱化成普通深度序列。"
+  },
+  "solution_variants": [
+    {
+      "name": "depth-tree-construction",
+      "summary": "把 x 当作树深度序列进行合法性检查，按层选父亲建树，再从树的递归结构输出 permutation。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "forward-partition-inversion",
+      "summary": "先推导 p 到 x 的递归分区过程，再逐步反向恢复能产生该分区树的排列。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求在 YES 时直接构造一个 permutation，主解法围绕反向构造而非只判定。",
+      "solution_variant": "depth-tree-construction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "合法 x 被解释为树深度序列，构造过程先建出父子树结构再从树生成排列。",
+      "solution_variant": "depth-tree-construction"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "分区规则由字典序最大/最小的递归选择决定，反向构造必须保留该字典序约束。",
+      "solution_variant": "depth-tree-construction"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "建树后用 DFS/递归遍历顺序输出满足条件的排列。",
+      "solution_variant": "depth-tree-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "合法性检查需要区分根层、深度跳跃、无可用父亲和递归分区顺序冲突等失败情况。",
+      "solution_variant": "depth-tree-construction"
+    }
+  ]
+}

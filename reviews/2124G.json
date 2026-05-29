@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2124,
+    "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2124,
+    "index": "G",
+    "title": "Maximise Sum",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2124/problem/G",
+      "notes": "题面：对排列 p 和成本数组 a，选择至多一次 swap(i,j)，对每个 x 求满足 swap cost <= x 时的最大 prefix-minimum sum。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/145016/en12?locale=en",
+      "notes": "官方题解确认只需考虑 i 为 prefix minimum、j 为 suffix maximum 的交换候选，并用 sparse table / binary search 查询交换收益。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/onlyblues/p/19037258",
+      "notes": "中文题解交叉确认候选对压缩、用单调栈找交换后影响区间，以及按代价做后缀最大值输出所有 x。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2124G",
+      "notes": "Checked candidate direction; no usable consulted Luogu solution content was found, so omitted from sources."
+    }
+  ],
+  "annotation": {
+    "summary": "给定排列 p 和每个位置的交换成本 a_i，问每个预算 x 下做至多一次允许成本内的交换后，prefix minimum 之和最大能提高多少。",
+    "constraints": "多测，n 较大，需要生成 O(n) 或 O(n log n) 个有意义候选，而不能枚举所有 O(n^2) 交换。",
+    "core_idea": "若左端 i 不是 prefix minimum，则把它和右侧交换不会改善任何新的前缀最小值；若右端 j 不是 suffix maximum，也存在更靠右且更大的支配候选。因此只考虑 prefix minima i 与 suffix maxima j。固定候选交换后，受影响的 prefix-minimum 区间可用 RMQ/next-smaller 或 sparse table + binary search 求出收益，再按交换成本 a_i+a_j 对收益取后缀最大，回答每个预算。",
+    "complexity": "O(n log n) typical implementation; O(n) candidate pairs plus logarithmic RMQ/binary-search queries.",
+    "tricks": ["prefix minimum / suffix maximum candidate pruning", "swap influence interval by next smaller value", "cost bucket suffix maximum"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": "3200 题，已用官方题解和中文题解确认主框架；建议主 agent 复核候选对数量的摊还证明以及收益公式边界，尤其是 j 与 i 的相对位置和 no-swap baseline。"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-min-suffix-max-candidates",
+      "summary": "枚举被 prefix minimum 与 suffix maximum 支配后剩下的交换候选，计算每个候选的收益和成本，并对成本做后缀最大。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "monotonic-stack-rmq-implementation",
+      "summary": "用单调栈/静态 RMQ 定位交换后 prefix minimum 改变的区间，替代显式模拟每次交换。",
+      "complexity": "O(n log n) or O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "主剪枝把所有有用交换限制为左端 prefix minimum、右端 suffix maximum 的组合。",
+      "solution_variant": "prefix-min-suffix-max-candidates"
+    },
+    {
+      "tag": "data-structure/sparse-table",
+      "importance": "primary",
+      "evidence": "官方做法用静态 RMQ/sparse table 支持交换收益区间的最值查询，并配合 binary search 定位边界。",
+      "solution_variant": "prefix-min-suffix-max-candidates"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "固定候选交换时，可二分受影响 prefix-minimum 区间的右边界。",
+      "solution_variant": "prefix-min-suffix-max-candidates"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "secondary",
+      "evidence": "中文实现可用单调栈预处理 next smaller / influence boundary，完成与 RMQ 类似的边界定位。",
+      "solution_variant": "monotonic-stack-rmq-implementation"
+    }
+  ]
+}

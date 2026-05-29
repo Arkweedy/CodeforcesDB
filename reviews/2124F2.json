@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2124,
+    "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2124,
+    "index": "F2",
+    "title": "Appending Permutations (Hard Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2124/problem/F2",
+      "notes": "Hard version of Appending Permutations; n <= 5000, m is additionally given as an upper bound in the input format."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/145016/en12?locale=en",
+      "notes": "官方题解给出 O(n^2) DP：维护 dp_i、s_i=sum dp_j，并按 last maximum/next candidate 起点做批量转移。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2124F2",
+      "notes": "Checked candidate URL direction; exact page was not accessible/usable as a consulted solution source, so it is not included in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "同 F1，统计数组 a 能由若干次追加排列得到的不同操作序列数，但 n 达到 5000，需要优化分段 DP。",
+    "constraints": "n <= 5000；O(n^4) easy DP 不可用，需要 O(n^2) 级别。答案取模 998244353。",
+    "core_idea": "保留 easy 的唯一计数规范：从 i 开始第一个合法 permutation 段和该段 last maximum 决定哪些后续起点可转移。Hard 版把这些转移改写成对 dp 的后缀/区间和查询：维护 s_i=sum_{j>=i} dp_j，枚举当前位置 i 和当前最大值位置 j 时，若候选下一起点 y 不超过 last maximum，就把一段 dp 和加入答案，否则更新到 max(y,j+1) 的累计状态。",
+    "complexity": "O(n^2) time, O(n) memory after precomputing/maintaining needed segment validity information.",
+    "tricks": ["canonical first permutation segment", "last maximum transition compression", "suffix sums over DP states"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-sum-canonical-dp",
+      "summary": "沿用 canonical split 规则，用 dp/suffix-sum 数组把同一段后续起点的贡献批量求和。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "quadratic-state-naive-transition",
+      "summary": "Easy 的规范化 DP 可作为推导基线，但直接枚举所有转移会超时。",
+      "complexity": "O(n^4)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "状态 dp_i 表示从位置 i 开始完成后缀的方案数，主算法是在这些状态间做计数转移。",
+      "solution_variant": "suffix-sum-canonical-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "Hard 版通过维护 suffix sums s_i 批量计算一段后续起点的 DP 贡献，把 easy 转移压到 O(n^2)。",
+      "solution_variant": "suffix-sum-canonical-dp"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "计数对象是把数组切成若干 permutation blocks 的操作序列，并且必须处理不同切法造成的重复。",
+      "solution_variant": "suffix-sum-canonical-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "合法块的判定和去重都依赖排列段的最大值、长度和值域关系。",
+      "solution_variant": "suffix-sum-canonical-dp"
+    }
+  ]
+}
