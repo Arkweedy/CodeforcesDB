@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "C",
+    "title": "Cacti Classification",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/C",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the cactus cycle fact, 16-bracket maintenance, monotone connectivity predicate, and second pass for bridge/cycle length classification."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181C",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Interactive classification of every edge in a cactus-like graph using connectivity queries on chosen edge subsets.",
+    "constraints": "The query budget is tight, so each edge needs only a constant number of connectivity queries.",
+    "core_idea": "Use the cactus fact that deleting two distinct edges from the same simple cycle disconnects the graph. Process edges by label and place them into one of 16 brackets: bracket i stores non-bridge edges that have exactly i earlier edges on their unique cycle, and bracket 15 stores bridges or edges deep in long cycles. For the current edge e, maintain base graphs G_i obtained by deleting already-placed bracket-i edges; each G_i remains connected. The predicate Ask(G_i \\ {e}) is monotone in i, so a 4-query binary search finds e's bracket. A second pass uses the same bracket predicates to distinguish bridges, big cycles, and exact cycle length up to 15.",
+    "complexity": "O(m log 16) connectivity queries, i.e. constant queries per edge.",
+    "tricks": [
+      "delete-two-edges cactus fact",
+      "constant number of brackets",
+      "monotone connectivity predicate"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Maintain 16 connected base graphs, binary-search the bracket of each edge with connectivity queries, then classify bridge/cycle length in a second pass.",
+      "complexity": "O(m) queries with a small constant factor",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/cactus",
+      "importance": "primary",
+      "evidence": "The correctness relies on the unique-cycle structure of a cactus and the fact that deleting two edges on the same cycle disconnects it.",
+      "solution_variant": "main",
+      "description": "Graph problems whose key structure is that every edge belongs to at most one simple cycle.",
+      "parent": "graph",
+      "created_reason": "Cactus graph structure is a standard graph class and a useful retrieval target beyond generic graph tags.",
+      "status": "active"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The algorithm is designed around connectivity queries to an interactor.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "Each edge's bracket is found by binary searching a monotone predicate over 16 possible brackets.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/bridge",
+      "importance": "secondary",
+      "evidence": "One classification outcome is whether deleting a single edge disconnects the graph, i.e. whether it is a bridge.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The connectivity predicate Ask(G_i \\ {e}) changes monotonically across bracket index i.",
+      "solution_variant": "main"
+    }
+  ]
+}

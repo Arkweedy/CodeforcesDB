@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "G",
+    "title": "Greta's Game",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dp",
+      "graphs",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/G",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the transformation a_i=b_i+b_{i-1}, the odd/even cycle cases, and the max/max-sum lower-bound formula."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181G",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Recover the minimum possible number of rounds in a circular comparison game from the counts a_i of wins adjacent to each participant.",
+    "constraints": "The circle can be large, so the hidden edge-round counts b_i must be recovered in linear time.",
+    "core_idea": "Let b_i be the number of rounds where participant i's number is strictly larger than the next participant's number. Then each reported a_i equals b_i + b_{i-1}. If all b_i were known, the minimum rounds is max(max b_i, ceil(sum b_i/(n-1))) because each round can increase any subset of b_i except all n of them. For odd n, the cyclic linear system has a unique solution. For even n, all solutions are b_i = base_i + (-1)^i Delta; choose Delta so all b_i are nonnegative and max b_i is minimized, then apply the same lower-bound formula.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "edge-count variables on a cycle",
+      "odd cycle unique solution",
+      "even cycle one-parameter optimization"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Solve a_i=b_i+b_{i-1} on the cycle, optimize the even-n free parameter, then compute the tight lower bound for the number of rounds.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/linear-system",
+      "importance": "primary",
+      "evidence": "The central transformation is solving the cyclic linear system a_i=b_i+b_{i-1}.",
+      "solution_variant": "main",
+      "description": "Solve or characterize linear equations over numbers, including structured systems with free parameters.",
+      "parent": "math/linear-algebra",
+      "created_reason": "This is distinct from matrix exponentiation or xor basis and useful for algebraic reconstruction problems.",
+      "status": "active"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "The final answer is the maximum of two tight lower bounds: max b_i and ceil(sum b_i/(n-1)).",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The solution splits on odd versus even n because the cyclic system has different degrees of freedom.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/one-parameter-optimization",
+      "importance": "secondary",
+      "evidence": "For even n, all feasible solutions are parameterized by Delta, chosen to minimize max(r0+Delta, r1-Delta) under nonnegativity.",
+      "solution_variant": "main",
+      "description": "Reduce a family of feasible solutions to one scalar parameter and optimize it analytically.",
+      "parent": "trick",
+      "created_reason": "This appears in structured equation systems and balancing problems, and is more precise than generic binary search.",
+      "status": "candidate"
+    }
+  ]
+}

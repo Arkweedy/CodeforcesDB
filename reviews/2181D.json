@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "D",
+    "title": "Doorway",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/D",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the one-opening reduction, extreme left/right door positions, and multiset sweep."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Given movable door segments on several lanes, maximize the size of a single opening after shifting doors within each lane.",
+    "constraints": "The total number of doors is large enough that candidate openings must be scanned after sorting rather than checking all pairs.",
+    "core_idea": "It is enough to consider one opening: multiple openings can be merged by moving intervening doors to one side. Move all doors as far left as possible and record each door's rightmost point R_{i,j}; move all doors as far right as possible and record each door's leftmost point L_{i,j}. Any optimal opening has left border at some R and right border at some L. Sweep increasing R: doors with R <= current left border are moved left, all others stay right. Maintain the minimum L among doors still on the right in an ordered multiset; current opening length is minRightL - maxLeftR. Update the answer during the sweep.",
+    "complexity": "O(K log K), where K is the total number of doors plus lane boundaries.",
+    "tricks": [
+      "reduce to one opening",
+      "candidate borders from extreme positions",
+      "sweep candidate left borders with right-side minimum"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Precompute R and L extreme coordinates, sort by R, and sweep while an ordered multiset stores the smallest remaining L.",
+      "complexity": "O(K log K)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The solution scans candidate left borders in sorted order while maintaining the best compatible right border.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "During the sweep it must delete door candidates and query the current minimum L among doors still on the right.",
+      "solution_variant": "main",
+      "description": "Balanced ordered multiset supporting duplicate keys, insertion/deletion, and min/max or predecessor/successor queries.",
+      "parent": "data-structure",
+      "created_reason": "Several sweep-line problems need duplicate-aware ordered sets rather than a heap or hash map.",
+      "status": "active"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "All candidate border events are processed in increasing R order.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "The key reduction is that an optimal border is realized by moving doors fully left or fully right.",
+      "solution_variant": "main",
+      "description": "Show an optimum can be achieved by pushing objects to an extreme feasible position.",
+      "parent": "trick",
+      "created_reason": "This exchange/reduction pattern is useful in interval packing and geometry-like optimization problems.",
+      "status": "candidate"
+    }
+  ]
+}
