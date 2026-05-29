@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "D",
+    "title": "Insolvable Disks",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/D",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the alternating-distance radius formula, interval intersection test, and greedy prefix partition proof."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Given sorted disk centers on a line, choose positive radii to maximize how many adjacent disks can be tangent without invalid overlaps.",
+    "constraints": "The point sequence is large enough that only a linear scan over consecutive distances is acceptable.",
+    "core_idea": "For a connected block, let the first radius be x. Tangency forces every later radius to be an alternating sum of adjacent distances plus or minus x. The positivity and non-overlap constraints become open intervals of feasible x; maintaining the intersection tells how far the current block can extend. When the intersection becomes empty, the previous block is maximal and a greedy restart is optimal because starting the next block earlier cannot extend beyond that maximal prefix.",
+    "complexity": "O(n) per test case after reading the points.",
+    "tricks": [
+      "alternating distance formula",
+      "feasible interval intersection",
+      "greedy maximal prefix partition"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Scan adjacent gaps, maintain the current valid interval for the first radius of the active block, and cut the block exactly when the interval becomes empty.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "A connected prefix is feasible exactly when all derived intervals for the first radius have nonempty intersection.",
+      "solution_variant": "main",
+      "description": "Reduce feasibility to maintaining an intersection of numeric intervals for one hidden parameter.",
+      "parent": "trick",
+      "created_reason": "The core of this geometry problem is not a standard data structure but a reusable interval-intersection feasibility pattern.",
+      "status": "active"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The constraints are derived from tangency and non-overlap of disks centered on a line.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The solution repeatedly takes the largest feasible prefix and proves that restarting at the next index is optimal.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "Each radius condition becomes a pair of strict inequalities on the first radius x.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The farthest feasible endpoint function is monotone enough for the maximal-prefix greedy proof.",
+      "solution_variant": "main"
+    }
+  ]
+}

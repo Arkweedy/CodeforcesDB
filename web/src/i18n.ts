@@ -169,6 +169,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm": "算法",
   "algorithm/binary-lifting": "倍增",
   "algorithm/bitmask": "位掩码",
+  "algorithm/bitmask/bitwise-greedy": "按位贪心",
   "algorithm/bitmask/lowbit": "Lowbit",
   "algorithm/bitmask/xor-subset": "异或子集",
   "algorithm/divide-and-conquer": "分治",
@@ -287,6 +288,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/group-by-divisor": "按因子分组",
   "trick/handle-special-case": "特判处理",
   "trick/highest-differing-bit": "最高不同位",
+  "trick/interval-feasibility": "区间可行性",
   "trick/invariant": "不变量",
   "trick/maintain-contribution": "维护贡献",
   "trick/mark-multiples": "标记倍数",
@@ -295,6 +297,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/popcount-invariant": "popcount 不变量",
   "trick/prefix-suffix-extrema": "前后缀极值",
   "trick/quotient-state-space": "商状态空间",
+  "trick/tight-loose-state": "紧/松状态",
   "trick/xor-hashing": "异或哈希"
 };
 
@@ -310,6 +313,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "bipartite-graph": "二分图",
   "bitmask": "位掩码",
   "bitmask-dp": "状压 DP",
+  "bitwise-greedy": "按位贪心",
   "bridge": "桥",
   "brute-force": "暴力",
   "cartesian-tree": "笛卡尔树",
@@ -364,6 +368,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "interactive": "交互",
   "invariant": "不变量",
   "inequality": "不等式",
+  "interval-feasibility": "区间可行性",
   "knapsack-dp": "背包 DP",
   "layered-graph": "分层图",
   "lca": "最近公共祖先",
@@ -419,6 +424,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "suffix-structures": "后缀结构",
   "sweep-line": "扫描线",
   "ternary-search": "三分",
+  "tight-loose-state": "紧/松状态",
   "transform": "变换",
   "tree": "树",
   "tree-dfs": "树上 DFS",

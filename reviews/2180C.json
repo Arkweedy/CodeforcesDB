@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "C",
+    "title": "XOR-factorization",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "dp",
+      "greedy",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/C",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the high-to-low bit construction, tight/loose state split, and optimality by bit weight dominance."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180C",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "For each test case, construct k integers a_i with 0 <= a_i <= n, XOR equal to n, and maximum possible total sum.",
+    "constraints": "n fits in about 30 bits and k can be output explicitly, so an O(k log n) constructive algorithm is intended.",
+    "core_idea": "Process bits from high to low. XOR fixes only the parity of how many a_i receive a 1 at each bit, while the objective wants as many 1s as possible because one higher bit dominates all lower bits. Maintain which indices are still tight with n and which are already loose; tight indices cannot take a 1 when n has 0, while loose indices can. When n has a 1 and k is even, one zero is forced, and choosing it from a tight index creates a new loose number for later zero-bits.",
+    "complexity": "O(k log n) per test case plus output size.",
+    "tricks": [
+      "high-bit dominance",
+      "tight/loose state",
+      "xor parity per bit"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Build all a_i bit by bit. For a 1-bit of n, set an odd and maximal number of ones; for a 0-bit, set an even and maximal number of ones only among loose indices.",
+      "complexity": "O(k log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "primary",
+      "evidence": "The construction greedily decides every bit from high to low, maximizing the number of chosen 1-bits subject to XOR parity and the a_i <= n bound.",
+      "solution_variant": "main",
+      "description": "Greedy decisions over binary bits, usually from high to low, where higher-bit value dominates lower-bit choices and feasibility is checked with bit constraints.",
+      "parent": "algorithm/bitmask",
+      "created_reason": "The existing bitmask tag is too broad for problems whose main retrieval feature is a high-to-low bit greedy proof.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/tight-loose-state",
+      "importance": "primary",
+      "evidence": "The algorithm distinguishes indices whose current prefix equals n from indices already below n; this state determines whether later zero-bits may be set.",
+      "solution_variant": "main",
+      "description": "Maintain objects as tight to an upper bound or already loose below it, so future choices are constrained differently.",
+      "parent": "trick",
+      "created_reason": "This tight/loose boundary is common in bit/digit constructions but is not captured by generic constructive or bitmask tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The output is the actual optimal array, and the proof shows the bit decisions construct a feasible optimum.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "At each bit the algorithm keeps as many 1s as possible because any higher-bit gain dominates all lower-bit changes.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The feasibility and objective are both reasoned bitwise through XOR parity.",
+      "solution_variant": "main"
+    }
+  ]
+}
