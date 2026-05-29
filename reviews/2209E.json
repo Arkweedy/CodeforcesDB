@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2209,
+    "title": "Codeforces Round 1087 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2209,
+    "index": "E",
+    "title": "A Trivial String Problem",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp",
+      "hashing",
+      "string suffix structures",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2209/problem/E",
+      "notes": "Statement and constraints: for each query, sum f(prefixes of the queried substring), where f(t) is the maximum split into non-empty prefixes of t."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152913/en2",
+      "notes": "Used to confirm the per-query KMP prefix-function solution and DP f_i = f_{i-g_i}+1."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8pl9d0cb",
+      "notes": "Chinese solution used to cross-check that g_i is the shortest border derived through prefix links, and that O(nq) works because q is small."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2209E",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "For each substring query s[l..r], compute the sum over all prefixes of the maximum number of pieces into which that prefix can be split, where every piece must be a prefix of the whole queried substring.",
+    "constraints": "Sum n <= 1e6 and q <= 100, so recomputing linear string data per query is acceptable.",
+    "core_idea": "For a string t, let g_i be the length of the shortest border of t[1..i], or i itself if no proper border exists. The optimal last piece in the maximum split has length g_i, so dp[i] = dp[i-g_i] + 1. The shortest border can be derived from the KMP prefix function: the border of a border is also a border, so following/compressing prefix links yields g_i. For every query, run KMP on the queried substring and sum the resulting dp values.",
+    "complexity": "O(length of query) per query, O(total n * q) in the worst case allowed by q <= 100.",
+    "tricks": [
+      "maximum split uses the shortest border as the last piece",
+      "border of a border is also a border",
+      "small q allows per-query recomputation"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "per-query-kmp-border-dp",
+      "summary": "For each query substring, compute prefix-function and shortest-border lengths, then use dp[i]=dp[i-g_i]+1 and sum dp over prefixes.",
+      "complexity": "O(r-l+1) per query",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/kmp-prefix-function",
+      "importance": "primary",
+      "evidence": "The shortest border lengths for every prefix are computed from the KMP prefix function and compressed prefix links.",
+      "solution_variant": "per-query-kmp-border-dp"
+    },
+    {
+      "tag": "string/border",
+      "importance": "primary",
+      "evidence": "The key recurrence depends on the shortest border of each prefix.",
+      "solution_variant": "per-query-kmp-border-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The value f for each prefix is computed by the recurrence dp[i]=dp[i-g_i]+1.",
+      "solution_variant": "per-query-kmp-border-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The accepted approach recomputes KMP and DP independently for each query because q is small.",
+      "solution_variant": "per-query-kmp-border-dp"
+    }
+  ]
+}

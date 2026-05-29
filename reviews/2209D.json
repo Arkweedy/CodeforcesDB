@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2209,
+    "title": "Codeforces Round 1087 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2209,
+    "index": "D",
+    "title": "Ghostfires",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2209/problem/D",
+      "notes": "Statement and constraints: construct the longest RGB string with no equal adjacent characters and no equal characters at distance three."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152913/en2",
+      "notes": "Used to confirm the greedy construction that repeatedly pairs the two currently non-smallest colors, then prints the pair blocks in a safe order."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2209D",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct the longest possible string using at most r, g, b copies of R/G/B such that equal colors are forbidden at distances 1 and 3.",
+    "constraints": "Total r+g+b over tests is at most 1e6, so construction must be linear in the output length.",
+    "core_idea": "The distance-1 and distance-3 constraints make it natural to consume colors in alternating two-color blocks. Greedily decrement the two colors that are not currently the unique smallest, recording how many RG/RB/GB pairs were formed, until at most one color remains. Then print the remaining single color, followed by the pair blocks in an order that prevents the boundary between two pair types from creating a forbidden distance-3 repetition.",
+    "complexity": "O(r+g+b) output time.",
+    "tricks": [
+      "consume colors as pair blocks",
+      "choose the two non-smallest colors greedily",
+      "order pair blocks to satisfy distance-three boundaries"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-pair-block-construction",
+      "summary": "Repeatedly form a pair from the two non-smallest remaining colors, count each pair type, then emit the single leftover color and pair blocks in a boundary-safe order.",
+      "complexity": "O(r+g+b)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is to output any maximum-length valid string, and the solution explicitly constructs it from color-pair blocks.",
+      "solution_variant": "greedy-pair-block-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The construction repeatedly consumes the two colors that can best extend the final string while avoiding an isolated overrepresented color.",
+      "solution_variant": "greedy-pair-block-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The final print order branches on which color remains and whether a pair-block type is present to avoid bad boundaries.",
+      "solution_variant": "greedy-pair-block-construction"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "The distance-3 constraint is handled through repeating two-color block patterns and careful boundary alignment.",
+      "solution_variant": "greedy-pair-block-construction"
+    }
+  ]
+}

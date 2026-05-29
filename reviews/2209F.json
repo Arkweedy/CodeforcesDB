@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2209,
+    "title": "Codeforces Round 1087 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2209,
+    "index": "F",
+    "title": "Dynamic Values And Maximum Sum",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2209/problem/F",
+      "notes": "Statement and constraints: repeated rerooting operations on a weighted tree; each non-leaf sends its value to the farthest leaf in its rooted subtree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152913/en2",
+      "notes": "Used to confirm the two-DFS rerooting implementation: compute farthest leaves, maintain where each value flows, and keep the sum of top k-1 leaf buckets."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2209F",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose k roots over time to maximize collected value, where after each root choice all non-leaf values flow to the farthest leaf in their rooted subtree.",
+    "constraints": "n up to 3e5 over all tests, so all candidate first roots must be evaluated with linear or logarithmic tree rerooting maintenance.",
+    "core_idea": "For a fixed first root r, all non-root values deterministically flow to leaves according to the farthest-leaf destination in the tree rooted at r; then the remaining k-1 operations should greedily collect the largest k-1 leaf buckets. Thus the problem is to evaluate every possible first root. A first DFS computes, for each rooted subtree, the best and second-best farthest leaf destinations. A rerooting DFS updates each vertex's current destination as the root moves across an edge. An ordered multiset maintains leaf bucket sums and the sum of the largest k-1 buckets, so each candidate root value can be evaluated during rerooting.",
+    "complexity": "O(n log n) per test case.",
+    "tricks": [
+      "after the first operation, greedily take the largest leaf buckets",
+      "reroot farthest-leaf destinations with best/second-best child choices",
+      "maintain the top k-1 bucket sum dynamically"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rerooting-topk-leaf-buckets",
+      "summary": "Compute farthest leaf destinations, reroot them across edges, update bucket sums for moved vertices, and query the top k-1 bucket sum using an ordered multiset.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/rerooting-dp",
+      "importance": "primary",
+      "evidence": "The solution evaluates every possible first root by rerooting farthest-leaf destination information across tree edges.",
+      "solution_variant": "rerooting-topk-leaf-buckets"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "A dynamic ordered multiset maintains leaf bucket sums and the sum of the largest k-1 buckets during rerooting.",
+      "solution_variant": "rerooting-topk-leaf-buckets"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The process and rerooting transitions are defined on a tree.",
+      "solution_variant": "rerooting-topk-leaf-buckets"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Once the first root is fixed, the remaining operations are optimally spent on the largest k-1 accumulated leaf buckets.",
+      "solution_variant": "rerooting-topk-leaf-buckets"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The main difficulty includes carefully updating destinations, bucket sums, and top-k iterator state while rerooting.",
+      "solution_variant": "rerooting-topk-leaf-buckets"
+    }
+  ]
+}
