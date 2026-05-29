@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2110, "title": "Codeforces Round 1026 (Div. 2)"},
+  "problem": {"contest_id": 2110, "index": "E", "title": "Melody", "rating": 2300, "rating_status": "official", "official_tags": ["dfs and similar", "graphs", "implementation"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2110/E", "notes": "题意：每个 sound 是 (volume,pitch)，相邻 sound 需恰好共享一维，任意三连不能同 volume 或同 pitch。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143186?mobile=true", "notes": "官方代码把 volume 与 pitch 建成二分图两侧，sound 为边，求欧拉迹。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/fgm3rsm2", "notes": "Luogu 题解候选确认 Hierholzer/欧拉路径视角。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2110E", "notes": "核对中文题面和约束。"}
+  ],
+  "annotation": {
+    "summary": "把所有二元组 sound 排成序列，使相邻共享一个坐标且三连不在同一坐标上。",
+    "constraints": "sum n <= 2e5，volume,pitch <= 1e9，二元组互不重复。",
+    "core_idea": "将每个不同 volume 和 pitch 视作二分图两侧顶点，每个 sound 是一条边。欧拉迹的连续边天然共享端点，对应相邻 sound 只差 volume 或 pitch；二分图中共享端点所在侧交替，避免三连都共享同一维。可行条件是使用所有边的欧拉迹存在：非零边连通且奇度点不超过 2。",
+    "complexity": "O(n log n)",
+    "tricks": ["坐标压缩成二分图顶点", "sound 序列转为边序列"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "bipartite-euler-trail", "summary": "volume/pitch 建二分图，Hierholzer 求覆盖所有边的欧拉迹并还原边对应的 sound 编号。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/euler-trail", "importance": "primary", "evidence": "需要找一条经过每个 sound 边恰一次的边序列，核心判定和构造都是欧拉迹。", "solution_variant": "bipartite-euler-trail"},
+    {"tag": "graph/bipartite-graph", "importance": "primary", "evidence": "volume 顶点和 pitch 顶点分属两侧，sound 是跨侧边，非 boring 性质依赖二分图两侧交替。", "solution_variant": "bipartite-euler-trail"},
+    {"tag": "graph/connectivity", "importance": "secondary", "evidence": "必须检查欧拉 DFS 是否覆盖全部 n 条边，否则存在非零边不连通。", "solution_variant": "bipartite-euler-trail"},
+    {"tag": "graph/dfs", "importance": "secondary", "evidence": "Hierholzer 实现通过 DFS/递归删除边构造路径。", "solution_variant": "bipartite-euler-trail"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "D", "title": "D/D/D", "rating": 1900, "rating_status": "official", "official_tags": ["dfs and similar", "graphs", "greedy", "shortest paths"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/D", "notes": "题面与约束：连通无向图，给定多重集 A，每次选一个 k 走恰好 k 条边，判断每个终点可达性。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解确认只需每个点最短偶/奇 walk 长度，以及总和 S 和最小奇数删除。"},
+    {"source_type": "luogu_solution_candidate", "url": "https://www.luogu.com.cn/problem/solution/CF2109D", "notes": "按候选 URL 检查，页面返回 401，未能读取正文；未作为推导依据。"}
+  ],
+  "annotation": {
+    "summary": "从 1 出发，每次消耗 A 中一个数并走对应长度 walk，问每个点能否作为终点。",
+    "constraints": "总 n<=2e5，总 m<=4e5，总 l<=2e5，Ai<=1e4。",
+    "core_idea": "任意 walk 可通过来回走一条边增加 2，因此对每个点只需知道到达它的最短偶长和最短奇长。可使用的总步数优先取 S=sum(A)；若需要相反奇偶，只需删除最小奇数元素得到最大相反奇偶步数 S-min_odd。",
+    "complexity": "O(n+m+l)",
+    "tricks": ["walk 可任意加 2，只保留奇偶最短距离", "改变可用总步数奇偶的最优方式是删去最小奇数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "parity-shortest-walk", "summary": "在 (vertex, parity) 状态图上 BFS，得到 dist[v][0/1]；再用 S 和 S-min_odd 判定两种奇偶步数是否足够。", "complexity": "O(n+m+l)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/shortest-path", "importance": "primary", "evidence": "主判定依赖每个点按步数奇偶划分的最短 walk 长度。", "solution_variant": "parity-shortest-walk"},
+    {"tag": "trick/parity", "importance": "primary", "evidence": "可达性只取决于步数总和奇偶与 dist[v][p] 是否不超过可用步数。", "solution_variant": "parity-shortest-walk"},
+    {"tag": "graph/bfs", "importance": "secondary", "evidence": "无权图上用 BFS 扩展 (点,奇偶) 状态计算最短长度。", "solution_variant": "parity-shortest-walk"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "为获得相反奇偶且保留最多总步数，贪心删除最小奇数元素。", "solution_variant": "parity-shortest-walk"}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "C2", "title": "Hacking Numbers (Medium Version)", "rating": 1700, "rating_status": "official", "official_tags": ["constructive algorithms", "interactive", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/C2", "notes": "题面与约束：同一交互模型，最多 4 条命令。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解确认 mul 9 后两次 digit 恒定到 9，再 add n-9。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1025", "notes": "可靠博客交叉确认 mul 9 / digit / digit / add 的 4 步协议。"},
+    {"source_type": "luogu_solution_candidate", "url": "https://www.luogu.com.cn/problem/solution/CF2109C2", "notes": "按候选 URL 检查，页面返回 401，未能读取正文；未作为推导依据。"}
+  ],
+  "annotation": {
+    "summary": "在 4 条命令内把任意隐藏 x 变成给定 n。",
+    "constraints": "1<=x,n<=1e9；最多 4 条命令；中间乘 9 不超过 9e9，合法。",
+    "core_idea": "先乘 9，使当前值是 9 的正倍数；其数位和仍是 9 的倍数且上界不超过 81，再 digit 一次得到 {9,18,...,81}，第二次 digit 必为 9，最后 add n-9。",
+    "complexity": "O(1) commands",
+    "tricks": ["9 的倍数数位和仍为 9 的倍数", "用上界 81 排除除 9 外的多次 digit 结果", "保留交互/通信类理由：需要设计隐藏状态归一协议"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "digital-root-to-nine", "summary": "mul 9, digit, digit 把所有隐藏 x 统一到 9，再 add n-9。", "complexity": "O(1) commands", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/communication", "importance": "primary", "evidence": "核心是构造不依赖知道 x 的命令通信协议，保证所有隐藏 x 收敛到同一状态。", "solution_variant": "digital-root-to-nine"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "primary", "evidence": "mul 9 和 digit 的正确性依赖十进制数位和模 9 不变以及正倍数性质。", "solution_variant": "digital-root-to-nine"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出具体命令序列，主解法直接给出固定构造。", "solution_variant": "digital-root-to-nine"},
+    {"tag": "paradigm/interactive", "importance": "secondary", "evidence": "原题是交互题，hack 版模拟交互命令；但本解法不需要自适应读取分支。", "solution_variant": "digital-root-to-nine"},
+    {"tag": "trick/invariant", "importance": "secondary", "evidence": "数位和保持模 9 余数这一不变量用于把状态压到 9。", "solution_variant": "digital-root-to-nine"}
+  ]
+}

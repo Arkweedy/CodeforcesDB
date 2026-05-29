@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "C1", "title": "Hacking Numbers (Easy Version)", "rating": 1500, "rating_status": "official", "official_tags": ["bitmasks", "constructive algorithms", "interactive", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/C1", "notes": "题面与约束：原题是非自适应交互题，隐藏 x,n<=1e9，最多 7 条命令，hack 格式给出 n,x。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解确认 digit,digit 后 x 落到 [1,16]，再用 add -8,-4,-2,-1 折叠到 1。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ei7eij43", "notes": "洛谷题解交叉确认两次 digit 缩小范围，再用 add 阈值折半，最后转成 n。"}
+  ],
+  "annotation": {
+    "summary": "给定目标 n 和未知隐藏数 x，需要在 7 条交互命令内保证把任意 x 变成 n。",
+    "constraints": "1<=x,n<=1e9；中间值需在 [1,1e18]；最多 7 条命令；interactor 非自适应。",
+    "core_idea": "先用两次 digit 把 x 的可能范围压到 [1,16]，随后利用 add 失败时不改变 x 的规则，用 -8,-4,-2,-1 将区间不断折半并统一折叠到 1，最后 add n-1 或 mul n 变成 n。",
+    "complexity": "O(1) commands",
+    "tricks": ["digit 压缩可能值域", "add 负数的成功/失败语义可把区间折叠到低半区", "保留交互/通信类理由：核心是设计对所有隐藏 x 都有效的命令协议"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "range-folding-protocol", "summary": "digit, digit 后执行 add -8,-4,-2,-1，把所有可能 x 归一到 1，再用一次命令转成 n。", "complexity": "O(1) commands", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/communication", "importance": "primary", "evidence": "需要构造一个固定命令协议，使所有隐藏 x 在有限交互回应规则下都被转成目标 n。", "solution_variant": "range-folding-protocol"},
+    {"tag": "paradigm/interactive", "importance": "primary", "evidence": "原题明确为 interactive，命令成功/失败会改变隐藏状态；hack 版仍模拟该协议。", "solution_variant": "range-folding-protocol"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "答案不是求值，而是显式构造一串对任意隐藏 x 都正确的命令。", "solution_variant": "range-folding-protocol"},
+    {"tag": "trick/interval-feasibility", "importance": "primary", "evidence": "add -2^k 的有效性把当前可能区间 [1,2^(k+1)] 折叠成 [1,2^k]，这是保证 7 步内归一的核心。", "solution_variant": "range-folding-protocol"},
+    {"tag": "math/number-theory", "importance": "secondary", "evidence": "digit 操作依赖十进制数位和上界，但不是本版本最关键的数论性质。", "solution_variant": "range-folding-protocol"}
+  ]
+}

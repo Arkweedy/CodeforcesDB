@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2111, "title": "Educational Codeforces Round 179 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2111, "index": "D", "title": "Creating a Schedule", "rating": 1400, "rating_status": "official", "official_tags": ["constructive algorithms", "data structures", "greedy", "implementation", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2111/D", "notes": "题意：n 个组、m 间教室、每天 6 节课，每节同一教室不能重复，最大化楼层移动总和。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/topic/144162/en5", "notes": "官方构造排序后取低端/高端教室并在 6 节课中交替。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/4it5psgq", "notes": "交叉确认依次取极值并轮换的贪心正确性。"},
+    {"source_type": "blog", "url": "https://maspypy.com/educational-codeforces-179", "notes": "从绝对值和最大化角度确认应把小的楼层放负侧、大的楼层放正侧。"}
+  ],
+  "annotation": {
+    "summary": "构造 6 节课安排，使所有组相邻课程之间的楼层移动总和最大。",
+    "constraints": "sum m <= 1e5，1 <= n <= m <= 1e5，教室编号互异，楼层为编号去掉最后两位。",
+    "core_idea": "每次移动的贡献是两节课教室楼层差。6 节课等价于重复 5 次二分配对；为最大化绝对差，应使用最小的 n 个楼层和最大的 n 个楼层配对并交替。排序后第 i 组取当前低端与高端教室，在奇偶课中交换即可保证每节课无冲突且总距离最大。",
+    "complexity": "O(m log m)",
+    "tricks": ["极值配对", "六节课交替复用同一对教室"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "sorted-extremes-alternating", "summary": "按楼层排序，低端/高端成对分配给组，并在 6 节课中交替。", "complexity": "O(m log m)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求直接输出任意最优课表，核心是显式构造交替教室序列。", "solution_variant": "sorted-extremes-alternating"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "每组取当前最小与最大可用楼层配对，极值选择最大化绝对差和。", "solution_variant": "sorted-extremes-alternating"},
+    {"tag": "trick/extreme-position", "importance": "primary", "evidence": "最大化移动总和完全由最小端和最大端教室的配对决定。", "solution_variant": "sorted-extremes-alternating"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "排序后才能按楼层两端取教室。", "solution_variant": "sorted-extremes-alternating"}
+  ]
+}

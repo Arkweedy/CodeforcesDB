@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "C3", "title": "Hacking Numbers (Hard Version)", "rating": 2600, "rating_status": "official", "official_tags": ["constructive algorithms", "interactive", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/C3", "notes": "题面与约束：要求使用最小 f(n) 条命令；若 n=81 可 2 条，否则 3 条。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解证明 S((10^d-1)x)=9d，并讨论 f(n) 的最小性。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/swyblog/articles/18882611", "notes": "博客交叉确认 999999999 的补数位证明：乘后左右 9 位逐位互补，digit 后为 81。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com/article/vu3wcowr", "notes": "洛谷个人记录简述 CF2109C3：乘 10^9-1 后数位和恒为 81，再 add n-81。"}
+  ],
+  "annotation": {
+    "summary": "求最少命令数 f(n)，并在该限制内把任意隐藏 x 变成 n。",
+    "constraints": "1<=x,n<=1e9；中间值上限 1e18；999999999*x <= 999999999000000000，合法。",
+    "core_idea": "利用恒等式 x(10^9-1)=(x-1)10^9+(10^9-1)-(x-1)，两段 9 位数逐位互补，所以数位和恒为 81；先 mul 999999999，再 digit 得到 81，若 n!=81 再 add n-81。官方还证明除 n=81 外无法用少于 3 步。",
+    "complexity": "O(1) commands",
+    "tricks": ["10^9-1 乘法制造九补数", "数位互补使 digit 后成为常数 81", "保留交互/通信类理由：本质是对隐藏 x 设计最优命令协议"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "nine-complement-state-forcing", "summary": "mul 999999999, digit 把所有 x 统一到 81；n=81 结束，否则 add n-81。", "complexity": "O(1) commands", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/communication", "importance": "primary", "evidence": "题目要最小化隐藏状态协议长度，核心不是恢复 x，而是用命令把任意 x 强制到常数。", "solution_variant": "nine-complement-state-forcing"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "primary", "evidence": "构造建立在 10^9-1 与九补数/数位和性质上，最终 digit 值恒为 81。", "solution_variant": "nine-complement-state-forcing"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "需要显式给出最短命令构造，并处理 n=81 的两步特例。", "solution_variant": "nine-complement-state-forcing"},
+    {"tag": "paradigm/interactive", "importance": "secondary", "evidence": "原题为 interactive，命令合法性和隐藏状态更新来自交互模型；主解法是非自适应协议。", "solution_variant": "nine-complement-state-forcing"},
+    {"tag": "trick/invariant", "importance": "secondary", "evidence": "乘以 10^9-1 后每对互补数位和为 9，使总数位和固定。", "solution_variant": "nine-complement-state-forcing"}
+  ]
+}

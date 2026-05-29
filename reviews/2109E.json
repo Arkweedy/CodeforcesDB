@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "E", "title": "Binary String Wowee", "rating": 2400, "rating_status": "official", "official_tags": ["combinatorics", "dp", "strings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/E", "notes": "题面与约束：长度 n 的二进制串，恰好 k 次选择当前为 0 的位置 i 并翻转前缀 [1,i]，计数 mod 998244353。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解给出后缀 DP dp[i][j]，转移用组合数统计插入当前位置操作的合法排列。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2109E", "notes": "洛谷题面翻译交叉确认输入约束与操作定义。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/j9vvgqb9", "notes": "洛谷题解确认倒序后缀 DP：按当前已用操作数和新增当前位次数转移。"}
+  ],
+  "annotation": {
+    "summary": "计算恰好 k 次合法前缀翻转操作序列数。",
+    "constraints": "1<=k<=n<=500，所有测试 n 总和 <=500，模 998244353。",
+    "core_idea": "倒着按位置处理。对后缀 i..n 已安排 j 次操作时，若在位置 i-1 新增 c 次操作，则所有当前位操作必须出现在该位为 0 的奇偶时刻；与后缀操作交错的合法数为相应的组合数。用 dp[i][j] 统计后缀方案。",
+    "complexity": "O(n*k^2)",
+    "tricks": ["前缀翻转转为后缀操作数影响当前位", "当前位能否被选只由此前包含它的操作次数奇偶决定", "同奇偶槽位中插入当前位操作用组合数计数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "suffix-combinatorial-dp", "summary": "dp[i][j] 表示只在后缀 i..n 做 j 次操作的方案数；枚举当前位操作次数并乘可插入槽位组合数。", "complexity": "O(n*k^2)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp", "importance": "primary", "evidence": "主解法以位置和已用操作数为状态，逐位倒序转移。", "solution_variant": "suffix-combinatorial-dp"},
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "每次转移的系数是把当前位操作插入合法奇偶槽位的组合数。", "solution_variant": "suffix-combinatorial-dp"},
+    {"tag": "trick/parity", "importance": "primary", "evidence": "某位置当前是否为 0 完全由覆盖它的操作次数奇偶和初始字符决定。", "solution_variant": "suffix-combinatorial-dp"},
+    {"tag": "trick/reverse-process", "importance": "secondary", "evidence": "从右向左处理能让前缀翻转影响变成已知的后缀操作计数。", "solution_variant": "suffix-combinatorial-dp"},
+    {"tag": "string", "importance": "incidental", "evidence": "对象是二进制字符串，但没有使用字符串匹配或结构算法。", "solution_variant": "suffix-combinatorial-dp"}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2110, "title": "Codeforces Round 1026 (Div. 2)"},
+  "problem": {"contest_id": 2110, "index": "C", "title": "Racing", "rating": 1400, "rating_status": "official", "official_tags": ["constructive algorithms", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2110/C", "notes": "题面与约束：给定部分未知的 0/1 高度增量，要求每个前缀高度落在 [l_i,r_i]。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143186?mobile=true", "notes": "官方代码维护当前确定高度和未决 -1 栈，必要时把最近的未决位定为 1 或 0。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/zhr0102/p/18901497", "notes": "交叉确认贪心：超下界时从后往前把未知位改为 1，超上界时把未知位定为 0。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2110C", "notes": "核对中文题面和约束。"}
+  ],
+  "annotation": {
+    "summary": "补全未知飞行增量 d_i，使高度 h_i 的每个前缀都满足障碍区间。",
+    "constraints": "多测，sum n <= 2e5，d_i in {-1,0,1}，0 <= l_i <= r_i <= n。",
+    "core_idea": "扫描前缀时维护当前已确定的最小高度 left，以及仍可自由选择的未知位置栈。当前可行高度区间为 [left,left+|stack|]；若低于 l_i，就把最近未知位置置 1；若高于 r_i，就把最近未知位置置 0。最近未知位对后续影响最短，因此贪心安全。",
+    "complexity": "O(n) per test case",
+    "tricks": ["把前缀高度可行性表示成区间", "从后往前消耗未决位置以最小化未来影响"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "stack-greedy-feasibility", "summary": "单次扫描维护高度可行区间，用栈保存未决 -1 并在违反上下界时立即决策。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "每次只在当前前缀被迫时处理最近的未知位，该局部选择保证对未来影响最小。", "solution_variant": "stack-greedy-feasibility"},
+    {"tag": "trick/interval-feasibility", "importance": "primary", "evidence": "核心状态是当前前缀高度可达到的区间 [left,left+unknown]，上下界检查直接驱动构造。", "solution_variant": "stack-greedy-feasibility"},
+    {"tag": "data-structure/stack", "importance": "secondary", "evidence": "未决 -1 位置按后进先出方式被固定为 0/1。", "solution_variant": "stack-greedy-feasibility"},
+    {"tag": "paradigm/constructive", "importance": "secondary", "evidence": "输出具体补全后的 d 数组，而不仅是判定可行性。", "solution_variant": "stack-greedy-feasibility"}
+  ]
+}

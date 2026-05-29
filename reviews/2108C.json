@@ -1,0 +1,25 @@
+{
+  "contest": {"contest_id": 2108, "title": "Codeforces Round 1022 (Div. 2)"},
+  "problem": {"contest_id": 2108, "index": "C", "title": "Neo's Escape", "rating": 1500, "rating_status": "official", "official_tags": ["binary search", "brute force", "data structures", "dp", "dsu", "graphs", "greedy", "implementation"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2108/C", "notes": "题面与约束：克隆可创建和移动，按钮第一次被克隆到达时会被按下，按下权值序列必须非增；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://mirror.codeforces.com/blog/entry/142512", "notes": "官方题解确认：压缩连续相等权值后，答案为严格局部最大值个数。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1022", "notes": "独立题解交叉验证：按降序考虑，只有无法由附近已有克隆覆盖的位置需要新克隆。"}
+  ],
+  "annotation": {
+    "summary": "给定一排按钮，每个按钮有权值。可以创建若干克隆并左右移动，克隆第一次到达未按按钮时会立即按下。要求所有按钮被按下的权值序列非增，求最少克隆数。",
+    "constraints": "t <= 1e4, sum n <= 2e5, 1 <= a_i <= 1e9，需要 O(n) 或 O(n log n)。",
+    "core_idea": "连续相同权值段不会影响答案，先压成相邻不同的数组。一个严格局部峰两侧都更小，任何已有克隆要到达它都会先按下更小权值，违反非增顺序，因此每个峰必须新建克隆；非峰位置至少有一个更大的相邻段，可以从已经按过的更大位置移动过去覆盖。",
+    "complexity": "O(n)",
+    "tricks": ["压缩连续相等段", "把最少克隆数转化为压缩后数组的严格局部最大值数量"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "compressed-local-peaks", "summary": "删除连续重复值，在两端加哨兵，统计 a[i] 同时大于左右邻居的位置数。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "构造最优策略时只在必须的位置，也就是压缩数组的局部峰处创建克隆；其他位置可由已访问的更大相邻位置扩展。", "solution_variant": "compressed-local-peaks"},
+    {"tag": "trick/extreme-position", "importance": "primary", "evidence": "答案完全由压缩后数组的局部最大值决定，每个局部峰都是必须单独启动克隆的极端位置。", "solution_variant": "compressed-local-peaks"}
+  ]
+}

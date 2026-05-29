@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2110, "title": "Codeforces Round 1026 (Div. 2)"},
+  "problem": {"contest_id": 2110, "index": "F", "title": "Faculty", "rating": 2400, "rating_status": "official", "official_tags": ["brute force", "greedy", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2110/F", "notes": "题意：输出每个前缀中 max((x mod y)+(y mod x))。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143186?mobile=true", "notes": "官方代码维护当前最大值 mx；当新最大值小于 2mx 时答案可直接更新为新最大值，否则暴力扫历史前缀。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2110F", "notes": "核对中文题面；未通过搜索结果获得可用的 Luogu 题解正文，主要依据官方题解和自行推导。"}
+  ],
+  "annotation": {
+    "summary": "对每个前缀求两数取模余数和的最大值。",
+    "constraints": "sum n <= 1e6，a_i <= 1e9。",
+    "core_idea": "设当前历史最大值为 mx。若新数 x <= mx，只需尝试 f(mx,x)。若 x 成为新最大且 x < 2mx，则 f(x,mx)=x，并且任意旧数 y<=mx 都有 f(x,y)<=x，所以答案至少可更新到 x。只有当 x >= 2mx 时，新最大与旧数的组合可能产生更优值，需要暴力枚举历史；这种情况 mx 至少翻倍，总枚举次数受 log 值域控制。",
+    "complexity": "O(n log A) amortized",
+    "tricks": ["新最大值按是否翻倍分情况", "利用 f(x,mx)=x 覆盖非翻倍情况"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "doubling-max-amortized-bruteforce", "summary": "维护前缀最大值；非翻倍新最大直接给出答案界，翻倍时才扫描历史。", "complexity": "O(n log A) amortized", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "primary", "evidence": "核心证明围绕 (x mod y)+(y mod x) 在 x 与当前最大值关系下的上界。", "solution_variant": "doubling-max-amortized-bruteforce"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "只维护当前最大值 mx 作为支配候选；非翻倍情况下不需要保留更多结构。", "solution_variant": "doubling-max-amortized-bruteforce"},
+    {"tag": "trick/extreme-position", "importance": "secondary", "evidence": "最优对的讨论始终围绕当前前缀最大值及新最大值展开。", "solution_variant": "doubling-max-amortized-bruteforce"},
+    {"tag": "paradigm/brute-force", "importance": "secondary", "evidence": "当新最大值至少翻倍时直接枚举历史前缀，但此类事件均摊很少。", "solution_variant": "doubling-max-amortized-bruteforce"}
+  ]
+}

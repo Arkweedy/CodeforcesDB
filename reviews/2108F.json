@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2108, "title": "Codeforces Round 1022 (Div. 2)"},
+  "problem": {"contest_id": 2108, "index": "F", "title": "Fallen Towers", "rating": 2900, "rating_status": "official", "official_tags": ["binary search", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2108/F", "notes": "题面与约束：每座塔恰好推倒一次，推倒 i 会让后面 a_i 座塔加 1 并令自身为 0；最终数组需非降，最大化 MEX；sum n <= 1e5。"},
+    {"source_type": "editorial", "url": "https://mirror.codeforces.com/blog/entry/142512", "notes": "官方题解确认：可达数组向下闭包，MEX 可二分；只需检查后缀形态 0...0,1,2,...,x-1；线性扫描模拟。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/vy52nzrd", "notes": "洛谷专栏题解交叉验证：引用官方证明，可达 r 则任意 r'<=r 也可达；检查 x 时令 r_i=max(0,x-1-n+i)。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1022", "notes": "独立题解交叉验证：把操作从左到右解释为保留若干收到的石头，其余向右传；只需模拟后缀连续目标。"}
+  ],
+  "annotation": {
+    "summary": "有 n 座塔，高度 a_i。每座塔恰好推倒一次，推倒时把当前高度对应数量的块分给后面的塔并令自身为 0，越界块消失。最终高度数组必须非降，求可实现的最大 MEX。",
+    "constraints": "t <= 1e4, sum n <= 1e5, 0 <= a_i <= 1e9，需要 O(n log n)。",
+    "core_idea": "关键引理：若某个最终数组 r 可达，则任何逐项不超过 r 的数组也可达，因为可以调整某座塔被推倒前后接收的块数。于是可达 MEX 关于 x 单调，可以二分答案；检查 MEX 至少 x 时，不必构造任意非降数组，只需检查规范形态 [0,...,0,1,2,...,x-1]，即 r_i=max(0, i-(n-x))。从左到右扫描，acc 表示当前位置已从前面获得的块数，need 为当前位置必须留下的目标高度；若 acc<need 则失败，否则推倒当前塔，把剩余 a_i+acc-need 个块贡献给后续连续区间，用差分/扫描线记录贡献结束点。",
+    "complexity": "O(n log n)",
+    "tricks": ["可达集合逐项向下闭包", "把 MEX 检查规约为后缀 1..x-1 的规范非降数组", "差分数组维护正在传递到当前位置的块数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "binary-search-canonical-mex-scan", "summary": "二分 MEX x。检查时目标数组为前缀 0、后缀 1..x-1；线性扫描当前收到块数 acc，若能满足 need 就把可继续向右传播的块加入差分结束点。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "trick/monotonicity", "importance": "primary", "evidence": "可达最终数组按逐项减小封闭，推出可实现 MEX 具有单调性，才能对答案二分。", "solution_variant": "binary-search-canonical-mex-scan"},
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "检查 MEX >= x 的可行性单调，因此主算法在 [1,n] 上二分最大可行 x。", "solution_variant": "binary-search-canonical-mex-scan"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "固定目标数组后，从左到右一旦当前位置收到的块足够，就只保留 need 个并将剩余影响向右传播；这个局部选择不会伤害后续且构成可行性判定。", "solution_variant": "binary-search-canonical-mex-scan"},
+    {"tag": "paradigm/sweep-line", "importance": "secondary", "evidence": "线性检查时用扫描线思想维护有多少前面倒下的块仍会落到当前位置。", "solution_variant": "binary-search-canonical-mex-scan"},
+    {"tag": "data-structure/difference-array", "importance": "secondary", "evidence": "实现中用差分数组记录每次推塔贡献区间的结束位置，从而 O(1) 更新当前位置收到的块数。", "solution_variant": "binary-search-canonical-mex-scan"}
+  ]
+}

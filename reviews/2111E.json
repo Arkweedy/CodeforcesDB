@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2111, "title": "Educational Codeforces Round 179 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2111, "index": "E", "title": "Changing the String", "rating": 1900, "rating_status": "official", "official_tags": ["binary search", "data structures", "greedy", "implementation", "sortings", "strings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2111/E?mobile=true", "notes": "题意：按给定顺序处理 q 个单字符替换操作，可执行或跳过，最终字符串字典序最小。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/topic/144162/en5", "notes": "官方做法按字符串位置从左到右贪心，维护各类操作时间的 set。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/p6h9vetw", "notes": "交叉确认有效操作类型：b->a、b->c->a、c->a、c->b、c->b->a。"},
+    {"source_type": "blog", "url": "https://maspypy.com/educational-codeforces-179", "notes": "交叉确认从前往后贪心与两步操作选择原则。"}
+  ],
+  "annotation": {
+    "summary": "选择性执行按时间排序的字符替换操作，使最终 a/b/c 字符串字典序最小。",
+    "constraints": "sum n <= 2e5，sum q <= 2e5，字符集仅 {a,b,c}。",
+    "core_idea": "字典序优先优化最左位置，因此从左到右处理字符。a 不动；b 优先用最早 b->a，否则尝试 b->c 后接后续 c->a；c 优先用 c->a，否则用 c->b，再尽量接后续 b->a。每类操作时间用有序集合维护，lower_bound 保证两步操作的时间顺序合法。",
+    "complexity": "O((n+q) log q)",
+    "tricks": ["只保留会让字符变小的有效操作链", "按位置贪心锁定字典序前缀"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "left-to-right-operation-sets", "summary": "为 3x3 操作类型维护时间集合，逐字符选择最优直接或两步变换。", "complexity": "O((n+q) log q)", "confidence": "high", "is_primary": true},
+    {"name": "prefix-length-binary-search", "summary": "可先二分最长可变成 a 的前缀，再贪心处理后缀；复杂度更高且实现更重。", "complexity": "O((n+q) log^2 q)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "按位置从左到右固定最优字符，左侧字典序优先级支配后续位置。", "solution_variant": "left-to-right-operation-sets"},
+    {"tag": "trick/lexicographic-order", "importance": "primary", "evidence": "核心目标是字典序最小，解法围绕尽早把当前位置降为 a/b。", "solution_variant": "left-to-right-operation-sets"},
+    {"tag": "data-structure/ordered-multiset", "importance": "primary", "evidence": "每类操作时间需要取最早元素和 lower_bound 查后续配套操作。", "solution_variant": "left-to-right-operation-sets"},
+    {"tag": "string", "importance": "secondary", "evidence": "处理对象是固定小字母表字符串，但核心难点在操作贪心和时间集合。", "solution_variant": "left-to-right-operation-sets"},
+    {"tag": "algorithm/search/binary-search", "importance": "incidental", "evidence": "存在二分最长 a 前缀的变体，但不是官方主实现的核心。", "solution_variant": "prefix-length-binary-search"}
+  ]
+}

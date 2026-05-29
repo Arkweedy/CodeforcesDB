@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2108, "title": "Codeforces Round 1022 (Div. 2)"},
+  "problem": {"contest_id": 2108, "index": "D", "title": "Needle in a Numstack", "rating": 2200, "rating_status": "official", "official_tags": ["binary search", "brute force", "implementation", "interactive"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2108/D", "notes": "题面与交互限制：k <= 50, 2k <= n <= 1e6，每组最多 250 次询问，interactor 非自适应；需唯一确定 |A|,|B| 或输出 -1。"},
+    {"source_type": "editorial", "url": "https://mirror.codeforces.com/blog/entry/142512", "notes": "官方题解确认：先询问前 k 与后 k 得到两个周期；选不同余数二分分界，再在小区间中判定唯一性。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/hczslzy7", "notes": "洛谷专栏题解交叉验证：任意长度 k 窗口互异且值域为 [1,k] 推出 A/B 都是 k 周期；维护分界区间可做到 O(k + log(n/k)) 次询问。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1022", "notes": "独立题解确认：若整体同周期则除 n=2k 外不可唯一确定；否则固定一个不同余数二分，再枚举附近切分。"}
+  ],
+  "annotation": {
+    "summary": "真交互题。未知数组 A,B 拼接成 C，A 和 B 的任意 k 个连续元素都是 1..k 的排列。可查询 C 的位置，需在 250 次内确定拼接分界，若无法唯一确定输出 -1。",
+    "constraints": "t <= 300, k <= 50, 2k <= n <= 1e6，查询上限 250；interactor 非自适应，hacks disabled。",
+    "core_idea": "任意 k 连续元素互异且值域为 1..k，推出每个数组按下标模 k 周期。前 k 个一定属于 A，后 k 个一定属于 B，查询后得到两个周期模式。若所有余数值相同，除 n=2k 外分界无法唯一确定；否则选一个前后值不同的余数，该余数上的查询值沿着位置只会从 A 周期切到 B 周期，可以二分找到边界所在的 k 长窗口，再结合其他不同余数或局部枚举判断唯一分界。",
+    "complexity": "about 2k + log(n/k) + log k queries",
+    "tricks": ["从任意 k 连续元素为排列推出 k 周期", "在固定模 k 余数上二分 A/B 切换点", "最后判定候选分界是否唯一"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "official-two-stage-boundary", "summary": "询问前 k 和后 k 得到 A/B 周期，取一个不同余数二分得到相邻边界块，再在不同余数集合上二分精确确定边界；若仍不唯一则 -1。", "complexity": "2k + log(n/k) + log k queries", "confidence": "high", "is_primary": true},
+    {"name": "interval-tightening", "summary": "对每个有用余数维护 |A| 的可行区间，并继承已有边界信息，只在必要位置二分；最后区间单点则输出，否则 -1。", "complexity": "O(k + log(n/k)) queries", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "paradigm/interactive/oracle-reconstruction", "importance": "primary", "evidence": "算法目标是在有限 oracle 查询内重构唯一的拼接分界，并在无法唯一重构时报告 -1。", "solution_variant": "official-two-stage-boundary"},
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "固定一个 A/B 周期值不同的模 k 余数后，该余数上的值从 A 模式单调切换到 B 模式，必须二分定位边界以满足查询限制。", "solution_variant": "official-two-stage-boundary"},
+    {"tag": "trick/periodicity", "importance": "primary", "evidence": "任意 k 个连续元素互异且值域为 1..k，直接推出每个数组的元素只由下标模 k 决定，这是整个重构的核心观察。", "solution_variant": "official-two-stage-boundary"},
+    {"tag": "trick/interval-feasibility", "importance": "secondary", "evidence": "二分只把分界限制到一个小候选区间，最后仍需判断满足所有已知周期约束的分界是否唯一。", "solution_variant": "official-two-stage-boundary"},
+    {"tag": "paradigm/interactive", "importance": "secondary", "evidence": "题面要求输出查询并 flush，且有非自适应 interactor 和 250 次查询限制；更精确主标签为 oracle-reconstruction。", "solution_variant": "official-two-stage-boundary"}
+  ]
+}

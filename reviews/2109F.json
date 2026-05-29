@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2109, "title": "Codeforces Round 1025 (Div. 2)"},
+  "problem": {"contest_id": 2109, "index": "F", "title": "Penguin Steps", "rating": 3000, "rating_status": "official", "official_tags": ["binary search", "dfs and similar", "flows", "graphs", "shortest paths"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2109/F", "notes": "题面与约束：n*n 网格，路径代价为经过格最大 a 值；可用 k 次操作增加黑格值，最大化 Fouad 的瓶颈路代价且 Mouf 的 dis_M 不变。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142960", "notes": "官方题解确认先求 dis_M，再二分 dis_F，使用八联通 cage/分隔链和多源 Dijkstra 计算造墙成本。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/cm8lkgqg", "notes": "洛谷题解交叉确认：二分 dis_F，合法条件是用 a>=mid 的八联通墙隔开起点和终点；mid>dis_M 时需避开保留的 super path。"}
+  ],
+  "annotation": {
+    "summary": "在不增加 Mouf 从 (1,1) 到 (r,n) 的最小瓶颈路径代价 dis_M 的前提下，用至多 k 次黑格加一操作最大化 Fouad 从 (n,1) 到出口的最小瓶颈代价 dis_F。",
+    "constraints": "2<=n<=300，k<=1e6，aij<=1e6，所有测试 n^2 总和 <=9e4。",
+    "core_idea": "dis_M 是普通四联通 minimax shortest path，可用 Dijkstra 求。对候选 x，若要 dis_F>=x，需要造出一条由边界和可提升到 >=x 的黑格组成的八联通 cage，将 Fouad 与出口分隔；造墙成本可建为格点权重 max(0,x-aij) 后跑多源多汇 Dijkstra。若 x>dis_M，还必须避开某条保持 dis_M 的 Mouf super path，先从 Mouf 侧边界按 a>dis_M 八联通 flood 标出不可用于造墙的区域。",
+    "complexity": "O(n^2 log(Amax+k) log n) depending on priority queue implementation",
+    "tricks": ["瓶颈路径可用 Dijkstra/DSU 求", "dis_F 的答案单调，可二分", "用八联通分隔链表示网格中的阻断墙", "mid>dis_M 时需要保留不受操作影响的 Mouf 最优路径区域"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "binary-search-grid-cage-dijkstra", "summary": "先求 Mouf 的 minimax dis_M；二分 Fouad 目标 x，用多源 Dijkstra 找最小造八联通 cage 成本，并在 x>dis_M 时禁用会破坏 Mouf 最优路径的格子。", "complexity": "O(n^2 log(Amax+k) log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "can(x) 关于目标 dis_F 单调，主框架二分最大可行 x。", "solution_variant": "binary-search-grid-cage-dijkstra"},
+    {"tag": "graph/shortest-path", "importance": "primary", "evidence": "dis_M 是四联通格上的 minimax shortest path；造墙成本也是多源 Dijkstra 求最小代价连接边界。", "solution_variant": "binary-search-grid-cage-dijkstra"},
+    {"tag": "graph/grid-separator", "importance": "primary", "evidence": "判定 dis_F>=x 的核心是构造一条八联通格子分隔链 cage，把 Fouad 起点侧与出口侧隔开。", "solution_variant": "binary-search-grid-cage-dijkstra", "description": "用于网格图中通过一条 4/8 联通的格子链或障碍带分隔两个区域、阻断路径的技巧；通常和最短路、割或平面拓扑对偶一起出现。", "parent": "graph", "created_reason": "现有 graph/flow 或 graph/shortest-path 不能准确表达本题的关键：在网格上构造分隔墙/屏障而非普通路径或显式最大流。", "status": "candidate"},
+    {"tag": "graph/bfs", "importance": "secondary", "evidence": "mid>dis_M 时从 Mouf 侧边界做八联通 flood/BFS 标记不可用于 cage 的 super-path 区域。", "solution_variant": "binary-search-grid-cage-dijkstra"},
+    {"tag": "graph/flow", "importance": "incidental", "evidence": "官方提到早期 intended solution based on flows，但最终题解可不用显式最大流/最小割实现。", "solution_variant": "binary-search-grid-cage-dijkstra"}
+  ]
+}

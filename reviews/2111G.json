@@ -1,0 +1,32 @@
+{
+  "contest": {"contest_id": 2111, "title": "Educational Codeforces Round 179 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2111, "index": "G", "title": "Divisible Subarrays", "rating": 2900, "rating_status": "official", "official_tags": ["binary search", "bitmasks", "brute force", "data structures", "interactive"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2111/G?locale=en", "notes": "题意：给定排列，回答子数组是否可用某个切分点和阈值把左右两边按值完全分开。题面写 technically interactive，但查询全部给出，只需每 10 个答案 flush。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/topic/144162/en5", "notes": "官方主解枚举有效三段关系，使用 set 和可持久化线段树回答在线查询；另有 awoo 的单调栈+二进制跳跃解法。"},
+    {"source_type": "blog", "url": "https://maspypy.com/educational-codeforces-179", "notes": "交叉确认可忽略在线限制先离线维护 ans，再用可持久化线段树处理查询版本。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2111G", "notes": "核对中文题面入口。"}
+  ],
+  "annotation": {
+    "summary": "对排列的区间 [l,r]，判断是否存在切分点 M，使左半所有值都小于右半所有值，或反向大于。",
+    "constraints": "n <= 2e5，q <= 1e6 且 q 为 10 的倍数，时限 7s，内存 1024MB。",
+    "core_idea": "区间可分等价于存在相邻切口 M，使 [l,M) 和 [M,r] 的值域完全分离。官方按值从小到大激活排列位置，维护已激活连续段；每次新段与左右未激活区间形成一批可行 (L,M,R) 覆盖关系，再用按左端版本化的线段树查询是否存在覆盖当前 [l,r] 的关系。替代解通过单调栈求 next greater / next smaller，再用二进制跳跃判断区间内是否出现足够远的可分结构，并对反向排列再做一次。",
+    "complexity": "official O((n+q) log n), monotonic-stack variant O(n log n + q log n)",
+    "tricks": ["把阈值分割转为区间覆盖关系", "正向和反向分别处理两种大小方向"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "persistent-covered-split-queries", "summary": "按值激活位置生成可行分割覆盖段，按左端建立可持久化线段树版本，查询区间内是否有覆盖到 r 的分割。", "complexity": "O((n+q) log n)", "confidence": "medium", "is_primary": true},
+    {"name": "monotonic-stack-binary-lifting", "summary": "用单调栈求 next greater/next smaller 关系，在跳表上查询是否存在跨过右端的有效分割；反转排列处理对称方向。", "complexity": "O(n log n + q log n)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "data-structure/persistent-segment-tree", "importance": "primary", "evidence": "官方在线查询解法需要按扫描位置保存线段树历史版本，并在版本 T[l] 上做区间最大值查询。", "solution_variant": "persistent-covered-split-queries", "description": "可持久化线段树，保留每次单点/区间更新后的历史版本以回答不同时间或前缀状态下的区间查询。", "parent": "data-structure/segment-tree", "created_reason": "现有 data-structure/segment-tree 不能区分需要历史版本查询的经典结构；本题主解的在线化核心正是持久化。", "status": "candidate"},
+    {"tag": "paradigm/offline", "importance": "primary", "evidence": "先把所有可能的可分三段/覆盖关系离线生成，再用数据结构回答查询。", "solution_variant": "persistent-covered-split-queries"},
+    {"tag": "data-structure/monotonic-stack", "importance": "primary", "evidence": "替代解的 next greater / next smaller 结构由单调栈构建，是快速识别可分切口的基础。", "solution_variant": "monotonic-stack-binary-lifting"},
+    {"tag": "algorithm/binary-lifting", "importance": "primary", "evidence": "awoo 解法用 up[v][j] 和 mx[v][j] 跳过若干 next-greater 段来回答区间查询。", "solution_variant": "monotonic-stack-binary-lifting"},
+    {"tag": "trick/interval-feasibility", "importance": "secondary", "evidence": "查询本质是是否存在某个切口使左右值域区间完全分离。", "solution_variant": "persistent-covered-split-queries"},
+    {"tag": "data-structure/segment-tree", "importance": "secondary", "evidence": "可持久化版本中每个节点维护覆盖关系能达到的最大右端。", "solution_variant": "persistent-covered-split-queries"},
+    {"tag": "paradigm/interactive", "importance": "incidental", "evidence": "题面要求每 10 个答案 flush，但算法不依赖交互式 oracle 或通信推理。", "solution_variant": "persistent-covered-split-queries"}
+  ]
+}

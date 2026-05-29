@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2108, "title": "Codeforces Round 1022 (Div. 2)"},
+  "problem": {"contest_id": 2108, "index": "E", "title": "Spruce Dispute", "rating": 2600, "rating_status": "official", "official_tags": ["constructive algorithms", "dfs and similar", "graphs", "greedy", "implementation", "shortest paths", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2108/E", "notes": "题面与约束：奇数点树，收缩一条边并给剩余 n-1 个点配 (n-1)/2 对同色，最大化同色点路径长度和；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://mirror.codeforces.com/blog/entry/142512", "notes": "官方题解确认：偶数点树以重心分组跨组配对；原奇数树重心唯一且收缩不变；应收缩距离重心最近的叶子边。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1022", "notes": "独立题解交叉验证：操作本质是边收缩；偶数点最优为到重心距离和，最小损失由最浅叶实现。"}
+  ],
+  "annotation": {
+    "summary": "给一棵奇数 n 点树，需要选择一条边收缩掉编号较大的端点，并给剩余 n-1 个点安排 (n-1)/2 种颜色、每种颜色两个点，使同色点间路径长度总和最大；输出任一最优边和配色。",
+    "constraints": "t <= 1e4, 3 <= n < 2e5 且 n 为奇数，sum n <= 2e5。",
+    "core_idea": "对收缩后偶数点树，若以重心为根并按重心子树分组，只要每一对同色点来自不同组，每条边都能达到 min(size, n-size) 的最大贡献。原树为奇数点时重心唯一，收缩任意一条边不会改变这个重心。收缩造成的目标损失等价于删去某个顶点并让其子树深度整体减一，最优总是收缩一条叶边，且应选择离重心最近的叶子。随后从重心 DFS 按颜色循环分配，最后把重心颜色调整给被收缩叶子的父亲即可。",
+    "complexity": "O(n), heap pairing variant O(n log n)",
+    "tricks": ["边收缩转化为删除最浅叶", "树重心保证所有重心子树大小不超过半数，可跨组完美配对", "用边贡献 min(subtree, complement) 证明最优性"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "centroid-leaf-contraction-coloring", "summary": "找原奇数树唯一重心，DFS 找离重心最近的叶子并收缩其与父亲的边；从重心 DFS 循环赋色，使同色点落在不同重心分组中。", "complexity": "O(n)", "confidence": "high", "is_primary": true},
+    {"name": "centroid-groups-heap-pairing", "summary": "以重心子树为组，将重心加入最小组后，用堆每次取两个最大组配对染同色。", "complexity": "O(n log n)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求直接输出最优收缩边和一种最优配色；解法构造最浅叶收缩和跨重心子树配对染色。", "solution_variant": "centroid-leaf-contraction-coloring"},
+    {"tag": "graph/tree-centroid", "importance": "primary", "evidence": "必须利用树重心保证每个重心子树大小不超过半数，从而可以跨组配对；同时利用奇数点树重心唯一且边收缩后不变来选择最优叶边。", "solution_variant": "centroid-leaf-contraction-coloring", "description": "Use a single tree centroid as a balancing vertex to bound child subtree sizes, pair vertices across centroid branches, or optimize distance sums. This is distinct from recursive centroid decomposition.", "parent": "graph/tree", "created_reason": "现有 graph/centroid-decomposition 表示递归点分治，不适合标注本题这种单个树重心的平衡与构造用途；该概念可复用于多道树上配对、距离和、删点优化题。", "status": "candidate"},
+    {"tag": "graph/tree", "importance": "primary", "evidence": "所有最优性证明和构造都依赖树结构上的边贡献、重心子树、叶子深度与 DFS 遍历。", "solution_variant": "centroid-leaf-contraction-coloring"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "在确定重心后，选择离重心最近的叶子使收缩损失最小；配对也可用每次取两个最大组的贪心实现。", "solution_variant": "centroid-leaf-contraction-coloring"},
+    {"tag": "graph/tree-dfs", "importance": "secondary", "evidence": "实现需要 DFS 计算子树大小找重心、找最近叶子，并按 DFS 顺序生成配色。", "solution_variant": "centroid-leaf-contraction-coloring"},
+    {"tag": "trick/maintain-contribution", "importance": "secondary", "evidence": "证明最大距离和时将路径贡献拆到每条边，每条边最多贡献 min(a,b)，从而导出跨重心子树配对和最浅叶收缩。", "solution_variant": "centroid-leaf-contraction-coloring"}
+  ]
+}

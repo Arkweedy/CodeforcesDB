@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2110, "title": "Codeforces Round 1026 (Div. 2)"},
+  "problem": {"contest_id": 2110, "index": "D", "title": "Fewer Batteries", "rating": 1700, "rating_status": "official", "official_tags": ["binary search", "dfs and similar", "dp", "graphs", "greedy", "hashing"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2110/D", "notes": "题意：有向边 s_i<t_i，边要求当前电池数至少 w_i，终点电池数最小。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143186?mobile=true", "notes": "官方做法对答案二分，check 中按点编号顺序做 DAG DP。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/d41uoiui", "notes": "交叉确认二分答案和 dp_i 为到达点 i 时可拥有的最大电池数。"},
+    {"source_type": "luogu_problem", "url": "https://www.luogu.com.cn/problem/CF2110D", "notes": "核对中文题面和约束。"}
+  ],
+  "annotation": {
+    "summary": "在只向编号更大的点连边的有向图上，最小化到达终点时携带的电池总数。",
+    "constraints": "sum n <= 2e5，sum m <= 3e5，b_i,w_i <= 1e9，所有边满足 s_i<t_i。",
+    "core_idea": "答案 x 具有单调性。固定携带上限 x 后，按拓扑顺序维护 best[v]：在不超过 x 的限制下到达 v 后最多能带多少电池。若 best[v] >= w，就可松弛出边。能到 n 则 x 可行。",
+    "complexity": "O((n+m) log 1e9)",
+    "tricks": ["利用 s_i<t_i 免去一般图最短路/搜索", "把最小终点电池转为容量上限判定"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "binary-search-dag-dp", "summary": "二分最终携带上限，DAG 顺序 DP 判定是否可达。", "complexity": "O((n+m) log W)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "最终电池数上限 x 可行则更大的 x 也可行，主算法二分最小可行上限。", "solution_variant": "binary-search-dag-dp"},
+    {"tag": "dp", "importance": "primary", "evidence": "check(x) 的核心是 best[v] 状态和按边转移，记录每个点可达到的最大携带量。", "solution_variant": "binary-search-dag-dp"},
+    {"tag": "graph/dag", "importance": "primary", "evidence": "边满足 s_i<t_i，点编号天然拓扑序，DP 正确性依赖 DAG 结构。", "solution_variant": "binary-search-dag-dp"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "固定上限后，到达点时总是尽量补到 min(x,best+b_v) 不会变差。", "solution_variant": "binary-search-dag-dp"}
+  ]
+}
