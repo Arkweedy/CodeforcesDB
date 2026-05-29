@@ -25,6 +25,11 @@
       "source_type": "self_derivation",
       "url": "https://codeforces.com/contest/2181/problem/B",
       "notes": "Could not rely on an official Codeforces editorial in this pass; tags are based on reasoning from the statement and common max-heap simulation for the game."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the intended variant, maximum-element optimal strategy, and priority-queue simulation."
     }
   ],
   "reference_candidates": [
@@ -37,22 +42,22 @@
   "annotation": {
     "summary": "Two players own arrays. On a turn, a player chooses one of their current values and attacks the opponent's maximum value; the opponent value is removed if it is not larger, otherwise it is decreased. Determine the winner under optimal play.",
     "constraints": "Values can be large and arrays have many elements, so the play should be simulated on current maxima rather than scanning arrays every turn.",
-    "core_idea": "Choosing the player's current maximum is dominant: it deals at least as much damage and is not consumed by choosing it. With this observation, the game becomes deterministic. Maintain both arrays as max-heaps; each turn, compare the attacker's maximum x with the defender's maximum y, pop y if y <= x, otherwise replace it with y - x. The player who empties the opponent's heap wins. A practical implementation can batch repeated subtraction in Euclidean-style cases, but the key tagging point is the greedy max-choice plus priority-queue simulation.",
-    "complexity": "O((n + m) log(n + m) log V) with Euclidean-style batching; straightforward heap simulation is the conceptual model.",
+    "core_idea": "The official tutorial notes that the intended variant fixes y as the opponent's maximum element, and proves that choosing the player's own maximum x is optimal. With this observation, the game becomes deterministic. Maintain both arrays as max-heaps; each turn, extract the attacker's maximum x and attack the defender's maximum y, removing or decreasing y according to the rules. When one heap becomes empty, the winner is known. The total number of simulated moves is bounded by a logarithmic potential argument on the total sum.",
+    "complexity": "O(N log N (log N + log M)), where N is the total number of elements and M is the maximum value.",
     "tricks": [
       "dominant choice is current maximum",
       "simulate only heap maxima",
       "repeated subtraction resembles Euclidean reduction"
     ],
-    "confidence": "medium",
+    "confidence": "high",
     "review_status": "reviewed"
   },
   "solution_variants": [
     {
       "name": "main",
       "summary": "Reduce optimal play to repeatedly using the current maximum value and maintain both sides in max-heaps.",
-      "complexity": "O((n + m) log(n + m) log V) with batching",
-      "confidence": "medium",
+      "complexity": "O(N log N (log N + log M))",
+      "confidence": "high",
       "is_primary": true
     }
   ],

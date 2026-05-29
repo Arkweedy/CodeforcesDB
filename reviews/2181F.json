@@ -33,9 +33,9 @@
     }
   ],
   "annotation": {
-    "summary": "Determine the winner of a fragmented Nim variant from the sizes of all current piles/fragments.",
-    "constraints": "Only pile parities matter, so the answer must be computed by a single scan rather than game-tree search.",
-    "core_idea": "The game collapses to a parity invariant. If at least one pile has even size, the first player has an immediate winning move. Otherwise all piles are odd, and every move changes the parity of the number of piles/fragments in a controlled way; the winner is determined by the parity of the pile count. Thus the solution is: even pile exists -> Alice; otherwise Alice wins exactly when the number of piles is even.",
+    "summary": "Determine the winner of a fragmented Nim variant where each turn one player chooses a pile for the opponent to play on.",
+    "constraints": "The full game tree is unnecessary; the winner follows from counting forced one-stone choices plus at most one larger-pile phase.",
+    "core_idea": "The official argument shows that if Bob ever gives Alice a pile with more than one stone, Bob loses: depending on whether the state without that pile is losing or winning, Alice removes all stones or all but one and then forces Bob back into the same pile. Therefore both players must give the opponent one-stone piles while possible. After all one-stone piles are consumed, a remaining pile with more than one stone contributes exactly one decisive move; if no such pile exists, the player to move loses. Hence moves = count(a_i = 1) + [max(a_i) > 1], and Alice wins iff this number is odd.",
     "complexity": "O(n) per test case.",
     "tricks": [
       "ignore exact pile sizes except parity",
@@ -48,7 +48,7 @@
   "solution_variants": [
     {
       "name": "main",
-      "summary": "Scan for an even pile; if none exists, decide by n mod 2.",
+      "summary": "Count one-stone piles and add one if any larger pile exists; the parity of that count decides the winner.",
       "complexity": "O(n)",
       "confidence": "high",
       "is_primary": true
@@ -58,7 +58,7 @@
     {
       "tag": "trick/parity",
       "importance": "primary",
-      "evidence": "The entire winner criterion depends on whether a pile size or the number of all-odd piles is even.",
+      "evidence": "The final winner criterion is the parity of count(a_i=1) plus the indicator that any larger pile exists.",
       "solution_variant": "main",
       "description": "Use even/odd parity as the decisive invariant or case split.",
       "parent": "trick",
@@ -68,13 +68,13 @@
     {
       "tag": "math/game-theory",
       "importance": "primary",
-      "evidence": "The task is a two-player impartial game, even though it simplifies to a parity criterion.",
+      "evidence": "The solution proves which pile choices are losing/winning and then reduces optimal play to forced moves.",
       "solution_variant": "main"
     },
     {
       "tag": "trick/invariant",
       "importance": "secondary",
-      "evidence": "The proof relies on the invariant behavior of pile-count parity after moves in the all-odd case.",
+      "evidence": "After any larger pile is chosen, the remaining state without that pile determines Alice's response and forces the game back to one-stone choices.",
       "solution_variant": "main"
     }
   ]
