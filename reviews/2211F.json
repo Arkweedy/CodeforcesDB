@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "F",
+    "title": "Learning Binary Search",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "divide and conquer",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/F",
+      "notes": "Statement asks for the total binary-search comparison count over all nondecreasing arrays of length n with values in [1,m]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Official editorial gives two O(n) approaches: Vandermonde plus interval minima with a monotonic stack, and inclusion-exclusion over binary-search recursion intervals."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/s45ytgys",
+      "notes": "Luogu article used to cross-check the contribution decomposition, stars-and-bars interpretation, and Vandermonde simplification."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211F",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "Sum, over all nondecreasing arrays a of length n with values in [1,m], the total number of binary-search comparisons needed to find every present value.",
+    "constraints": "Total n and total m across tests are each <= 1e6, so linear preprocessing and linear per-test processing are intended.",
+    "core_idea": "The binary-search recursion tree fixes a depth for each array index. For a maximal equal-value block [l,r], the search cost for that value is the minimum depth inside [l,r]. For an interior value x, stars-and-bars counts choices on the left and right as C(l+x-3,x-2) * C(m-x+n-r-1,m-x-1); Vandermonde collapses the sum over x so the coefficient depends only on block length. The remaining task is summing minimum depths over all intervals of each length, computed by a monotonic stack and second-order difference updates. Edge values 1 and m are handled separately by prefix/suffix minimum depths.",
+    "complexity": "O(n) per test case after O(max(n,m)) factorial/inverse precomputation.",
+    "tricks": [
+      "block contribution by minimum binary-search depth",
+      "Vandermonde identity",
+      "second-order difference accumulation",
+      "edge values handled separately"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "vandermonde-min-intervals",
+      "summary": "Build the binary-search depth array, reduce equal-value block contribution to a length-dependent binomial coefficient using stars-and-bars and Vandermonde, then compute all interval-minimum sums by monotonic stack plus second-order differences.",
+      "complexity": "O(n) per test case after factorial precomputation",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "recursion-interval-inclusion-exclusion",
+      "summary": "Traverse binary-search recursion intervals and count arrays where the searched value terminates at the midpoint by stars-and-bars with inclusion-exclusion on boundary equalities.",
+      "complexity": "O(n) per test case after factorial precomputation",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "The primary solution uses stars-and-bars and Vandermonde's identity to collapse a value sum into a coefficient depending only on interval length.",
+      "solution_variant": "vandermonde-min-intervals"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "After the combinatorial reduction, the central task is summing minimum binary-search depths over all intervals, solved by monotonic-stack dominance ranges.",
+      "solution_variant": "vandermonde-min-intervals"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "Each depth contributes a triangular count pattern over interval lengths, accumulated with second-order difference updates.",
+      "solution_variant": "vandermonde-min-intervals"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "The alternative official solution subtracts arrays where the left or right strict boundary fails, then adds back their intersection.",
+      "solution_variant": "recursion-interval-inclusion-exclusion"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "Both solutions rely on the fixed binary-search recursion tree over intervals.",
+      "solution_variant": "recursion-interval-inclusion-exclusion"
+    }
+  ]
+}

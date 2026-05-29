@@ -1,0 +1,61 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "E",
+    "title": "Minimum Path Cover",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp",
+      "greedy",
+      "interactive",
+      "math",
+      "number theory",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/E",
+      "notes": "Statement explicitly says this is an interactive problem: information for vertex x is given only after the answer for S(x+1), and each line must be flushed."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Official editorial gives the LCM/GCD bottom-up greedy DP and prints/flushed answers after each node."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/kibrp1hi",
+      "notes": "Luogu article confirms the forced-online setting and the LCM of possible child path GCDs."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211E",
+      "notes": "Candidate Luogu solution page; not used because this problem is excluded from ordinary searchable scope."
+    }
+  ],
+  "annotation": {
+    "summary": "Excluded from the normal searchable ICPC-style database: this is a technically interactive streaming-output problem, not ordinary batch input/output.",
+    "constraints": "The judge supplies node data from n down to 1 only after reading the previous output line; each answer must be printed and flushed online.",
+    "core_idea": "Algorithmically, one can process nodes bottom-up. Let dp[u] be the minimum path count for the known subtree, and val[u] be the LCM of possible non-1 GCD values of an upward path through u. For each child c, if gcd(val[c], a_u) > 1 then u can attach to a child path; combine such gcds by LCM. If no child accepts u, open a new path and set val[u]=a_u. However, this solution relies on online I/O order and flushing, so it is outside this repository's default standard AC searchable scope.",
+    "complexity": "Excluded; algorithmic solution is O(n log A) but requires special online interactive I/O.",
+    "tricks": [
+      "technical interactive streaming I/O",
+      "LCM summarizes possible path GCDs",
+      "bottom-up online tree processing"
+    ],
+    "confidence": "high",
+    "review_status": "excluded"
+  },
+  "solution_variants": [],
+  "tags": []
+}

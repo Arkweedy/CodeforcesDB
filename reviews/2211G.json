@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "G",
+    "title": "Rational Bubble Sort",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "geometry",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/G",
+      "notes": "Statement and constraints: adjacent averaging on rational values, sum n up to 1e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Official editorial confirms the prefix-sum convex-chain interpretation and the O(n) below-line / adjacent-above-line criterion."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2211G?lang=en",
+      "notes": "Luogu mirror used to cross-check the statement."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/nebius-round-2-codeforces-round-1088",
+      "notes": "Independent writeup used to cross-check the equivalent zero-sum prefix-sign formulation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211G",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an integer sequence, repeatedly replace adjacent pairs by their average and decide whether the sequence can become nondecreasing.",
+    "constraints": "Total n <= 1e6, values <= 1e6; the decision must be linear and use exact integer cross-products rather than floating rationals.",
+    "core_idea": "Move to prefix sums b_i. Nondecreasing a is equivalent to the points (i,b_i) forming a lower-convex chain, and averaging a_i,a_{i+1} replaces b_i by the midpoint of neighboring prefix points. If some prefix point is strictly below the chord from (0,0) to (n,b_n), one can flatten both sides almost to straight lines and expand a convex segment outward. Otherwise all points are on or above the chord; then the only possible target is the chord itself, and two consecutive strictly-above points can never both be pushed exactly onto it. Thus the answer is Yes iff there is a below-chord point, or no two consecutive prefix points are strictly above the chord.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "represent adjacent averaging as midpoint relaxation on prefix sums",
+      "test position relative to the global chord by cross multiplication",
+      "when no point is below the chord, reduce to exact-on-line versus strictly-above-line states"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-convex-chain",
+      "summary": "Compute prefix sums and classify each interior prefix point relative to the line between endpoints. A below-line point is immediately feasible; otherwise reject exactly when two consecutive points are both strictly above the line.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "zero-sum-prefix-sign",
+      "summary": "Subtract the average slope conceptually so the endpoint sum is zero; then the same criterion becomes a sign-state condition on transformed prefix sums.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/convexity",
+      "importance": "primary",
+      "evidence": "The decisive reduction is that sortedness is lower convexity of the prefix-sum chain, and the operation is midpoint relaxation of one point on that chain.",
+      "solution_variant": "prefix-convex-chain",
+      "description": "Problems where a sequence or operation is solved by translating it into convex or concave chain geometry or convex-function behavior, without necessarily using a convex hull data structure.",
+      "parent": "math/geometry",
+      "created_reason": "Existing math/geometry is broad and math/geometry/convex-hull is too specific; this problem uses convex-chain feasibility rather than hull construction.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "The array operation becomes local replacement of a prefix-sum point, and the O(n) criterion is expressed on prefix sums.",
+      "solution_variant": "prefix-convex-chain"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "The editorial justifies arbitrary flattening by variance decrease under averaging and convexity of squared distance from the mean.",
+      "solution_variant": "prefix-convex-chain"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The total sum and segment means are invariant under operations, determining the global chord and flattening argument.",
+      "solution_variant": "prefix-convex-chain"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "Feasibility for the below-chord case is proved by explicitly flattening segments and expanding a convex interval.",
+      "solution_variant": "prefix-convex-chain"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "D",
+    "title": "AND-array",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/D",
+      "notes": "Statement and constraints: reconstruct any a with 0 <= a_i < 2^29 from all subsequence bitwise-AND sums modulo 1e9+7."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Used to confirm the per-bit count formula, high-to-low peeling, and prefix construction of one valid a."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/nebius-round-2-codeforces-round-1088",
+      "notes": "Independent writeup used to confirm that only per-bit occurrence counts matter and that suffix-term peeling determines those counts."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211D",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given b_k equal to the sum of bitwise AND over all length-k subsequences of an unknown array a, reconstruct any valid a.",
+    "constraints": "Sum n <= 1e5, a_i < 2^29, and a valid answer is guaranteed; O(n log A) with binomial precomputation is intended.",
+    "core_idea": "For each bit independently, if cnt_l elements of a contain that bit, then this bit contributes 2^l * C(cnt_l,k) to b_k. Thus b is a sum of binomial-basis vectors indexed by bit counts. The current last coefficient reveals exactly which bits have cnt_l equal to the current suffix size, because the sum of possible bits is below the modulus and has no wrap ambiguity. Subtract their full contribution from all b_k, decrease the active size, and repeat. After all cnt_l are known, set bit l in the first cnt_l output positions to construct any valid array.",
+    "complexity": "O(n log A) after O(n) factorial/inverse precomputation, with log A = 29.",
+    "tricks": [
+      "bitwise AND decomposes by independent bits",
+      "binomial coefficient contribution by bit frequency",
+      "peel counts from largest subsequence size downward",
+      "construct arbitrary array from per-bit counts"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bit-count-binomial-peeling",
+      "summary": "Recover cnt_l for each bit by repeatedly reading the highest remaining b index, subtracting 2^l*C(m,k) contributions for bits with count m, then construct a by putting each recovered bit on a prefix of that length.",
+      "complexity": "O(n log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The solution decomposes the AND sums into 29 independent bit contributions and reconstructs the answer bit by bit.",
+      "solution_variant": "bit-count-binomial-peeling"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "For each bit, its contribution to b_k is counted by the number of k-subsequences chosen entirely among cnt_l set positions, i.e. C(cnt_l,k).",
+      "solution_variant": "bit-count-binomial-peeling"
+    },
+    {
+      "tag": "math/combinatorics/binomial-basis",
+      "importance": "primary",
+      "evidence": "Recovering the hidden bit counts is a triangular inversion of b_k = sum_l 2^l*C(cnt_l,k), peeled from large k to small k.",
+      "solution_variant": "bit-count-binomial-peeling",
+      "description": "Recover or manipulate quantities represented as linear combinations of binomial coefficient basis vectors C(m,k), especially via triangular high-to-low inversion.",
+      "parent": "math/combinatorics",
+      "created_reason": "Generic combinatorics does not distinguish this reusable binomial-basis inversion pattern from ordinary counting.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "After recovering only the per-bit counts, the algorithm explicitly builds any valid array by assigning each bit to the first cnt_l positions.",
+      "solution_variant": "bit-count-binomial-peeling"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "H",
+    "title": "Median Deletion",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/H",
+      "notes": "Statement and constraints: permutation, delete median of any length-3 subarray, answer independently for every original position."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Official editorial gives the extrema-reduction invariant, answer range 2/3/4/5, and sparse-table implementation over reverse/value-complement symmetries."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tq8x0xbc",
+      "notes": "Luogu solution article used to cross-check the high-level classification for answers <=4 and <=3; some symmetric cases are intentionally omitted in prose."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211H",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "For each element of a permutation, find the minimum remaining length of an obtainable array that still contains that element when each operation deletes the median of a chosen triple.",
+    "constraints": "Sum n <= 2e5, so all per-index answers must be computed in O(n log n) or O(n) total per test.",
+    "core_idea": "Global minimum 1 and maximum n can never be deleted. Any fixed interval can be reduced to only its minimum and maximum, so every non-extreme element has answer between 3 and 5. For each i, prefix/suffix minimum and maximum positions around i decide whether one side-extreme can be eliminated, giving answer <=4. Then deciding whether the final array can be exactly [1,p_i,n] requires considering the relative order of pos_1, pos_n, i and the side extrema. The official implementation applies reverse and value-complement symmetries so one canonical case covers all orientations, and uses range min/max queries over critical intervals to distinguish answer 3 from 4 in the remaining cases.",
+    "complexity": "O(n log n) with sparse tables as in the editorial implementation.",
+    "tricks": [
+      "1 and n are undeletable",
+      "reduce any interval to its min and max",
+      "answers collapse to 2 for global extrema and 3/4/5 otherwise",
+      "apply reverse and value-complement symmetries to avoid duplicating cases",
+      "use range min/max to test whether a helper outside the endpoint value interval exists"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "extrema-classification-sparse-table",
+      "summary": "Precompute prefix/suffix extrema positions plus range min/max sparse tables. Classify each i under canonical orientation and its reverse/value-complement symmetries, improving default answer 5 to 4 or 3 when the extrema configuration permits.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "linear-extrema-classification",
+      "summary": "The same classification can be implemented in O(n) with specialized preprocessing for the needed min/max witnesses instead of generic sparse tables.",
+      "complexity": "O(n)",
+      "confidence": "low",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/extreme-position",
+      "importance": "primary",
+      "evidence": "The solution starts from the fact that global 1 and n are undeletable and every interval can be reduced to its minimum and maximum.",
+      "solution_variant": "extrema-classification-sparse-table"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "For every i, the answer is determined by prefix min/max positions before i and suffix min/max positions after i, plus range extrema inside critical intervals.",
+      "solution_variant": "extrema-classification-sparse-table"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "The core difficulty is the exhaustive classification of whether the answer is 3, 4, or 5 under the relative orders of pos_1, pos_n, i, and side extrema.",
+      "solution_variant": "extrema-classification-sparse-table"
+    },
+    {
+      "tag": "data-structure/sparse-table",
+      "importance": "secondary",
+      "evidence": "The official implementation uses static range minimum and maximum queries to test critical intervals for helper values.",
+      "solution_variant": "extrema-classification-sparse-table"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Reverse order and value-complement transformations reduce mirrored cases to one canonical classifier.",
+      "solution_variant": "extrema-classification-sparse-table"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Undeletability of global extrema and reducibility of an interval to its two extrema are invariants used to bound and classify answers.",
+      "solution_variant": "extrema-classification-sparse-table"
+    }
+  ]
+}

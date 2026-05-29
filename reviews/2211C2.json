@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2211,
+    "title": "Nebius Round 2 (Codeforces Round 1088, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2211,
+    "index": "C2",
+    "title": "Equal Multisets (Hard Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dsu",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2211/problem/C2",
+      "notes": "Statement and constraints: fill -1 in b so every length-k window has the same multiset as the corresponding window of a."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152448",
+      "notes": "Used to confirm the adjacent-window transition condition and modulo-k subsequence decomposition."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/x8sb2tsn",
+      "notes": "Luogu article used to cross-check the pair transition and final first-window count check."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/nebius-round-2-codeforces-round-1088",
+      "notes": "Independent writeup used to confirm decomposition into the first window plus transitions between adjacent windows."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2211C2",
+      "notes": "Requested aggregate Luogu solution page; direct fetch was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Given arrays a and partially unknown b, decide whether b can be filled so every corresponding length-k window has equal multisets.",
+    "constraints": "Sum n <= 2e5 and values are in [1,n], so the decision must be linear or near-linear.",
+    "core_idea": "Compare adjacent windows: moving from [l,l+k-1] to [l+1,l+k] removes a_l and adds a_{l+k}, and b must perform the same multiset change. If a_l != a_{l+k}, then b_l and b_{l+k} are forced to equal the corresponding a values; if a_l == a_{l+k}, then b_l and b_{l+k} only need to be equal. These constraints split into independent chains by index modulo k. Non-constant a-chains force b=a on that chain; constant a-chains allow one shared value. Finally, the first k positions must be fillable as the same multiset as a[1..k], checked by frequency counts of already forced values.",
+    "complexity": "O(n) with frequency buckets, or O(n log n) with maps/sets.",
+    "tricks": [
+      "adjacent fixed-window delta invariant",
+      "split constraints by index modulo k",
+      "first-window multiset feasibility check"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "modulo-chain-constraint-check",
+      "summary": "For each residue class modulo k, detect whether all a values are equal. Non-constant classes require every known b value to equal a; constant classes require all known b values in the class to agree, then first-window frequencies decide whether remaining unknown classes can be filled.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The decisive observation is the invariant between adjacent length-k windows: the endpoint removal/insertion delta in b must match the endpoint delta in a.",
+      "solution_variant": "modulo-chain-constraint-check"
+    },
+    {
+      "tag": "trick/residue-class-decomposition",
+      "importance": "primary",
+      "evidence": "The endpoint constraints always connect positions i and i+k, so the problem decomposes into independent chains by index modulo k.",
+      "solution_variant": "modulo-chain-constraint-check",
+      "description": "Split positions by index modulo a fixed step or period so local constraints between i and i+k become independent chains. Use when this decomposition is part of the proof or state reduction, not just loop organization.",
+      "parent": "trick",
+      "created_reason": "Existing generic invariant/greedy tags do not capture the reusable modulo-class decomposition that drives this solution.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The proof of sufficiency constructs or reserves values for unknown b positions, then verifies that the first window can be completed by remaining frequencies.",
+      "solution_variant": "modulo-chain-constraint-check"
+    }
+  ]
+}
