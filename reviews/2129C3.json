@@ -1,0 +1,125 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "C3",
+    "title": "Interactive RBS (Hard Version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "constructive algorithms", "dp", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/C3",
+      "notes": "Read statement and constraints: same hidden bracket oracle as C1/C2, but query limit is 100."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/145152",
+      "notes": "Used official editorial hard-version code and discussion: choose a sequence of block weights based on triangular counts so one query decodes many positions."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1040",
+      "notes": "Used as an additional cross-check for the C3 idea: query design distinguishes multiple brackets by unique contribution sets."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129C3",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactive reconstruction of a hidden bracket sequence under the hardest 100-query limit.",
+    "constraints": "n <= 1000, at most 100 queries, k <= 1000, repeated indices allowed.",
+    "core_idea": "After finding opposite anchors, one query must decode a larger block than in C2. The hard solution chooses lengths/weights whose triangular-number contributions are strictly decodable: when an unknown is '(', its local pattern contributes a known triangular value to f(t); when it is ')', it contributes zero. Choose a set of such weights with increasing cumulative sums so the total answer can be greedily decoded back into all brackets of the block.",
+    "complexity": "O(log n + n / b) queries for a larger constant block size b; within 100 queries; O(n) local decoding.",
+    "tricks": [
+      "Use triangular-number contribution weights created by repeated anchor patterns.",
+      "Greedily decode a unique subset sum from the oracle answer.",
+      "The query-length limit k <= 1000 constrains the choice of weights."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "triangular-weight-decoding",
+      "summary": "Choose a list of pattern lengths p_j so that each '(' contributes p_j(p_j+1)/2 and the sum is uniquely decodable; decode a large block per query.",
+      "complexity": "O(log n + n / b) queries, within 100",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "medium-binary-coding-fallback",
+      "summary": "The C2 binary-coded block method works conceptually but does not pack enough positions for the hard query limit.",
+      "complexity": "O(log n + n / b) queries with smaller b; not sufficient for 100 in worst case",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The problem is solved by designing and decoding a limited number of interactor queries.",
+      "solution_variant": "triangular-weight-decoding"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "The f(t) oracle is forced to behave like a weighted sum over unknown bracket states by a carefully constructed query string.",
+      "solution_variant": "triangular-weight-decoding",
+      "description": "Designing queries to an oracle/interactor so that the numeric or Boolean response directly encodes the desired hidden information.",
+      "parent": "trick",
+      "created_reason": "The broad interactive tag does not distinguish problems whose main difficulty is constructing a decoding oracle rather than binary search or randomized probing.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/information-encoding",
+      "importance": "primary",
+      "evidence": "The hard version's main difficulty is packing many bracket bits into one returned integer via uniquely decodable triangular weights.",
+      "solution_variant": "triangular-weight-decoding",
+      "description": "Encoding multiple hidden decisions into one numeric/query response using unique weights, positional codes, or other decodable representations.",
+      "parent": "trick",
+      "created_reason": "Interactive and reconstruction tasks often hinge on how information is packed into few oracle answers; this is more specific than generic bitmask or constructive tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The decodable weights are triangular numbers counting regular substrings contributed by repeated patterns.",
+      "solution_variant": "triangular-weight-decoding"
+    },
+    {
+      "tag": "dp/subset-dp",
+      "importance": "secondary",
+      "evidence": "The official tag includes dp; one way to view/check the chosen weights is as a unique subset-sum/code design over possible contributions, though the submitted solution can greedily decode due to the chosen sequence.",
+      "solution_variant": "triangular-weight-decoding"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Binary search is used for the initial anchor calibration before heavy block decoding.",
+      "solution_variant": "triangular-weight-decoding"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The answer of each query represents multiple hidden binary states, generalizing the bitmask decoding of the medium version.",
+      "solution_variant": "triangular-weight-decoding"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The algorithm constructs a concrete family of query strings satisfying query-length and uniqueness constraints.",
+      "solution_variant": "triangular-weight-decoding"
+    }
+  ]
+}

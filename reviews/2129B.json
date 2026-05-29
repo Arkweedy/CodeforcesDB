@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "B",
+    "title": "Stay or Mirror",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "dp", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/B",
+      "notes": "Read statement and constraints: choose each a_i as p_i or 2n-p_i, minimize inversions; n sum <= 5000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/145152",
+      "notes": "Used official editorial D1B. Key observation: each value's contribution can be chosen independently; answer sums min(left bigger, right bigger)."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129B",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a permutation p, independently replace each p_i by either p_i or 2n-p_i. Minimize the number of inversions in the resulting array.",
+    "constraints": "Multiple tests, n <= 5000 and total n <= 5000, so O(n^2) counting is acceptable.",
+    "core_idea": "Process the contribution of each original value independently. For a fixed element p_i, choosing the low value makes inversions only with larger elements before it, while choosing the mirrored high value makes inversions only with larger elements after it. Thus its optimal contribution is min(count bigger on left, count bigger on right), and the global optimum is the sum of these independent minima.",
+    "complexity": "O(n^2) with direct counting; can be O(n log n) with Fenwick if desired.",
+    "tricks": [
+      "Mirror choice turns a pair contribution into an independent per-element larger-left/larger-right minimum.",
+      "Although official tags include dp/data structures, the decisive reviewed solution is a greedy independent contribution sum."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "independent-contribution-greedy",
+      "summary": "For each position count larger elements on the left and on the right, add the smaller value.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "fenwick-counting-optimization",
+      "summary": "Compute larger-left and larger-right counts by two Fenwick sweeps; same greedy formula.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "After the contribution decomposition, each position is chosen locally by min(left bigger, right bigger), with no remaining coupling.",
+      "solution_variant": "independent-contribution-greedy"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The main observation is a per-element inversion contribution formula; the answer is the sum of these contributions.",
+      "solution_variant": "independent-contribution-greedy"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "incidental",
+      "evidence": "A Fenwick tree can compute left/right larger counts faster, but O(n^2) direct counting already fits the constraints.",
+      "solution_variant": "fenwick-counting-optimization"
+    }
+  ]
+}

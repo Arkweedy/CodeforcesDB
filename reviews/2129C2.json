@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "C2",
+    "title": "Interactive RBS (Medium Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "constructive algorithms", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/C2",
+      "notes": "Read statement and constraints: same hidden RBS oracle as C1, but query limit is 200."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/145152",
+      "notes": "Used official editorial D1C1/C2/C3. Medium version improves batching using binary-code-like query templates."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129C2",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactive reconstruction of a hidden bracket sequence under a tighter 200-query limit.",
+    "constraints": "n <= 1000, at most 200 queries, k <= 1000, repeated indices allowed.",
+    "core_idea": "As in C1, first find one '(' anchor and one ')' anchor. The tighter limit requires batching more than two positions in a single query: arrange the anchors and several unknown positions so that each candidate contributes a distinct binary-weighted amount to f(t) when it is '('. The returned integer is decoded as a small bitmask, recovering a block of positions per query.",
+    "complexity": "O(log n + n / b) queries for a small constant block size b, within 200; O(n) local decoding.",
+    "tricks": [
+      "Use known anchors to isolate each unknown position's contribution.",
+      "Encode several positions in one numeric response by assigning distinguishable binary weights."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-coded-block-queries",
+      "summary": "Recover a constant-size block per query by making each unknown position contribute a different power-of-two value to f(t).",
+      "complexity": "O(log n + n / b) queries, within 200",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The entire solution is an adaptive query strategy under a fixed query budget.",
+      "solution_variant": "binary-coded-block-queries"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "The oracle query is deliberately shaped so the count f(t) reveals multiple hidden brackets at once.",
+      "solution_variant": "binary-coded-block-queries",
+      "description": "Designing queries to an oracle/interactor so that the numeric or Boolean response directly encodes the desired hidden information.",
+      "parent": "trick",
+      "created_reason": "The broad interactive tag does not distinguish problems whose main difficulty is constructing a decoding oracle rather than binary search or randomized probing.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/information-encoding",
+      "importance": "primary",
+      "evidence": "Several bracket values are packed into one integer answer by giving their contributions distinct binary weights.",
+      "solution_variant": "binary-coded-block-queries",
+      "description": "Encoding multiple hidden decisions into one numeric/query response using unique weights, positional codes, or other decodable representations.",
+      "parent": "trick",
+      "created_reason": "Interactive and reconstruction tasks often hinge on how information is packed into few oracle answers; this is more specific than generic bitmask or constructive tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The medium version decodes the answer as a small bitmask over a block of positions.",
+      "solution_variant": "binary-coded-block-queries"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Binary search is used to find a useful pair of opposite bracket anchors before block decoding.",
+      "solution_variant": "binary-coded-block-queries"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The method constructs special query strings to realize the required code.",
+      "solution_variant": "binary-coded-block-queries"
+    }
+  ]
+}

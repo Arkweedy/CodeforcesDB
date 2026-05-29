@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "D",
+    "title": "Permutation Blackhole",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp", "implementation", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/D",
+      "notes": "Read statement and constraints: count permutations producing a partial coloring-score sequence; n <= 100, sum n^2 <= 1e4, modulo 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/145152",
+      "notes": "Used official editorial D1D. Main solution is range DP dp[l][r][x][y], merged by enumerating the first colored position in an interval and using an O(log n) score upper bound."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1040",
+      "notes": "Used as an independent cross-check: describes interval DP over black endpoints and notes the O(log n) bound / pruning on score dimensions."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129D",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a partially specified score sequence from a process that colors permutation positions one by one and increments the nearest already-black cell, count permutations that can produce it.",
+    "constraints": "n <= 100, sum n^2 <= 1e4, modulo 998244353; s_i can be -1 or fixed in [0,n-1].",
+    "core_idea": "Enumerate the first colored position inside an interval; once outside boundary cells are black, choices inside [l,r] only affect the two boundary cells through how often they are selected as nearest black cells. Define dp[l][r][x][y] as the number of ways to color [l,r] so the left outside boundary receives x increments and the right outside boundary receives y increments. Split at the first chosen i, combine left/right subintervals with binomial coefficients for interleaving orders, and match fixed s_i by j+k=s_i. The key feasibility bound is that any score is O(log n), because cells contributing repeatedly to the same nearest black cell must be exponentially farther, so the x,y dimensions are small.",
+    "complexity": "O(n^3 log^3 n) as stated by the editorial, with small LOG dimensions.",
+    "tricks": [
+      "First colored position splits the interval into independent left/right subproblems.",
+      "Boundary contribution counts summarize all interaction with the outside.",
+      "Scores have an O(log n) upper bound from exponential distance growth."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "boundary-count-interval-dp",
+      "summary": "Use dp[l][r][x][y], split by first colored position, combine child intervals with binomial interleavings and fixed-score constraints.",
+      "complexity": "O(n^3 log^3 n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "pruned-high-dimensional-interval-dp",
+      "summary": "Equivalent interval DP with explicit pruning when fixed/accumulated scores exceed possible O(log n) bounds.",
+      "complexity": "High polynomial with small constants; accepted variants prune aggressively",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/interval-dp",
+      "importance": "primary",
+      "evidence": "The main state is over an interval [l,r] and combines subintervals after choosing the first colored position.",
+      "solution_variant": "boundary-count-interval-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The DP values count the number of valid permutations/orders modulo 998244353 under partial score constraints.",
+      "solution_variant": "boundary-count-interval-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The DP is only feasible after proving boundary score dimensions x,y need only O(log n) values instead of O(n).",
+      "solution_variant": "boundary-count-interval-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "Combining left and right interval orders requires binomial coefficients for interleaving choices.",
+      "solution_variant": "boundary-count-interval-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "The solution enumerates split positions and small score dimensions, but brute force is not the conceptual core.",
+      "solution_variant": "boundary-count-interval-dp"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "Careful edge cases for boundaries and fixed s_i are needed, but they do not define the algorithmic category.",
+      "solution_variant": "boundary-count-interval-dp"
+    }
+  ]
+}
