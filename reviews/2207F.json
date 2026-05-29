@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "F",
+    "title": "Hanabi",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "dsu",
+      "flows",
+      "graph matchings",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/F",
+      "notes": "Statement and constraints: n*m total cards, rank/color clue process, and objective of minimizing clue changes."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the forced rank clues per color and the optimized DP with range-min segment tree."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Community discussion and editorial notes mention a bipartite minimum vertex cover / matching formulation as an alternative."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207F",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a permutation of all rank-color cards in hand order, choose rank or color clues so the leftmost highlighted play order is valid while minimizing clue changes.",
+    "constraints": "t <= 1e4, n*m <= 2e5 in aggregate, so the intended solution is near-linear up to logarithmic factors.",
+    "core_idea": "For each color, scan its ranks in hand order and mark ranks that must be handled by rank clues before that color can safely continue. These forced fixes define which ranks cannot end a color-clue block. Then run DP over rank prefixes: either use a rank clue at rank i, or end a block of color clues at i whose left boundary is after each selected color's previous forced fix. Sorting these previous-fix bounds converts transitions into range-min queries over earlier DP states, maintained by a segment tree.",
+    "complexity": "O(n*m log(n*m)) under the aggregate n*m <= 2e5 bound.",
+    "tricks": [
+      "derive forced rank clues from each color's hand-order sequence",
+      "coalesce color clue runs into rank intervals",
+      "optimize interval DP with range-min segment tree"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "forced-fixes-segment-tree-dp",
+      "summary": "Compute forced ranks for each color, then DP over ranks with transitions for rank clues and color-clue blocks; use a segment tree for feasible-block range minima.",
+      "complexity": "O(n*m log(n*m))",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "bipartite-min-vertex-cover",
+      "summary": "Model rank clues on one side and maximal feasible color intervals on the other; covering all cards reduces to bipartite minimum vertex cover via maximum matching.",
+      "complexity": "O((n*m)^{3/2}) with Hopcroft-Karp style matching",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The main solution minimizes clue changes by dynamic programming over rank prefixes and clue-ending states.",
+      "solution_variant": "forced-fixes-segment-tree-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The optimized DP needs range-min queries over previous states; the official solution uses a segment tree for these transitions.",
+      "solution_variant": "forced-fixes-segment-tree-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The forced-fix sets are obtained by greedily simulating each color's earliest playable rank while scanning that color's hand-order sequence.",
+      "solution_variant": "forced-fixes-segment-tree-dp"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "A documented alternative builds a bipartite graph between rank clues and feasible color intervals and solves minimum vertex cover through matching.",
+      "solution_variant": "bipartite-min-vertex-cover"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "The editorial notes a flow-style formulation, but the reviewed main solution is DP with a segment tree.",
+      "solution_variant": "bipartite-min-vertex-cover"
+    }
+  ]
+}

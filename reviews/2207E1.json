@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "E1",
+    "title": "N-MEX (Constructive Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/E1",
+      "notes": "Statement and constraints: construct b or report impossible; b_i can be large."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2207E1?lang=en",
+      "notes": "Luogu mirror used to cross-check statement and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the validity conditions and greedy construction."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207E1",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given target values a_i, decide whether they can be the (n-i+1)-mex of each prefix of a nonnegative array b, and construct one valid b.",
+    "constraints": "t <= 1e4, sum n <= 2e5, a_i <= 1e9, and constructed b_i must fit the statement bound.",
+    "core_idea": "After i elements are chosen, the requested k-mex has k = n - i + 1. This forces a_i to be nonincreasing, and at zero-based position i it must satisfy n - i - 1 <= a_i <= n. If a drops, output a large dummy value so the missing set below the new answer is preserved while k decreases. If a stays equal, output an unused value below a_i that is not itself one of the target a-values, filling exactly one currently missing small number.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "derive tight bounds on kth missing value",
+      "use a large dummy value on decreases",
+      "avoid placing values that must remain missing later"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "monotone-mex-greedy-construction",
+      "summary": "Check monotonicity and range constraints, then scan left to right: emit INF on strict drops and otherwise greedily emit an available non-target value below the current target.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution is an explicit construction of b from necessary monotonicity and range conditions.",
+      "solution_variant": "monotone-mex-greedy-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "When a_i stays equal, the construction greedily consumes an available missing number below a_i while preserving future target values as missing.",
+      "solution_variant": "monotone-mex-greedy-construction"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "secondary",
+      "evidence": "The invariant is entirely phrased through kth missing nonnegative values of prefixes.",
+      "solution_variant": "monotone-mex-greedy-construction"
+    }
+  ]
+}

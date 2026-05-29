@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "B",
+    "title": "One Night At Freddy's",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "games",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/B",
+      "notes": "Statement and constraints: m animatronics, l seconds, fixed flashlight reset times, and total m*l over tests is bounded."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the minimax order-statistic strategy: reset the current largest danger and grow the relevant tracked level."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207B",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given fixed flashlight reset times, minimize the maximum final danger level against adversarial choices of which animatronic increases each second.",
+    "constraints": "n, m, l <= 2e5 and sum of m*l <= 2e5, so direct simulation over the relevant danger levels is acceptable.",
+    "core_idea": "With r flashlight uses remaining, only the largest min(m, r + 1) danger levels matter: the player can still erase r of them, so the eventual threat is governed by the next surviving order statistic. Therefore the player resets the current largest danger at each flash time, while the adversary raises the smallest level among the tracked top r + 1 levels to balance the final maximum.",
+    "complexity": "O(l * m log m) with repeated sorting under the given aggregate bound; an ordered-set implementation can be O(l log m).",
+    "tricks": [
+      "order statistic under remaining resets",
+      "reset the current maximum",
+      "adversary balances tracked top levels"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tracked-order-statistic-simulation",
+      "summary": "Maintain danger levels in sorted order. Each second increments the min(m, remaining_flashes + 1)-th largest tracked value, and each reset sets the largest value to zero.",
+      "complexity": "O(l * m log m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "ordered-set-tracked-levels",
+      "summary": "Maintain only the relevant tracked top levels in an ordered multiset and update the smallest/largest tracked element.",
+      "complexity": "O(l log m)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The key is a minimax strategy between the player choosing reset targets and the adversary choosing which danger level to increment.",
+      "solution_variant": "tracked-order-statistic-simulation"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Once the relevant order statistic is identified, both sides have greedy optimal actions: reset the largest danger and increment the smallest relevant tracked level.",
+      "solution_variant": "tracked-order-statistic-simulation"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "The straightforward implementation repeatedly sorts the danger levels to access the largest value and the required order statistic.",
+      "solution_variant": "tracked-order-statistic-simulation"
+    }
+  ]
+}

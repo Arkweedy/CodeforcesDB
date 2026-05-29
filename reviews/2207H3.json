@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "H3",
+    "title": "Bowser's Castle (Hard Version)",
+    "rating": null,
+    "rating_status": "no_cf_rating",
+    "official_tags": [
+      "constructive algorithms",
+      "divide and conquer",
+      "interactive",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/H3",
+      "notes": "Statement and hack format: same hidden min-max function task as H1/H2, but with n <= 400 and a tighter learning-query budget."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the hard-version pivot leaf, recursive prefix/suffix reconstruction, and inside-out merge idea."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/r6nz97mw",
+      "notes": "Chinese solution consulted to cross-check the shared model and an alternative memoized divide-and-conquer view."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207H3",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "Reconstruct the hidden min-max function as in H1/H2, but under a tight query budget that requires a near-linear reconstruction.",
+    "constraints": "Hard version: n <= 400, sum n <= 400, and at most 1500 learning queries.",
+    "core_idea": "Query f(1,2,...,n); the returned index is a pivot leaf on an alternating root-to-leaf path. By setting suffixes to +infinity or prefixes to -infinity, recursively recover the left and right partial trees around this pivot. Flatten adjacent equal operators, then merge the nearest left and right recovered blocks around the pivot using small separating query patterns and two pointers. Each block is consumed once, giving a linear-query reconstruction.",
+    "complexity": "O(n) oracle queries in the intended hard solution; final evaluations are O(n).",
+    "tricks": [
+      "pivot leaf from f(1..n)",
+      "neutral infinities isolate prefix and suffix subfunctions",
+      "inside-out two-pointer merge of recovered blocks"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-pivot-and-merge-reconstruction",
+      "summary": "Find the pivot leaf, recursively recover overlapping left/right pieces using neutral defaults, flatten them, and merge blocks outward with two-pointer oracle checks.",
+      "complexity": "O(n) oracle queries, O(n) per final evaluation query",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The hard solution is a query-efficient reconstruction of an unknown ordered min-max function under a strict oracle-query cap.",
+      "solution_variant": "linear-pivot-and-merge-reconstruction",
+      "description": "Interactive or query-based problems where the main goal is to reconstruct an unknown hidden structure or function from adaptive oracle answers.",
+      "parent": "paradigm/interactive",
+      "created_reason": "The broad interactive tag does not distinguish reusable hidden-structure reconstruction from simple interactive search or games.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "After recursively recovering pieces around the pivot, the hard solution merges child blocks from the two inner ends outward.",
+      "solution_variant": "linear-pivot-and-merge-reconstruction"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "The reconstruction recursively isolates subfunctions on intervals using neutral defaults.",
+      "solution_variant": "linear-pivot-and-merge-reconstruction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The hidden min-max expression is recovered as an ordered rooted tree and flattened when adjacent operators share a type.",
+      "solution_variant": "linear-pivot-and-merge-reconstruction"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "Small-valued query patterns decide which neighboring block attaches next in the reconstructed expression tree.",
+      "solution_variant": "linear-pivot-and-merge-reconstruction"
+    }
+  ]
+}

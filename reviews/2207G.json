@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "G",
+    "title": "Toothless",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "dsu"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/G",
+      "notes": "Statement and constraints: grid cells, needy cells, ordinary/special values, target value at least two thirds, and no special cell adjacent to a needy cell."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the three-color grid construction, cycle breaking by deleting ordinary cells, and DFS output order."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207G",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose and order grid cells to blacken so all needy cells are chosen, each chosen cell has at most one earlier black neighbor, and the chosen non-needy value is at least two thirds of the total.",
+    "constraints": "n*m <= 2000, sum (n*m)^2 <= 4e6, a <= b, and special cells are not adjacent to needy cells.",
+    "core_idea": "A legal move order follows from any forest in the chosen grid graph: DFS preorder gives every vertex at most one earlier chosen neighbor. For each residue class of (i+j) mod 3, initially keep the other two classes plus all needy cells; by pigeonhole one choice keeps at least 2P/3 non-needy value. Adding needy cells can create cycles, so repeatedly detect a cycle and delete an ordinary non-special cell on it. The no-special-adjacent-to-needy condition lets these deletions be charged safely while preserving the value bound. The remaining induced graph is a forest, so output a DFS order.",
+    "complexity": "O((n*m)^2) per test in the official-style implementation.",
+    "tricks": [
+      "three-color the grid and keep two residue classes",
+      "interpret the move order as constructing an acyclic induced subgraph",
+      "delete ordinary cells from cycles while preserving the value bound"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-color-forest-cycle-pruning",
+      "summary": "Try each skipped residue class modulo 3; include the other residues and all needy cells, delete ordinary cells until the selected subgraph is acyclic, then output DFS preorder.",
+      "complexity": "O((n*m)^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for an explicit legal move sequence, and the solution constructs a high-value forest plus its DFS order.",
+      "solution_variant": "three-color-forest-cycle-pruning"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "primary",
+      "evidence": "Among the three residues of (i+j) mod 3, keeping the other two guarantees at least two thirds of the total non-needy value for some choice.",
+      "solution_variant": "three-color-forest-cycle-pruning"
+    },
+    {
+      "tag": "graph/planar-graph",
+      "importance": "primary",
+      "evidence": "The proof that cycles can be repaired by deleting ordinary cells relies on the embedded grid/planar structure around inserted needy cells.",
+      "solution_variant": "three-color-forest-cycle-pruning",
+      "description": "Problems whose key proof or construction relies on planar graph structure, such as faces, embedded cycles, or Euler-style charging, beyond generic graph traversal.",
+      "parent": "graph",
+      "created_reason": "Existing graph tags cover DFS and cycles, but not planar-embedding arguments used in constructive grid/graph proofs.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "DFS is used to detect cycles in the selected grid subgraph and to output a preorder satisfying the move rule.",
+      "solution_variant": "three-color-forest-cycle-pruning"
+    },
+    {
+      "tag": "graph/cycle-space",
+      "importance": "secondary",
+      "evidence": "The algorithm repeatedly removes a vertex from a detected cycle until the selected induced subgraph is a forest.",
+      "solution_variant": "three-color-forest-cycle-pruning"
+    }
+  ]
+}

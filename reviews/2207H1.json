@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "H1",
+    "title": "Bowser's Castle (Easy Version)",
+    "rating": null,
+    "rating_status": "no_cf_rating",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "divide and conquer",
+      "greedy",
+      "interactive",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/H1",
+      "notes": "Statement and hack format: learn an unknown ordered min-max function; easy version has n <= 70 and a loose query budget."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the H1 divide-and-conquer reconstruction of an ordered alternating min/max tree."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/r6nz97mw",
+      "notes": "Chinese solution consulted to cross-check the shared H1/H2/H3 min-max tree model and split-finding approach."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207H1",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "Learn an unknown ordered min-max expression over x1..xn using oracle-style queries, then answer evaluation queries; in the hack format the hidden function is supplied to the interactor.",
+    "constraints": "Easy version: n <= 70, sum n <= 70, and a generous learning-query limit.",
+    "core_idea": "Model the expression as an ordered rooted tree whose internal nodes are min/max and leaves are x1..xn in order. With 0/1 or strictly ordered query vectors, the returned value identifies which leaf wins under chosen defaults. Increasing/decreasing probes determine the top operation and localize a split f=min(g,h) or f=max(g,h). In H1, the split can be found by direct scanning under the loose budget; recurse on the two intervals using neutral extremes outside the active interval.",
+    "complexity": "O(n^2) oracle queries is sufficient for H1; later evaluation is O(n) on the reconstructed tree.",
+    "tricks": [
+      "0-1 sorting-style probes identify the winning leaf",
+      "neutral infinities isolate a recursive interval",
+      "linear split search is acceptable only in the easy version"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-divide-and-conquer-reconstruction",
+      "summary": "Recursively determine the root operation and a split point using ordered probes and linear split search, building an equivalent min-max tree.",
+      "complexity": "O(n^2) oracle queries, O(n) per final evaluation query",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The central task is to design oracle-style queries that reconstruct an unknown min-max function before answering evaluations.",
+      "solution_variant": "quadratic-divide-and-conquer-reconstruction",
+      "description": "Interactive or query-based problems where the main goal is to reconstruct an unknown hidden structure or function from adaptive oracle answers.",
+      "parent": "paradigm/interactive",
+      "created_reason": "The broad interactive tag does not distinguish reusable hidden-structure reconstruction from simple interactive search or games.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "After finding the top split, the same reconstruction problem is solved recursively on the left and right variable intervals.",
+      "solution_variant": "quadratic-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "secondary",
+      "evidence": "The original model is adaptive interaction; the hack format still preserves the hidden-function reconstruction pattern.",
+      "solution_variant": "quadratic-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The unknown expression is represented and evaluated as an ordered alternating min/max tree.",
+      "solution_variant": "quadratic-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "Query answers guide the reconstruction decisions for the hidden expression tree.",
+      "solution_variant": "quadratic-divide-and-conquer-reconstruction"
+    }
+  ]
+}

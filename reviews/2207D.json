@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "D",
+    "title": "Boxed Like a Fish",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "games",
+      "shortest paths",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/D",
+      "notes": "Statement and constraints: tree game from non-leaf start v; Snorlax blocks one edge and refreshes after cooldown k."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the rooted tree DP returning distance to the nearest Cyndaquil-winning node and the l1 + l2 < k branching test."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207D",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether Cyndaquil can force reaching a leaf in a tree while Snorlax periodically blocks one edge.",
+    "constraints": "Total n <= 5e5, so the game must be characterized by a single linear DFS/tree DP from the starting vertex.",
+    "core_idea": "Root the tree at v. A leaf is a direct winning target and returns distance 0. A one-child node only inherits the nearest winning distance plus one, because Snorlax can keep controlling the only direction. At a branching node, two child subtrees with nearest winning distances l1 and l2 create two threats; if l1 + l2 < k, Snorlax cannot refresh the block fast enough and the node is winning. Otherwise the node returns 1 + min child distance. The start is winning iff the root is marked winning.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "root the game at the starting vertex",
+      "combine two nearest winning child distances",
+      "branching creates an unavoidable escape threat"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "nearest-winning-node-tree-dp",
+      "summary": "DFS from v; each node returns either winning status or distance to the nearest winning descendant, combining the two smallest child values to test branch inevitability.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The solution is a rooted tree DP whose return value summarizes each subtree by the nearest winning-state distance.",
+      "solution_variant": "nearest-winning-node-tree-dp"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The recurrence encodes optimal play in a blocking-and-escape game, especially when a branch creates two threats Snorlax cannot cover in time.",
+      "solution_variant": "nearest-winning-node-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The entire strategy relies on rooting the tree at v and combining child-subtree summaries.",
+      "solution_variant": "nearest-winning-node-tree-dp"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "A single DFS computes the two smallest child DP values at every node.",
+      "solution_variant": "nearest-winning-node-tree-dp"
+    }
+  ]
+}

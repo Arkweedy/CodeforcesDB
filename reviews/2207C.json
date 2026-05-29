@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "C",
+    "title": "Where's My Water?",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "divide and conquer",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/C",
+      "notes": "Statement and constraints: choose up to two drains in a one-dimensional terrain cross-section; sum n <= 2000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the single-drain contribution formula and the two-drain overlap as cnt[argmax on the interval]."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/151886?locale=en",
+      "notes": "Comments around the official editorial were used only as a cross-check for the overlap formula."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207C",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose up to two drain positions to maximize the number of removed water cells, counting water drained by both positions only once.",
+    "constraints": "Sum n <= 2000 and h can be very large, so the intended solution works with column heights and interval maxima rather than grid cells.",
+    "core_idea": "For one drain at i, the drained amount contributed by column j is h - max(a[min(i,j)..max(i,j)]). Precompute this cnt[i] for every single drain by expanding left and right with a running maximum. For two drains i <= j, their overlap is exactly the one-drain region of an index where a reaches a maximum on [i,j], so the union value is cnt[i] + cnt[j] - cnt[argmax]. Enumerating all pairs is sufficient.",
+    "complexity": "O(n^2) per test case.",
+    "tricks": [
+      "reduce connected water to interval maxima",
+      "overlap equals the basin of the maximum ridge between drains",
+      "pair brute force after one-drain preprocessing"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-overlap-bruteforce",
+      "summary": "Precompute cnt[i] for every drain by maintaining running interval maxima, then enumerate all drain pairs and subtract cnt at an argmax between them.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "After deriving the pair-union formula, the accepted solution directly enumerates all O(n^2) drain pairs under the sum n <= 2000 bound.",
+      "solution_variant": "quadratic-overlap-bruteforce"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "primary",
+      "evidence": "The decisive observation is that the overlap of two drained regions is cnt[argmax a[i..j]], converting a geometric union into one subtraction.",
+      "solution_variant": "quadratic-overlap-bruteforce"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Single-drain values are computed by maintaining running interval maxima and accumulating each column's water contribution.",
+      "solution_variant": "quadratic-overlap-bruteforce"
+    }
+  ]
+}

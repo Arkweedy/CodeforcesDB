@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "H2",
+    "title": "Bowser's Castle (Medium Version)",
+    "rating": null,
+    "rating_status": "no_cf_rating",
+    "official_tags": [
+      "constructive algorithms",
+      "divide and conquer",
+      "interactive",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/H2",
+      "notes": "Statement and hack format: same hidden min-max function task as H1, with n <= 200 and larger total n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the H2 optimization: binary-search style probes for the top behavior and two-ended split search."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/r6nz97mw",
+      "notes": "Chinese solution consulted to cross-check the shared model and recursive split-finding explanation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207H2",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "Reconstruct the same hidden ordered min-max function as H1, but with a larger n that requires more efficient top-operation and split discovery.",
+    "constraints": "Medium version: n <= 200, sum n <= 200, and the learning-query budget remains generous enough for O(n log n).",
+    "core_idea": "Keep the recursive tree reconstruction from H1, but reduce the cost of identifying the top behavior and split. Binary-search style prefix/suffix 0-1 probes locate the selected boundary in logarithmic queries, then a two-ended scan finds a valid split without paying a full quadratic cost at every recursion level. Recurse with neutral defaults outside the active interval.",
+    "complexity": "O(n log n) oracle queries in the intended H2 approach; final evaluations are O(n).",
+    "tricks": [
+      "binary search on prefix/suffix query patterns",
+      "two-ended scan for the split position",
+      "neutral defaults isolate recursive subfunctions"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-divide-and-conquer-reconstruction",
+      "summary": "Use binary-search probes to determine top behavior, scan from both ends to find the split, and recursively reconstruct the ordered min-max tree.",
+      "complexity": "O(n log n) oracle queries, O(n) per final evaluation query",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query scheme for reconstructing an unknown min-max expression tree.",
+      "solution_variant": "binary-search-divide-and-conquer-reconstruction",
+      "description": "Interactive or query-based problems where the main goal is to reconstruct an unknown hidden structure or function from adaptive oracle answers.",
+      "parent": "paradigm/interactive",
+      "created_reason": "The broad interactive tag does not distinguish reusable hidden-structure reconstruction from simple interactive search or games.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "The reconstruction repeatedly splits the ordered variable interval into child subexpressions and recurses.",
+      "solution_variant": "binary-search-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The medium optimization explicitly locates the top selected boundary with logarithmic prefix/suffix query searches.",
+      "solution_variant": "binary-search-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The split-finding phase scans candidate split positions from both ends after the top operation is known.",
+      "solution_variant": "binary-search-divide-and-conquer-reconstruction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The recovered min-max function is represented and evaluated as an ordered expression tree.",
+      "solution_variant": "binary-search-divide-and-conquer-reconstruction"
+    }
+  ]
+}

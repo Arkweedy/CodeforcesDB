@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2207,
+    "title": "Codeforces Round 1085 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2207,
+    "index": "E2",
+    "title": "N-MEX (Counting Version)",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2207/problem/E2",
+      "notes": "Statement and constraints: count valid bounded arrays b with 0 <= b_i <= n modulo 1e9+7."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2207E2?lang=en",
+      "notes": "Luogu mirror used to cross-check statement and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151886",
+      "notes": "Used to confirm the shared feasibility test with E1 and the O(n) product formula."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2207E2",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Count how many bounded arrays b produce the given sequence of prefix kth-mex values.",
+    "constraints": "t <= 1e4, sum n <= 2e5, and b_i is restricted to [0,n], allowing a linear product formula modulo 1e9+7.",
+    "core_idea": "The same conditions from E1 are necessary and sufficient: a_i must be nonincreasing and n - i - 1 <= a_i <= n. Valid constructions become independent local choices. If a_i equals the previous target, the next value must consume one still-missing non-target value below a_i, giving a_i - (n - i - 1) choices. If the target starts a lower level, there are i + 1 bounded choices. Multiplying these factors gives the answer.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "reuse E1 feasibility conditions",
+      "classify equal steps versus drops",
+      "turn constrained construction into local product factors"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-product-counting",
+      "summary": "Validate the target sequence, then multiply i+1 on block starts/drops and a_i-(n-i-1) on equal adjacent targets.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The answer is a product of the number of valid choices contributed by each structural step.",
+      "solution_variant": "linear-product-counting"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "secondary",
+      "evidence": "The counted objects are characterized by kth-mex values of all prefixes.",
+      "solution_variant": "linear-product-counting"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The counting formula is derived from the same constrained constructive characterization as E1.",
+      "solution_variant": "linear-product-counting"
+    }
+  ]
+}
