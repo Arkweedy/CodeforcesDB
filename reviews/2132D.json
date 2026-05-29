@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2132,
+    "title": "Codeforces Round 1043 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2132,
+    "index": "D",
+    "title": "From 1 to Infinity",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2132/D",
+      "notes": "Statement and constraints: sum of first k digits of the infinite string 1234567891011..., with k up to 1e15."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145692",
+      "notes": "Official solution confirms locating the containing number and summing digit contributions up to it."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/clesp0a3",
+      "notes": "Uses standard per-position digit counting for [1..n] plus the partial final number."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.pythoner.work/post/cf-2132/",
+      "notes": "Independent derivation of locating the digit block and summing digit sums by formula/recursion."
+    }
+  ],
+  "annotation": {
+    "summary": "For the infinite decimal string formed by concatenating positive integers, answer the sum of the first k digits.",
+    "constraints": "t <= 20000, k <= 1e15; decimal length is at most about 15, so per-digit formulas are enough.",
+    "core_idea": "Subtract whole blocks of 1-digit, 2-digit, and longer numbers to find the exact number containing the k-th digit and the prefix length used inside it. Then compute the sum of digit sums of all complete numbers before it using positional digit-counting formulas, and add the needed prefix digits of the final number.",
+    "complexity": "O(log_10 k) per test case",
+    "tricks": [
+      "Block by number length in the Champernowne sequence.",
+      "Count digit contributions position by position.",
+      "Handle the partial final number separately."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "digit-counting-formula",
+      "summary": "Find the final number by decimal length blocks, compute sum_digits(1..num-1) with per-position digit counting, then add the prefix of num.",
+      "complexity": "O(log k)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "recursive-prefix-sum",
+      "summary": "Equivalent recursive decomposition of digit-sum over [0..x] by leading digit and suffix interval.",
+      "complexity": "O(log k)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/digit-dp",
+      "importance": "primary",
+      "evidence": "The main computation is a digit-position count for all numbers up to a boundary, equivalent to a compact digit-DP/counting formula.",
+      "solution_variant": "digit-counting-formula"
+    },
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "secondary",
+      "evidence": "The solution groups the infinite string by decimal length and reasons about decimal positional digits.",
+      "solution_variant": "digit-counting-formula",
+      "description": "Use positional base representation of an integer to derive counts, carries, digit sums, or canonical decompositions; applies when the base digits are central to the solution rather than just input parsing.",
+      "parent": "math/number-theory",
+      "created_reason": "Existing math/number-theory is too broad for problems whose core is positional base decomposition and digit contribution counting.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "Digit sums over complete blocks are counted by combinatorial frequency formulas for each position.",
+      "solution_variant": "digit-counting-formula"
+    }
+  ]
+}

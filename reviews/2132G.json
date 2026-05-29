@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2132,
+    "title": "Codeforces Round 1043 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2132,
+    "index": "G",
+    "title": "Famous Choreographer",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "hashing",
+      "implementation",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2132/G",
+      "notes": "Statement and constraints: extend an n by m character grid to be invariant under 180-degree rotation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145692",
+      "notes": "Official solution reduces centers to corner-containing overlap subrectangles and uses 2D hashing to test rotation equality."
+    }
+  ],
+  "annotation": {
+    "summary": "Add the minimum number of cells around an existing character rectangle so the final rectangle is invariant under 180-degree rotation, with at least one original cell mapped inside the original rectangle.",
+    "constraints": "t <= 100000, total n*m <= 1000000; all candidate checks must be near O(nm).",
+    "core_idea": "There is no benefit to adding cells on both opposite sides of the same dimension, so an optimal final rectangle has its rotation center inside the original grid. The overlap between the original rectangle and its 180-degree rotated copy is then a subrectangle containing one of the four original corners. A center is feasible iff that overlap subrectangle equals its own 180-degree rotation. Enumerate all four families of corner-anchored subrectangles, check each by forward and reversed 2D rolling hashes, and minimize the resulting final area.",
+    "complexity": "O(nm) per test case after hash-power preprocessing",
+    "tricks": [
+      "Reduce possible centers to corner-anchored overlap rectangles.",
+      "Compare a subrectangle with its 180-degree reverse using normalized 2D hashes.",
+      "Evaluate four corner cases with explicit area formulas."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "corner-overlap-2d-hash",
+      "summary": "Build polynomial prefix hashes for the grid and reversed orientation, enumerate all corner-containing overlaps, test rotational equality in O(1), and minimize added area.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/hashing/2d-rolling-hash",
+      "importance": "primary",
+      "evidence": "The solution needs O(1) equality tests between arbitrary grid subrectangles and their 180-degree reversed counterparts.",
+      "solution_variant": "corner-overlap-2d-hash",
+      "description": "Polynomial or randomized hashing extended to two-dimensional arrays or grids for constant-time subrectangle equality or pattern checks.",
+      "parent": "algorithm/hashing",
+      "created_reason": "Existing algorithm/hashing does not distinguish 2D subrectangle hashing, which is the central optimization here and a reusable grid/string technique.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "The main reduction is based on 180-degree rotational symmetry and the overlap between the original and rotated rectangles.",
+      "solution_variant": "corner-overlap-2d-hash"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "All feasible overlaps are split into four corner-anchored subrectangle families, each with its own final-area formula.",
+      "solution_variant": "corner-overlap-2d-hash"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "The grid entries are lowercase letters and equality checks are over character submatrices.",
+      "solution_variant": "corner-overlap-2d-hash"
+    }
+  ]
+}

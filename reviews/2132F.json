@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2132,
+    "title": "Codeforces Round 1043 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2132,
+    "index": "F",
+    "title": "Rada and the Chamomile Valley",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "graphs",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2132/F",
+      "notes": "Statement and constraints: for each query vertex, find the nearest edge that lies on every path from 1 to n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145692",
+      "notes": "Official solution uses bridges on the 1-to-n DFS path and multi-source BFS."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/k1bydrhu",
+      "notes": "Cross-check via edge-biconnected components, bridge tree path, and BFS from required bridge endpoints."
+    }
+  ],
+  "annotation": {
+    "summary": "In a connected undirected simple graph, answer for each vertex the nearest edge that every path from 1 to n must use, breaking ties by smallest edge index.",
+    "constraints": "t <= 10000, sum n,m,q <= 200000; requires linear or near-linear preprocessing per test case.",
+    "core_idea": "An edge is used by every 1-to-n path exactly when it is a bridge separating 1 and n, equivalently a bridge on the 1-to-n path in the bridge-block tree. Find those required bridges by lowlink DFS with path marking, or by compressing edge-biconnected components and taking the bridge-tree path. Then run a multi-source BFS from all endpoints of required bridges, carrying the bridge index and distance; equal-distance ties keep the smallest index.",
+    "complexity": "O(n + m + q) per test case",
+    "tricks": [
+      "Required edges are exactly separating bridges for terminals 1 and n.",
+      "Mark only bridges on the 1-to-n bridge-tree path.",
+      "Multi-source BFS answers nearest required edge for all query vertices at once."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lowlink-path-bfs",
+      "summary": "Run DFS from 1, compute lowlink bridges while marking tree edges on the DFS route to n, initialize all required bridge endpoints, then multi-source BFS.",
+      "complexity": "O(n + m + q)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "bridge-block-tree",
+      "summary": "Compress 2-edge-connected components, find the path between components of 1 and n in the bridge tree, then BFS from endpoints of bridges on that path.",
+      "complexity": "O(n + m + q)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bridge",
+      "importance": "primary",
+      "evidence": "The mandatory lanes are precisely bridges whose removal separates vertex 1 from vertex n.",
+      "solution_variant": "lowlink-path-bfs"
+    },
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "All query answers are obtained by a multi-source BFS from endpoints of the mandatory bridges.",
+      "solution_variant": "lowlink-path-bfs"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "Lowlink DFS is used to compute bridges and mark the 1-to-n DFS path.",
+      "solution_variant": "lowlink-path-bfs"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "secondary",
+      "evidence": "The bridge-block tree variant relies on 2-edge-connected components and component compression.",
+      "solution_variant": "bridge-block-tree"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "After bridge compression, the relevant mandatory edges form the unique path between the terminal components in a tree.",
+      "solution_variant": "bridge-block-tree"
+    }
+  ]
+}

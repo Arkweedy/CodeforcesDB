@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2132,
+    "title": "Codeforces Round 1043 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2132,
+    "index": "C2",
+    "title": "The Cunning Seller (hard version)",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2132/C2",
+      "notes": "Statement and constraints: buy exactly n watermelons with at most k deals, where n and k are up to 1e9."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145692",
+      "notes": "Official solution confirms ternary decomposition and splitting large deals into smaller deals."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9jiup6qv",
+      "notes": "Cross-checks that replacing one 3^x deal by three 3^(x-1) deals is cheaper and consumes two extra deals."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.pythoner.work/post/cf-2132/",
+      "notes": "Independent Chinese write-up derives the saving and batch greedy replacement."
+    }
+  ],
+  "annotation": {
+    "summary": "Given n and a deal limit k, buy exactly n watermelons using deals of size 3^x and minimize total cost, or report impossible.",
+    "constraints": "t <= 10000, n,k <= 1e9; only O(log_3 n) ternary digits can be processed per test.",
+    "core_idea": "The minimum possible number of deals is the digit sum of n in base 3, obtained by buying each ternary digit separately. If this exceeds k, no solution exists. Otherwise, one deal of size 3^x can be split into three deals of size 3^(x-1), increasing the deal count by 2 and decreasing the cost. Splitting larger powers saves more, so greedily split from the largest ternary digit downward while the remaining deal budget allows.",
+    "complexity": "O(log_3 n) per test case",
+    "tricks": [
+      "Represent n by ternary digit counts of deal sizes.",
+      "Use extra deal budget in chunks of two.",
+      "Greedily split largest available powers first."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ternary-split-greedy",
+      "summary": "Count ternary digits as initial deals, then batch-convert high powers to three lower powers using at most floor((k-min_deals)/2) splits.",
+      "complexity": "O(log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "primary",
+      "evidence": "The feasible minimum-deal representation is exactly the base-3 digit expansion of n, and all later operations modify these digit counts.",
+      "solution_variant": "ternary-split-greedy",
+      "description": "Use positional base representation of an integer to derive counts, carries, digit sums, or canonical decompositions; applies when the base digits are central to the solution rather than just input parsing.",
+      "parent": "math/number-theory",
+      "created_reason": "Existing math/number-theory is too broad, while this problem is specifically solved by base-3 digit decomposition and reverse-carry style operations.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "After the ternary representation is fixed, the optimal use of extra deals is to split the largest remaining deal size first because it gives the largest cost reduction.",
+      "solution_variant": "ternary-split-greedy"
+    }
+  ]
+}

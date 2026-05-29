@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2132,
+    "title": "Codeforces Round 1043 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2132,
+    "index": "E",
+    "title": "Arithmetics Competition",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "sortings",
+      "ternary search"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2132/E",
+      "notes": "Statement and constraints: answer capped-card maximum-sum queries over two arrays."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145692",
+      "notes": "Official solution provides both merged top-z repair and ternary-search variants."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.pythoner.work/post/cf-2132/",
+      "notes": "Independent write-up explains prefix sums and the unimodal ternary-search alternative."
+    }
+  ],
+  "annotation": {
+    "summary": "Given two arrays and many queries (x,y,z), choose exactly z numbers with at most x from a and at most y from b, maximizing the sum.",
+    "constraints": "Across tests, sum n,m <= 200000 and sum q <= 100000; after sorting, each query should be O(1) or O(log n).",
+    "core_idea": "Sort each array descending and build prefix sums. Without caps, the best z cards are obtained by merging the two sorted arrays; precompute for every z how many come from each side. For a query, if the unrestricted top-z choice respects both caps, use it. If it exceeds x from a, the optimum is forced to take exactly x from a and z-x from b; symmetrically if it exceeds y from b. Prefix sums then answer immediately.",
+    "complexity": "O((n+m) log(n+m) + q) per test case for the merged solution",
+    "tricks": [
+      "Precompute composition of the global top z cards.",
+      "A violated cap pins the number chosen from that side.",
+      "Prefix sums make fixed-count best sums O(1)."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "merged-top-z-repair",
+      "summary": "Sort a and b, precompute prefix sums and the pair (count_from_a,count_from_b) in the unrestricted best z-card merge; repair only the violated cap per query.",
+      "complexity": "O((n+m) log(n+m) + q)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "unimodal-ternary-search",
+      "summary": "For each query maximize pa[i]+pb[z-i] over max(0,z-y) <= i <= min(z,x); the function is unimodal because both arrays are sorted.",
+      "complexity": "O((n+m) log(n+m) + q log(n+m))",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For any fixed count from each array, taking the largest elements is optimal, and the unrestricted global top-z selection only needs cap repair.",
+      "solution_variant": "merged-top-z-repair"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Both the prefix sums and the global top-z composition depend on sorting the two arrays by value.",
+      "solution_variant": "merged-top-z-repair"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "After sorting, each fixed count answer is computed as pa[cnt_a]+pb[cnt_b].",
+      "solution_variant": "merged-top-z-repair"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The primary solution precomputes the unrestricted best composition for every z by merging two sorted arrays.",
+      "solution_variant": "merged-top-z-repair"
+    },
+    {
+      "tag": "algorithm/search/ternary-search",
+      "importance": "secondary",
+      "evidence": "The alternate official solution uses ternary search on the unimodal function pa[i]+pb[z-i].",
+      "solution_variant": "unimodal-ternary-search"
+    }
+  ]
+}
