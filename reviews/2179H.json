@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2179,
+    "title": "Codeforces Round 1071 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2179,
+    "index": "H",
+    "title": "Blackslex and Plants",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "data structures",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2179/problem/H",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/contest/2179/problem/H",
+      "notes": "Used to read the range-update statement and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149406",
+      "notes": "Used to confirm the decomposition of lowbit into power-of-two divisibility layers and the prefix-sum implementation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2179H",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "For many range watering operations [l,r], add f(i-l+1) = (i-l+1) * lowbit(i-l+1) to every covered position and output final values.",
+    "constraints": "Sum of n and q is 2e5, so each range update must be processed in logarithmic or amortized logarithmic time rather than iterating the full interval.",
+    "core_idea": "Use lowbit(x) = 1 + sum over powers 2^b for which 2^(b+1) divides x. For each bit layer, positions satisfying the divisibility condition form an arithmetic progression relative to l. Maintain per-layer difference arrays for the constant and linear coefficients so that x * lowbit(x) is accumulated as position-dependent range additions, then prefix-sum all layers into the answer.",
+    "complexity": "O((n + q) log n) per test file total.",
+    "tricks": [
+      "decompose lowbit by divisibility layers",
+      "separate linear coefficient i and offset l-1",
+      "per-power-of-two difference arrays"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "For every query and every relevant power of two, update difference arrays on positions congruent to l-1 modulo that power, then prefix-sum coefficients to form final water amounts.",
+      "complexity": "O((n + q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/lowbit",
+      "importance": "primary",
+      "evidence": "The function being updated is x multiplied by its least significant set bit, and the solution decomposes that lowbit by powers of two.",
+      "solution_variant": "main",
+      "description": "Uses the least significant set bit or divisibility by powers of two as a main decomposition.",
+      "parent": "algorithm/bitmask",
+      "created_reason": "Lowbit appears often enough in Fenwick-tree-adjacent and power-of-two decomposition problems to be directly searchable.",
+      "status": "active"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "primary",
+      "evidence": "Range updates are stored in per-layer difference arrays and materialized by prefix sums.",
+      "solution_variant": "main",
+      "description": "Range updates are accumulated with difference arrays and prefix sums.",
+      "parent": "data-structure",
+      "created_reason": "Difference arrays are a common range-update technique worth querying independently from generic prefix sums.",
+      "status": "active"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The lowbit decomposition relies on the condition that powers of two divide i-l+1.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "After all difference updates, prefix sums recover each layer's contribution.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The final value is assembled by independently maintaining contributions of each power-of-two layer.",
+      "solution_variant": "main"
+    }
+  ]
+}

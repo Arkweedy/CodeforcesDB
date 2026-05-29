@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2179,
+    "title": "Codeforces Round 1071 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2179,
+    "index": "F",
+    "title": "Blackslex and Another RGB Walking",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "communication",
+      "constructive algorithms",
+      "graphs",
+      "interactive",
+      "number theory",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2179/problem/F",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/contest/2179/problem/F",
+      "notes": "Used to read the run-twice communication statement and graph constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149406",
+      "notes": "Used to confirm the BFS-distance modulo 3 coloring strategy."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2179F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "In a run-twice communication setting, first color every vertex of a connected bipartite graph with one of three colors; later, from only the multiset/order of neighbor colors at an unknown vertex, choose a neighbor closer to vertex 1.",
+    "constraints": "Across tests, n and m sum to 1e5. The graph is connected and bipartite, so BFS distances from vertex 1 are well-defined and adjacent vertices have distances differing by exactly 1.",
+    "core_idea": "During the first run, BFS from vertex 1 and color each vertex by dist mod 3. In a bipartite graph every edge changes distance parity, and because adjacent BFS distances differ by at most 1, they differ exactly by 1. Thus the neighbor colors reveal the current distance class modulo 3: if two adjacent distance layers appear, choose the color corresponding to dist-1; if all neighbors have the same color, any neighbor is closer.",
+    "complexity": "O(n + m) in the first run and O(deg(v)) per second-run query.",
+    "tricks": [
+      "BFS distance modulo 3 coloring",
+      "bipartite graph forbids same-level edges",
+      "decode current layer from neighbor colors"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Color vertices by BFS distance modulo 3, then choose a neighbor with the preceding modulo color according to the visible neighbor colors.",
+      "complexity": "O(n + m) preprocessing, O(deg(v)) per query",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/communication",
+      "importance": "primary",
+      "evidence": "The core task is designing a two-run protocol where vertex colors encode enough information for the second run.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "The coloring is exactly the BFS distance from vertex 1 taken modulo 3.",
+      "solution_variant": "main",
+      "description": "Breadth-first search levels or distances are a central part of the solution.",
+      "parent": "graph",
+      "created_reason": "BFS levels are a frequent graph primitive and should be searchable separately from generic graph traversal.",
+      "status": "active"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "Bipartiteness proves adjacent vertices cannot have the same BFS distance, making distance layers differ by exactly one.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "secondary",
+      "evidence": "The second run answers queries using only the colors supplied by the judge-like protocol.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The maintained invariant is that visible neighbor colors always encode the previous/next BFS layer relation.",
+      "solution_variant": "main"
+    }
+  ]
+}

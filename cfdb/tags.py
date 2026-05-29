@@ -25,6 +25,7 @@ OFFICIAL_TAG_MAP = {
     "brute force": "paradigm/brute-force",
     "chinese remainder theorem": "math/number-theory/chinese-remainder-theorem",
     "combinatorics": "math/combinatorics",
+    "communication": "paradigm/communication",
     "constructive algorithms": "paradigm/constructive",
     "data structures": "data-structure",
     "dfs and similar": "graph/dfs",

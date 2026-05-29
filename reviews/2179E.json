@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2179,
+    "title": "Codeforces Round 1071 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2179,
+    "index": "E",
+    "title": "Blackslex and Girls",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "geometry",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2179/problem/E",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/contest/2179/problem/E",
+      "notes": "Used to read the statement when the primary Codeforces host was protected by Cloudflare."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149406",
+      "notes": "Used to confirm the lower-bound construction and the all-one-winner special case."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2179E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Given party vote totals, district minimum populations, and the required winning party in each district, decide whether nonnegative district allocations can realize all strict majorities.",
+    "constraints": "Sum of n over tests is 2e5, while x, y, and p_i are up to 1e9, so the feasibility conditions must be checked with linear scans and 64-bit sums.",
+    "core_idea": "Each district whose designated winner has minimum population p_i needs at least floor(p_i/2)+1 votes from that winner. If both parties win at least one district, after satisfying these lower bounds any leftover votes can be absorbed by a district won by that party. If all districts have the same winner, the losing party can only be absorbed while maintaining a strict majority in every district, which adds the global difference condition winner_votes >= loser_votes + n.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "designated-winner lower bound",
+      "mixed winners absorb leftovers",
+      "all-winner strict-majority special case"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Check total capacity, sum per-party lower bounds floor(p_i/2)+1, then split into mixed-winner and single-winner cases.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "The feasibility test is reduced to a small set of necessary and sufficient inequalities on x, y, sum p_i, and the strict-majority margins.",
+      "solution_variant": "main",
+      "description": "Reasoning with lower/upper bounds, strict inequalities, or feasibility inequalities that directly characterize existence.",
+      "parent": "math",
+      "created_reason": "Useful for constructive feasibility problems where the whole solution is deriving exact inequalities rather than running an algorithm.",
+      "status": "active"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The proof argues by constructing a valid allocation from lower-bound votes and showing how leftovers can be placed.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The decisive branch is whether both parties have designated districts or all districts share the same designated winner.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "The solution is an arithmetic feasibility proof using sums and strict-majority bounds.",
+      "solution_variant": "main"
+    }
+  ]
+}

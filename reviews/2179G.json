@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2179,
+    "title": "Codeforces Round 1071 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2179,
+    "index": "G",
+    "title": "Blackslex and Penguin Migration",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2179/problem/G",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/contest/2179/problem/G",
+      "notes": "Used to read the interactive Manhattan-distance reconstruction statement."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/149406",
+      "notes": "Used to confirm the corner-finding and two-anchor coordinate reconstruction."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2179G",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Reconstruct an n by n grid placement up to symmetry using Manhattan-distance queries between labeled penguins.",
+    "constraints": "n <= 100, total n <= 500, and the query budget is 3n^2 + 150, so the method can query all labels from a constant number of anchors.",
+    "core_idea": "A cell farthest from an arbitrary anchor is a corner. Distances from that corner identify the non-opposite-corner candidates at distance n-1; querying among those candidates finds a second non-opposite corner. Distances to two non-opposite corners uniquely determine each coordinate by solving two Manhattan-distance equations, and any reflected/rotated reconstruction is accepted.",
+    "complexity": "O(n^2) time and 3n^2 + O(n) queries.",
+    "tricks": [
+      "find a corner as a farthest point",
+      "use two non-opposite corner distance signatures",
+      "solve coordinates from Manhattan distance equations"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Find two adjacent corners using farthest-distance queries, then locate every label from its two distances to those corners.",
+      "complexity": "O(n^2), 3n^2 + O(n) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The algorithm is constrained by an interactive query budget and reconstructs the hidden grid through distance queries.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The main reconstruction uses Manhattan geometry and distances from grid corners to derive coordinates.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/distance-signature",
+      "importance": "primary",
+      "evidence": "Each penguin is identified by the pair of distances to two selected non-opposite corners.",
+      "solution_variant": "main",
+      "description": "Recover or distinguish objects by a vector of distances to selected anchors.",
+      "parent": "trick",
+      "created_reason": "This pattern recurs in reconstruction and interactive geometry tasks where selected anchors encode positions.",
+      "status": "active"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "Any grid consistent with all pairwise distances is valid, so the solution constructs one canonical orientation.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "incidental",
+      "evidence": "The editorial notes small constant query optimizations, but they are not the conceptual core.",
+      "solution_variant": "main"
+    }
+  ]
+}
