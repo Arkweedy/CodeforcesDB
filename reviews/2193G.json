@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2193,
+    "title": "Codeforces Round 1076 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2193,
+    "index": "G",
+    "title": "Paths in a Tree",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "interactive",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2193/problem/G",
+      "notes": "题面为交互题：隐藏路径 x-y，查询路径 a-b 是否与其相交，要求在 floor(n/2)+1 次内找出路径上一点。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150510?mobile=false",
+      "notes": "官方题解按 DFS 序两两配对查询；若某对路径相交，再查询其中一个单点，否则奇数 n 时剩余点必在隐藏路径上。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2193G",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定树和可交互查询：询问路径 a-b 是否与隐藏路径 x-y 相交；需要在 floor(n/2)+1 次内输出隐藏路径上的任意点。",
+    "constraints": "多测，sum n<=2e5；交互查询次数上限为 floor(n/2)+1。",
+    "core_idea": "任意两两相邻的 DFS 序点对，其路径覆盖树中所有顶点：对 DFS 序 L[0],L[1],...，查询 (L[0],L[1]),(L[2],L[3])...。如果某一对返回 1，则这对路径上至少有一个端点可能在隐藏路径上，再用一次单点查询区分两个端点；如果所有配对都返回 0，奇数 n 时唯一未配对点就是答案。",
+    "complexity": "O(n) preprocessing and at most floor(n/2)+1 queries.",
+    "tricks": [
+      "DFS 序相邻两点配对",
+      "用成对路径覆盖所有顶点",
+      "命中一对后用单点查询二分到一个端点"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dfs-order-pairing",
+      "summary": "DFS 得到顶点序列，按相邻两点成对查询；若某对返回相交，则查询第一个端点，否则输出第二个端点；若无命中则输出最后未配对点。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "原题要求设计查询策略，在查询次数限制内找隐藏路径上的点。",
+      "solution_variant": "dfs-order-pairing"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "primary",
+      "evidence": "核心配对序列来自树的 DFS 遍历顺序。",
+      "solution_variant": "dfs-order-pairing"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "primary",
+      "evidence": "查询策略是配对路径检测，命中后再用一次单点查询决策。",
+      "solution_variant": "dfs-order-pairing"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "查询对象是树上两点间简单路径。",
+      "solution_variant": "dfs-order-pairing"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 sorting，但主要只需 DFS 顺序，不是排序算法。",
+      "solution_variant": "dfs-order-pairing"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "contest": {
+    "contest_id": 2193,
+    "title": "Codeforces Round 1076 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2193,
+    "index": "H",
+    "title": "Remove the Grail Tree",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2193/problem/H",
+      "notes": "题面给带权树；若 a_v 与当前邻居权值和 S_v 奇偶不同则可删除 v，要求是否存在删除全部顶点的顺序。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150510?mobile=false",
+      "notes": "官方题解先对权值取模 2，删除可立即处理的 0，再对剩余全 1 森林用 f(v)=0 的点队列删除。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2193H",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "树上每点有权值；每步可删除一个点，当且仅当它的权值与剩余邻居权值和奇偶不同。要求构造删除完整棵树的顺序。",
+    "constraints": "多测，sum n<=2e5；需要 O(n) 或 O(n log n)。",
+    "core_idea": "只关心权值奇偶。先处理 0 点：当其邻居奇数和为 1 时可以删除；若孤立 0 则无解，其余 0 会随着 1 点删除而变可删。删去所有 0 后，剩余是若干全 1 森林。全 1 树大小为偶数时无解；大小为奇数时总能删除。对全 1 树定义 f(v) 为删除 v 后会形成偶大小组件的邻居数，需要选择 f(v)=0 的点删除；删除后只会影响邻居的 f，用队列维护即可。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "所有权值先取模 2",
+      "把 0 点与全 1 森林分阶段处理",
+      "奇大小全 1 树中始终存在 f(v)=0 的可删点",
+      "删除一个点只会影响邻居的 f 值"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-forest-queue",
+      "summary": "先删除满足条件的 0 点并构造剩余全 1 森林；对每棵奇大小树预计算 f(v)，用队列反复删除 f=0 的点并更新邻居。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "tree-dp",
+      "summary": "官方还给出树 DP 状态 0/1/2/3，描述点与父亲删除顺序的依赖关系，用于证明和构造。",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "删除条件完全取决于 a_v 与邻居和的奇偶性。",
+      "solution_variant": "parity-forest-queue"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "核心结构是树删点后形成的组件大小奇偶。",
+      "solution_variant": "parity-forest-queue"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "在全 1 奇大小树中反复选择 f(v)=0 的点删除即可完成构造。",
+      "solution_variant": "parity-forest-queue"
+    },
+    {
+      "tag": "graph/bfs",
+      "importance": "secondary",
+      "evidence": "实现用队列维护当前 f(v)=0 的可删点并更新邻居。",
+      "solution_variant": "parity-forest-queue"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "存在等价树 DP 解法，记录点与父亲删除顺序的依赖状态。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "删去 0 点后需要按剩余全 1 森林的各连通块分别判断和构造。",
+      "solution_variant": "parity-forest-queue"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "需要细致维护已删除点、邻居奇偶和、f 值和输出顺序。",
+      "solution_variant": "parity-forest-queue"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2193,
+    "title": "Codeforces Round 1076 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2193,
+    "index": "F",
+    "title": "Pizza Delivery",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2193/problem/F",
+      "notes": "题面给起点 A、终点 B 和 n 个房屋坐标；每步只能 x+1 或 y±1，要求访问所有房屋后到 B 的最短时间。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150510?mobile=false",
+      "notes": "官方题解按 x 坐标分组，组内 y 必须从一端扫到另一端；DP 维护到当前组上下端的最小代价。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2193F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "从 A 出发，只能向右或上下移动，访问所有房屋后到 B，求最短路径长度；所有房屋 x 坐标都在 A_x 与 B_x 之间。",
+    "constraints": "多测，sum n<=2e5；需要按 x 分组后线性处理。",
+    "core_idea": "横向距离固定为 B_x-A_x，优化只在纵向移动。对同一个 x 的所有房屋，最优访问方式一定是从该组 y 的一端走到另一端，最终停在 min_y 或 max_y。按 x 递增处理各组，DP 两个状态表示处理完当前组后停在下端/上端的最小纵向代价，从上一组两端转移即可。",
+    "complexity": "O(n log n) for sorting, O(number of distinct x) DP.",
+    "tricks": [
+      "按 x 坐标分组",
+      "同一列房屋只需扫过 [min_y,max_y]",
+      "DP 只保留当前列上下端两个状态"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-end-dp",
+      "summary": "排序房屋并压成每个 x 的 min/max y；从 A_y 开始，逐组转移到当前组下端或上端，最后加到 B_y 的距离和固定横向距离。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "每个 x 组处理后只需记录停在 min_y 或 max_y 的两个状态。",
+      "solution_variant": "two-end-dp"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "display_name": "Group by coordinate",
+      "description": "Group points or objects by one coordinate and solve each group using an aggregated range or summary.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "The decisive compression is grouping houses by equal x coordinate; existing grouping tags are divisor-specific.",
+      "importance": "primary",
+      "evidence": "所有相同 x 的房屋被压成一个 y 区间 [min_y,max_y] 后做 DP。",
+      "solution_variant": "two-end-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "同一列中访问所有点时，从一端扫到另一端是局部最优。",
+      "solution_variant": "two-end-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "需要按 x 坐标排序/分组房屋。",
+      "solution_variant": "two-end-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "题目是网格坐标路径最短路，利用单调 x 方向和纵向距离分解。",
+      "solution_variant": "two-end-dp"
+    }
+  ]
+}
