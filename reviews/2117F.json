@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2117, "title": "Codeforces Round 1029 (Div. 3)"},
+  "problem": {"contest_id": 2117, "index": "F", "title": "Wildflower", "rating": 1800, "rating_status": "official", "official_tags": ["combinatorics", "dfs and similar", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2117/problem/F", "notes": "题面与约束：树上计数问题，需要输出方案数模 998244353。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143362", "notes": "官方题解确认答案只由叶子数量和两片叶子的 LCA 深度关系决定。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/yprcpusr", "notes": "Luogu 题解确认：非叶点最多只能有一个儿子子树包含叶子，因此根以外叶子超过两个无解；链情形答案为 2^n。"}
+  ],
+  "annotation": {
+    "summary": "给定一棵以 1 为根的树，统计满足题目条件的二进制标记方案数。",
+    "constraints": "sum n <= 2e5，模数 1e9+7，需要 DFS 统计叶子、深度并预处理快速幂。",
+    "core_idea": "约束会迫使除根外每个非叶点至多只有一个儿子子树含叶子，因此根以外叶子数超过 2 时无解。若只有一个叶子，树是一条从根出发的链，所有点的二选一标记独立，答案为 2^n。若恰有两个叶子，设深度为 d1,d2，LCA 深度为 l；公共祖先链贡献 2^(l+1) 的自由度，两条分支长度差决定较长分支可额外偏移的方案数，按官方公式组合得到答案。",
+    "complexity": "O(n) per test case",
+    "tricks": ["叶子数超过二直接判零", "两叶情形只需 LCA 深度和两叶深度", "用快速幂计算独立选择贡献"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "leaf-count-lca-formula", "summary": "DFS 统计叶子与深度，叶子数分 1/2/>2 三类，双叶时用 LCA 深度和分支长度差代入组合公式。", "complexity": "O(n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/tree", "importance": "primary", "evidence": "可行性和计数公式完全由树的叶子、深度和 LCA 结构决定。", "solution_variant": "leaf-count-lca-formula"},
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "答案是对独立二选一结构的计数，按叶子数和两条分支长度分类组合。", "solution_variant": "leaf-count-lca-formula"},
+    {"tag": "graph/lca", "importance": "secondary", "evidence": "双叶情形需要两片叶子的 LCA 深度来确定公共路径贡献。", "solution_variant": "leaf-count-lca-formula"},
+    {"tag": "trick/case-analysis", "importance": "secondary", "evidence": "解法按叶子数 1、2、超过 2 分成互斥公式。", "solution_variant": "leaf-count-lca-formula"}
+  ]
+}

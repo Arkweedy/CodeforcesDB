@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2117, "title": "Codeforces Round 1029 (Div. 3)"},
+  "problem": {"contest_id": 2117, "index": "G", "title": "Omg Graph", "rating": 1900, "rating_status": "official", "official_tags": ["brute force", "dsu", "graphs", "greedy", "shortest paths", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2117/problem/G", "notes": "题面与约束：无向加权图，路径代价与边权极值相关，要求从 1 到 n 的最优值。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143362", "notes": "官方题解确认把边按权值排序加入 DSU，连通块里维护最小边权，端点连通时更新 max+min。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/616z4kiz", "notes": "Luogu 题解交叉验证：按边权从小到大合并，维护连通块内最小边，1 和 n 连通时更新答案。"}
+  ],
+  "annotation": {
+    "summary": "给一张无向带权图，路径代价是路径上最大边权与最小边权之和，要求从 1 到 n 的最小可能代价。",
+    "constraints": "多测，总 n,m 级别适合排序、并查集或 Dijkstra 变体；不能枚举所有路径。",
+    "core_idea": "枚举路径最大边权 W，只需考虑权值不超过 W 的边。将边按权值从小到大加入 DSU；当加入当前边后，所有连通块都只使用最大边不超过当前 W 的边。因为路径可以在连通块中绕行，若 1 和 n 已经连通，则可以让路径经过该连通块内的最小边，当前候选答案为 W + min_edge(component)。合并连通块时维护其中出现过的最小边权即可。",
+    "complexity": "O(m log m) with sorted edges and DSU-style processing",
+    "tricks": ["按路径最大边从小到大扫描", "连通块中维护可绕行经过的最小边", "排序边权后用 DSU 维护连通性"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "sorted-threshold-dsu", "summary": "从小到大加入边，连通块维护内部最小边；当 1 与 n 连通时用当前最大边加该块最小边更新答案。", "complexity": "O(m log m)", "confidence": "high", "is_primary": true},
+    {"name": "bottleneck-shortest-path", "summary": "把状态松弛值定义为到达点时路径最大边的最小可能值，在固定下界子图中求瓶颈路径。", "complexity": "O(m log n) per threshold if naively repeated", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "graph/bottleneck-path", "importance": "primary", "evidence": "主扫描固定当前可用路径的最大边权，并在该瓶颈限制下维护最小边贡献。", "solution_variant": "sorted-threshold-dsu", "description": "在图中寻找使路径最大边权最小、最小边权最大，或同时优化边权极值的路径问题。", "parent": "graph/shortest-path", "created_reason": "2117G 的主要检索点不是普通 shortest path，而是按边权极值优化的 bottleneck path；该模式在 MST/DSU/最短路交界题中可复用。", "status": "candidate"},
+    {"tag": "data-structure/dsu", "importance": "primary", "evidence": "排序扫描边权阈值时用并查集维护当前阈值子图的连通性。", "solution_variant": "sorted-threshold-dsu"},
+    {"tag": "graph/shortest-path", "importance": "secondary", "evidence": "等价解释是用非加法代价的最短路松弛求最小瓶颈值。", "solution_variant": "bottleneck-shortest-path"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "需要按边权排序后只在阈值变化处更新答案。", "solution_variant": "sorted-threshold-dsu"}
+  ]
+}

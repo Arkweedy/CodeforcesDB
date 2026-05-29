@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2117, "title": "Codeforces Round 1029 (Div. 3)"},
+  "problem": {"contest_id": 2117, "index": "E", "title": "Lost Soul", "rating": 1600, "rating_status": "official", "official_tags": ["brute force", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2117/problem/E", "notes": "题面与约束：两个数组 a,b，操作可把相邻列的另一个数组值拷到当前位置，允许至多删除一列，最大化匹配前缀长度。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143362", "notes": "官方题解确认从右往左维护 suffix 可达值集合，并分别处理不删除与删除一列的情形。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/og9twtup", "notes": "Luogu 题解确认交错赋值导致可传递位置存在奇偶性；删除一列会改变间距奇偶。"}
+  ],
+  "annotation": {
+    "summary": "给两个长度为 n 的数组，可反复把某个位置的 a_i 或 b_i 替换成后一列另一行的值；还可以至多删除一列。问最多能让多少个位置满足 a_i=b_i。",
+    "constraints": "多测，sum n <= 2e5，需要线性扫描；值域可用哈希/出现数组记录。",
+    "core_idea": "从右往左看，位置 i 能被右侧同奇偶/交错链条中的某些值传回来。若当前 a_i=b_i，答案至少为 i。不删除时，只要 a_i 或 b_i 已经出现在右侧可传回集合，或当前列与下一列形成可直接传递的交叉相等，也能让 i 匹配。允许删除一列时，删除会改变后缀相邻关系，因此需要同时维护跳过一列后的可达集合/相邻检查。扫描过程中不断把 a_i,b_i 加入后缀集合，取最靠左能匹配的位置对应的最大前缀长度。",
+    "complexity": "O(n) per test case",
+    "tricks": ["从右向左维护后缀可达值", "删除一列后只影响局部相邻关系和后缀可达集合", "把最大匹配前缀转化为找到最小可修复位置"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "reverse-suffix-reachability", "summary": "右往左维护可从后缀传到当前位置的值集合，分别检查不删除和删除一列后的可匹配条件。", "complexity": "O(n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "只需要找到最靠左的可修复位置，一旦后缀能支持该位置匹配，右侧位置都可由相同后缀传播逻辑处理。", "solution_variant": "reverse-suffix-reachability"},
+    {"tag": "trick/reverse-process", "importance": "secondary", "evidence": "操作影响从右侧传播到左侧，因此主扫描方向必须反过来维护可达信息。", "solution_variant": "reverse-suffix-reachability"},
+    {"tag": "data-structure/hash-map", "importance": "secondary", "evidence": "需要记录后缀中哪些值已经可作为传递来源出现，通常用哈希表或值域计数实现。", "solution_variant": "reverse-suffix-reachability"},
+    {"tag": "implementation", "importance": "secondary", "evidence": "删除一列导致的下标错位和边界条件是实现主要风险。", "solution_variant": "reverse-suffix-reachability"}
+  ]
+}

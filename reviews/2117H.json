@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2117, "title": "Codeforces Round 1029 (Div. 3)"},
+  "problem": {"contest_id": 2117, "index": "H", "title": "Incessant Rain", "rating": 2500, "rating_status": "official", "official_tags": ["data structures", "divide and conquer", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2117/problem/H", "notes": "题面与约束：给定颜色数组，考虑连续子数组在雨水不断减少元素后的颜色出现次数变化，要求最大化某颜色次数。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143362", "notes": "官方题解把每个颜色的贡献转成位置权值，按颜色出现位置维护最大子段和，并用线段树合并。"}
+  ],
+  "annotation": {
+    "summary": "给定数组，要求选择一种颜色和一个连续区间，使得经过题目定义的雨水过程后该颜色在区间中的净贡献最大。",
+    "constraints": "sum n <= 2e5 级别，需要 O(n log n) 或 O(n log^2 n)；不能对每种颜色重建整段数组。",
+    "core_idea": "固定一个颜色 c，可把每个位置转成贡献：等于 c 的位置给正贡献，和它竞争/会被抵消的位置给负贡献，其他位置为 0。于是该颜色的最优区间就是最大子段和。若对每个颜色从零计算会超时，需要按颜色出现位置离线修改线段树：只在与该颜色相关的位置赋正/负权，用线段树维护 sum、最大前缀、最大后缀、最大子段；处理完一个颜色后回滚这些修改。所有颜色的最大子段和取最大即答案。",
+    "complexity": "O(n log n)",
+    "tricks": ["把固定颜色的区间最优转成最大子段和", "只修改该颜色相关位置并回滚", "线段树维护最大子段和四元组"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "color-wise-segment-tree-max-subarray", "summary": "逐颜色设置相关位置的贡献，用线段树查询全局最大子段和，随后回滚修改。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "data-structure/segment-tree", "importance": "primary", "evidence": "需要支持一批单点权值修改/回滚，并在根节点实时读出最大子段和。", "solution_variant": "color-wise-segment-tree-max-subarray"},
+    {"tag": "dp/max-subarray", "importance": "primary", "evidence": "固定颜色后目标正是求贡献数组最大子段和，线段树节点维护其可合并 DP 信息。", "solution_variant": "color-wise-segment-tree-max-subarray"},
+    {"tag": "paradigm/offline", "importance": "secondary", "evidence": "按颜色批处理相关修改并回滚，避免对每个颜色在线重算完整数组。", "solution_variant": "color-wise-segment-tree-max-subarray"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "实现中通常需要按颜色分组出现位置，便于批量修改和回滚。", "solution_variant": "color-wise-segment-tree-max-subarray"}
+  ]
+}
