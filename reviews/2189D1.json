@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2189,
+    "title": "Codeforces Round 1075 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2189,
+    "index": "D1",
+    "title": "Little String (Easy Version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "greedy",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2189/problem/D1",
+      "notes": "题面定义 f(w) 为满足每个 mex 是否可由子段得到的排列数量；Easy 中 s 不含 ?。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150452",
+      "notes": "官方题解推导 f(w)=prod(2 if w_i=1 else i-1)，再用 gcd 逐因子消去 c 判断是否整除。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2189D1",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 01 串 s 和 c；f(w) 是使每个 i 是否存在 mex=i 的子段恰好匹配 w_i 的排列数量。Easy 没有 ?，要求最小的 f(w) 且不被 c 整除，否则 -1。",
+    "constraints": "多测，sum n<=2e5；需要 O(n log c) 判断整除并计算答案。",
+    "core_idea": "构造排列时按 0,1,...,k 逐个插入。若希望 mex=k 可出现，则 k 只能插到当前序列两端，有 2 种；若希望 mex=k 不出现，则 k 插到内部，有 k-1 种。故 f(w)=prod_i factor_i。Easy 固定 w=s，只需一边计算乘积，一边用 gcd(factor_i,c) 逐步除掉 c；最终 c 被除到 1 则 f 被原 c 整除，答案不存在。",
+    "complexity": "O(n log c) per test case.",
+    "tricks": [
+      "按数值递增插入排列来计数 mex 可达性",
+      "把 f(w) 化为独立因子的乘积",
+      "用 gcd 逐因子消去 c 避免大整数整除判断"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "product-formula",
+      "summary": "若 s_1 或 s_n 为 0 则 f=0；否则枚举 i=2..n-1 得到因子 2 或 i-1，计算答案取模并用 gcd 因子消去 c。",
+      "complexity": "O(n log c)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "题目定义和计数条件都围绕子段 mex 是否等于 i。",
+      "solution_variant": "product-formula"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "核心是统计满足 mex 可达性模式的排列数量。",
+      "solution_variant": "product-formula"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "需要用 gcd 逐因子判断乘积是否被 c 整除。",
+      "solution_variant": "product-formula"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "按从小到大插入值的过程给出独立因子计数。",
+      "solution_variant": "product-formula"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2189,
+    "title": "Codeforces Round 1075 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2189,
+    "index": "C2",
+    "title": "XOR-convenience (Hard Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2189/problem/C2",
+      "notes": "题面要求构造 1..n 的排列 p，使每个 i<n 都能找到 j>=i 且 p_i=p_j xor i；Hard 要覆盖所有 i=1..n-1。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150452",
+      "notes": "官方题解证明 n 为 2 的幂时无解；否则在 C1 配对构造基础上处理最高位余数 r。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2189C2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "构造排列 p[1..n]，使每个 i<n 都存在 j>=i 满足 p_i = p_j xor i；若不存在输出 -1。",
+    "constraints": "多测，sum n<=2e5；需要 O(n) 构造。",
+    "core_idea": "若 n 是 2 的幂则无解：最大值 n 若不在末尾会 xor 出界，若在末尾又无法满足 i=n-1。否则先用 C1 的构造令大多数 i 都以 j=n 为见证，奇数 n 直接成立；偶数 n 写成 n=2^x+r，交换 p_1 与 p_r，利用 2^x xor r = n 修补位置 r，同时用 r xor 1=r+1 修补位置 1。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "用固定见证 j=n 构造大部分位置",
+      "n 为 2 的幂时用最大值出界证明无解",
+      "非 2 的幂时按最高位余数 r 做一次交换修补"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "先按相邻偶奇数配对构造 C1 排列；若 n 是 2 的幂输出 -1，否则对偶数 n 交换 p_1 和 p_r，奇数 n 直接输出。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "primary",
+      "evidence": "构造和无解证明都依赖最高位、2 的幂、xor 配对关系。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出满足条件的排列，核心是显式构造。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/highest-differing-bit",
+      "importance": "secondary",
+      "evidence": "非 2 的幂情况写成 n=2^x+r，并使用最高位性质 2^x xor r=n。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "需要单独判定 n 为 2 的幂时无解。",
+      "solution_variant": "main"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2189,
+    "title": "Codeforces Round 1075 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2189,
+    "index": "D2",
+    "title": "Little String (Hard Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "greedy",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2189/problem/D2",
+      "notes": "Hard 版本允许 s 中出现 ?，需要在所有补全中选择 f(w) 最小且不被 c 整除的值。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150452",
+      "notes": "官方题解复用 D1 乘积公式，先消去固定因子，再对 ? 位在 2 与 i-1 中贪心选择。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2189D2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "在含 ? 的字符串中选择补全 w，使 f(w) 最小且不被 c 整除；若不存在输出 -1。",
+    "constraints": "多测，sum n<=2e5；需要 O(n log n) 或 O(n log c)。",
+    "core_idea": "仍有 f(w)=固定因子 b * 可选因子 x。先用所有固定字符对应因子逐步 gcd 消去 c，得到剩余 c'；之后每个 ? 位置可在因子 2 与 i-1 中选较小或较利于避开整除的一个。若 c' 不是 2 的幂，全选 2 已经不会被 c' 整除且最小；若 c' 是 2 的幂，则所有偶数 i-1 也选 2，并从较大的奇数因子开始尽量选 2，直到保持 x 不被 c' 整除且乘积最小。",
+    "complexity": "O(n log n) per test case.",
+    "tricks": [
+      "把固定因子和可选因子分离",
+      "用 gcd 消去固定乘积对 c 的贡献",
+      "按 c' 是否为 2 的幂分类贪心"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-factor-choice",
+      "summary": "计算固定部分 b 后得到 c'；对 ? 位置的候选因子 2 和 i-1 排序/分类，选择最小且使 x 不被 c' 整除的乘积。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "f(w) 的定义仍来自每个 mex 是否可由某个子段得到。",
+      "solution_variant": "greedy-factor-choice"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "目标是最小化乘积并避免被 c 整除，解法直接围绕整除性展开。",
+      "solution_variant": "greedy-factor-choice"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "? 位的因子选择按最小乘积和剩余 c' 的结构贪心决定。",
+      "solution_variant": "greedy-factor-choice"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "基础乘积公式来自排列计数。",
+      "solution_variant": "greedy-factor-choice"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "固定因子部分通过 gcd 逐步消去 c。",
+      "solution_variant": "greedy-factor-choice"
+    }
+  ]
+}

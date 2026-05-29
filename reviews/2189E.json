@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2189,
+    "title": "Codeforces Round 1075 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2189,
+    "index": "E",
+    "title": "Majority Wins?",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2189/problem/E",
+      "notes": "题面给定二进制串，每次可把一个子串替换为该子串中不少于另一种字符的任意字符；求变成 1 的最小总代价。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150452",
+      "notes": "官方题解证明总代价为 n-1+k，其中 k 是操作次数，并分类判定最小 k 为 0..4。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2189E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定二进制串，每次选择一个子串并把它替换为该子串的多数字符之一，代价为子串长度；求把整个串变成 \"1\" 的最小总代价。",
+    "constraints": "多测，sum n<=5e5；需要 O(n) 判定。",
+    "core_idea": "若进行了 k 次操作，总删除字符数为 n-1，因此总代价固定为 n-1+k。问题转为判定最少操作数 k。令 diff=#1-#0；k=0 仅 s=1，k=1 当 diff>=0。k=2 需要存在正差前缀/后缀或总 diff=-1；k=3 需要存在非负差前缀/后缀或相邻两个 1；否则有 1 的串总能在 4 步完成，全 0 无解。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "把总代价转为 n-1+操作次数",
+      "用 #1-#0 的差值判断一次替换是否能变成目标字符",
+      "只需检查前缀/后缀差值和是否有相邻 1"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "case-classification",
+      "summary": "线性扫描得到总 diff、前缀/后缀最大差、是否存在相邻 1；按官方 0..4 步条件分类并返回 n-1+k。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string",
+      "importance": "primary",
+      "evidence": "题目操作对象是二进制字符串的子串替换。",
+      "solution_variant": "case-classification"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "是否能把子串替换为 1 或 0 由 #1-#0 的非负/正负不等式决定。",
+      "solution_variant": "case-classification"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "判定 k=2/3 需要检查是否存在正/非负差的前缀或后缀。",
+      "solution_variant": "case-classification"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "官方解法按最小操作次数 0,1,2,3,4 分类讨论。",
+      "solution_variant": "case-classification"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "每个分类条件都配有对应的操作构造来证明可达。",
+      "solution_variant": "case-classification"
+    }
+  ]
+}
