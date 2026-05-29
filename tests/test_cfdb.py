@@ -118,6 +118,46 @@ class CfDbTests(unittest.TestCase):
                 favorite_results = search_problems(conn, tag_mode="or", favorite_only=True)
                 self.assertEqual([item["problem_uid"] for item in favorite_results], ["cf_problem:1:B"])
 
+    def test_search_omits_excluded_contests(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, eligibility_status, extraction_status)
+                    VALUES
+                        (1, 'cf_contest:1', 'Eligible Contest', 'eligible', 'problems_loaded'),
+                        (2, 'cf_contest:2', 'Excluded Contest', 'excluded', 'excluded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:1:A', 1, 'A', 'Visible DP', 1800, 'official',
+                         'https://codeforces.com/contest/1/problem/A',
+                         'https://codeforces.com/problemset/problem/1/A'),
+                        ('cf_problem:2:A', 2, 'A', 'Hidden DP', 1800, 'official',
+                         'https://codeforces.com/contest/2/problem/A',
+                         'https://codeforces.com/problemset/problem/2/A')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
+                    VALUES
+                        ('cf_problem:1:A', 'dp', 'primary', 'synthetic', 'manual'),
+                        ('cf_problem:2:A', 'dp', 'primary', 'synthetic', 'manual')
+                    """
+                )
+
+                results = search_problems(conn, tags=["dp"])
+                self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:1:A"])
+
     def reviewed_payload(self) -> dict[str, object]:
         return {
             "contest": {"contest_id": 2, "title": "Synthetic Contest"},

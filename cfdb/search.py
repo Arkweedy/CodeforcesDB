@@ -25,11 +25,13 @@ def _problem_set_for_tag(
         SELECT DISTINCT pt.problem_uid
         FROM problem_tags pt
         JOIN problems p ON p.problem_uid = pt.problem_uid
+        JOIN contests c ON c.contest_id = p.contest_id
         LEFT JOIN problem_annotations a ON a.problem_uid = p.problem_uid
         WHERE pt.tag IN ({placeholders})
           AND pt.importance IN ({imp_placeholders})
           AND (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
           AND COALESCE(a.review_status, 'raw') <> 'excluded'
+          AND COALESCE(c.eligibility_status, 'eligible') <> 'excluded'
         """,
         (*expanded, *imp),
     ).fetchall()
@@ -88,6 +90,7 @@ def search_problems(
         {where_sql}
         {"AND" if where_sql else "WHERE"} (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
           AND COALESCE(a.review_status, 'raw') <> 'excluded'
+          AND COALESCE(c.eligibility_status, 'eligible') <> 'excluded'
         """,
         params,
     ).fetchall()

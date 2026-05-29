@@ -10,6 +10,7 @@ EXCLUDED_PATTERNS = [
     ("huawei", "heuristic or optimization challenge"),
     ("challenge", "challenge or optimization style contest"),
     ("winter challenge", "challenge or optimization style contest"),
+    ("tact smart battle", "platform-specific smart contract contest"),
 ]
 
 MANUAL_REVIEW_PATTERNS = [
@@ -41,4 +42,3 @@ def classify_contest(name: str, cf_type: str | None = None, manual_override: str
             return Eligibility("needs_manual_review", reason)
 
     return Eligibility("eligible", None)
-
