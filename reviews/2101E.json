@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2101,
+    "title": "Codeforces Round 1024 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2101,
+    "index": "E",
+    "title": "Kia Bakes a Cake",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2101/problem/E",
+      "notes": "题面与约束：选中树点形成完全图，nice path 的边权要求至少翻倍；sum n <= 7e4。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142788?locale=en",
+      "notes": "官方题解确认路径长度对数级、反向 DP 和点分治后缀优化。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1024",
+      "notes": "独立题解确认按步数 DP 与点分治转移。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bqifpqtd",
+      "notes": "中文题解交叉确认：反向 DP + 点分治/BIT，复杂度 O(n log^3 n) 变体。"
+    }
+  ],
+  "annotation": {
+    "summary": "对每个选中的树点，求经过选中点的最长 nice path，路径相邻完全图边对应的树距离必须至少翻倍。",
+    "constraints": "多测，sum n <= 7e4；树距离最多 n，nice path 边数为 O(log n)。",
+    "core_idea": "nice path 中边长指数增长，因此长度只有 O(log n)。反向定义 dp[len][v]：从 v 出发能形成 len 条边 nice path 时，第一条边允许达到的最好距离阈值。转移需要找选中点 u，使 dist(v,u)*2 <= dp[len-1][u]，并最大化 dist(v,u)。这个全点树距离阈值转移用点分治批处理，在每个重心处按距离桶维护候选，并排除同一子树来源。",
+    "complexity": "O(n log^2 n) intended; O(n log^3 n) variants with Fenwick/max structures",
+    "tricks": ["边长翻倍限制路径长度", "反向 DP 维护第一条边阈值", "点分治批量处理树距离转移"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-dp-centroid",
+      "summary": "枚举路径边数，使用点分治为每一层 DP 查询满足距离阈值的最佳下一点，并处理同一重心子树排除。",
+      "complexity": "O(n log^2 n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "reverse-dp-centroid-bit",
+      "summary": "同样的 DP，用点分治配合 Fenwick/max 结构实现，复杂度略高但更直接。",
+      "complexity": "O(n log^3 n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "主解是按路径剩余边数和起点做反向 DP，转移判断能否往前接一条边。",
+      "solution_variant": "reverse-dp-centroid"
+    },
+    {
+      "tag": "graph/centroid-decomposition",
+      "importance": "primary",
+      "evidence": "最重的转移通过点分治按树距离批量查询，并处理跨重心子树限制。",
+      "solution_variant": "reverse-dp-centroid",
+      "description": "在树上使用点分治分解，批量处理距离、路径或跨子树查询与转移。",
+      "parent": "graph/tree",
+      "created_reason": "现有 graph/tree 无法区分点分治这一经典树上距离优化技术。",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "点分治转移需要在距离桶上维护后缀最优候选和次优候选。",
+      "solution_variant": "reverse-dp-centroid"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "点分治本质是递归分治树结构并处理跨子树贡献。",
+      "solution_variant": "reverse-dp-centroid"
+    }
+  ]
+}

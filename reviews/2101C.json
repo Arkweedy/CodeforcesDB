@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2101,
+    "title": "Codeforces Round 1024 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2101,
+    "index": "C",
+    "title": "23 Kingdom",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "data structures", "greedy", "ternary search", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2101/problem/C",
+      "notes": "题面与约束：选择 1 <= b_i <= a_i，最大化每个值最后出现位置减第一次出现位置之和；sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142788?locale=en",
+      "notes": "官方题解入口；实际推导用洛谷题解和自推交叉确认。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/lpqwwbxi",
+      "notes": "确认 pre[k]/suf[k] 的前后缀贪心匹配，以及答案为非交叉距离之和。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/aue1wug7",
+      "notes": "独立中文题解，使用同样的有序集合贪心。"
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2102/problem/E",
+      "notes": "Div.2 重叠入口；canonical problem 为 2101C。"
+    }
+  ],
+  "annotation": {
+    "summary": "每个位置有容量 a_i，选择 b_i<=a_i，最大化所有取值的 last(value)-first(value) 之和。",
+    "constraints": "多测，sum n <= 2e5，需要 O(n log n) 维护可用标签。",
+    "core_idea": "若要让 k 个不同值产生贡献，可将它们规范为 1..k，因为较小值更容易放入容量限制。左到右扫描，用有序集合维护未使用的 1..n，每次贪心取 <=a_i 的最大标签，记录第 k 个标签首次能被前缀实现的位置 pre[k]；右到左同理得到 suf[k]。值 k 的最优贡献就是 max(0, suf[k]-pre[k])，求和即可。",
+    "complexity": "O(n log n)",
+    "tricks": ["last-first 贡献转为前后缀匹配", "选择不超过容量的最大未用标签", "前后缀位置相减求贡献"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-suffix-greedy-matching",
+      "summary": "从左右两侧各做一次容量匹配，记录第 k 个不同标签可实现的位置，累加 suf[k]-pre[k]。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "前缀/后缀匹配时总是取 <=a_i 的最大未用标签以最大化可完成的标签数量。",
+      "solution_variant": "prefix-suffix-greedy-matching"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "last-first 的全局目标被转化为 pre[k] 与 suf[k] 两组前后缀可行位置。",
+      "solution_variant": "prefix-suffix-greedy-matching"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "需要前驱查询和删除，找出最大的不超过 a_i 的未用标签。",
+      "solution_variant": "prefix-suffix-greedy-matching"
+    }
+  ]
+}

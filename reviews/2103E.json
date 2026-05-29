@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2103,
+    "title": "Codeforces Round 1019 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2103,
+    "index": "E",
+    "title": "Keep the Sum",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "implementation", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2103/problem/E",
+      "notes": "题面与约束：构造不超过 3n 次操作使数组非降；sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142149",
+      "notes": "官方题解确认互补对缓冲、三操作交换、端点缓冲和排序中间段。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/fn2rm7y2",
+      "notes": "中文题解交叉确认操作可视为用和为 k 的互补对作为临时存储。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1019",
+      "notes": "独立题解总结端点互补对和三操作内部交换。"
+    }
+  ],
+  "annotation": {
+    "summary": "构造不超过 3n 次允许操作使数组非降，或判断不可能。",
+    "constraints": "多测，sum n <= 2e5，4 <= n，0 <= a_i <= k。",
+    "core_idea": "若数组已排序直接输出 0；否则如果不存在一对元素和为 k，则没有可用操作，输出 -1。有一对互补元素后，把它们维护为缓冲对：先移动到端点，再用三次操作模拟任意两个内部元素的交换，同时恢复缓冲不变量。将 2..n-1 排序，最后把端点变成 0 和 k 即可保证整体非降。",
+    "complexity": "O(n log n), operations <= 3n",
+    "tricks": ["和为 k 的互补对作为辅助缓冲", "三操作模拟交换", "端点 0/k 缓冲保证最终有序"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "complement-buffer-sort",
+      "summary": "找到互补对作为缓冲并移动到端点，用它模拟中间段交换，把中间段排好后固定端点为 0 和 k。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出具体操作序列，主解围绕构造 swap 序列展开。",
+      "solution_variant": "complement-buffer-sort"
+    },
+    {
+      "tag": "trick/helper-buffer",
+      "importance": "primary",
+      "evidence": "和为 k 的互补对被保留为临时缓冲，用于模拟其他位置交换。",
+      "solution_variant": "complement-buffer-sort",
+      "description": "在构造或操作模拟题中保留满足不变量的辅助元素/辅助位置，用作临时存储来移动、交换或改写其他部分。",
+      "parent": "trick",
+      "created_reason": "现有 invariant tag 过宽，无法精确检索这类用辅助缓冲完成操作构造的模式。",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "每次模拟交换后都恢复缓冲对 a_i+a_j=k 的不变量。",
+      "solution_variant": "complement-buffer-sort"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "建立缓冲后，中间段按目标有序排列通过交换实现。",
+      "solution_variant": "complement-buffer-sort"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "incidental",
+      "evidence": "可用哈希表寻找初始互补对，但这只是实现辅助。",
+      "solution_variant": "complement-buffer-sort"
+    }
+  ]
+}

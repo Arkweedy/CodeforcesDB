@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2101,
+    "title": "Codeforces Round 1024 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2101,
+    "index": "B",
+    "title": "Quartet Swapping",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "divide and conquer", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2101/problem/B",
+      "notes": "题面与约束：排列上进行 quartet swap，操作保持下标奇偶类；sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142788?locale=en",
+      "notes": "官方题解确认下标奇偶类不变和全局置换奇偶性约束。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/78thym7d",
+      "notes": "中文题解交叉确认：分别排序奇偶下标子序列，若奇偶性不符则交换最后一对同奇偶位置修复。"
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2102/problem/D",
+      "notes": "Div.2 重叠入口；canonical problem 为 2101B。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定排列，每次操作等价于同时交换两对相邻奇偶类位置，求所有可达排列中字典序最小的一个。",
+    "constraints": "多测，sum n <= 2e5，需要 O(n log n) 或线性级别处理。",
+    "core_idea": "元素只能在同奇偶下标类中移动。先分别排序奇数下标和偶数下标上的元素，得到忽略可达奇偶性的字典序最小候选。quartet swap 对整体排列是偶置换，因此还需要匹配 inversion parity；若候选奇偶性不对，就交换尽量靠后的同奇偶位置 n 与 n-2 来修复，字典序损失最小。",
+    "complexity": "O(n log n)",
+    "tricks": ["下标奇偶类不变量", "置换奇偶性不变量", "最后位置修复奇偶性"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-classes-with-inversion-parity",
+      "summary": "按下标奇偶拆分并排序；计算候选相对原排列的奇偶性，必要时交换最后两个同奇偶位置。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "操作只会让元素移动两个位置，奇偶下标类是主不变量。",
+      "solution_variant": "parity-classes-with-inversion-parity"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "可达性由同奇偶类排列和整体 inversion parity 两个排列结构约束决定。",
+      "solution_variant": "parity-classes-with-inversion-parity"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "候选答案从分别排序奇偶下标子序列得到。",
+      "solution_variant": "parity-classes-with-inversion-parity"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "可用树状数组在 O(n log n) 内计算 inversion parity。",
+      "solution_variant": "parity-classes-with-inversion-parity"
+    }
+  ]
+}

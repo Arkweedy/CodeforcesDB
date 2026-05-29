@@ -1,0 +1,74 @@
+{
+  "contest": {
+    "contest_id": 2103,
+    "title": "Codeforces Round 1019 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2103,
+    "index": "C",
+    "title": "Median Splits",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2103/problem/C",
+      "notes": "题面与约束：把数组分成三个非空连续段，判断至少两个段的 median 是否 <= k；sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142149",
+      "notes": "官方题解确认 +1/-1 转化和三种好段组合的判定。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/mht3cigb",
+      "notes": "中文题解交叉确认前缀/后缀计数和左中、左右、中右三类情况。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1019",
+      "notes": "独立题解确认阈值转化和 split pattern。"
+    }
+  ],
+  "annotation": {
+    "summary": "判断是否能把数组分成三个非空连续段，使至少两个段的 median <= k。",
+    "constraints": "多测，sum n <= 2e5，需要线性判定。",
+    "core_idea": "把 a_i<=k 记为 +1，否则记为 -1。一个子数组 median<=k 等价于该段符号和非负。于是只需检查三段中任意两段能否非负：左+中、中+右、左+右三种情况，用前缀和和后缀极值/最早好前缀位置在线性时间完成。",
+    "complexity": "O(n)",
+    "tricks": ["median 阈值转为符号和", "三类好段组合", "前后缀极值判定"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "signed-prefix-case-check",
+      "summary": "用 +1/-1 前缀和检查左中、中右、左右三种至少两个好段的分割方式。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "median 条件被转化为 +1/-1 数组上的前缀和非负条件。",
+      "solution_variant": "signed-prefix-case-check"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "所有分割可行性都通过符号前缀和和后缀极值判断。",
+      "solution_variant": "signed-prefix-case-check"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "需要分别讨论哪两个段 median<=k。",
+      "solution_variant": "signed-prefix-case-check"
+    }
+  ]
+}

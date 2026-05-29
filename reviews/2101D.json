@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2101,
+    "title": "Codeforces Round 1024 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2101,
+    "index": "D",
+    "title": "Mani and Segments",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "implementation", "sortings", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2101/problem/D",
+      "notes": "题面与约束：统计排列子数组中 LIS+LDS=len+1 的数量；n 总和不超过 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142788?locale=en",
+      "notes": "官方题解确认公共 pivot、单调性和每个 pivot 的最大 cute 区间。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/knxr3xew",
+      "notes": "交叉确认 pivot 刻画和 endpoint rectangle union 解释。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/dtfswlza",
+      "notes": "给出线性单调栈边界计算和单调矩形计数思路。"
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2102/problem/F",
+      "notes": "Div.2 重叠入口；canonical problem 为 2101D。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计排列的非空子数组中，最长上升子序列长度加最长下降子序列长度等于子数组长度加一的数量。",
+    "constraints": "多测，sum n <= 2e5，不能逐子数组求 LIS/LDS。",
+    "core_idea": "满足条件的子数组可看作 LIS 与 LDS 只有一个公共 pivot，其余元素按相对 pivot 的左右和值大小归入两条链。对每个 pivot i 求最大可行区间 [L_i,R_i]；由于 cute 性质对缩小区间保持，包含 i 且落在 [L_i,R_i] 内的子数组都可行。于是计数变为 endpoint 平面中矩形 [L_i,i] x [i,R_i] 的并。线性解用单调栈求每个 pivot 的失效边界，再利用区间单调性计数。",
+    "complexity": "O(n) with monotone stacks; O(n log n) with sweep-line segment tree variant",
+    "tricks": ["LIS/LDS 唯一公共 pivot", "cute 子数组缩小保持", "endpoint 矩形并计数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "monotone-stacks-and-interval-union",
+      "summary": "单调栈求每个 pivot 的最大可行左右边界，再线性/单调地统计 endpoint 矩形并。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "segment-tree-rectangle-union",
+      "summary": "把每个 pivot 的可行 endpoint 看成矩形，用扫描线和 lazy segment tree 求并集大小。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "主解为每个 pivot 求最大可行区间 [L_i,R_i]，子数组是否可行由区间包含关系决定。",
+      "solution_variant": "monotone-stacks-and-interval-union"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "线性求最近失效边界需要维护相邻比较模式的单调栈。",
+      "solution_variant": "monotone-stacks-and-interval-union"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "cute 子数组缩小后仍 cute，支撑最大区间与单调计数。",
+      "solution_variant": "monotone-stacks-and-interval-union"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "O(n log n) 变体用扫描线统计 endpoint 矩形并。",
+      "solution_variant": "segment-tree-rectangle-union"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "矩形并变体需要 lazy segment tree 维护覆盖。",
+      "solution_variant": "segment-tree-rectangle-union"
+    }
+  ]
+}

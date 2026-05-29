@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2101,
+    "title": "Codeforces Round 1024 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2101,
+    "index": "F",
+    "title": "Shoo Shatters the Sunshine",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2101/problem/F",
+      "notes": "题面与约束：对树的所有 3^n 红/蓝/白染色求 coolness 之和；sum n <= 3000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142788?locale=en",
+      "notes": "官方题解给出 special node/edge、直径相交、概念 DP 和最终 O(n^2) 计数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1024",
+      "notes": "独立题解从固定中心、深度和方向的角度交叉确认计数框架。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2101F",
+      "notes": "检查到洛谷题面翻译；未作为主要解法来源。"
+    }
+  ],
+  "annotation": {
+    "summary": "对树上每种红/蓝/白染色，取红点到蓝点的最大距离作为 coolness，求所有染色的 coolness 之和。",
+    "constraints": "t <= 50, sum n <= 3000, mod 998244353；目标复杂度 O(n^2)。",
+    "core_idea": "按红蓝最远距离的中心给染色分类。树上任意两条直径相交；没有 special vertex 的染色对应唯一 special edge，有 special vertex 的染色对应唯一 super-special vertex。固定每个点中心或边中心，按距离层和相邻方向统计可选红/蓝最远点数量，用 at-most/exact 差分计数让该中心负责的染色，并乘以对应直径长度求和。",
+    "complexity": "O(n^2)",
+    "tricks": ["按直径中心分类染色", "点中心/边中心分类讨论", "按距离层和方向做 exact 计数"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "diameter-center-counting",
+      "summary": "枚举每个点中心和边中心，统计各方向距离层的颜色选择数，累加 exact 最远红蓝深度贡献。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "conceptual-special-dp",
+      "summary": "题解推导中的 f/g 状态和树形合并 DP，用于证明中心分类，最终通过组合化简到 O(n^2)。",
+      "complexity": "conceptual O(n^4), optimized O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "答案通过统计满足特定最远红蓝深度和中心归属的染色数量得到。",
+      "solution_variant": "diameter-center-counting"
+    },
+    {
+      "tag": "graph/tree-diameter",
+      "importance": "primary",
+      "evidence": "核心分类围绕红蓝最大距离的树直径中心：special vertex 和 special edge。",
+      "solution_variant": "diameter-center-counting",
+      "description": "使用树直径端点、中心、直径相交结构来分类、计数或优化树上配置。",
+      "parent": "graph/tree",
+      "created_reason": "树直径中心与相交性质是常见可复用技巧，比 graph/tree 更具体。",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "官方推导包含按子树/深度合并的概念 DP，最终公式是对这些状态的组合压缩。",
+      "solution_variant": "diameter-center-counting"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "计数必须区分有 special node 的染色和由唯一 special edge 表示的染色。",
+      "solution_variant": "diameter-center-counting"
+    }
+  ]
+}

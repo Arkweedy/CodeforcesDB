@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2103,
+    "title": "Codeforces Round 1019 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2103,
+    "index": "D",
+    "title": "Local Construction",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dfs and similar", "implementation", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2103/problem/D",
+      "notes": "题面与约束：给出局部极值删除轮次，构造一个排列；sum n <= 2e5，保证有解。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142149",
+      "notes": "官方题解确认按层构造：幸存者取极值，删除段单调填充。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/h0h928u1",
+      "notes": "中文题解交叉确认删除段的单调处理和边界情况。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/08/28/0930",
+      "notes": "独立实现视角：按删除轮次交替赋高/低值。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定每个位置在交替删除局部最小/局部最大过程中的删除轮次，构造任意一个能产生这些轮次的排列。",
+    "constraints": "多测，sum n <= 2e5；轮次数不超过 ceil(log2 n) 或 -1。",
+    "core_idea": "按仍存活位置的层次处理。当前层需要继续存活的位置必须在本层成为指定方向的局部极值，因此给它们分配当前可用值域的一端；本层要删除的相邻 gap 用另一端剩余值按单调顺序填充，避免它们错误存活。处理完一层后，幸存位置形成同类子问题，下一层极值方向翻转。",
+    "complexity": "O(n log n) straightforward; O(n) with maintained ranges",
+    "tricks": ["幸存者形成嵌套子序列", "删除 gap 单调填充", "奇偶轮次切换局部最小/最大方向"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "layered-extreme-construction",
+      "summary": "逐层区分幸存者和本层删除点，给幸存者分配极端值，删除段按单调值填入，然后递归处理幸存子序列。",
+      "complexity": "O(n log n) or O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "需要显式构造排列，使每层局部极值恰好符合给定轮次。",
+      "solution_variant": "layered-extreme-construction"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "primary",
+      "evidence": "固定当前层后，幸存子序列变成下一层的同构构造问题。",
+      "solution_variant": "layered-extreme-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "每层贪心地为幸存者保留极端值，并用剩余值单调填充删除块。",
+      "solution_variant": "layered-extreme-construction"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "线性实现维护低/高可用值区间，从两端消耗值。",
+      "solution_variant": "layered-extreme-construction"
+    }
+  ]
+}

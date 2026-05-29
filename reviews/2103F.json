@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2103,
+    "title": "Codeforces Round 1019 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2103,
+    "index": "F",
+    "title": "Maximize Nor",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "data structures", "dp", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2103/problem/F",
+      "notes": "题面与约束：左结合 k-bit NOR，n<=1e5, k<=17, sum n<=1e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142149",
+      "notes": "官方题解确认每 bit 最后一个 1 的刻画、每个右端点 O(k) 个关键值、segment tree range update。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1019",
+      "notes": "独立解释：固定右端点时只有每个 bit 的最后一个 1 重要，其余零段产生两个交替值。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/g9uwbiek",
+      "notes": "中文题解强调 last occurrence of bit 1 和每个右端点 O(log V) 个候选。"
+    }
+  ],
+  "annotation": {
+    "summary": "对每个位置 i，求所有包含 i 的子数组左结合 k-bit NOR 的最大值。",
+    "constraints": "多测，sum n <= 1e5, k <= 17；可接受 O(n k^2 + n k log n)。",
+    "core_idea": "逐 bit 分析左结合 NOR。固定右端点 r 和左端点 l 时，每个 bit 的结果只由该 bit 在 [l,r] 中最后一个 1 的位置以及 l、r 的奇偶关系决定；当 l 在没有关键 1 的区间里移动时，值只按奇偶交替，因此每个 r 只需考虑 O(k) 个关键左端点。枚举这些候选 l，计算 NOR 值，并对覆盖区间 [l,r] 做 range chmax，最后 point query 得到每个位置答案。",
+    "complexity": "O(n k^2 + n k log n)",
+    "tricks": ["左结合 NOR 按 bit 建模", "最后一个 1 与奇偶周期", "右端点扫描加区间最大更新"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "critical-lefts-segment-tree",
+      "summary": "扫右端点，枚举每个 bit 的 last-one 附近关键左端点，计算区间 NOR 后对 [l,r] range-chmax。",
+      "complexity": "O(n k^2 + n k log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "主解按 bit 独立刻画 NOR，并维护每个 bit 的最后出现位置。",
+      "solution_variant": "critical-lefts-segment-tree"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "固定右端点后，左端点在非关键区间内移动只产生 period-2 的值变化。",
+      "solution_variant": "critical-lefts-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "每个候选子数组值需要对覆盖的所有位置做区间取 max 更新。",
+      "solution_variant": "critical-lefts-segment-tree"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "每个 bit 的左结合 NOR 可视为二状态递推，并被压缩为 last-one 与奇偶状态。",
+      "solution_variant": "critical-lefts-segment-tree"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "算法扫右端点，并为所有以当前 r 结尾的关键区间发出更新。",
+      "solution_variant": "critical-lefts-segment-tree"
+    }
+  ]
+}
