@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "D",
+    "title": "Root was Built by Love, Broken by Destiny",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dfs and similar", "graphs", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2127/problem/D",
+      "notes": "读取题面与约束：连通无重边图，要求把点放到河两岸并排列，使每条边跨河且直线桥不相交，统计方案数 mod 1e9+7；sum n,m <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认：任何环不合法；树合法当且仅当删去叶子后剩余结构是一条简单路径，计数由叶子排列阶乘和两岸/方向选择组成。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ssc0wwcw",
+      "notes": "Luogu 题解从二分性、无环和每个点相邻非叶节点数量不超过 2 推导计数公式，交叉验证 degree-based 实现。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127D",
+      "notes": "Luogu solution index candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "统计一个连通无向图有多少种两岸排列，使所有边跨河且画成直线后不相交。",
+    "constraints": "多测，sum n,m <= 2e5。若 m >= n 则连通图含环直接为 0；合法树可 O(n) 检查并计数。",
+    "core_idea": "无交叉跨河图必须是树，且不能出现一个点连接三个以上非叶方向的分叉；等价地，移除所有叶子后非叶骨架是一条路径。对每个非叶点，叶子邻居可以在局部任意排列，贡献 leaf_count!；整棵骨架还有两岸交换和方向选择的常数因子。实现上检查每个点的非叶邻居数量是否超过 2，并累乘相邻叶子数量的阶乘。",
+    "complexity": "O(n + m) per test case, O(n + m) memory.",
+    "tricks": [
+      "把非交叉桥排列转成树骨架是否为路径的判定",
+      "每个非叶点的叶子邻居只贡献局部阶乘",
+      "环或三叉非叶分支会强制出现交叉"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "degree-skeleton-counting",
+      "summary": "先判连通图是否为树，再按度数统计每个点的非叶邻居个数；若都不超过 2，则累乘叶子排列阶乘和全局翻转/方向因子。",
+      "complexity": "O(n + m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dfs-rooted-counting",
+      "summary": "从最大度点 DFS，沿骨架递归计数每个点的叶子子节点排列；本质等价于 degree-skeleton 判定。",
+      "complexity": "O(n + m)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "合法性首先要求连通图无环；官方和 Luogu 解法都把问题规约到树的结构判定。",
+      "solution_variant": "degree-skeleton-counting"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "答案不是只判定合法性，还要累乘每个点叶子邻居的排列阶乘，并处理两岸交换/方向选择。",
+      "solution_variant": "degree-skeleton-counting"
+    },
+    {
+      "tag": "graph/degree-sequence",
+      "importance": "secondary",
+      "evidence": "核心判定可由每个点相邻非叶节点数量是否超过 2 表达，是一个局部度数结构条件。",
+      "solution_variant": "degree-skeleton-counting"
+    },
+    {
+      "tag": "graph/planar-graph",
+      "importance": "secondary",
+      "evidence": "题目本质是二部图在两条平行直线上的无交叉嵌入计数；非交叉性驱动了树骨架路径条件。",
+      "solution_variant": "degree-skeleton-counting"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "incidental",
+      "evidence": "可用 DFS 做连通/环检测或递归计数，但核心不是 DFS 模板本身。",
+      "solution_variant": "dfs-rooted-counting"
+    }
+  ]
+}

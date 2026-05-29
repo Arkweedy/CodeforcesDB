@@ -1,0 +1,122 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "F",
+    "title": "Hamed and AghaBalaSar",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2127/problem/F",
+      "notes": "读取题面与约束：统计所有 snake array 的 f(a) 之和；n,m <= 2e5，sum m <= 2e5，模 1e9+7。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认：先把 f(a) 改写为最大值贡献、最大值后一位负贡献和 a1 负贡献；固定最大值 x 后用有上界整数拆分的容斥公式 g(n,m,x) 统计。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/i6bad0sp",
+      "notes": "Luogu 题解给出按位置独立贡献的写法，并用容斥计算长度 L、和 S、上界 M 的数组数量。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0pmia5zg",
+      "notes": "Luogu 另一题解交叉验证了枚举最大值、每个位置贡献独立，以及复杂度来自调和级数求和。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127F",
+      "notes": "Luogu solution index candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "对所有长度 n、元素和为 m、且末项为最大值的 snake arrays，求伪代码 f(a) 的总和。",
+    "constraints": "n,m <= 2e5，sum m <= 2e5，需要预处理组合数并让每个测试 O(m log m) 左右。模 1e9+7。",
+    "core_idea": "先理解 f(a)：沿 next-greater 跳跃时，每一段贡献为段末最大值减段首值，因此 f 可线性化为“所有被访问到的最大值之和 - 每个最大值后一位之和 - a1”。固定全局最大值 x=a_n 后，剩下位置都在 [0,x] 且总和固定。令 g(len,sum,x) 为上界为 x 的非负整数解个数，用 stars and bars + inclusion-exclusion 计算。最大值的正贡献、a1 的负贡献、最大值后一位的负贡献都可用对称性转为 g(n-1,m-x,x) 和 g(n-2,m-2x,x) 的组合式。枚举 x，内层容斥长度为 O(m/(x+1))，总复杂度 O(m log m)。",
+    "complexity": "O(m log m) per total sum-m batch after O(max(n+m)) factorial/inverse factorial preprocessing; O(n+m) memory for combinatorics tables.",
+    "tricks": [
+      "把 next-greater 跳跃过程的 f(a) 拆成线性贡献",
+      "固定最大值 x 后转成有上界的整数拆分计数",
+      "用 stars and bars + inclusion-exclusion 计算 g(len,sum,x)",
+      "利用前 n-1 个位置的对称性统计 a1 或指定位置的总贡献",
+      "枚举 x 的容斥总次数满足调和级数界"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "inclusion-exclusion-contribution-sum",
+      "summary": "固定最大值 x，使用 g(len,sum,x) 统计上界整数拆分数量，再通过线性贡献公式合并最大值、a1 和最大值后一位的贡献。",
+      "complexity": "O(m log m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "position-contribution-form",
+      "summary": "Luogu 解法等价地把每个位置是否成为段首/段末的贡献独立统计，用同一个上界整数拆分容斥函数求和。",
+      "complexity": "O(m log m)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "主问题是对所有满足和与上界约束的数组做总量统计，核心为组合计数而非单个构造。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "g(len,sum,x) 通过钦定若干位置超过上界 x，再使用容斥和插板法计算。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "解法依赖 C(m+n-1-t(x+1), n-1) 这类插板组合式，并用预处理组合数快速求值。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "最关键的转化是把 f(a) 的跳跃过程拆成最大值正贡献、最大值后一位负贡献和 a1 负贡献，之后才能独立计数。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "secondary",
+      "evidence": "虽然最终用闭式容斥，g(len,sum,x) 承担的是计数 DP 子问题的角色：统计有界数组数量及相关位置贡献。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "容斥中需要选择哪些位置被强制超过上界，对这些位置集合求和。",
+      "solution_variant": "inclusion-exclusion-contribution-sum"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "secondary",
+      "evidence": "枚举最大值 x 时，g 的容斥项数是 O(m/(x+1))，总复杂度靠 sum_x m/(x+1)=O(m log m) 保证。",
+      "solution_variant": "inclusion-exclusion-contribution-sum",
+      "description": "用于标记一类复杂度分析或算法设计技巧：外层枚举参数 x，内层工作量约为 floor(N/x)，整体通过调和级数界得到 O(N log N)。不用于普通二重循环或真正的除数枚举分组。",
+      "parent": "trick",
+      "created_reason": "当前已有 tag 中没有专门表达“按参数枚举、内层 O(N/x)、总复杂度调和级数”的检索入口；该技巧在组合计数和数论枚举题中可复用。",
+      "status": "candidate"
+    }
+  ]
+}

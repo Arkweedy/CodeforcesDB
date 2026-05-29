@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "C",
+    "title": "Trip Shopping",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["games", "greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2127/problem/C",
+      "notes": "读取题面与约束：n 总和 2e5，k 可重复选择同一对下标，Bahamin 可任意重排四个数，目标是 minimax 后的 sum |a_i-b_i|。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认：先令每对满足 a_i<=b_i，把每对看成区间；若存在相交区间则 Ali 可保持初值，否则答案为初值加两倍最小相邻间隔。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sozfdgrj",
+      "notes": "Luogu 题解交叉验证了同一组四数的三种本质配对，以及排序后只需检查相邻区间 gap。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127C",
+      "notes": "Luogu solution index candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "给定两数组，Ali 每轮选两个位置，Bahamin 重排这两个位置上的四个数，双方最优后求最终 sum |a_i-b_i|。",
+    "constraints": "多测，sum n <= 2e5，值域到 1e9，需要 O(n log n)。k 对答案几乎无影响，因为 Ali 可以重复选择同一对，Bahamin 也可以选择不改。",
+    "core_idea": "对每个位置把较小值放左端、较大值放右端，转成 n 个线段 [l_i,r_i]。Bahamin 永远不会让总值降低；若 Ali 能选到两个相交线段，Bahamin 无法获得正增量，可以一直选它们。若所有线段互不相交，Bahamin 第一次能把最近的两段拉成交叉配对，增量为 2 * min gap，之后不再增加。排序后最近 gap 只会出现在相邻线段。",
+    "complexity": "O(n log n) per test case, O(n) extra memory.",
+    "tricks": [
+      "把每个下标的两数规范化为区间端点",
+      "minimax 游戏因可重复选择和 Bahamin 可保持不变而退化为一次最小增量",
+      "不相交区间的最小间隔只需看排序相邻项"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interval-gap-greedy",
+      "summary": "把每个位置转成区间，排序后若相邻区间相交则答案为初始差值和；否则加上两倍最小相邻 gap。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Ali 的最优策略是在所有可选 pair 中选择使 Bahamin 增量最小的一对；排序后取最小相邻 gap 即可。",
+      "solution_variant": "interval-gap-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "核心实现依赖按区间左端排序，并利用最近不相交区间必为排序相邻这一性质。",
+      "solution_variant": "interval-gap-greedy"
+    },
+    {
+      "tag": "trick/non-overlap",
+      "importance": "secondary",
+      "evidence": "解法将情况分为存在相交区间与所有区间互不相交，后者才需要计算 gap 增量。",
+      "solution_variant": "interval-gap-greedy"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "secondary",
+      "evidence": "题目表面是双方博弈，关键观察是 Bahamin 可不改、Ali 可重复选同一对，使 minimax 退化为最小可迫增量。",
+      "solution_variant": "interval-gap-greedy"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "incidental",
+      "evidence": "证明中需要枚举四个数重排后的本质配对情况，但不是主要检索入口。",
+      "solution_variant": "interval-gap-greedy"
+    }
+  ]
+}

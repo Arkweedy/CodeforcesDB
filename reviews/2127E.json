@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "E",
+    "title": "Ancient Tree",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "data structures", "dfs and similar", "dsu", "greedy", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2127/problem/E",
+      "notes": "读取题面与约束：有根树，部分点颜色缺失；若存在同色 x,y 且 lca(x,y)=v 且颜色不同于 v，则 v 为 cutie；需最小化 cutie 权重和并输出染色。sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认虚树思路：对每种已有颜色构造关键点及相邻 DFS 序 LCA，出现在多个颜色虚树中的点必然 cutie，其他点可构造性染色避免额外代价。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tajspp2p",
+      "notes": "Luogu 题解同样使用按颜色虚树/LCA 解释哪些点不可避免成为 cutie，并给出染色策略。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/zoynujw1",
+      "notes": "Luogu 另一解法用 DSU on tree/启发式合并维护子树固定颜色集合，作为非虚树实现的交叉参考。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127E",
+      "notes": "Luogu solution index candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "给一棵带权有根树，部分点未染色，需要补全颜色，使所有满足同色点对 LCA 颜色不同的 cutie 顶点权重和最小，并输出一种最优染色。",
+    "constraints": "sum n <= 2e5，k <= n。需要 O(n log n) 级别的 LCA/DFS 序处理或 small-to-large 合并。",
+    "core_idea": "只考虑原本已染色的点。对每种颜色，把该颜色所有固定点按 DFS 序排序，相邻点的 LCA 就足以代表该颜色虚树中新增的关键祖先。若某个点同时属于两个及以上颜色的虚树，或已染色点被另一颜色虚树要求，则它无论如何都会 cutie，必须计入答案。若某个未染色点只属于一种颜色虚树，就把它染成该颜色；剩余点沿树继承任意已有颜色，即可避免产生额外 cutie。",
+    "complexity": "Official virtual-tree implementation O(n log n) per total input because of sorting same-color vertices and binary-lifting LCA; O(n log n) memory for ancestors.",
+    "tricks": [
+      "同色关键点的相邻 DFS 序 LCA 足以覆盖虚树 LCA 集合",
+      "按一个点出现于多少种颜色虚树分类出不可避免贡献",
+      "只属于一种颜色约束的未染色点可直接染成该颜色，其余点继承颜色补全"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "virtual-tree-lca",
+      "summary": "对每种已有颜色收集点，按 DFS 序排序并加入相邻 LCA；统计每个 LCA 被多少颜色要求，据此计算必然 cutie 点并构造染色。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dsu-on-tree-color-set",
+      "summary": "维护每个子树中出现过的固定颜色集合，用 small-to-large 合并判断一个节点是否被多种颜色约束；实现不同但核心仍是固定同色点的 LCA/祖先约束。",
+      "complexity": "O(n log n) or O(n log^2 n) depending on set implementation",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/virtual-tree",
+      "importance": "primary",
+      "evidence": "官方主解显式为每种颜色构造虚树，答案由点出现在多少个颜色虚树中决定。",
+      "solution_variant": "virtual-tree-lca"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "primary",
+      "evidence": "cutie 定义直接依赖 LCA；算法需要大量计算同色点相邻 DFS 序的 LCA。",
+      "solution_variant": "virtual-tree-lca"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "所有约束和构造都发生在有根树上，利用 DFS 序、祖先关系和子树传播颜色。",
+      "solution_variant": "virtual-tree-lca"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "除了最小代价，还必须输出一种最优染色；解法给出单虚树颜色点染对应颜色、剩余点继承颜色的构造。",
+      "solution_variant": "virtual-tree-lca"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "secondary",
+      "evidence": "存在等价做法用 DSU on tree/启发式合并子树颜色集合来判定必然 cutie 点。",
+      "solution_variant": "dsu-on-tree-color-set"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "实现需要 DFS 序排序、深度和父表，并在最后 DFS 传播补全颜色。",
+      "solution_variant": "virtual-tree-lca"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "关键证明是某些点无论怎样给缺失点染色都会 cutie，而其余点存在构造避免贡献。",
+      "solution_variant": "virtual-tree-lca"
+    }
+  ]
+}
