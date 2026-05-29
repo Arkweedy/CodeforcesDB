@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "E",
+    "title": "Parallel Sums",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "geometry"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/E",
+      "notes": "题面与约束：给定长度 m 的滑动窗口和，查询区间 [l,r] 中 max(a_l..a_r) 的最小可能值，或判断可无界降低。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 推出 a_{i+m}-a_i=s_{i+1}-s_i，按 i mod m 表示 a_i=base_{i mod m}+w_i，查询只需各模类 w 最大值之和。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9bfphwmq",
+      "notes": "详细展开小 m 的模类 sparse table，以及大 m 预处理区间最大值前缀和的 O((n+q)sqrt n) 做法。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206E",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定所有长度 m 的连续和，回答每个区间内元素最大值在所有合法原数组中的最小可能值；若可任意小则输出无界情况。",
+    "constraints": "n<=2e5, q<=1e5；不能每次枚举所有原数组自由变量或所有区间位置。",
+    "core_idea": "相邻窗口差给出 a_{i+m}-a_i=s_{i+1}-s_i，因此每个位置可写成模类自由变量加已知偏移 w_i，且前 m 个自由变量和固定为 s_0。对查询 [l,r]，若长度<m，至少缺一个模类，可把出现模类整体压低并用缺失模类补偿，所以无界。否则令 y_j 为区间内模类 j 的最大 w_i。要使 max(a_i)<=x，需 base_j<=x-y_j 且 sum base_j=s_0，因此最小 x=ceil((s_0+sum y_j)/m)。剩下是快速求各模类最大 w_i 之和：m 小用每模类 RMQ；m 大用 sqrt decomposition 预处理块编号区间的模类最大值前缀和。",
+    "complexity": "O((n + q) sqrt n) time with implementation-dependent precomputation memory.",
+    "tricks": ["滑动窗口差分还原模类偏移", "查询缺模类时无界", "固定和下最小化最大值的上界不等式", "按 m 分块", "预处理模类区间最大值之和"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sqrt-residue-rmq",
+      "summary": "构造偏移 w_i。m 小时每个模类建 sparse table 查询最大值；m 大时预处理块区间的模类最大值和，用少量预处理片段拼出查询。",
+      "complexity": "O((n + q) sqrt n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "复杂度来自按 m 是否约小于 sqrt(n) 分成两套预处理/查询策略。",
+      "solution_variant": "sqrt-residue-rmq"
+    },
+    {
+      "tag": "data-structure/sparse-table",
+      "importance": "primary",
+      "evidence": "m 小时对每个模类建立 range maximum sparse table，O(1) 得到 y_j。",
+      "solution_variant": "sqrt-residue-rmq",
+      "description": "Static range query data structure, usually O(n log n) preprocessing and O(1) idempotent queries such as min/max/gcd.",
+      "parent": "data-structure",
+      "created_reason": "The current taxonomy has segment tree/Fenwick but no static RMQ sparse table tag; this problem's small-m branch specifically relies on sparse tables.",
+      "status": "candidate",
+      "aliases": ["sparse table", "static rmq", "rmq"]
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "m 大时，块区间的模类最大值被预处理成前缀和，查询组合若干区间和。",
+      "solution_variant": "sqrt-residue-rmq"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "secondary",
+      "evidence": "查询按 i mod m 分组，且每个组只关心最大偏移。",
+      "solution_variant": "sqrt-residue-rmq"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "ceil((s_0+sum y_j)/m) 来自 base_j <= x-y_j 且 base 变量和固定的必要充分不等式。",
+      "solution_variant": "sqrt-residue-rmq"
+    }
+  ]
+}

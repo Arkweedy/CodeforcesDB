@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "C",
+    "title": "Upside Down Dijkstra",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["dfs and similar"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/C",
+      "notes": "题面与约束：给定图和目标访问排列，构造正边权使错误的“最大距离优先”Dijkstra 按该顺序访问点。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac.icpc.global/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "官方 analysis 说明访问序等价于某种 DFS 栈序，并给出基于栈关系的权值构造。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206C",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给无向图和目标访问顺序，判断是否存在正边权使提取最大 tentative distance 的错误 Dijkstra 恰好按该顺序访问点，并构造边权。",
+    "constraints": "图较大，顺序检查和构造需要 O(n+m) 或近线性。",
+    "core_idea": "错误算法类似深度优先过程：新到达的点可以通过足够大的边权压过旧堆项。因此目标序可行当且仅当它能由 DFS 栈过程实现。维护当前 active path 栈；接受下一个排列点前弹出未访问邻居耗尽的点，然后下一个点必须邻接栈顶。验证通过后，按 push 顺序和局部栈关系赋权，使每一步所需点拥有最大 tentative distance。",
+    "complexity": "O(n + m).",
+    "tricks": ["错误 Dijkstra 转 DFS", "栈验证遍历序", "构造权值强制优先队列顺序"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dfs-order-stack-validation",
+      "summary": "检查目标排列是否为某个 DFS 栈序；若可行，构造正边权强制最大距离优先队列按该顺序弹出。",
+      "complexity": "O(n + m)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dfs-order",
+      "importance": "primary",
+      "evidence": "决定性条件是目标排列是否能实现为 DFS-like stack traversal order。",
+      "solution_variant": "dfs-order-stack-validation",
+      "description": "Problems about validating, counting, or constructing a depth-first traversal order, often with an explicit or implicit DFS stack.",
+      "parent": "graph/dfs",
+      "created_reason": "Generic graph/dfs does not distinguish traversal-order realization problems from ordinary DFS reachability or component processing.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "验证顺序可行后，必须显式构造边权来强制优先队列行为。",
+      "solution_variant": "dfs-order-stack-validation"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "secondary",
+      "evidence": "可行性检查维护 active DFS path 栈并弹出耗尽节点。",
+      "solution_variant": "dfs-order-stack-validation"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "官方转化把错误 Dijkstra 的访问过程等价为 DFS 过程。",
+      "solution_variant": "dfs-order-stack-validation"
+    }
+  ]
+}

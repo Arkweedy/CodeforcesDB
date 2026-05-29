@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "F",
+    "title": "Minesweeper String",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["fft", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/F",
+      "notes": "题面与约束：对可能的棋盘宽度计算 minesweeper string 加权得分，并输出达到最大值的宽度。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac.icpc.global/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "官方 analysis 把 f(w) 拆成水平邻居、垂直邻居和边界项；其中垂直邻居项用 convolution/FFT 计算。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206F",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "对所有可能棋盘宽度，计算 minesweeper string 的最佳得分并输出达到最大得分的宽度。",
+    "constraints": "字符串较长，不能对每个宽度逐格检查；必须聚合所有候选宽度上的贡献。",
+    "core_idea": "把得分 f(w) 拆成多种局部贡献。水平相邻、垂直相邻、边界影响分别处理；边界和 divisibility-style 项可通过倍数或区间累加，最贵的垂直相邻项则变成字符指示数组间的 correlation/convolution。FFT 一次性求出所有 offset 的成对计数，再用差分或因子枚举把贡献累加到每个宽度。",
+    "complexity": "O(n log n) dominated by FFT/convolution, plus near-linear harmonic/range accumulation.",
+    "tricks": ["按贡献类型拆分得分", "垂直相邻转卷积", "宽度相关边界项聚合"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "contribution-split-fft",
+      "summary": "分解 f(w) 的水平、垂直和边界贡献；用 FFT convolution 计算所有垂直 pair count，再对剩余项做倍数/区间聚合。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/transform/fft",
+      "importance": "primary",
+      "evidence": "所有宽度的垂直邻居贡献通过字符指示数组的 FFT convolution 计算。",
+      "solution_variant": "contribution-split-fft"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "primary",
+      "evidence": "主要瓶颈被转化为 correlation/convolution，以统计每个 offset 的字符对贡献。",
+      "solution_variant": "contribution-split-fft",
+      "description": "Use polynomial convolution or cross-correlation to aggregate pair/offset contributions, independent of the specific FFT/NTT implementation.",
+      "parent": "math/transform",
+      "created_reason": "The existing fft tag names the implementation technique, but many retrieval needs are about recognizing convolution modeling itself.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "解法把 f(w) 拆成贡献类并分别对所有宽度聚合。",
+      "solution_variant": "contribution-split-fft"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "多个宽度相关项按 offset 或宽度的倍数/因子关系累加。",
+      "solution_variant": "contribution-split-fft"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "部分区间式宽度贡献可用差分数组累计后前缀化。",
+      "solution_variant": "contribution-split-fft"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "D",
+    "title": "Christmas Tree Un-decoration",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/D",
+      "notes": "题面与约束：有根树上每次选择根到 u 的路径，对路径上未清空点各减一；支持点权持久修改，每次求最少操作数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 给出 dp(u)=max(a_u, sum dp(child))，并用重链剖分维护动态更新。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ik4v2w9f",
+      "notes": "交叉确认 b_u 为轻儿子 dp 和，f_u=max(a_u,b_u+f_hson)，每条重链维护前缀轻儿子贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206D",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "动态维护有根树点权；一次操作覆盖一条根到点路径并对未清空点各减一，求每次点权修改后清空全树的最少操作数。",
+    "constraints": "总 n,q <= 2e5，点权 up to 1e9，需要每次修改多对数复杂度。",
+    "core_idea": "静态时子树 u 的最少操作数为 dp(u)=max(a_u, sum dp(child))：u 自身至少被覆盖 a_u 次，孩子子树所需操作可由选择各子树内终点完成。动态时按重链剖分重写为 dp(u)=max(a_u, b_u+dp(heavy(u)))，b_u 是轻儿子 dp 和。对重链 c1..ck，链顶答案为 max_i(a_ci + sum_{j<i} b_cj)。每条链用懒线段树维护这些候选值，修改后只沿轻边链顶向上影响 O(log n) 条链。",
+    "complexity": "O(n log n + q log^2 n).",
+    "tricks": ["树 DP 刻画路径操作数", "拆出重儿子与轻儿子贡献", "链顶 DP 转为前缀仿射最大值", "只沿轻边链顶传播"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "hld-chain-segment-tree",
+      "summary": "在重链上维护 a_ci 加轻儿子贡献前缀的最大值；点权修改后重算所在链顶 dp 并把 delta 传播到父链。",
+      "complexity": "O(n log n + q log^2 n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "基本公式 dp(u)=max(a_u, sum dp(child)) 是最少操作数的核心刻画。",
+      "solution_variant": "hld-chain-segment-tree"
+    },
+    {
+      "tag": "graph/heavy-light-decomposition",
+      "importance": "primary",
+      "evidence": "动态更新通过重链剖分使 dp 改动只跨 O(log n) 条轻边链传播。",
+      "solution_variant": "hld-chain-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "每条重链需要 range-add 式维护轻儿子贡献前缀并查询链顶最大值，由懒线段树完成。",
+      "solution_variant": "hld-chain-segment-tree"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "动态部分是在链顶 dp 改变时维护它对父链 b 值的贡献。",
+      "solution_variant": "hld-chain-segment-tree"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "递推和更新传播依赖有根树的父子关系与重链结构。",
+      "solution_variant": "hld-chain-segment-tree"
+    }
+  ]
+}

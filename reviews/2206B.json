@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "B",
+    "title": "Subtree Removal Game",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "games", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/B",
+      "notes": "题面与约束：有根树上轮流删除子树，直到剩一个叶子；先手希望最终叶值小，后手希望大。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac.icpc.global/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "官方 analysis 给出 threshold game Game(v)、递归 D(x) 值，以及对答案二分。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206B",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "两人轮流删除有根子树直到剩一个叶子，先手最小化最终叶值，后手最大化，求最优最终值。",
+    "constraints": "多测总 n 较大；固定阈值需要线性检查，答案值域可二分。",
+    "core_idea": "二分最终值阈值 v。固定 v 时，把叶子按 value<=v 是否对先手有利分成两类。官方定义递归 signed value D(x)：叶子给 +1/-1，内部节点根据有利/不利子树数量压缩符号。根处 Game(v) 是否先手可赢，给出最终值是否 <=v 的单调谓词。",
+    "complexity": "O(n log V), where V is the leaf-value range.",
+    "tricks": ["threshold game", "signed subtree outcome", "monotone answer predicate"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-threshold-tree-game",
+      "summary": "二分阈值 v；每次自底向上计算树上 minimax 风格的 signed outcome，判断先手是否可迫使最终值不超过 v。",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "固定阈值后，游戏通过递归比较子树对 minimizer/maximizer 是否有利来求解。",
+      "solution_variant": "binary-search-threshold-tree-game",
+      "description": "Game-theory problems solved by minimax-style optimal play over states, choices, or game trees rather than Sprague-Grundy xor.",
+      "parent": "math/game-theory",
+      "created_reason": "The existing math/game-theory tag is broad; this problem is specifically a deterministic minimax threshold game, not impartial SG theory.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "最终最优叶值通过二分最小可行阈值 v 得到。",
+      "solution_variant": "binary-search-threshold-tree-game"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "每个阈值检查都从子节点递推出子树 outcome，是有根树上的 DP。",
+      "solution_variant": "binary-search-threshold-tree-game"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "博弈状态与递推完全由有根树的子树关系决定。",
+      "solution_variant": "binary-search-threshold-tree-game"
+    }
+  ]
+}
