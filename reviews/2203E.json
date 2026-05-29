@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2203,
+    "title": "Educational Codeforces Round 187 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2203,
+    "index": "E",
+    "title": "Probabilistic Card Game",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "games", "greedy", "math", "ternary search"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2203/E",
+      "notes": "题面与约束：在线插入卡片后，计算 Alice/Bob 最优响应下的随机期望得分。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151612",
+      "notes": "官方解法维护有序卡片和前缀和，并在左右代价的交点附近搜索最优位置。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/educational-codeforces-round-187",
+      "notes": "外部题解交叉确认 nearest-neighbor best response 与 crossing search。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2203E",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "每次插入一张卡后，求 Alice 先选、Bob 最优回应、第三张卡均匀随机时 Bob 的最优期望得分。",
+    "constraints": "m up to 2e5，卡值 up to 1e12，在线插入且值互异。",
+    "core_idea": "若 Alice 选择排序后位置 p 的卡，Bob 最优回应只需考虑左右最近邻；选左邻得到左侧更远卡的距离和，选右邻得到右侧更远卡的距离和。Alice 要最小化 max(left_cost(p), right_cost(p))。left_cost 单调不降、right_cost 单调不升，因此二分交点并检查邻近位置即可。",
+    "complexity": "O(m log^2 m) with ordered set and Fenwick tree.",
+    "tricks": ["最近邻最优回应", "左右代价单调交点", "期望分母的模逆"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ordered-set-fenwick-crossing-search",
+      "summary": "用 order-statistics tree 维护第 k 小卡片，用 Fenwick tree 维护前缀和；对每次插入二分左右代价交点。",
+      "complexity": "O(m log^2 m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "sqrt-decomposition-crossing-search",
+      "summary": "用分块维护有序集合和块和，保留同样的左右代价交点思想。",
+      "complexity": "O(m sqrt m)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "主推导是 minimax：Alice 选择位置以最小化 Bob 的最佳回应期望。",
+      "solution_variant": "ordered-set-fenwick-crossing-search"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "答案是第三张卡均匀随机时的期望，由距离贡献和除以 n-2 得到。",
+      "solution_variant": "ordered-set-fenwick-crossing-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "Alice 的最优排序位置通过二分左右单调代价的交点确定。",
+      "solution_variant": "ordered-set-fenwick-crossing-search"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "需要在线维护卡值前缀和来 O(log n) 计算左右距离和。",
+      "solution_variant": "ordered-set-fenwick-crossing-search"
+    },
+    {
+      "tag": "data-structure/order-statistics-tree",
+      "importance": "secondary",
+      "evidence": "需要按 rank 取出候选位置及其相邻卡片，官方 PBDS 方案使用 ordered_set。",
+      "solution_variant": "ordered-set-fenwick-crossing-search",
+      "description": "Balanced tree supporting rank queries and selecting the k-th element in sorted order.",
+      "parent": "data-structure",
+      "created_reason": "Rank/select ordered-set maintenance is a recurring technique distinct from generic ordered containers.",
+      "status": "candidate"
+    }
+  ]
+}

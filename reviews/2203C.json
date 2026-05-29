@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2203,
+    "title": "Educational Codeforces Round 187 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2203,
+    "index": "C",
+    "title": "Test Generator",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2203/C",
+      "notes": "题面与约束：构造最短数组，数组元素为非负整数且每个元素的置位都必须包含在 m 中。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151612",
+      "notes": "用于确认二分答案和按位贪心可行性检查。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/educational-codeforces-round-187",
+      "notes": "外部题解交叉确认。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2203C",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 s 和 m，求最少需要多少个非负整数，使它们的和为 s，且每个数的所有置位都必须是 m 的置位子集。",
+    "constraints": "t 可达 1e4，s,m 可达 1e18，只需处理约 60 个二进制位。",
+    "core_idea": "固定数组长度 n 后，m 中每个允许的 2^b 最多可被 n 个元素贡献。自高位向低位维护还需要覆盖的数值 debt，遇到 m 有该位时贪心使用最多 n 份该位。这个可行性随 n 单调，因此二分最小 n；若无限制份数也无法覆盖则无解。",
+    "complexity": "O(60 log 1e18) per test case.",
+    "tricks": ["每个允许二进制位最多使用 n 次", "高位到低位维护 debt", "单调可行性"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-bit-greedy",
+      "summary": "二分长度 n，并用高位到低位的按位贪心判断 s 能否由 m 允许的位、每位最多 n 份组成。",
+      "complexity": "O(60 log 1e18)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "最小长度通过二分 n，并检查一个关于 n 单调的表示可行性。",
+      "solution_variant": "binary-search-bit-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定 n 后，可行性检查贪心优先使用最大允许二进制位来覆盖 s。",
+      "solution_variant": "binary-search-bit-greedy"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "允许的加数结构完全由 m 的二进制置位决定，检查过程逐位处理。",
+      "solution_variant": "binary-search-bit-greedy"
+    }
+  ]
+}

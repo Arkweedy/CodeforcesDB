@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2204,
+    "title": "Educational Codeforces Round 188 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2204,
+    "index": "D",
+    "title": "Alternating Path",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dfs and similar", "graph matchings", "graphs"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2204/problem/D",
+      "notes": "题面与约束：给无向图定向，使满足任意路径方向交替的起点数量最大。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152150",
+      "notes": "官方解法代码使用 BFS 二染色，对每个二分连通块加入较大颜色类。"
+    },
+    {
+      "source_type": "cfstep_hints",
+      "url": "https://cfstep.com/codeforces/contests/contest-2204/problem-d/hints/",
+      "notes": "用于确认入边/出边角色与二分块贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2204D",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给无向图每条边定向，最大化从该点出发的所有路径都能与边方向交替的起点数量。",
+    "constraints": "sum n,m up to 2e5，需要线性处理所有连通块。",
+    "core_idea": "若某个点是 beautiful，则它的所有 incident 边必须向外，邻点的边必须向内，角色按距离奇偶交替。因此一个连通块只有是二分图时才可贡献；定向所有边从一个颜色类指向另一个颜色类，源侧即 beautiful，选择较大颜色类。",
+    "complexity": "O(n + m) per test case.",
+    "tricks": ["距离奇偶角色", "连通块二分性", "选择较大颜色类"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bipartite-component-count",
+      "summary": "对每个连通块 BFS/DFS 二染色，若可二分则加入两侧较大者，并按颜色定向边。",
+      "complexity": "O(n + m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "primary",
+      "evidence": "连通块可贡献当且仅当能分成交替入/出角色，这正是二染色条件。",
+      "solution_variant": "bipartite-component-count"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "实现用 DFS/BFS 遍历每个连通块并完成二染色。",
+      "solution_variant": "bipartite-component-count"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "角色由到 beautiful 起点的距离奇偶决定。",
+      "solution_variant": "bipartite-component-count"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "证明需要构造从选定颜色类指向另一颜色类的边方向。",
+      "solution_variant": "bipartite-component-count"
+    }
+  ]
+}

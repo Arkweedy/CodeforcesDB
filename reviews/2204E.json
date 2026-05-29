@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2204,
+    "title": "Educational Codeforces Round 188 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2204,
+    "index": "E",
+    "title": "Sum of Digits (and Again)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["brute force", "constructive algorithms", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2204/problem/E",
+      "notes": "题面与约束：给出 S(x) 的数字重排，构造任意合法重排。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152150",
+      "notes": "官方解法枚举第一次 digit sum，并检查 digit-count 可行性。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8ldadsmf",
+      "notes": "交叉确认 S(x) 后缀链的数字计数与剩余数位和条件。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2204E",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个数字多重集，已知它可以重排成某个 S(X)，要求输出任意合法重排。",
+    "constraints": "总长度 up to 1e5，枚举 digitSum(X) 到 9|s| 可行。",
+    "core_idea": "不枚举原数 X，而枚举 y=digitSum(X)。对每个 y 构造后缀链 S(y)，检查其数位计数是否被输入包含；剩余数字能组成第一段 X 当且仅当它们的数位和为 y。找到后输出剩余数字和 y,digitSum(y),... 的链。",
+    "complexity": "O(9|s| log |s|) per test case, or near-linear with precomputed chains.",
+    "tricks": ["枚举第一次 digit sum", "数位计数包含关系", "剩余数位和不变量"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-digit-sum-chain",
+      "summary": "枚举 y=digitSum(X)，检查 S(y) 消耗的数字和剩余数字和，最后构造答案。",
+      "complexity": "O(9|s| log |s|)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "关键判定是输入数位和减去后缀链数位和必须等于 digitSum(X)。",
+      "solution_variant": "enumerate-digit-sum-chain"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "解法枚举所有可能的 digitSum(X) 并测试数位计数。",
+      "solution_variant": "enumerate-digit-sum-chain"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "找到可行 y 后，需要显式拼出剩余数字与 digit-sum 链作为答案。",
+      "solution_variant": "enumerate-digit-sum-chain"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2205,
+    "title": "Codeforces Round 1083 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2205,
+    "index": "E",
+    "title": "Simons and Dividing the Rhythm",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "data structures", "dp", "dsu", "math", "string suffix structures", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2205/problem/E",
+      "notes": "题面与约束：数组 S 被划分为连续段并分别反转后得到 T，求可能的 S 数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151310",
+      "notes": "官方题解确认：为避免重复计数，只允许最后一段对应 T 的无 border 区间；对每个右端点用 KMP 检查 border。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/g9yj5jnh",
+      "notes": "从唯一紧凑分解解释 border 条件，并给出 border 数组 + DP 的 O(n^2) 实现。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2205E",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计有多少数组 S 能通过把若干连续段分别反转后变成给定数组 T。",
+    "constraints": "sum n <= 8000，允许 O(n^2) 枚举区间与转移。",
+    "core_idea": "同一个 S 可能由多种切分得到，需要选取唯一规范切分。若某段存在 border，则可以被进一步拆分并导致重复；因此规范切分要求每段无 border。令 dp[i] 表示 T[1..i] 的答案，若 T[j..i] 无 border，则 dp[i] += dp[j-1]。用 KMP/prefix-function 风格过程为所有右端点判断区间是否有 border。",
+    "complexity": "O(n^2)",
+    "tricks": ["无 border 区间建立唯一计数规范", "每个右端点做 KMP 式 border 检测"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "border-dp",
+      "summary": "预处理/在线计算每个区间是否有 border，然后做前缀 DP 统计无 border 段划分。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "答案由 dp[i] 对所有可作为最后无 border 段的 j 转移得到，前缀 DP 是主框架。",
+      "solution_variant": "border-dp"
+    },
+    {
+      "tag": "string/border",
+      "importance": "primary",
+      "evidence": "能否转移完全取决于 T[j..i] 是否存在 border；无 border 是去重计数的核心条件。",
+      "solution_variant": "border-dp",
+      "description": "Use string/array borders, borderless substrings, or border-based uniqueness arguments in matching, decomposition, or counting.",
+      "parent": "string",
+      "created_reason": "Existing string suffix/automaton tags do not describe border-based decomposition and duplicate-count prevention.",
+      "status": "candidate",
+      "aliases": ["border", "borderless", "borderless segment"]
+    },
+    {
+      "tag": "string/kmp-prefix-function",
+      "importance": "secondary",
+      "evidence": "官方和 Luogu 解法都用 KMP/prefix-function 风格计算来检测区间 border。",
+      "solution_variant": "border-dp",
+      "description": "Use KMP prefix function or equivalent failure links to compute borders or repeated-prefix structure.",
+      "parent": "string/border",
+      "created_reason": "This is a reusable implementation-level string algorithm distinct from generic border reasoning.",
+      "status": "candidate",
+      "aliases": ["kmp", "prefix-function", "failure-function"]
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "DP 通过构造唯一规范分解来计数不同数组。",
+      "solution_variant": "border-dp"
+    }
+  ]
+}

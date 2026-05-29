@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2204,
+    "title": "Educational Codeforces Round 188 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2204,
+    "index": "F",
+    "title": "Sum of Fractions",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "brute force", "combinatorics", "data structures", "greedy", "math", "number theory", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2204/problem/F",
+      "notes": "题面与约束：对每个有序 k 查询，求所有子数组最大 fraction value 之和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152150",
+      "notes": "官方实现使用单调栈确定最小值归属，并对查询区间做线性系数差分更新。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tytyx0np",
+      "notes": "交叉确认单个最小值的操作公式和子数组最小值贡献聚合。"
+    },
+    {
+      "source_type": "cfstep_hints",
+      "url": "https://cfstep.com/codeforces/contests/contest-2204/problem-f/hints/",
+      "notes": "辅助确认 minimum-based aggregation 与 thresholded query handling。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2204F",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "对每个 k_i，计算所有子数组在恰好 k_i 次增量操作后的最大 fraction value 之和。",
+    "constraints": "n,m up to 5e5 且 k_i 排序，必须按贡献聚合全部子数组。",
+    "core_idea": "固定子数组时，所有操作最优地作用在一个最小分母 v 上；当 k<v 时贡献为 (k+1)/v，否则为 k-v+2。用单调栈按 tie-break 统计每个位置作为代表最小值的子数组数。每个最小值的贡献关于 k 是以 v 为断点的分段线性函数，因此在排序后的查询下标区间上差分加入线性系数。",
+    "complexity": "O(n log MOD + n log m + m).",
+    "tricks": ["所有操作集中到最小分母", "k 的分段线性贡献", "tie-break 子数组最小值归属", "有序查询上区间加线性函数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "minimum-piecewise-range-add",
+      "summary": "计算基础倒数和；用单调栈统计每个代表最小值的子数组数，并按 k<a[i] 的断点对查询下标区间加线性系数。",
+      "complexity": "O(n log MOD + n log m + m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "MSF 公式依赖所有操作都应给子数组最小分母这一贪心结构。",
+      "solution_variant": "minimum-piecewise-range-add"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "需要用最近更小边界统计每个位置作为代表最小值的子数组数量。",
+      "solution_variant": "minimum-piecewise-range-add"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "实现把线性系数差分加到查询下标区间，再前缀求出每个 k 的答案。",
+      "solution_variant": "minimum-piecewise-range-add"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "对每个最小值，用 lower_bound 在排序查询中找到分段公式的断点。",
+      "solution_variant": "minimum-piecewise-range-add"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "incidental",
+      "evidence": "分数输出需要模逆，但不是核心聚合结构。",
+      "solution_variant": "minimum-piecewise-range-add"
+    }
+  ]
+}

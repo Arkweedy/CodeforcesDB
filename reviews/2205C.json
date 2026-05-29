@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2205,
+    "title": "Codeforces Round 1083 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2205,
+    "index": "C",
+    "title": "Simons and Posting Blogs",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["greedy", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2205/problem/C",
+      "notes": "题面与约束：按某个顺序发布所有博客，提及用户移动到最近提及序列 Q 开头，要求最终 Q 字典序最小。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151310",
+      "notes": "官方题解确认：每个博客只保留从后往前第一次出现的用户；逆向处理，每步选择当前字典序最小的剩余数组。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2205C",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "选择博客发布顺序，使所有用户按最近提及规则得到的最终序列 Q 字典序最小。",
+    "constraints": "sum n,sum L <= 3000，允许反复比较和过滤剩余列表。",
+    "core_idea": "最终 Q 等价于把完整提及流从后往前扫描得到的去重序列。先把每个博客反转并去重，再按逆发布顺序构造答案；每一步选择过滤后字典序最小的博客，将其未出现元素加入答案，并从其他博客中删去这些元素。",
+    "complexity": "O(n^2 + nL)",
+    "tricks": ["逆向模拟最近提及序列", "每个博客只保留最后一次出现", "按当前过滤列表做字典序贪心"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-greedy",
+      "summary": "反转每个博客并去重，维护已加入答案的用户；重复选择字典序最小的剩余列表并过滤其它列表。",
+      "complexity": "O(n^2 + nL)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "每一步固定逆序构造中下一个未确定块，选择当前字典序最小列表决定最终 Q 的字典序。",
+      "solution_variant": "reverse-greedy"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "primary",
+      "evidence": "把前向 move-to-front 过程转化为从最终提及流后往前扫描去重，是解法关键。",
+      "solution_variant": "reverse-greedy",
+      "description": "Analyze an operation sequence backward or reverse the time/order of events so the final state can be built directly.",
+      "parent": "trick",
+      "created_reason": "Existing lexicographic/greedy tags do not capture the decisive reverse-time transformation used by move-to-front style processes.",
+      "status": "candidate",
+      "aliases": ["reverse processing", "process backwards", "backward simulation"]
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "secondary",
+      "evidence": "贪心选择通过比较过滤后的剩余数组字典序来确定。",
+      "solution_variant": "reverse-greedy"
+    }
+  ]
+}

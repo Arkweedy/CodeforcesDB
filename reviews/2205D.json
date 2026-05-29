@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2205,
+    "title": "Codeforces Round 1083 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2205,
+    "index": "D",
+    "title": "Simons and Beating Peaks",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["data structures", "divide and conquer", "dp", "greedy", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2205/problem/D",
+      "notes": "题面与约束：排列中反复选择局部峰并删除相邻元素之一，求达到无局部峰数组的最少删除次数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151310",
+      "notes": "官方题解给出最大笛卡尔树视角：保留的最长序列对应从根到某节点的一条路径。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ymonqfmz",
+      "notes": "补充确认分治 / 单调栈 DP 两种视角。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2205D",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定排列，删除局部峰相邻元素直到不存在局部峰，最小化删除次数。",
+    "constraints": "sum n <= 5e5，需要 O(n) 或 O(n log n)。",
+    "core_idea": "最大值本身不能被删除，并把左右区间分成相同子问题；递归结构正是最大笛卡尔树。保留的合法最终数组等价于笛卡尔树上的一条根到点路径，最长可保留长度为最大深度，因此答案为 n - max_depth。",
+    "complexity": "O(n)",
+    "tricks": ["最大值不可删除形成递归分治", "最长保留结构对应笛卡尔树根到节点路径"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cartesian-tree",
+      "summary": "构建最大笛卡尔树，计算最大深度，答案 n - max_depth。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "monotonic-stack-dp",
+      "summary": "用单调栈等价维护左右删除代价，取最优保留长度。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer/cartesian-tree",
+      "importance": "primary",
+      "evidence": "最大值递归分割区间，最终可保留序列由最大笛卡尔树的一条根到节点路径刻画。",
+      "solution_variant": "cartesian-tree"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "核心判定转化为树上最大深度。",
+      "solution_variant": "cartesian-tree"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "secondary",
+      "evidence": "线性构建笛卡尔树或维护左右删除代价可用单调栈完成。",
+      "solution_variant": "monotonic-stack-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "单调栈做法可视为在弹栈关系上递推左右删除代价。",
+      "solution_variant": "monotonic-stack-dp"
+    }
+  ]
+}

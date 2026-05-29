@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2205,
+    "title": "Codeforces Round 1083 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2205,
+    "index": "G",
+    "title": "Simons and Diophantus Equation",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "brute force", "data structures", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2205/problem/G",
+      "notes": "题面与约束：统计 0<=i,j,k<=m，使 (i xor j)*x + (j xor k)*y = n 有整数解。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151310",
+      "notes": "官方题解确认：由 Bézout 定理转为 gcd(i xor j, j xor k) | n；对 gcd 条件做 Möbius inversion，再计算 f(T)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zb4hi9j9",
+      "notes": "补充确认：固定 T 和倍数后，满足 x xor j <= m 的 j 集合可分解为 O(log m) 个 01-trie 子树/区间。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2205G",
+      "notes": "洛谷题解候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计满足一个二元线性 Diophantine 方程存在整数解的 xor 三元组。",
+    "constraints": "n <= 1e9, sum m <= 3e5，需要约 O(m log^2 m)。",
+    "core_idea": "由 Bézout 定理，方程有整数解等价于 gcd(i xor j, j xor k) 整除 n。设 p=i xor j, q=j xor k，对 gcd 条件做 Möbius inversion，把答案化为对每个 T 计算 f(T)：p 和 q 都被 T 整除的三元组数。固定 T 后枚举倍数 dT，约束 dT xor j <= m 的 j 集合按二进制拆成 O(log m) 个 trie 子树/区间；统计两组集合交集得到 f(T)，再按 Möbius 系数汇总。",
+    "complexity": "O(m log^2 m) approximately.",
+    "tricks": ["Bézout 定理转 gcd 整除", "Möbius inversion 改变求和顺序", "xor<=m 约束拆成 trie 子树区间", "调和级数枚举 T 的倍数"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mobius-trie-intersections",
+      "summary": "对每个 T 计算 f(T)，把每个倍数 x=dT 的合法 j 集合 {j | x xor j <= m} 分解为 trie 子树并统计两组集合交集；最后用 Möbius 系数和 n 的约数条件汇总。",
+      "complexity": "O(m log^2 m)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "mobius-interval-two-pointers",
+      "summary": "保存 xor<=m 产生的区间，排序或按特殊顺序双指针统计区间交集。",
+      "complexity": "O(m log^2 m)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "核心计数从 gcd(p,q)|n 转为对 T|p 且 T|q 的 f(T) 加权求和，需要 Möbius inversion。",
+      "solution_variant": "mobius-trie-intersections"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "Bézout 定理把 Diophantine 方程存在整数解完全转化为 gcd(i xor j, j xor k) | n。",
+      "solution_variant": "mobius-trie-intersections"
+    },
+    {
+      "tag": "data-structure/trie",
+      "importance": "primary",
+      "evidence": "为了快速统计 xor<=m 产生的 j 集合交集，题解使用 01-trie 子树表示区间并插入/查询。",
+      "solution_variant": "mobius-trie-intersections"
+    },
+    {
+      "tag": "trick/xor-interval-decomposition",
+      "importance": "primary",
+      "evidence": "固定 x 后，集合 {j | x xor j <= m} 可按 m 的二进制结构拆成 O(log m) 个区间/trie 子树，这是 f(T) 可计算的关键。",
+      "solution_variant": "mobius-trie-intersections",
+      "description": "Decompose constraints of the form x xor y <= bound or similar xor-order predicates into binary-trie subtrees or disjoint intervals.",
+      "parent": "trick",
+      "created_reason": "Existing bitmask and trie tags do not capture the specific xor-order interval decomposition needed for range/intersection counting.",
+      "status": "candidate",
+      "aliases": ["xor range decomposition", "xor less-equal intervals", "xor trie intervals"]
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "区间拆分与所有约束都依赖 xor 的逐位决策。",
+      "solution_variant": "mobius-trie-intersections"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "secondary",
+      "evidence": "计算按 T 是否整除 p、q 分组，并用调和级数枚举倍数。",
+      "solution_variant": "mobius-trie-intersections"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "incidental",
+      "evidence": "官方题解提到 Fenwick/segment tree 可替代部分区间聚合，但不是主实现核心。",
+      "solution_variant": "mobius-interval-two-pointers"
+    }
+  ]
+}

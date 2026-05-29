@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2203,
+    "title": "Educational Codeforces Round 187 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2203,
+    "index": "D",
+    "title": "Divisibility Game",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["brute force", "games", "greedy", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2203/D",
+      "notes": "题面与约束：围绕整除关系的交替取数博弈。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151612",
+      "notes": "官方代码按 b 值被多少个 a 值整除分类，再用桶数量模拟最优策略。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/educational-codeforces-round-187",
+      "notes": "外部题解交叉确认三类移动的归约。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2203D",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "Alice 与 Bob 按相反的整除条件轮流移除 b 中可选值，判断谁无法行动。",
+    "constraints": "值域与 n,m 同阶，可用倍数/因子调和复杂度聚合每个值的整除计数。",
+    "core_idea": "对每个 b 值 y，统计有多少 a 值整除 y。计数为 0 的值只属于 Bob，计数为 n 的值只属于 Alice，其余值双方都能拿。公共值总应优先拿，因为它同时消耗对手的潜在行动而不浪费私有行动；于是博弈化为 Alice-only、Bob-only、common 三类桶的计数问题。",
+    "complexity": "O((n + m) log(n + m)) per test case.",
+    "tricks": ["私有/公共移动分类", "倍数枚举统计整除数量", "公共移动优先"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-pile-divisibility-game",
+      "summary": "用 divisor-sieve 分类 b 值为 Alice-only、Bob-only、common，再按公共移动优先的最优策略判胜负。",
+      "complexity": "O((n + m) log(n + m))",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "核心是把交替取数博弈归约成三类可行动作的最优策略。公共动作先拿会改变双方剩余行动数。",
+      "solution_variant": "three-pile-divisibility-game"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "每个 b 值属于哪类行动完全由 a 中有多少值整除它决定。",
+      "solution_variant": "three-pile-divisibility-game"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "实现需要枚举倍数，把 cnt_a[d] 聚合到所有 y 上来得到每个 y 的整除计数。",
+      "solution_variant": "three-pile-divisibility-game",
+      "description": "Sieve-style aggregation over divisors or multiples to compute values on the divisibility poset.",
+      "parent": "math/number-theory",
+      "created_reason": "This is more specific than generic divisibility and is reusable for divisor/multiple counting tasks.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "双方最优策略可用优先消耗 common 桶的贪心归纳刻画。",
+      "solution_variant": "three-pile-divisibility-game"
+    }
+  ]
+}

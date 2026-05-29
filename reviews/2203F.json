@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2203,
+    "title": "Educational Codeforces Round 187 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2203,
+    "index": "F",
+    "title": "Binary Search with One Swap",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "divide and conquer", "dp", "hashing", "math", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2203/F",
+      "notes": "题面与约束：对排序数组 1..n 的一次交换，统计普通二分还能找到多少目标值。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151612",
+      "notes": "官方代码按二分递归子树长度计数，聚合一次交换导致的失败数量。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/educational-codeforces-round-187",
+      "notes": "外部题解交叉确认 binary-search tree / recursion interval 视角。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2203F",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "对排序数组 1..n 的每种交换，统计标准二分仍能找到的目标数，并输出 beauty 分布。",
+    "constraints": "n up to 5e6，不能逐个交换模拟，需要按二分递归结构批量计数。",
+    "core_idea": "把标准二分看成固定的递归决策树。一次交换只会影响包含两个交换位置的最小递归区间；路径不进入该区间的目标仍然成功。按递归区间长度统计出现次数，再对每种子树形状组合计算 midpoint-left、midpoint-right、left-subtree/right-subtree 等交换对造成的 lost 数量，并汇总到 answer[n-lost]。",
+    "complexity": "O(n log n) in the official map-based counting; distinct interval sizes have near-linear total structure.",
+    "tricks": ["binary search as recursion tree", "按最低受影响区间计数", "复用相同子树长度"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "subtree-shape-lost-counting",
+      "summary": "统计每种二分递归区间长度出现次数，计算该区间内交换对的 lost-target 分布并聚合 beauty。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "整个计数模型建立在标准二分查找的固定决策树上。",
+      "solution_variant": "subtree-shape-lost-counting"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "解法按二分递归区间分治统计，并复用同长度子问题的贡献。",
+      "solution_variant": "subtree-shape-lost-counting"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "每种子树形状内的交换对按 lost 数量组合计数，而非枚举所有全局交换。",
+      "solution_variant": "subtree-shape-lost-counting"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "二分递归结构被视为一棵隐式树，失败归因于两交换位置的最低公共区间。",
+      "solution_variant": "subtree-shape-lost-counting"
+    }
+  ]
+}

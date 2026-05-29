@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2205,
+    "title": "Codeforces Round 1083 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2205,
+    "index": "F",
+    "title": "Simons and Reconstructing His Roads",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "data structures", "dsu", "graphs"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2205/problem/F",
+      "notes": "题面与约束：在带禁用边的网格中选择偶度边集，最大化交替符号权值和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151310",
+      "notes": "官方题解确认：单位方格作为 cycle-space basis；不可选边强制相邻 basis 状态相同，用 DSU 合并。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2205F",
+      "notes": "洛谷题解候选来源；本次未找到可直接使用的 Luogu solution/article。"
+    }
+  ],
+  "annotation": {
+    "summary": "在带禁用边的网格中选择偶度边集，最大化按行/列交替符号计算的 beauty。",
+    "constraints": "sum n*m <= 4e5，需要接近线性。",
+    "core_idea": "网格中的偶度边集是 cycle space，单位方格环构成一组基。选择一个方格基会给答案增加由四条边权组成的 signed delta。若某条边不可选，则这条边两侧的方格变量必须相等；边界外侧视为固定 0。用 DSU 合并这些相等约束，未连到 0 的每个连通块可以整体选择或不选，取正的 delta 和加入答案。",
+    "complexity": "O(nm alpha(nm))",
+    "tricks": ["单位方格 cycle basis", "不可选边转化为相邻变量相等", "每个 DSU 分量独立取正贡献"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "square-cycle-basis-dsu",
+      "summary": "为每个单位方格建立 0/1 变量，计算方格 signed delta；不可用边合并相邻变量，最后每个自由分量取 max(sum,0)。",
+      "complexity": "O(nm alpha(nm))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/cycle-space",
+      "importance": "primary",
+      "evidence": "所有偶度重建边集正是网格图的 cycle space，单位方格环 basis 是主转化。",
+      "solution_variant": "square-cycle-basis-dsu",
+      "description": "Reason about even-degree subgraphs, cycle bases, or graph cycle spaces, often over GF(2).",
+      "parent": "graph",
+      "created_reason": "Existing graph/connectivity and xor-vector-space tags do not specifically capture even-degree subgraph/cycle-basis modeling.",
+      "status": "candidate",
+      "aliases": ["cycle basis", "eulerian subgraph", "even-degree subgraph"]
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "禁用边给相邻方格变量施加相等约束，使用 DSU 合并并聚合分量权值。",
+      "solution_variant": "square-cycle-basis-dsu"
+    },
+    {
+      "tag": "math/linear-algebra/xor-vector-space",
+      "importance": "secondary",
+      "evidence": "选择单位方格环等价于在 GF(2) 上选择 cycle basis 向量，尽管实现用 DSU 而非显式消元。",
+      "solution_variant": "square-cycle-basis-dsu"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "证明需要构造单位方格 cycle basis 并说明任意合法偶度边集可被分解。",
+      "solution_variant": "square-cycle-basis-dsu"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "相等约束后每个 DSU 分量独立贡献 max(component_sum, 0)。",
+      "solution_variant": "square-cycle-basis-dsu"
+    }
+  ]
+}

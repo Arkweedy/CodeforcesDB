@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2204,
+    "title": "Educational Codeforces Round 188 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2204,
+    "index": "G",
+    "title": "Grid Path",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": ["dp", "graphs", "matrices"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2204/problem/G",
+      "notes": "题面与约束：统计芯片在网格中可访问的不同格子集合数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152150",
+      "notes": "官方解法构造 2m+1 状态转移矩阵，并对行数 n 快速幂。"
+    },
+    {
+      "source_type": "cfstep_hints",
+      "url": "https://cfstep.com/codeforces/contests/contest-2204/problem-g/hints/",
+      "notes": "用于确认行内访问区间解释和 n 很大时矩阵快速幂的必要性。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2204G",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计从 (1,1) 出发、只能左右或向下移动的芯片可能访问的不同格子集合数。",
+    "constraints": "n up to 1e8，m up to 150，需要在小状态空间上对行转移快速幂。",
+    "core_idea": "任意被访问的一行一定是一个连续列区间。按行建模：当前行选择包含入口列的区间，可以停止，也可以从区间内某列向下。官方把必要信息压缩成 2m 个列/标志状态加一个 absorbing stop state，枚举行内区间构造一行转移矩阵，然后把矩阵提升到第 n 行。",
+    "complexity": "O((2m+1)^3 log n + m^4).",
+    "tricks": ["每行访问列为连续区间", "压缩行入口状态", "吸收终止状态", "任意模数矩阵乘法"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "compressed-row-automaton-matrix-power",
+      "summary": "构造固定有限状态行自动机和终止状态，对转移矩阵做快速幂后读取从起点到终止状态的计数。",
+      "complexity": "O((2m+1)^3 log n + m^4)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/matrix-exponentiation",
+      "importance": "primary",
+      "evidence": "n 可达 1e8，必须把重复行转移表示成矩阵并快速幂。",
+      "solution_variant": "compressed-row-automaton-matrix-power"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "计数是在固定 2m+1 个行入口/终止状态上的重复 DP。",
+      "solution_variant": "compressed-row-automaton-matrix-power"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "关键压缩是在当前列之外加入标志和吸收态，而不是保留所有 O(m^2) 区间状态。",
+      "solution_variant": "compressed-row-automaton-matrix-power"
+    },
+    {
+      "tag": "dp/grid-dp",
+      "importance": "secondary",
+      "evidence": "有限状态转移来源于网格中逐行访问区间的演化。",
+      "solution_variant": "compressed-row-automaton-matrix-power"
+    },
+    {
+      "tag": "graph/path-counting",
+      "importance": "secondary",
+      "evidence": "压缩后等价于在有向转移图中统计从起点状态到吸收终止状态的 walk 数。",
+      "solution_variant": "compressed-row-automaton-matrix-power"
+    }
+  ]
+}
