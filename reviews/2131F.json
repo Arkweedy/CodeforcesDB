@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2131,
+    "title": "Codeforces Round 1042 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2131,
+    "index": "F",
+    "title": "Unjust Binary Life",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "math",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2131/F",
+      "notes": "Statement and constraints: two binary strings define an n*n XOR grid; sum minimum flips over all endpoints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145439",
+      "notes": "Official solution confirms each endpoint cost can be written as min(f(x,y),g(x,y)) and optimized with a min/absolute-value identity."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1042",
+      "notes": "Independent notes confirm aggregating all (x,y) by prefix counts of zeroes and ones."
+    }
+  ],
+  "annotation": {
+    "summary": "Binary strings a,b generate grid value a_i xor b_j. For every endpoint (x,y), compute the minimum flips needed so there is an all-zero monotone path from (1,1) to (x,y), and sum over all endpoints.",
+    "constraints": "sum n <= 200000, so n^2 endpoints cannot be enumerated explicitly; prefix counts and sorting/bucketing are needed.",
+    "core_idea": "A monotone path to (x,y) connects the first x rows and first y columns, so those row/column bits must be made consistent. Let prefix counts of zeroes/ones in a[1..x] and b[1..y] be A0,A1,B0,B1. The endpoint cost is min(A1+B1, A0+B0). Convert min to (sum - abs(diff))/2 or an equivalent threshold formula, then aggregate all pairs of one-dimensional prefix differences using sorting/prefix sums or buckets.",
+    "complexity": "O(n log n) with sorting, or O(n) with bounded-difference buckets",
+    "tricks": [
+      "Path connectivity turns into prefix row/column same-color constraints.",
+      "Use min-to-absolute-value identity.",
+      "Group by prefix zero/one difference."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-difference-absolute-sum",
+      "summary": "Compute prefix zero/one counts and differences for a and b, rewrite each endpoint cost as a min/absolute-value expression, and aggregate all pairs by sorting or buckets.",
+      "complexity": "O(n log n) or O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "two-pointer-sorted-prefixes",
+      "summary": "Build one-dimensional values from each prefix, sort them, and maintain prefix sums with a two-pointer threshold to sum all min/absolute contributions.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "Each endpoint's cost is determined only by prefix counts in a[1..x] and b[1..y].",
+      "solution_variant": "prefix-difference-absolute-sum"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The core optimization uses min(f,g)=(f+g-|f-g|)/2 or an equivalent threshold identity to collapse a 2D sum into 1D aggregation.",
+      "solution_variant": "prefix-difference-absolute-sum"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting prefix differences allows all pair absolute/min contributions to be accumulated linearly.",
+      "solution_variant": "prefix-difference-absolute-sum"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "secondary",
+      "evidence": "With bounded difference range, prefix zero/one differences can be bucketed instead of enumerating all endpoints.",
+      "solution_variant": "prefix-difference-absolute-sum"
+    }
+  ]
+}

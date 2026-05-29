@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2131,
+    "title": "Codeforces Round 1042 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2131,
+    "index": "G",
+    "title": "Wafu!",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2131/G",
+      "notes": "Statement and constraints: repeatedly delete the minimum m, multiply answer by m, and insert 1..m-1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145439",
+      "notes": "Official solution confirms that after shifting values by one, fully processing value v has block length 2^v and contribution can be precomputed by DP/DFS."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/qxo49m7e",
+      "notes": "Chinese solution cross-checks the full-block recurrence and binary-block consumption of k."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an initial positive integer multiset S, repeat k times: take the minimum m, multiply it into the answer, delete it, and insert 1..m-1; output the product modulo 1e9+7.",
+    "constraints": "sum n <= 200000, k <= 1e9, s_i <= 1e9; only about 30 low value levels can affect the answer.",
+    "core_idea": "Rewrite value x as v=x-1. Fully deleting a value v and all smaller values it recursively creates takes 2^v operations, with contribution dp[0]=1 and dp[v]=(v+1)*prod_{j<v}dp[j]. Sort the initial multiset. From smaller values upward, consume k: complete blocks use dp[v] directly; the first incomplete block is solved by a recursive dfs(v,k) that unfolds subblocks j=0..v-1 according to the binary capacity left. Since k<=1e9, values above about 30 are truncated to a single partial block.",
+    "complexity": "O(n log n + log^2 k) per test case after small precomputation",
+    "tricks": [
+      "A full value-v block has length 2^v.",
+      "Precompute full deletion contributions by DP.",
+      "Use the binary structure of k to handle a partial block.",
+      "Large values can be capped to the range that k can reach."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "power-block-dp-recursion",
+      "summary": "Sort the initial multiset, multiply complete blocks using dp[v], and solve the first incomplete block with dfs(v,k) over smaller power-of-two subblocks.",
+      "complexity": "O(n log n + log^2 k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The contribution of fully processing a value v is recursively determined by all smaller full-block contributions.",
+      "solution_variant": "power-block-dp-recursion"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "Operation counts decompose into 2^v blocks, and partial-block processing consumes k by binary-scale subblocks.",
+      "solution_variant": "power-block-dp-recursion"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "Because k<=1e9, only about 30 levels need explicit handling despite values up to 1e9.",
+      "solution_variant": "power-block-dp-recursion"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "The initial multiset must be processed in increasing minimum-value order.",
+      "solution_variant": "power-block-dp-recursion"
+    }
+  ]
+}

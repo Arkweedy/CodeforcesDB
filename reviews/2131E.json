@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2131,
+    "title": "Codeforces Round 1042 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2131,
+    "index": "E",
+    "title": "Adjacent XOR",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2131/E",
+      "notes": "Statement and constraints: for each i<n, at most once apply a_i := a_i xor a_{i+1}; sum n <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145439",
+      "notes": "Official code confirms checking a_i, a_i xor a_{i+1}, and a_i xor b_{i+1} for each position."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.pythoner.work/post/cf-2131/",
+      "notes": "Chinese write-up explains the three order cases and operation dependencies."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1042",
+      "notes": "Independent notes confirm each position changes at most once and candidates are {a_i, a_i xor a_{i+1}, a_i xor b_{i+1}}."
+    }
+  ],
+  "annotation": {
+    "summary": "Given arrays a and target b, each position i<n may xor a_i with its right neighbor at most once; decide whether a can become b.",
+    "constraints": "Multiple tests, sum n <= 200000, values below 2^30; O(n) check required.",
+    "core_idea": "a_n never changes, so it must equal b_n. For i<n, the final a_i has only three possible sources: no operation gives a_i; operating before i+1 changes gives a_i xor original a_{i+1}; operating after i+1 has reached b_{i+1} gives a_i xor b_{i+1}. If every b_i is among these candidates, the dependencies can be ordered acyclically, so the transformation is feasible.",
+    "complexity": "O(n)",
+    "tricks": [
+      "Last element invariant.",
+      "Separate operation before/after the right neighbor changes.",
+      "Local three-candidate feasibility check."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-candidate-local-check",
+      "summary": "Check a_n=b_n, then for each i<n test whether b_i lies in {a_i, a_i xor a_{i+1}, a_i xor b_{i+1}}.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "a_n is immutable, and once the right target is fixed each position has a small invariant-derived reachable set.",
+      "solution_variant": "three-candidate-local-check"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "Each position is fully characterized by three mutually exclusive cases: no operation, operation before the right neighbor changes, or operation after it changes.",
+      "solution_variant": "three-candidate-local-check"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "The operation is XOR, but there is no high-dimensional bitmask state or bitwise optimization.",
+      "solution_variant": "three-candidate-local-check"
+    }
+  ]
+}

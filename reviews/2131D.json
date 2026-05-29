@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2131,
+    "title": "Codeforces Round 1042 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2131,
+    "index": "D",
+    "title": "Arboris Contractio",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2131/problem/D",
+      "notes": "Statement and constraints: tree path operation flattens one path into a star-like adjacency; minimize operations to achieve the minimum possible diameter."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2131D?lang=en",
+      "notes": "Used to cross-check the statement, operation definition, and examples."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145439",
+      "notes": "Official solution confirms the answer is total leaves minus the maximum number of leaves adjacent to one vertex."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a tree, one operation can turn a path from s to t into a star centered at s; find the minimum operations needed to reduce the diameter to its minimum possible value.",
+    "constraints": "t <= 10000, sum n <= 200000; only linear degree/leaf counting is needed.",
+    "core_idea": "For n<=3 the tree is already optimal. Otherwise the minimum possible diameter is 2, so the final shape can be seen as centered at some vertex. Each original leaf not already adjacent to the final center must be handled at least once to pull its branch closer. Choosing the vertex with the most adjacent leaves maximizes leaves kept for free, so the answer is leaves - max_adjacent_leaves.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "Minimum target diameter is 2.",
+      "Leaf-count lower bound.",
+      "Enumerate the final center by adjacent leaf count."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "leaf-neighbor-counting",
+      "summary": "Count total leaves and the number of leaf neighbors for each vertex; answer total leaves minus the maximum leaf-neighbor count, with n<=3 as zero.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The feasibility and lower bound rely on tree leaves, centers, and unique simple path structure.",
+      "solution_variant": "leaf-neighbor-counting"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Among all possible final centers, choosing the vertex adjacent to the most leaves directly minimizes the leaves that require operations.",
+      "solution_variant": "leaf-neighbor-counting"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "incidental",
+      "evidence": "The implementation may traverse the tree, but degree counting is sufficient and DFS is not the core idea.",
+      "solution_variant": "leaf-neighbor-counting"
+    }
+  ]
+}

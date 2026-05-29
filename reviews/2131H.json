@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2131,
+    "title": "Codeforces Round 1042 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2131,
+    "index": "H",
+    "title": "Sea, You & copriMe",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "graphs",
+      "greedy",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2131/H",
+      "notes": "Statement and constraints: find four distinct indices forming two coprime pairs; sum n<=200000 and sum max value<=1000000."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2131H?lang=en",
+      "notes": "Used to cross-check statement, bounds, and output requirements."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145439",
+      "notes": "Official editorial computes degrees in the coprime graph with PIE/Mobius, then uses a max-degree and min-neighbor greedy for matching size 2."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1042",
+      "notes": "Independent notes confirm reducing the task to finding a matching of size 2 in the coprime graph."
+    }
+  ],
+  "annotation": {
+    "summary": "Given array a, output four distinct indices p,q,r,s such that gcd(a_p,a_q)=1 and gcd(a_r,a_s)=1, or report none.",
+    "constraints": "sum n <= 200000 and sum maximum value <= 1000000; explicit coprime graph construction is too large, so sieve/Mobius or prime-factor inclusion-exclusion is needed.",
+    "core_idea": "View indices as vertices and coprime pairs as graph edges; the task is to find a matching of size 2. Precompute f(d), the count of numbers divisible by d, and use Mobius inversion deg(i)=sum_{d|a_i} mu(d)f(d) minus self adjustment to get degrees in the coprime graph. If an edge exists, choose a maximum-degree vertex u and among its coprime neighbors a minimum-degree vertex v. Delete u and v; if the remaining graph still has an edge, these two edges form the answer, otherwise the greedy proof shows no size-2 matching exists.",
+    "complexity": "O(m log m + n * tau(max a)) for the Mobius-divisor variant",
+    "tricks": [
+      "Reduce to matching size 2 in a coprime graph.",
+      "Compute coprime degrees by Mobius inversion.",
+      "Use maximum-degree vertex and minimum-degree neighbor greedy."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mobius-degree-greedy-matching",
+      "summary": "Use Mobius inversion to compute each vertex degree in the coprime graph, choose max-degree u and min-degree coprime neighbor v, then delete them and look for a remaining coprime edge.",
+      "complexity": "O(m log m + n * tau(max a))",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "prime-factor-pie-degree-greedy-matching",
+      "summary": "Instead of explicit Mobius, enumerate each a_i's distinct prime-factor subsets and use inclusion-exclusion to count non-coprime numbers, then run the same matching greedy.",
+      "complexity": "O(m log log m + n * 2^omega(max a))",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "The task is equivalent to finding two vertex-disjoint edges in the coprime graph, i.e. a matching of size 2.",
+      "solution_variant": "mobius-degree-greedy-matching"
+    },
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "The main solution uses [gcd(x,y)=1]=sum_{d|gcd(x,y)} mu(d) to compute coprime degrees in bulk.",
+      "solution_variant": "mobius-degree-greedy-matching"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Choosing maximum-degree u and its minimum-degree coprime neighbor v is the key greedy step for correctly deciding matching size 2.",
+      "solution_variant": "mobius-degree-greedy-matching"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "An alternate implementation enumerates prime-factor subsets and uses inclusion-exclusion to count non-coprime values.",
+      "solution_variant": "prime-factor-pie-degree-greedy-matching"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "Edges are defined by gcd(a_i,a_j)=1, though the high-performance algorithm uses more specific Mobius/PIE counting.",
+      "solution_variant": "mobius-degree-greedy-matching"
+    }
+  ]
+}
