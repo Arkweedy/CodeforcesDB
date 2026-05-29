@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "H",
+    "title": "Minimise Cost",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dp",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/H",
+      "notes": "题面要求把长度 n 的序列划分成恰好 k 个非空子序列，子序列 b 的代价为 len(b)*sum(b)，最小化总代价。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en42",
+      "notes": "官方题解先排序并证明可转为连续分段，再用 Aliens trick 二分惩罚项，内部 DP 借助四边形不等式/决策单调性优化。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183H",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定长度 n 的数组 a 和整数 k，把所有元素划分进恰好 k 个非空子序列；子序列 b 的代价是 |b|*sum(b)，求总代价最小值。",
+    "constraints": "多测，1<=k<=n<=2e5，|a_i|<=1e9，sum n<=2e5；朴素 O(nk) 或枚举划分不可行。",
+    "core_idea": "先将值排序，交换论证可把最优分组看成若干连续段，且分段长度满足单调结构。为处理恰好分出 k 段，引入每段惩罚 lambda，二分 lambda 后求无组数限制的最小化 dp；对应 dp 的转移代价满足四边形不等式/决策单调性，维护候选决策点即可近线性求解。最后用答案减去 lambda*k 恢复原问题。",
+    "complexity": "O(n log C) for the parametric search times near-linear DP, where C is the penalty value range.",
+    "tricks": [
+      "排序后把子序列分组转成连续分段",
+      "用每段惩罚项把恰好 k 段转成无约束最优化",
+      "利用决策单调性维护 DP 候选转移"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "排序后对惩罚 lambda 做二分；每次计算带惩罚的最优分段 DP，同时记录段数，通过决策单调性维护转移，得到段数不少于/不超过 k 的边界后恢复答案。",
+      "complexity": "O(n log C)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/aliens-trick",
+      "display_name": "Aliens trick",
+      "description": "Use a Lagrangian/penalty parameter and binary search to turn an exact-count DP constraint into an unconstrained optimization.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "Existing binary-search and dp tags do not identify the Lagrangian penalty pattern needed for exact group-count optimization.",
+      "importance": "primary",
+      "evidence": "主解法二分每段惩罚 lambda，把恰好 k 段的 DP 转成带惩罚的无约束最小化。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp/decision-monotonicity",
+      "display_name": "Decision monotonicity",
+      "description": "Optimize DP by using monotone optimal transition positions, often from quadrangle inequality or Monge-like costs.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "The inner DP optimization depends on monotone optimal decisions, which is more specific than generic DP.",
+      "importance": "primary",
+      "evidence": "官方题解用四边形不等式推导决策点单调，从而维护候选转移。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Aliens trick 的惩罚参数通过二分确定。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "解法第一步排序，并用排序后的连续段结构描述最优分组。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "排序连续段化和 DP 决策单调性都依赖交换论证/四边形不等式。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 greedy，但最终高质量标注中它主要体现在排序和局部交换观察，非主算法。",
+      "solution_variant": "main"
+    }
+  ]
+}

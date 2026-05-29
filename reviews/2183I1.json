@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "I1",
+    "title": "Pairs Flipping (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/I1",
+      "notes": "题面给出二进制串；第 x 次操作可选择一个 l，翻转 s_l 与 s_{l+x}，也可令 l=0 跳过；Easy 要求最终 1 的数量至多 15。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en42",
+      "notes": "官方题解用 [l,r] 区间递归，把左右半区按中心对称匹配成距离唯一的若干对，从而用对应距离操作逐步压缩 1 的数量。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2183I1",
+      "notes": "使用洛谷题面镜像交叉确认 Easy 版本的操作规则与目标剩余 1 数不超过 15。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183I1",
+      "notes": "洛谷题解候选来源；本次只参考题面镜像，未参考题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定长度 n 的 01 串，第 x 次操作可选择一对距离为 x 的位置并翻转二者，或跳过；要求输出所有操作，使最终 1 不超过 15。",
+    "constraints": "多测，3<=n<=2e6，sum n<=2e6；每个距离 x=1..floor(n/2) 至多使用一次，必须输出完整操作序列。",
+    "core_idea": "考虑区间 [l,r]。按中心把左右半区成对匹配时，每对距离互不相同，因此可在对应的操作编号上翻转这些位置。递归处理左右半区，每轮用不重复距离把 1 压向更小区域，最终所有未消去的 1 被压到若干小区间内；Easy 只需保证总数不超过 15。",
+    "complexity": "O(n log n) generated operations in the constructive recursion.",
+    "tricks": [
+      "利用中心对称匹配保证每个翻转距离唯一",
+      "递归把区间内的 1 压缩到更小的半区",
+      "Easy 版本只需停止在小规模阈值"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "在当前区间内用一组唯一距离安排跨半区翻转，然后递归左右半区；区间足够小时停止，保证剩余 1 数不超过 Easy 阈值。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求直接输出一串翻转距离，核心是构造合法操作序列。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "display_name": "Recursive construction",
+      "description": "Build an object or operation sequence recursively by solving smaller intervals/components with a maintained invariant.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "Existing constructive/divide-and-conquer tags do not express that the construction maintains an invariant through recursive interval reduction.",
+      "importance": "primary",
+      "evidence": "解法在区间 [l,r] 上构造一组翻转后递归到两个半区，保持剩余 1 被压缩的性质。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "每轮按中点把区间拆成左右两半分别递归。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "中心对称配对使跨半区距离可控且互不重复。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "incidental",
+      "evidence": "实现中需要处理小区间和边界剩余情况，但不是主要检索价值。",
+      "solution_variant": "main"
+    }
+  ]
+}

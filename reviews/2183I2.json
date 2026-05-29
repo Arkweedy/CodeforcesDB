@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "I2",
+    "title": "Pairs Flipping (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/I2",
+      "notes": "Hard 版本保持同一翻转规则，但最终剩余 1 数要求更严格：不超过 7，需要更强的小规模收尾构造。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en42",
+      "notes": "官方题解在 Easy 递归构造外，预计算小规模模式的翻转方案，使最终小区间能继续压到至多 7 个 1。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183I2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "同 Pairs Flipping Easy：第 x 次操作可翻转一对距离为 x 的位置或跳过；Hard 要求最终 1 数不超过 7。",
+    "constraints": "多测，3<=n<=2e6，sum n<=2e6；每个距离最多使用一次，递归大区间构造后还需要对小区间做可证明覆盖的收尾。",
+    "core_idea": "大框架仍是按区间递归：用中心对称距离消去跨半区的 1 对，把问题压到更小区间。Hard 额外对小长度状态做预计算/搜索，找出能把任意小模式继续压到 7 个 1 以下的操作表；递归到阈值后套用该表完成收尾。",
+    "complexity": "O(n log n) generated operations plus constant-size or small-state preprocessing.",
+    "tricks": [
+      "递归区间构造与 Easy 相同",
+      "用小状态预计算保证更严格的剩余 1 上界",
+      "把大规模问题缩小到可暴力覆盖的局部模式"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "先用递归中心配对把 1 压缩到许多小区间；对小区间使用预先搜索出的操作序列，把剩余 1 数进一步降到 7。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "需要构造一串距离操作，并证明对所有输入都能达到剩余 1 数上界。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "primary",
+      "evidence": "主结构仍是在区间上递归构造并维护压缩不变量。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "递归每次把区间分成左右两半处理。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "Hard 收尾依赖对小规模状态进行搜索/预计算操作表。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "secondary",
+      "evidence": "小区间状态可用 bitmask 表示并搜索可达操作序列。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "中心对称配对仍是保证翻转距离可控的关键构造部件。",
+      "solution_variant": "main"
+    }
+  ]
+}
