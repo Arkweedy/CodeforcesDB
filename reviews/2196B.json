@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "B",
+    "title": "Another Problem about Beautiful Pairs",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/B",
+      "notes": "题面：统计满足 a_i * a_j = j - i 的下标对。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2196B",
+      "notes": "Luogu 镜像题面，用于确认 n 总和与 a_i 范围。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/yzms0vns",
+      "notes": "题解确认根号分治：a_i 大时枚举 j=i+k*a_i，小值时枚举乘子反推 i。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196B",
+      "notes": "洛谷题解候选入口；实际参考了其中一篇专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定数组 a，统计 i<j 且 a_i*a_j=j-i 的下标对数量。",
+    "constraints": "多测，sum n<=2e5, a_i<=1e9；不能枚举所有二元组。",
+    "core_idea": "由 j-i 必须是 a_i 的倍数可知，对较大的 a_i，固定 i 后候选 j 的数量只有 O(n/a_i)。对较小的 a_i，则枚举右端 j 和小值 x，反推出 i 并检查乘积条件。用 sqrt(n) 作为分界后，总复杂度为 O(n sqrt n)。",
+    "complexity": "O(n sqrt n) per test case, O(n) memory.",
+    "tricks": [
+      "按 a_i 大小分治枚举方向",
+      "由乘积等式反推另一个下标"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sqrt-split-enumeration",
+      "summary": "大 a_i 直接跳倍数枚举 j；小值枚举乘子和右端点反推左端点，并用原式检查合法性。",
+      "complexity": "O(n sqrt n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "核心是以 sqrt(n) 分界，分别处理大值和小值枚举。",
+      "solution_variant": "sqrt-split-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "j-i 必须被 a_i 整除，候选下标由乘法/整除关系推导。",
+      "solution_variant": "sqrt-split-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "两种枚举都是对原暴力二元组枚举的受限版本。",
+      "solution_variant": "sqrt-split-enumeration"
+    }
+  ]
+}

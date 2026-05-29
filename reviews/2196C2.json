@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "C2",
+    "title": "Interactive Graph (Hard Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/C2",
+      "notes": "题面：hard 版本同样恢复未知 DAG，但查询次数限制变为 n+m。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2196C2",
+      "notes": "Luogu 镜像题面，用于确认 hard 版本 n<=30 和 n+m 查询限制。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/pctzfp20",
+      "notes": "题解确认 hard 做法：按 k 递增查询路径，记录边；若路径末点已处理，跳过该末点的后续路径数量。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196C2",
+      "notes": "洛谷题解候选入口；实际参考了其中一篇专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "未知图是 DAG。每次询问字典序第 k 条路径；hard 版本要求用不超过 n+m 次询问恢复全部边。",
+    "constraints": "n<=30，查询次数仅 n+m；不能像 simple 版本一样反复二分。",
+    "core_idea": "按 k 从小到大询问路径。每条返回路径上的相邻点都是边，直接加入答案。若路径末点第一次出现，说明发现了一个新的路径后缀，记录从该末点出发的后缀路径数量；若末点已经出现过，则这条路径后面接的所有同末点后缀之前已完整处理，可以把 k 一次性跳过对应数量。这样每个点的后缀块和每条新边只造成常数次有效查询，总查询数控制在 n+m。",
+    "complexity": "O(n+m) queries and O(n^2) local storage.",
+    "tricks": [
+      "按字典序路径流逐条扫描",
+      "记忆化已经处理过的末点后缀块",
+      "用跳过后缀块把查询数压到 n+m"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lexicographic-path-memoized-skip",
+      "summary": "顺序询问路径，记录路径上的边；对已经出现过的末点，使用其后缀路径计数跳过整块已知路径。",
+      "complexity": "O(n+m) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "题目本质是通过有限次询问恢复隐藏 DAG。",
+      "solution_variant": "lexicographic-path-memoized-skip"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "待恢复对象是 DAG，路径后缀有限且可被重复利用。",
+      "solution_variant": "lexicographic-path-memoized-skip"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "按字典序逐条扫描路径，使同后缀路径块可被识别并跳过。",
+      "solution_variant": "lexicographic-path-memoized-skip"
+    },
+    {
+      "tag": "dp/graph-dp",
+      "importance": "secondary",
+      "evidence": "每个末点维护其后续路径数量，本质是 DAG 后缀路径计数的记忆化。",
+      "solution_variant": "lexicographic-path-memoized-skip"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "已经处理过的后缀块被整段跳过，保证每个点/边只贡献有限次查询。",
+      "solution_variant": "lexicographic-path-memoized-skip"
+    }
+  ]
+}

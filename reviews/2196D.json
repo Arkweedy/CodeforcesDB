@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "D",
+    "title": "Double Bracket Sequence",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "expression parsing",
+      "flows",
+      "greedy",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/D",
+      "notes": "题面：最少修改四种括号，使圆括号子序列和方括号子序列分别合法。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2196D",
+      "notes": "Luogu 镜像题面，用于确认 n 总和与样例。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/jkdl9xz4",
+      "notes": "题解确认：分别栈匹配两类括号，删除已匹配部分后按剩余左右括号奇偶和位置分类。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196D",
+      "notes": "洛谷题解候选入口；实际参考了其中一篇专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定只含 (), [] 的偶长字符串。一次操作可任意改一个字符，求变成“圆括号子序列合法且方括号子序列合法”的最少操作数。",
+    "constraints": "多测，sum n<=2e5；需要线性处理。",
+    "core_idea": "分别只看圆括号和方括号，用普通栈删除已经匹配的合法对；这些对保持不改一定不劣。剩余部分中，每一类都形如若干右括号后接若干左括号，且总剩余长度为偶数。一次修改通常可以同时修复两个未匹配括号，所以基础代价是 leftover/2。若剩余左括号数和右括号数都是奇数，还要看最左未匹配左括号是否在最右未匹配右括号之前；若顺序好，基础代价仍够，否则需要额外一次操作。",
+    "complexity": "O(n) per test case, O(n) memory.",
+    "tricks": [
+      "分别对两种括号做栈匹配并删除已匹配部分",
+      "剩余未匹配括号按奇偶和相对位置分类",
+      "一次修改可同时修复两个未匹配括号"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "stack-cancel-parity-greedy",
+      "summary": "对圆/方括号分别栈匹配，保留未匹配位置；根据未匹配左右括号数量奇偶和最左左括号、最右右括号位置计算答案。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "目标性质完全由两个括号子序列是否合法决定。",
+      "solution_variant": "stack-cancel-parity-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "已匹配括号对保持不改最优，剩余未匹配括号按最少修改贪心配对。",
+      "solution_variant": "stack-cancel-parity-greedy"
+    },
+    {
+      "tag": "data-structure/stack",
+      "display_name": "Stack",
+      "description": "LIFO stack used for parsing, matching, rollback, or maintaining nested structure; not necessarily monotonic.",
+      "parent": "data-structure",
+      "created_reason": "Existing data-structure/monotonic-stack is a different specialized technique; ordinary stack matching is a reusable category.",
+      "status": "candidate",
+      "importance": "secondary",
+      "evidence": "第一步对两种括号分别用栈消去已匹配对。",
+      "solution_variant": "stack-cancel-parity-greedy"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "剩余左右括号数量的奇偶决定是否可能只用 leftover/2 次修改。",
+      "solution_variant": "stack-cancel-parity-greedy"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "奇数剩余时还要根据未匹配左/右括号的相对位置分情况加一。",
+      "solution_variant": "stack-cancel-parity-greedy"
+    }
+  ]
+}

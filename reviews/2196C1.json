@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "C1",
+    "title": "Interactive Graph (Simple Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/C1",
+      "notes": "题面：交互式恢复未知 DAG 的边，可询问字典序第 k 条路径。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2196C1",
+      "notes": "Luogu 镜像题面，用于确认 simple 版本 n<=15 和 32*(n+m) 查询限制。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/vj6jcgm4",
+      "notes": "题解确认 simple 做法：利用返回路径第一、第二个点的单调性做多次二分。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196C1",
+      "notes": "洛谷题解候选入口；实际参考了其中一篇专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "未知图是 DAG。每次可以询问所有路径按字典序排序后的第 k 条路径，要求在查询次数限制内恢复全部边；simple 版本 n<=15，允许 32*(n+m) 次询问。",
+    "constraints": "n<=15，查询次数宽松到 32*(n+m)，允许对每个边界做二分。",
+    "core_idea": "所有路径按字典序分块：先按第一个点递增，同一起点内再按第二个点递增。因此询问返回路径的首个点、第二个点随 k 有单调边界。先二分出每个首点对应的路径区间，再在每个首点区间里二分找出每个可能第二点开始出现的位置；所有出现过的首两点组合就是 DAG 中的边。",
+    "complexity": "O((n+m) log P) queries where P is the path-list search bound; memory O(n+m).",
+    "tricks": [
+      "路径字典序形成按首点/次点分块的单调结构",
+      "二分路径编号边界恢复边"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lexicographic-boundary-binary-search",
+      "summary": "对路径编号做二分，先定位每个起点的区间，再定位同一起点下每个第二点的边界，从而输出所有边。",
+      "complexity": "O((n+m) log P) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "题目本质是通过询问恢复隐藏图。",
+      "solution_variant": "lexicographic-boundary-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "核心操作是在路径编号 k 上二分首点和第二点的分界。",
+      "solution_variant": "lexicographic-boundary-binary-search"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "display_name": "Lexicographic order",
+      "description": "Use lexicographic ordering of strings, paths, arrays, or sequences to expose block boundaries or greedy comparisons.",
+      "parent": "trick",
+      "created_reason": "Existing sorting/greedy tags do not capture problems where lexicographic order itself creates the searchable structure.",
+      "status": "candidate",
+      "importance": "primary",
+      "evidence": "路径列表按字典序排序后形成首点、第二点的连续区间，是二分恢复边的基础。",
+      "solution_variant": "lexicographic-boundary-binary-search"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "隐藏对象是有向无环图，路径集合有限且可按 DAG 路径解释。",
+      "solution_variant": "lexicographic-boundary-binary-search"
+    }
+  ]
+}
