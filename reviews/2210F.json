@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2210,
+    "title": "Codeforces Round 1089 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2210,
+    "index": "F",
+    "title": "A Simple Problem",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2210/problem/F",
+      "notes": "Statement and constraints: answer range queries about maximizing inversions after replacing each element by its prefix maximum or prefix minimum within the subarray."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152413",
+      "notes": "Used to confirm block decomposition by equal prefix-min, concave quadratic optimization inside each block, and binary lifting over next-smaller blocks."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://mirror.codeforces.com/blog/entry/152524",
+      "notes": "Referenced as a community video editorial for the greedy idea; not used for implementation details."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2210F",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "For each subarray query, choose for every position either the subarray prefix maximum or prefix minimum to maximize the number of inversions.",
+    "constraints": "n and q are large, so each query must use preprocessed block jumps rather than scanning every element.",
+    "core_idea": "Within a query, positions with the same prefix minimum form a block, and choices from different blocks are independent. If s elements precede a block of length t and x of this block are chosen as prefix maximum before the rest are prefix minimum, the contribution is (s+x)(t-x), a concave quadratic maximized near (t-s)/2. Blocks with t <= s are simple and can be jumped in batches; blocks with t > s can occur only O(log n) times because the processed prefix length at least doubles. Precompute next-smaller positions with a monotonic stack, then use binary lifting and prefix sums of block lengths/squares to skip many simple blocks per query.",
+    "complexity": "O((n+q) log n) intended, with O(n log n + q log^2 n) also acceptable.",
+    "tricks": [
+      "partition query by equal prefix-min blocks",
+      "optimize a concave quadratic per block",
+      "large blocks can occur only logarithmically often"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "next-smaller-block-binary-lifting",
+      "summary": "Build next-smaller blocks with a monotonic stack, precompute binary-lifting jumps and block-length sums, then answer each query by jumping over type-2 blocks and handling O(log n) large blocks directly.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "fenwick-active-blocks",
+      "summary": "Alternative offline implementation maintains active block contributions with Fenwick trees while processing left endpoints.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "Next-smaller positions define the equal-prefix-min blocks and are computed with a monotonic stack.",
+      "solution_variant": "next-smaller-block-binary-lifting"
+    },
+    {
+      "tag": "algorithm/binary-lifting",
+      "importance": "primary",
+      "evidence": "The query algorithm jumps over many simple blocks using binary lifting over next-smaller block links.",
+      "solution_variant": "next-smaller-block-binary-lifting"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Inside each block, the optimal form is to choose a prefix of prefix-max choices followed by prefix-min choices.",
+      "solution_variant": "next-smaller-block-binary-lifting"
+    },
+    {
+      "tag": "trick/one-parameter-optimization",
+      "importance": "secondary",
+      "evidence": "Each block reduces to maximizing the single-variable concave quadratic (s+x)(t-x).",
+      "solution_variant": "next-smaller-block-binary-lifting"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "incidental",
+      "evidence": "A Fenwick tree appears in an alternative offline implementation, but the main reviewed solution uses binary lifting.",
+      "solution_variant": "fenwick-active-blocks"
+    }
+  ]
+}

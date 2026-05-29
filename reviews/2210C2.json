@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2210,
+    "title": "Codeforces Round 1089 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2210,
+    "index": "C2",
+    "title": "A Simple GCD Problem (Hard Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2210/problem/C2",
+      "notes": "Statement and constraints: choose b_i within bounds while preserving all subarray gcd values and maximizing changed positions."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152413",
+      "notes": "Used to confirm the local adjacent-gcd reduction, lcm lower bounds, prime-multiple candidates, and DP over the first few primes."
+    },
+    {
+      "source_type": "cfstep_hints",
+      "url": "https://cfstep.com/codeforces/contests/contest-2210/problem-c2/",
+      "notes": "Used as an additional hint source for the same adjacent-gcd and small-prime DP structure."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2210C2",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose a bounded array b that preserves every subarray gcd of a while maximizing the number of positions where b_i differs from a_i.",
+    "constraints": "Values can be large enough that enumerating all multiples is impossible, but only adjacent gcd constraints and a small list of primes are needed.",
+    "core_idea": "Preserving gcd for all subarrays is equivalent to preserving gcd for every adjacent pair, because longer subarray gcds are derived from adjacent gcds. For each position, the smallest value preserving its two adjacent gcds is an lcm of those gcds; if it is below a_i, changing downward is always optimal. Positions that cannot be reduced may only be changed upward to a multiple, and it suffices to try multiplying by one of the first few primes: adjacent values cannot block all small primes because the product limit is finite. A DP over positions and chosen prime multiplier checks compatibility with the previous and next adjusted values.",
+    "complexity": "O(n * P^2 * log A) with P around 20 small primes.",
+    "tricks": [
+      "global subarray gcd preservation reduces to adjacent gcd preservation",
+      "minimal preserving value is an lcm of neighboring gcds",
+      "only the first few prime multipliers need to be considered"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "small-prime-adjacent-gcd-dp",
+      "summary": "Precompute each position's minimal preserving value, then DP over positions and prime multiplier choice to maximize changed positions while preserving adjacent gcds.",
+      "complexity": "O(n * P^2 * log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The hard version requires dynamic programming over positions and chosen prime multipliers to maintain compatibility with neighboring gcds.",
+      "solution_variant": "small-prime-adjacent-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The preserved property is every subarray gcd, reduced to adjacent gcd constraints.",
+      "solution_variant": "small-prime-adjacent-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/lcm",
+      "importance": "secondary",
+      "evidence": "The minimum value preserving both adjacent gcds is lcm(gcd(a_i,a_{i-1}), gcd(a_i,a_{i+1})).",
+      "solution_variant": "small-prime-adjacent-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "Unreduced positions can only be changed to multiples, and prime divisibility determines whether adjacent gcds stay unchanged.",
+      "solution_variant": "small-prime-adjacent-gcd-dp"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The solution identifies adjacent gcds as a sufficient invariant for all subarray gcd values.",
+      "solution_variant": "small-prime-adjacent-gcd-dp"
+    }
+  ]
+}

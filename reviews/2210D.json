@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2210,
+    "title": "Codeforces Round 1089 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2210,
+    "index": "D",
+    "title": "A Simple RBS Problem",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "math",
+      "strings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2210/problem/D",
+      "notes": "Statement and constraints: decide whether one regular bracket sequence can be transformed into another by swapping two disjoint RBS substrings."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152413",
+      "notes": "Used to confirm the tree representation of bracket pairs and the two invariants: leaf count and outer-chain length/highest branching depth."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2210D",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given two regular bracket sequences, decide whether one can be transformed into the other by repeatedly swapping two disjoint RBS substrings.",
+    "constraints": "The sequences are large, but only two linear-time invariants need to be computed.",
+    "core_idea": "Represent '(' + s + ')' as a rooted tree where each bracket pair is a node and nesting gives parent-child relations. Swapping disjoint RBS substrings corresponds to swapping contiguous ranges of child subtrees, so it preserves the number of leaves and the depth of the highest node with multiple children, equivalently the length of the outer single-child chain. The editorial proves these invariants are also sufficient by reducing any tree with the same invariants to a canonical form. In string terms, the leaf count is the number of adjacent \"()\" pairs, and the outer chain length is counted by repeatedly stripping matching outer brackets.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "model an RBS as a rooted tree of bracket pairs",
+      "find complete invariants of the reversible operation",
+      "reduce both trees to the same canonical form"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tree-invariant-characterization",
+      "summary": "Compute the leaf count and outer-chain length of both bracket trees; transformation is possible iff both invariants match.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "The objects and operation are regular bracket sequences and RBS substrings.",
+      "solution_variant": "tree-invariant-characterization"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The decisive representation is the rooted tree of bracket pairs.",
+      "solution_variant": "tree-invariant-characterization"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The answer is determined by two operation invariants: number of leaves and outer-chain/highest-branching depth.",
+      "solution_variant": "tree-invariant-characterization"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The sufficiency proof constructs a sequence of swaps that reduces any tree with the same invariants to a canonical form.",
+      "solution_variant": "tree-invariant-characterization"
+    }
+  ]
+}

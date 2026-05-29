@@ -346,6 +346,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/circular-interval": "环形区间",
   "trick/classify-overlap": "重叠分类",
   "trick/component-decomposition": "分量分解",
+  "trick/complement-symmetry": "补集对称",
   "trick/common-prefix-cancellation": "公共前缀消去",
   "trick/convert-to-prefix": "转为前缀",
   "trick/decision-tree": "决策树",

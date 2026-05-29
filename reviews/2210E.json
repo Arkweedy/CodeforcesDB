@@ -1,0 +1,114 @@
+{
+  "contest": {
+    "contest_id": 2210,
+    "title": "Codeforces Round 1089 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2210,
+    "index": "E",
+    "title": "Binary Strings are Simple?",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation",
+      "interactive",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2210/problem/E",
+      "notes": "Statement and hacks format: originally interactive, but hacks provide the hidden binary string as standard input."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152413",
+      "notes": "Used to confirm f(l,r)=m/gcd(m, number_of_ones), parity extraction on even-length queries, and the two-ended low-cost reconstruction."
+    },
+    {
+      "source_type": "cfstep_hints",
+      "url": "https://cfstep.com/codeforces/contests/contest-2210/problem-e/hints/",
+      "notes": "Used to cross-check the closed form for f and the query-graph viewpoint."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2210E",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Reconstruct a hidden binary string using queries that return the number of distinct inversion residues over cyclic rotations of a substring; in hacks the hidden string is supplied as input.",
+    "constraints": "Sum n <= 3000 and the intended query cost is bounded by O(n), but the underlying reconstruction idea is independent of the hack implementation.",
+    "core_idea": "For a substring of length m with k ones, cyclic rotations change the inversion count by k modulo m, so the number of distinct residues is m / gcd(m,k). For even m, the parity of gcd(m,k) tells the parity of k. Thus even-length queries reveal xor/parity constraints on substrings. Starting from an assumed first bit, one can reconstruct adjacent bits using differences of prefix/suffix parity queries; querying from both ends keeps the total cost below the bound. Equivalently, build a graph of parity constraints between prefix xor states and DFS it; the complement string gives the same answers, so up to two guesses are needed.",
+    "complexity": "O(n) oracle queries/cost up to the allowed constant factor; O(n) reconstruction work.",
+    "tricks": [
+      "closed form f=m/gcd(m, number_of_ones)",
+      "even-length query reveals parity of ones",
+      "binary string is only determined up to complement"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-ended-parity-reconstruction",
+      "summary": "Use even-length prefix/suffix queries to infer adjacent-bit parity from known previous bits while choosing the cheaper side.",
+      "complexity": "O(n) query cost under the intended bound",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "parity-constraint-graph",
+      "summary": "Create graph edges between prefix-xor states from chosen even-length queries, then DFS/BFS from assumed initial parity to recover the string up to complement.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The core task is reconstructing an unknown binary string from query answers; hacks only simulate the oracle offline.",
+      "solution_variant": "two-ended-parity-reconstruction"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The closed form f(l,r)=m/gcd(m,k) is the main mathematical observation.",
+      "solution_variant": "two-ended-parity-reconstruction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Even-length queries are useful because they reveal the parity of the number of ones in the substring.",
+      "solution_variant": "two-ended-parity-reconstruction"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The intended low-cost implementation chooses prefix or suffix queries from both ends depending on which side is cheaper.",
+      "solution_variant": "two-ended-parity-reconstruction"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "An alternative constructs a graph of parity constraints and recovers prefix xor values with DFS/BFS.",
+      "solution_variant": "parity-constraint-graph"
+    },
+    {
+      "tag": "trick/complement-symmetry",
+      "importance": "secondary",
+      "evidence": "The query answers are unchanged by complementing the whole binary string, so the solution may need two guesses.",
+      "solution_variant": "two-ended-parity-reconstruction",
+      "description": "Problems where an object and its bitwise/color/combinatorial complement are indistinguishable or symmetrically valid, and the solution must handle that ambiguity.",
+      "parent": "trick/symmetry",
+      "created_reason": "The existing symmetry tag is broad; complement ambiguity is a reusable searchable subpattern in binary reconstruction and coloring problems.",
+      "status": "candidate"
+    }
+  ]
+}
