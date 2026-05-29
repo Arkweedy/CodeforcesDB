@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "C",
+    "title": "Comparable Permutations",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation",
+      "interactive",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/C",
+      "notes": "题面为交互题：通过比较查询隐藏排列 p，输出重排索引 r，使 q=p_r 是字典序最小且 q>p、rev(q)>rev(p) 的排列。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256?locale=ru&mobile=false",
+      "notes": "官方题解将条件转为首尾差异位置两端都变大，证明最优 i 为最后一个局部最大值 k 的前一位，并排序后缀的三段单调区间。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190C",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "隐藏排列 p；需找到字典序最小的重排 q，使 q>p 且 reverse(q)>reverse(p)，并输出对应的原下标排列。",
+    "constraints": "多测，sum n<=2e4；交互限制最多 3n 次比较查询，hack 版直接给 p。",
+    "core_idea": "若 q 与 p 的首个差异为 i、末个差异为 j，则必须 q_i>p_i 且 q_j>p_j。对固定区间 [i,j]，只要两端都不是区间最大值，就可将 q_i 设为区间中大于 p_i 的最小值，其余升序填充。为了字典序最小，应让 i 尽量靠右；官方证明 i=k-1，其中 k 是最后一个局部最大值。后缀 [k,n] 由 decreasing then increasing 的结构组成，可用三指针/排序得到所需重排。",
+    "complexity": "O(n log n) in hacked/offline version, or O(n) comparisons beyond sorting monotone sections in the interactive strategy.",
+    "tricks": [
+      "把双向字典序条件转为首尾差异两端都增大",
+      "最后一个局部最大值决定最晚可修改位置",
+      "利用后缀三段单调结构排序候选区间"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "last-local-maximum",
+      "summary": "先找最后一个局部最大值 k；若不存在则无解。令 i=k-1，对后缀按单调段合并排序，取刚大于 p_i 的元素放到 i，其余升序填充。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "原题要求通过比较查询恢复足够的排列相对顺序。",
+      "solution_variant": "last-local-maximum"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "最优解选择尽量靠右的首个修改位置，并在区间内选刚好大于 p_i 的最小元素。",
+      "solution_variant": "last-local-maximum"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "后缀区间需要按值升序重排以得到字典序最小 q。",
+      "solution_variant": "last-local-maximum"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "解法依赖最后局部最大值后缀先降后升的排列结构。",
+      "solution_variant": "last-local-maximum"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "交互实现将后缀的单调段用指针合并排序。",
+      "solution_variant": "last-local-maximum"
+    }
+  ]
+}

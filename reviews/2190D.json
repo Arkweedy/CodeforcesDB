@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "D",
+    "title": "Prufer Vertex",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dsu",
+      "number theory",
+      "probabilities",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/D",
+      "notes": "题面给定森林，统计所有补边成树方案中，每个 v<n 成为 Prufer vertex 的方案数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256?locale=ru&mobile=false",
+      "notes": "官方题解证明 P(T) 是从 n 到 n-1 路径上的第二个点，并用组件大小对广义 Cayley 补树方案做对称计数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190D",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一个森林，枚举所有补边成一棵树的方案；对每个 v<n，统计最终树的 Prufer 删除过程最后与 n 同剩的另一个点 P(T)=v 的方案数。",
+    "constraints": "多测，sum n<=2e5；需要线性或 O(n log n)，答案模 998244353。",
+    "core_idea": "在任意树中，若 n-1 能被删除，则 n 与 n-1 是仅剩叶子，最后 P(T) 正是 n 到 n-1 路径上的第二个点。于是只需统计补边后这条路径第二点为 v 的方案数。森林组件内顶点在补边计数中可按组件大小对称处理；用广义 Cayley 公式 n^{k-2} prod s_i 作为总方案基数，再按 n、n-1、v 所在组件关系分类，乘上子树大小/组件大小比例。",
+    "complexity": "O(n) per test case after DFS/DSU component preprocessing.",
+    "tricks": [
+      "把 Prufer 删除结果转成 n 到 n-1 路径第二点",
+      "用森林补树的广义 Cayley 公式计数",
+      "按 n、n-1、v 的组件关系分类并用组件大小对称性求比例"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "component-symmetry",
+      "summary": "DFS 求组件、大小、以 n 为根时的父亲和子树大小；根据 n 与 n-1 是否同组件以及 v 所在组件，套用组件大小比例公式计算答案。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/prufer-sequence",
+      "importance": "primary",
+      "evidence": "题目定义直接基于 Prufer 序列生成过程，核心结论刻画最后剩余顶点。",
+      "solution_variant": "component-symmetry"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "需要用森林补成树的方案数公式 n^(k-2) prod s_i 并按条件计数。",
+      "solution_variant": "component-symmetry"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "P(T) 等于 n 到 n-1 路径第二点的性质是树结构核心。",
+      "solution_variant": "component-symmetry"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "需要识别森林连通组件和组件大小；DFS 或 DSU 均可实现。",
+      "solution_variant": "component-symmetry"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "官方推导用组件内顶点对称性，将计数转为 k/|C| 这类比例。",
+      "solution_variant": "component-symmetry"
+    }
+  ]
+}

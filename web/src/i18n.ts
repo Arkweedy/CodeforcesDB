@@ -229,6 +229,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm/sqrt-decomposition": "分块",
   "string": "字符串",
   "string/acam": "AC 自动机",
+  "string/bracket-sequence": "括号序列",
   "string/finite-automaton": "有限自动机",
   "string/run-length-encoding": "游程编码",
   "string/suffix-array": "后缀数组",

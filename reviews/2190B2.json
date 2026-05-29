@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "B2",
+    "title": "Sub-RBS (Hard Version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "games",
+      "implementation",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/B2",
+      "notes": "Hard 版本给任意括号串 s，要求所有非空子序列 t 的 score 之和；score 是 t 的更优合法括号子序列最大长度。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256?locale=ru&mobile=false",
+      "notes": "官方题解证明若合法 t 有更优子序列，则 score=|t|-2，且等价于 t 是 RBS 并包含 subsequence ')(('；随后做 DP 计数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190B2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定括号串 s，枚举所有非空子序列 t；若 t 是合法括号序列，score 为其更优合法括号子序列最大长度，否则 0。求所有 score 之和。",
+    "constraints": "多测，sum n<=100；可做 O(n^3) DP，也可优化到 O(n^2)。",
+    "core_idea": "由 Easy 的结构可知，对于固定长度的合法 t，score 只能是 0 或 |t|-2。进一步等价条件是 t 为 RBS 且包含 ')((' 作为子序列。于是 DP 只需同时维护当前 balance、已选长度，以及匹配到 ')((' 的进度；最终对 balance=0 且进度=3 的状态贡献 length-2。",
+    "complexity": "O(n^3) in the straightforward DP; O(n^2) if storing count and total length instead of exact length.",
+    "tricks": [
+      "把最大更优子序列长度化为二值条件 |t|-2",
+      "将条件归约为 RBS + 包含 ')((' 子序列",
+      "DP 同时维护括号 balance 和模式匹配进度"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bracket-pattern-dp",
+      "summary": "扫描原串，每个字符可选或不选；选时更新 balance、长度和 ')((' 的自动机进度。最后累加 dp[balance=0][progress=3][len]*(len-2)。",
+      "complexity": "O(n^3)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "length-sum-optimized",
+      "summary": "不显式存长度，而对每个 balance/progress 存方案数与长度和，可将 DP 压到 O(n^2)。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bracket-dp",
+      "importance": "primary",
+      "evidence": "主状态包含括号 balance，并统计合法括号子序列。",
+      "solution_variant": "bracket-pattern-dp"
+    },
+    {
+      "tag": "dp/automaton-dp",
+      "importance": "primary",
+      "evidence": "需要记录 ')((' 已匹配到几位，等价于小自动机状态。",
+      "solution_variant": "bracket-pattern-dp"
+    },
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "score 和合法性完全由 RBS/括号 balance 条件定义。",
+      "solution_variant": "bracket-pattern-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "DP 统计所有子序列的数量及长度贡献。",
+      "solution_variant": "bracket-pattern-dp"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "需要正确处理不选字符、balance 非负、长度贡献和模式进度更新。",
+      "solution_variant": "bracket-pattern-dp"
+    }
+  ]
+}

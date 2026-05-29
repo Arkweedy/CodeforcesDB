@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "B1",
+    "title": "Sub-RBS (Easy Version)",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "dp",
+      "greedy",
+      "strings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/B1",
+      "notes": "题面给定一个合法括号序列 s，要求找比 s 字典序更大的合法括号子序列的最大长度。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256?locale=ru&mobile=false",
+      "notes": "官方题解固定第一次差异位置，把某个 ')' 替换为后面的 '('，并证明删除对应数量括号后仍是 RBS。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190B1",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定合法括号序列 s，求一个非空合法括号子序列 t 的最大长度，使 t 按题目定义比 s 更大；不存在则 -1。",
+    "constraints": "多测，sum n<=2e5；需要 O(n) 扫描。",
+    "core_idea": "t 比 s 大的第一处差异必须是 s_i=')' 而 t_i='('。固定这个 i 后，选择后方第一个 '(' 作为 t_i，会跳过 j-i 个 ')'；为保持左右括号数相等，还需在更后方删除 j-i 个 '('。删除 ')' 会提高之后前缀 balance，而删除的 '(' 都在差异点之后，所以只要后方 '(' 数足够，得到的子序列一定仍是 RBS，长度为 n-2*(j-i)。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "固定字典序第一次变大的位置",
+      "用 next '(' 和后缀 '(' 数判断可行",
+      "利用删除 ')' 不会破坏前缀非负性"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-next-open",
+      "summary": "预处理每个位置右侧第一个 '(' 和后缀 '(' 数；枚举 s_i=')' 的位置，若可删除匹配数量的 '('，更新 n-2*(j-i)。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/bracket-sequence",
+      "display_name": "Bracket sequence",
+      "description": "Problems where the central object is a bracket sequence, regular bracket sequence, or prefix-balance constraints.",
+      "status": "candidate",
+      "parent": "string",
+      "created_reason": "RBS and bracket-prefix-balance problems are common and deserve direct retrieval beyond the generic string tag.",
+      "importance": "primary",
+      "evidence": "题目核心对象是合法括号序列及其合法括号子序列。",
+      "solution_variant": "greedy-next-open"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定第一次变大位置后，选择其后第一个 '(' 能最大化保留长度。",
+      "solution_variant": "greedy-next-open"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "实现依赖 next '(' 和后缀 '(' 计数判断每个差异点。",
+      "solution_variant": "greedy-next-open"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "需要用删除的 '(' 与 ')' 数量配平来保证最终长度和合法性。",
+      "solution_variant": "greedy-next-open"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 dp，但 Easy 的主解法是贪心扫描，不需要 DP。",
+      "solution_variant": "greedy-next-open"
+    }
+  ]
+}
