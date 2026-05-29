@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import argparse
 import re
+import sqlite3
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cfdb.db import DEFAULT_DB_PATH, ROOT, connect, init_db
+from cfdb.db import DEFAULT_DB_PATH, ROOT
 
 
 FULL_TAG_BLOCK_RE = re.compile(
@@ -26,10 +27,11 @@ def extract_full_tag_translations(i18n_path: str | Path) -> set[str]:
 
 
 def db_tags(db_path: str | Path) -> list[str]:
-    init_db(db_path)
-    with connect(db_path) as conn:
+    path = Path(db_path)
+    uri = f"file:{path.resolve().as_posix()}?mode=ro"
+    with sqlite3.connect(uri, uri=True) as conn:
         rows = conn.execute("SELECT tag FROM tags ORDER BY tag").fetchall()
-    return [str(row["tag"]) for row in rows]
+    return [str(row[0]) for row in rows]
 
 
 def missing_translations(tags: list[str], translated_tags: set[str]) -> list[str]:

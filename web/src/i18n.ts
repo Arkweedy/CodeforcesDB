@@ -255,6 +255,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/linear-algebra": "线性代数",
   "math/linear-algebra/matrix": "矩阵",
   "math/linear-algebra/xor-basis": "异或线性基",
+  "math/linear-algebra/xor-vector-space": "异或向量空间",
   "math/number-theory": "数论",
   "math/number-theory/chinese-remainder-theorem": "中国剩余定理",
   "math/number-theory/divisibility": "整除",
@@ -433,6 +434,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "versioned-node": "版本节点",
   "xor-hashing": "异或哈希",
   "xor-basis": "异或线性基",
+  "xor-vector-space": "异或向量空间",
   "xor-subset": "异或子集"
 };
 
