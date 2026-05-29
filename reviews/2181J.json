@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "J",
+    "title": "Jinx or Jackpot",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/J",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the Bayesian posterior DP and the endpoint-bet optimization."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181J",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "A gambler has a hidden win probability selected from a known finite set. After observing wins/losses, choose bets to maximize expected final money after k rounds.",
+    "constraints": "k is small enough for a DP over observed win/loss counts, while money values should not be part of the state explicitly.",
+    "core_idea": "Given a history with a wins and b losses, use Bayes' rule to compute the posterior probability that the next round is a win. Let f[a][b] be the best expected multiplier for one unit of current money from that state. The recurrence is linear in the chosen bet fraction y: p*f[a+1][b]*(1+y)+(1-p)*f[a][b+1]*(1-y). A linear objective over y in [0,1] is maximized at an endpoint, so the optimal action is either bet nothing or all current money. This removes the money dimension and leaves an O(k^2 * n) posterior DP.",
+    "complexity": "O(k^2 n) after precomputing posterior sums over n candidate probabilities.",
+    "tricks": [
+      "Bayesian posterior from win/loss counts",
+      "expected value is homogeneous in current money",
+      "linear objective chooses endpoint bet"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "DP over (wins, losses) storing best expected multiplier; compute posterior win probabilities from the prior list and choose all-in or no-bet by the sign of a linear coefficient.",
+      "complexity": "O(k^2 n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "The recurrence optimizes expected future money over the number of observed wins and losses.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/probability/bayesian-update",
+      "importance": "primary",
+      "evidence": "The next-win probability is recomputed from the posterior distribution after a wins and b losses.",
+      "solution_variant": "main",
+      "description": "Use Bayes' rule or posterior weights to update probabilities after observations.",
+      "parent": "math/probability",
+      "created_reason": "Posterior-update probability DP is distinct from generic probability and expectation tags.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/linear-objective-extreme-choice",
+      "importance": "primary",
+      "evidence": "The optimized bet appears linearly in the recurrence, so the optimum is always at y=0 or y=1.",
+      "solution_variant": "main",
+      "description": "When a decision variable appears only linearly over an interval, reduce the choice to one of the interval endpoints.",
+      "parent": "trick",
+      "created_reason": "This endpoint-choice optimization is a reusable trick in expected value and greedy problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "The whole recurrence is written in terms of conditional probabilities and expectation.",
+      "solution_variant": "main"
+    }
+  ]
+}

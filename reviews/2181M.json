@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "M",
+    "title": "Medical Parity",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/M",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the two-state parity DP over adjacent x/y consistency."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181M",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Given two binary strings with possible mistakes, change the fewest characters so that the second string matches the running parity relation induced by the first.",
+    "constraints": "The strings are long, but the consistency relation only depends on adjacent parity, so a two-state DP suffices.",
+    "core_idea": "Let the corrected medical parity string be y. The corrected x_i is forced by consecutive y values: x_i = y_{i-1} xor y_i, with y_0 fixed. Therefore choosing the whole corrected y sequence determines x. Run a DP over the current value y_i; transition from previous bit p to current bit q costs one if x_i differs from the input x_i plus one if q differs from the input y_i. This is a standard finite-state DP on a binary automaton.",
+    "complexity": "O(n) per test case with two states.",
+    "tricks": [
+      "represent x by adjacent parity differences of y",
+      "two-state DP",
+      "Hamming cost on corrected strings"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Choose each corrected y_i by DP; the previous y bit and current y bit determine the corrected x_i and the local edit cost.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "Only the previous corrected y bit is needed as state, giving a constant-state automaton DP.",
+      "solution_variant": "main",
+      "description": "Dynamic programming over a small finite set of states, often equivalent to a hand-built automaton.",
+      "parent": "dp",
+      "created_reason": "This distinguishes constant-state recurrence problems from broad dp/string tags.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The consistency relation is exactly an XOR/parity relation between adjacent corrected y values and x_i.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "The input objects are binary strings and the cost is Hamming edits over their characters.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "The first string is treated as the adjacent XOR difference sequence of the second string.",
+      "solution_variant": "main"
+    }
+  ]
+}

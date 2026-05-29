@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "F",
+    "title": "Fragmented Nim",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "games"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/F",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the parity-only winning criterion for Fragmented Nim."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Determine the winner of a fragmented Nim variant from the sizes of all current piles/fragments.",
+    "constraints": "Only pile parities matter, so the answer must be computed by a single scan rather than game-tree search.",
+    "core_idea": "The game collapses to a parity invariant. If at least one pile has even size, the first player has an immediate winning move. Otherwise all piles are odd, and every move changes the parity of the number of piles/fragments in a controlled way; the winner is determined by the parity of the pile count. Thus the solution is: even pile exists -> Alice; otherwise Alice wins exactly when the number of piles is even.",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "ignore exact pile sizes except parity",
+      "even pile immediate win",
+      "all-odd pile-count parity"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Scan for an even pile; if none exists, decide by n mod 2.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The entire winner criterion depends on whether a pile size or the number of all-odd piles is even.",
+      "solution_variant": "main",
+      "description": "Use even/odd parity as the decisive invariant or case split.",
+      "parent": "trick",
+      "created_reason": "Parity-only game and construction problems are common and not captured by generic math/game tags.",
+      "status": "active"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The task is a two-player impartial game, even though it simplifies to a parity criterion.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The proof relies on the invariant behavior of pile-count parity after moves in the all-odd case.",
+      "solution_variant": "main"
+    }
+  ]
+}
