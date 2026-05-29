@@ -1,0 +1,57 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "A",
+    "title": "Compare Suffixes",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://apac.icpc.global/assets/championship/2026/2026-problemset.pdf",
+      "notes": "Official APAC problemset statement. The task is explicitly interactive: only n is given, suffix comparisons are obtained by online queries, and the query limit is 6260."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac26.icpc.tw/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "Official contest analysis. It describes maintaining suffix order from the end, using splitting positions, representative indices, and fallback binary searches to fit the 6260-query budget."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2206A?lang=en",
+      "notes": "Luogu mirror of the statement, used to cross-check the interactive format and constraints."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206A",
+      "notes": "Candidate Luogu solution page; I did not find or consult a concrete solution article there."
+    }
+  ],
+  "annotation": {
+    "summary": "Excluded from the normal searchable ICPC-style database: this is an interactive suffix-order reconstruction problem, not a standard input/output algorithmic task.",
+    "constraints": "The hidden string length is 2 <= n <= 1000 over lowercase letters. The program may ask at most 6260 adaptive suffix-comparison queries, then must output the full suffix order.",
+    "core_idea": "The official strategy is algorithmically interesting but interactive: maintain the suffix array for suffixes processed from right to left. Adjacent ordered suffixes can only create at most 25 splitting positions, because there are only 26 lowercase letters. For most insertions, split the current order into blocks, use representative indices to locate the target block in about log2(26)+1 queries, and only in rare split-creating cases fall back to a full binary search over the current suffix order. This yields about 6n + 25 log n queries. However, because the solution depends on live oracle queries and flush-based interaction, it is outside the repository's default standard-AC searchable scope.",
+    "complexity": "Excluded; official strategy uses O(n^2) local computation and at most 6260 interactive queries.",
+    "tricks": [
+      "interactive oracle queries",
+      "incremental suffix-array maintenance",
+      "alphabet-size bound on splitting positions",
+      "representative-index search",
+      "rare fallback binary search"
+    ],
+    "confidence": "high",
+    "review_status": "excluded"
+  },
+  "solution_variants": [],
+  "tags": []
+}
