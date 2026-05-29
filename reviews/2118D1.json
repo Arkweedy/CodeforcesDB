@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2118, "title": "Codeforces Round 1030 (Div. 2)"},
+  "problem": {"contest_id": 2118, "index": "D1", "title": "Red Light, Green Light (Easy version)", "rating": 1700, "rating_status": "official", "official_tags": ["brute force", "dfs and similar", "dp", "graphs", "implementation", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2118/problem/D1", "notes": "题面与约束：长为 1e15 的直线，若到达红灯则掉头，每秒移动一格；Easy 版 n,q,k 总规模均小。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143702", "notes": "官方题解确认 Easy 版可在状态 (红绿灯编号, 时间 mod k, 方向) 上直接 DFS 判环。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/t2z0c41j", "notes": "Luogu 题解给出相同状态设计：从一个红绿灯跳到下一个红绿灯，用 vis[u][t][dir] 判定循环。"}
+  ],
+  "annotation": {
+    "summary": "在一条很长的线段上有若干周期红灯。每个查询从某个起点向右出发，遇到红灯先掉头再移动，问是否会在极长时间内离开线段。",
+    "constraints": "Easy 版 n,k,q 总和较小，可显式枚举红绿灯状态；位置可达 1e15，不能逐格模拟。",
+    "core_idea": "只有到达红绿灯时方向才可能改变，因此把状态压成 (当前红绿灯下标, 当前时间 mod k, 方向)。从当前灯按方向跳到相邻灯，时间增加两灯距离 mod k；若新灯在该余数为红灯则翻转方向。若跳出灯序列则会离开；若某个状态重复则陷入循环，不能离开。",
+    "complexity": "O(nk) states per query in the easy constraints",
+    "tricks": ["只在红绿灯之间跳转", "时间只需保留 mod k", "重复状态表示永不离开"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "explicit-functional-graph-dfs", "summary": "对每个查询从第一个不小于起点的红绿灯状态出发，DFS/while 跳转相邻红绿灯，用 visited 判环。", "complexity": "O(nk) per query worst-case", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/functional-graph", "importance": "primary", "evidence": "每个压缩状态都有唯一后继；答案取决于沿函数图是否到达边界或进入环。", "solution_variant": "explicit-functional-graph-dfs"},
+    {"tag": "trick/cycle-detection", "importance": "primary", "evidence": "Easy 版直接用 visited 状态判定是否进入循环，循环即无法离开。", "solution_variant": "explicit-functional-graph-dfs", "description": "在模拟、函数图或状态转移系统中检测状态是否重复，从而判断无限循环或周期行为。", "parent": "trick", "created_reason": "Red Light Green Light 的核心判定是是否重复状态；该技巧在模拟/函数图题中可复用，现有 functional-graph 不能表达判环这一流程。", "status": "candidate"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "secondary", "evidence": "红灯状态只取决于到达时间 modulo k。", "solution_variant": "explicit-functional-graph-dfs"},
+    {"tag": "implementation", "importance": "secondary", "evidence": "需要处理起点不在红绿灯上、跳出边界和到达后先看灯再移动的顺序。", "solution_variant": "explicit-functional-graph-dfs"}
+  ]
+}

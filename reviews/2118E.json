@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2118, "title": "Codeforces Round 1030 (Div. 2)"},
+  "problem": {"contest_id": 2118, "index": "E", "title": "Grid Coloring", "rating": 2400, "rating_status": "official", "official_tags": ["constructive algorithms", "geometry", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2118/problem/E", "notes": "题面与约束：n,m 均为奇数，要求给出 n*m 个格子的染色顺序，使每个格子受到的最远点惩罚不超过 3。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143702", "notes": "官方题解给出从 N=1 和较小矩形逐层扩展的构造；奇数尺寸保证中线和两侧交替扩展可控。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2118E", "notes": "Luogu 候选题解页；本次草稿未实际引用正文。"}
+  ],
+  "annotation": {
+    "summary": "给一个奇数行列的网格，输出所有格子的染色顺序。每次染一个格子后，已染格子中离它最远者会受惩罚，要求任意格子总惩罚不超过 3。",
+    "constraints": "sum n*m <= 5000，允许直接输出构造；重点是证明每格惩罚上界。",
+    "core_idea": "先处理一维奇数链：从中心附近交替向两端染色，可保证端点/已染最远点的惩罚次数受控。二维时假设 n>=m，把 (n-2)*m 的构造扩展到 n*m：先染新增两条长边的中间格，使当前外接矩形在棋盘距离下足够宽；再沿两条边上下交替染色，让新格只可能惩罚对侧边上的少数格。角落可能同时受水平和垂直扩展影响，需固定扩展顺序处理。递归/迭代地每次加两行或两列，最终得到全网格顺序。",
+    "complexity": "O(nm)",
+    "tricks": ["奇数网格有唯一中心线", "从一维交替染色推广到二维边界扩展", "每次只扩展两条对边并控制角落惩罚"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "odd-grid-layer-extension", "summary": "从 1 维/小矩形构造出发，每次向外扩展两行或两列，并在新增边上交替输出格子。", "complexity": "O(nm)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出一个染色顺序，核心是显式构造并证明惩罚上界。", "solution_variant": "odd-grid-layer-extension"},
+    {"tag": "math/geometry", "importance": "primary", "evidence": "最远点由 Chebyshev 距离和 Manhattan tie-break 决定，构造证明依赖矩形边界的距离关系。", "solution_variant": "odd-grid-layer-extension"},
+    {"tag": "trick/tiling", "importance": "secondary", "evidence": "构造按网格层/边界块逐步铺开，局部模式重复到整个矩形。", "solution_variant": "odd-grid-layer-extension"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "扩展时按固定顺序交替选择两侧格子，局部控制对侧惩罚次数。", "solution_variant": "odd-grid-layer-extension"}
+  ]
+}

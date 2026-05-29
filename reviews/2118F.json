@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2118, "title": "Codeforces Round 1030 (Div. 2)"},
+  "problem": {"contest_id": 2118, "index": "F", "title": "Shifts and Swaps", "rating": 3100, "rating_status": "official", "official_tags": ["data structures", "graphs", "hashing", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2118/problem/F", "notes": "题面与约束：数组可整体循环左移，也可交换相邻且差值至少 2 的元素，判断 a 能否变为 b。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143702", "notes": "官方题解将可交换关系转成相邻值不可跨越的约束结构，并使用树哈希/循环匹配判断等价。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/k9sd2t1j", "notes": "Luogu 题解确认：只需保留相邻值之间的相对结构，将数组规约为树/括号式对象后比较循环位移。"}
+  ],
+  "annotation": {
+    "summary": "两个长度 n 的数组都包含 1..m 的所有值。允许循环移位整个数组，以及交换相邻但数值差至少 2 的元素。问能否从 a 变成 b。",
+    "constraints": "sum n <= 5e5，t 可很大，需要线性或 n log n 总复杂度；值可能重复但每个 1..m 至少出现一次。",
+    "core_idea": "差值至少 2 的相邻元素可以互换，意味着只有数值相邻的元素对 (x,x+1) 的相对穿越受限制。把数组按这些不可交换约束规约成一棵以值域层级为骨架的有根树/嵌套结构：相同值的出现划分出子区间，下一层值只能在这些区间中移动。两个数组可通过允许操作互达，当且仅当它们的规约树在考虑全局循环移位后同构。用树哈希给每个子结构编码，再用 KMP/字符串匹配检查根的儿子序列是否为循环位移。",
+    "complexity": "O(n log n) or O(n) with careful hashing and matching",
+    "tricks": ["相邻值不可跨越，非相邻值可交换", "把 trace-monoid 等价类规约为值层级树", "根层需要按循环位移比较"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "tree-hash-cyclic-match", "summary": "构造表示不可交换相邻值约束的 rooted tree，对树做哈希，并对顶层序列做 cyclic shift 匹配。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/tree-hashing", "importance": "primary", "evidence": "主判定把数组规约成树状结构，并通过树哈希比较两个规约结构是否同构。", "solution_variant": "tree-hash-cyclic-match", "description": "对有根或无根树结构计算规范哈希，用于树同构、子树比较或把组合结构压缩为可比较编码。", "parent": "graph/tree", "created_reason": "2118F 的核心是树结构哈希判等；普通 hashing 或 graph/tree 不足以精准检索。", "status": "candidate"},
+    {"tag": "algorithm/hashing", "importance": "primary", "evidence": "需要给子树/子结构计算稳定编码并快速比较。", "solution_variant": "tree-hash-cyclic-match"},
+    {"tag": "string/kmp-prefix-function", "importance": "secondary", "evidence": "顶层结构只要求循环移位相等，可把哈希序列复制一遍后用 KMP/前缀函数匹配。", "solution_variant": "tree-hash-cyclic-match"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "不可交换关系形成的嵌套结构以树表示。", "solution_variant": "tree-hash-cyclic-match"}
+  ]
+}

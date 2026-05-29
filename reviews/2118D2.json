@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2118, "title": "Codeforces Round 1030 (Div. 2)"},
+  "problem": {"contest_id": 2118, "index": "D2", "title": "Red Light, Green Light (Hard version)", "rating": 2200, "rating_status": "official", "official_tags": ["binary search", "brute force", "data structures", "dfs and similar", "dp", "graphs", "implementation", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2118/problem/D2", "notes": "题面与 Easy 相同，但 n,q 总规模提升，k 可大，不能对每个查询重跑 O(nk) 状态 DFS。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143702", "notes": "官方题解确认按状态图预处理能否逃离，并用有序集合/二分找到当前方向上的下一盏灯。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/7e8079ew", "notes": "Luogu 题解确认用 p_i ± d_i modulo k 对状态分组，反向/记忆化判定每个灯的方向状态。"}
+  ],
+  "annotation": {
+    "summary": "多次询问同一组周期红绿灯下，从不同起点向右出发是否最终离开线段；Hard 版要求预处理后快速回答。",
+    "constraints": "sum n+q <= 2e5 级别，位置到 1e15，k 大；需要 O((n+q) log n) 或近似复杂度。",
+    "core_idea": "仍然把运动压成红绿灯状态 (i,dir)。从某个灯向右走到下一个会在到达时间满足 (p_j - current_time) mod k 的条件时翻转；把等价条件整理成 p_i-d_i 或 p_i+d_i 的模 k 分类，可以用有序集合找到从某状态出发第一个会触发转向的下一个灯。这样每个状态有唯一后继，预处理整张函数图上哪些状态能逃离、哪些进入环。查询时先二分找到起点右侧第一盏灯，计算到达时间余数和方向状态，再查预处理结果。",
+    "complexity": "O((n+q) log n)",
+    "tricks": ["把红灯条件化成 p_i ± d_i modulo k 的同类状态", "用有序集合/二分跳到下一个相关红绿灯", "在压缩函数图上做记忆化判环"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "compressed-functional-graph-with-ordered-sets", "summary": "用模类分组和有序集合求每个方向状态的后继，再在函数图上预处理能否逃离。", "complexity": "O((n+q) log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/functional-graph", "importance": "primary", "evidence": "压缩后每个灯和方向状态都有唯一后继，整题变成函数图能否到达出口。", "solution_variant": "compressed-functional-graph-with-ordered-sets"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "primary", "evidence": "后继查找的关键是红灯出现条件只依赖 p_i±d_i 的 modulo k 分类。", "solution_variant": "compressed-functional-graph-with-ordered-sets"},
+    {"tag": "data-structure/ordered-multiset", "importance": "secondary", "evidence": "需要在每个模类中按位置找当前方向的下一盏相关灯，可用有序 set/multiset 或排序数组二分。", "solution_variant": "compressed-functional-graph-with-ordered-sets"},
+    {"tag": "trick/cycle-detection", "importance": "secondary", "evidence": "预处理状态结果时需要区分到达出口与进入环。", "solution_variant": "compressed-functional-graph-with-ordered-sets"}
+  ]
+}
