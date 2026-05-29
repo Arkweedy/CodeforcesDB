@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "L",
+    "title": "Onion",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/L",
+      "notes": "题面与约束：点集 S={(x,(ax+b) mod n)}，重复 k 次求当前点集凸包二倍面积并删除凸包边界点。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac.icpc.global/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "官方 analysis 给出关键 sqrt 分组：用鸽巢原理找到小步长 u 和小纵向差 v，把所有点划分为 O(sqrt n) 个共线组；每层只在组端点候选上求凸包并更新组。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206L",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定由线性同余生成的巨大点集，反复执行凸包剥洋葱：每次输出当前凸包二倍面积，然后删除凸包边界上的所有点。",
+    "constraints": "n up to 1e9，不能显式存点；k<=300，需要每层只处理 O(sqrt n) 级别的压缩表示。",
+    "core_idea": "利用点的生成式 y=(ax+b) mod n。令 r=ceil(sqrt(n))，在前 r+1 个点中按 y 所在长度约 r 的区间套鸽巢，可找到 0<=j<k<=r，使 u=k-j<=r 且 v=y_k-y_j 满足 |v|<r，并有 v≡a*u (mod n)。固定余数 s 后，点 s,s+u,s+2u,... 的 y 坐标可写成 y_s+t*v 减去若干个 n；当 floor((y_s+t*v)/n) 不变时，这一段点共线。于是所有 n 个点能被划分成 O(sqrt n) 个共线连续组。凸包顶点只可能来自每个组的左右端点，所以每层在 O(sqrt n) 个候选点上求凸包、用 shoelace 计算面积，再删除顶/底整组以及落在凸包边界上的各组端点，更新组端点后进入下一层。",
+    "complexity": "O(k sqrt(n) log n) time with candidate sorting, or O(k sqrt(n)) with ordered iteration; O(sqrt(n)) memory.",
+    "tricks": ["鸽巢原理找小 modular step", "隐式模点集划分为共线段", "凸包顶点只来自组端点", "维护共线组并剥凸包层"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sqrt-collinear-groups-onion-peeling",
+      "summary": "找小步长 (u,v)，把巨大模点集表示成 O(sqrt n) 个共线组；反复从组端点求凸包、输出二倍面积并删除边界组/端点。",
+      "complexity": "O(k sqrt(n) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/convex-hull",
+      "importance": "primary",
+      "evidence": "每次操作都要求当前凸包面积并删除边界点，算法也显式从候选端点计算凸包。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling"
+    },
+    {
+      "tag": "math/geometry/convex-layers",
+      "importance": "primary",
+      "evidence": "题目过程正是反复删除凸包边界，即 onion decomposition / convex layers。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling",
+      "description": "Repeated convex hull peeling / onion decomposition of a planar point set, including counting or maintaining convex layers.",
+      "parent": "math/geometry/convex-hull",
+      "created_reason": "This is more specific than a single convex hull computation and is useful for retrieving onion-layer problems.",
+      "status": "candidate",
+      "aliases": ["onion decomposition", "convex layer", "convex layers"]
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "决定性压缩把最多 1e9 个隐式点划分为 O(sqrt n) 个共线组，使每层可处理。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "问题本质是平面点集、凸包、多边形面积与几何层剥离。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "secondary",
+      "evidence": "小步长 u 和小纵向差 v 通过把 y 值分入 sqrt 大小区间并套鸽巢原理得到。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling",
+      "description": "Use the pigeonhole principle to prove the existence of a bounded object, collision, repetition, or compressed representation.",
+      "parent": "trick",
+      "created_reason": "The pigeonhole step is a reusable proof/algorithmic trick and is the reason the sqrt-sized representation exists here.",
+      "status": "candidate",
+      "aliases": ["pigeonhole"]
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "共线分组来自 v ≡ a*u (mod n) 和 y=(ax+b) mod n 的表示。",
+      "solution_variant": "sqrt-collinear-groups-onion-peeling"
+    }
+  ]
+}
