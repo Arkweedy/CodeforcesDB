@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2195,
+    "title": "Codeforces Round 1080 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2195,
+    "index": "E",
+    "title": "Idiot First Search",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2195/problem/E",
+      "notes": "题面：给定满二叉树式结构和 IFS 移动规则，要求每个起点到 0 的时间。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2195E",
+      "notes": "用于补充读取题面、输入范围与样例解释。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151174?locale=en&mobile=false",
+      "notes": "官方题解代码确认：一次后序求子树 IFS 时间，一次前序把父侧贡献传给孩子。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Amy-xue/p/19657048/March2026",
+      "notes": "中文题解交叉确认树形 DP 含义：先求回到自身/离开子树代价，再加父侧答案。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2195E",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "在一棵特殊二叉树上，Bob 按空/L/R 三态规则移动。对每个非根点，求从该点出发直到到达 0 的步数，答案对 1e9+7 取模。",
+    "constraints": "多测，所有 n 总和不超过 300001；需要线性或接近线性处理每棵树。",
+    "core_idea": "对一个点第一次进入后，若是叶子只需一步回父亲；否则会依次走完整个左子树、右子树，再回父亲，所以子树内部代价满足 dp[u]=dp[l]+dp[r]+3。这个 dp 只覆盖从 u 进入并最终离开 u 到父亲的过程。再从根向下传播父侧贡献：从孩子出发的总时间等于孩子内部代价加上回到父亲后父亲还需要的剩余过程，官方代码中把父亲 dp 累加到两个孩子即可得到每个起点答案。",
+    "complexity": "O(n) per test case, O(n) memory.",
+    "tricks": [
+      "把三态移动压缩成每个内部节点固定访问左、右、父三段的代价",
+      "后序计算子树代价，前序传播父侧贡献"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tree-dp-reroot-propagation",
+      "summary": "后序 DFS 计算每个点完成自己子树 IFS 流程并离开到父亲的时间；前序 DFS 将父侧剩余时间加入孩子，使每个节点的 dp 成为从该节点出发到 0 的总时间。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "核心状态 dp[u] 是树上递推的 IFS 子树代价，转移 dp[u]=dp[l]+dp[r]+3 直接决定解法。",
+      "solution_variant": "tree-dp-reroot-propagation"
+    },
+    {
+      "tag": "dp/rerooting-dp",
+      "importance": "secondary",
+      "evidence": "第二遍 DFS 把父侧贡献下传给每个孩子，形式上是换根/重根 DP 的贡献传播。",
+      "solution_variant": "tree-dp-reroot-propagation"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "两次树 DFS 分别完成后序和前序传播。",
+      "solution_variant": "tree-dp-reroot-propagation"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "题面三态标记空/L/R 是理解固定遍历顺序和 DP 代价的关键状态。",
+      "solution_variant": "tree-dp-reroot-propagation"
+    }
+  ]
+}

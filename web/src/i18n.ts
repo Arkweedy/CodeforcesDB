@@ -204,8 +204,10 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/bridge": "桥",
   "graph/cactus": "仙人掌",
   "graph/connectivity": "连通性",
+  "graph/dag": "DAG",
   "graph/dfs": "DFS",
   "graph/euler-trail": "欧拉路径",
+  "graph/euler-tour": "欧拉序",
   "graph/flow": "网络流",
   "graph/heavy-light-decomposition": "树链剖分",
   "graph/layered-graph": "分层图",
@@ -349,6 +351,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/state-augmentation": "状态增强",
   "trick/symmetry": "对称性",
   "trick/tight-loose-state": "紧/松状态",
+  "trick/tiling": "平铺构造",
   "trick/xor-hashing": "异或哈希"
 };
 
@@ -385,6 +388,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "convex-hull": "凸包",
   "convex-hull-optimization": "斜率优化",
   "data-structure": "数据结构",
+  "dag": "DAG",
   "decision-tree": "决策树",
   "difference-array": "差分数组",
   "dfs": "DFS",
@@ -401,6 +405,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "expression": "表达式",
   "extreme-position": "极端位置",
   "euler-trail": "欧拉路径",
+  "euler-tour": "欧拉序",
   "fenwick-tree": "树状数组",
   "finite-state-dp": "有限状态 DP",
   "fft": "FFT",
@@ -503,6 +508,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "symmetry": "对称性",
   "ternary-search": "三分",
   "tight-loose-state": "紧/松状态",
+  "tiling": "平铺构造",
   "transform": "变换",
   "tree": "树",
   "tree-dp": "树形 DP",

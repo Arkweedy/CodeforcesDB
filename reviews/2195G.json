@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2195,
+    "title": "Codeforces Round 1080 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2195,
+    "index": "G",
+    "title": "Idiot First Search and Queries",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "graphs",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2195/problem/G",
+      "notes": "题面：沿用 E 的 IFS 规则，回答从 v 出发走 k 步后所在节点。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2195G",
+      "notes": "用于补充读取查询约束：sum n<=300001, sum q<=400000, k<Tv 且 k<1e9+7。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151174?locale=en&mobile=false",
+      "notes": "官方题解代码确认：构造 IFS 的 Euler 序，预处理 dp 时间和 ancestor lifting，用祖先定位后按序偏移查询。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.nowcoder.net/n/4bbcf444bb15448b90355e50dc8f3bc9",
+      "notes": "中文记录交叉确认：过程可视为重复走欧拉序，从起点切入并用倍增找可查询位置。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2195G",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "在 E 的 IFS 二叉树规则下，回答 q 个询问：从 v 出发恰好走 k 步后位于哪个节点，保证 k 小于到达 0 的总时间。",
+    "constraints": "多测，所有 n 总和不超过 300001，所有 q 总和不超过 400000；需要 O((n+q)log n) 或更好。",
+    "core_idea": "IFS 对任意子树的访问顺序可以展开成一段 Euler-like 序列：内部节点进入、左子树、回到节点、右子树、再回到节点。先像 E 一样求每个节点相关的剩余时间，并在 DFS 中记录每个节点在 Euler 序中的 tin。查询 (v,k) 时，若从 v 的当前位置向上跨过若干完整祖先段，就用二进制提升找到最高的祖先 w，使得从 v 到 w 之前消耗不超过 k；扣除这部分后，答案就是 euler[tin[w]+remaining]。",
+    "complexity": "O(n log n + q log n) per test case, O(n log n) memory.",
+    "tricks": [
+      "把动态三态移动展开成 Euler-like 序列",
+      "用剩余时间差配合倍增定位查询落在哪个祖先段"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "euler-tour-binary-lifting",
+      "summary": "预处理 IFS 访问序列、每个节点在序列中的入口、从节点出发的剩余时间，以及父亲倍增表；每个询问通过倍增跳祖先后在 Euler 序中定位答案。",
+      "complexity": "O(n log n + q log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/euler-tour",
+      "display_name": "Euler tour",
+      "description": "Flattening a rooted tree traversal into an entry/visit sequence used for interval, subtree, or path-position queries.",
+      "parent": "graph/tree",
+      "created_reason": "Existing graph/euler-trail means Euler path over edges, while this problem needs tree traversal flattening/Euler tour indexing.",
+      "status": "candidate",
+      "importance": "primary",
+      "evidence": "查询最终通过 euler[tin[w]+offset] 在预处理的树遍历序列中定位节点。",
+      "solution_variant": "euler-tour-binary-lifting"
+    },
+    {
+      "tag": "algorithm/binary-lifting",
+      "importance": "primary",
+      "evidence": "每个询问需要从 v 向上跳到合适祖先，官方代码维护 lift[x][j] 并倒序尝试。",
+      "solution_variant": "euler-tour-binary-lifting"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "仍需先计算每个子树/节点的 IFS 时间，用于判断查询要跨过多少完整段。",
+      "solution_variant": "euler-tour-binary-lifting"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "DFS 同时生成 tin、Euler 序和倍增父表。",
+      "solution_variant": "euler-tour-binary-lifting"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "题面的空/L/R 状态决定了 Euler-like 展开顺序。",
+      "solution_variant": "euler-tour-binary-lifting"
+    }
+  ]
+}

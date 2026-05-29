@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2195,
+    "title": "Codeforces Round 1080 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2195,
+    "index": "F",
+    "title": "Parabola Independence",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "graphs",
+      "greedy",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2195/problem/F",
+      "notes": "题面：给定二次函数，要求每个函数所在的最大两两不相交函数集合大小。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2195F",
+      "notes": "用于补充读取题面与 n^2 总和约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151174?locale=en&mobile=false",
+      "notes": "官方题解代码确认：用 comp(f,g) 判断一条抛物线始终低于另一条，建有向关系并做两向最长链 DP。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/uwkh81d3",
+      "notes": "洛谷题解交叉确认：用判别式判断是否相交，排序后做前后两次 DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2195F",
+      "notes": "洛谷题解候选入口；实际参考了其中一篇专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 n 个二次函数。若集合内任意两函数在所有实数 x 上都不相等，则集合合法。对每个函数求包含它的最大合法集合大小。",
+    "constraints": "多测，n<=3000，所有测试的 n^2 总和不超过 3000^2；允许 O(n^2) 建关系和 DP。",
+    "core_idea": "两个二次函数不相交可由差函数判别式判断；若一条函数对所有 x 都小于另一条，则它们可以按稳定上下顺序放入同一链。定义有向边 f->g 表示 f(x)<g(x) 对所有 x 成立，这个关系按高度形成偏序 DAG。对 DAG 做拓扑最长路，分别求到每点的最长上升链和从每点出发的最长链，答案为 in[i]+out[i]-1。",
+    "complexity": "O(n^2) per test case, O(n^2) memory for adjacency in the official implementation.",
+    "tricks": [
+      "用二次差函数判别式判断两条抛物线是否有交点",
+      "把互不相交的有序函数集合转化为偏序 DAG 最长链"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parabola-poset-dag-dp",
+      "summary": "枚举函数对，用判别式判断是否存在全局上下关系；由该关系建 DAG，再做正反最长链 DP，得到每个点所在最大链长度。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dag",
+      "display_name": "DAG",
+      "description": "Directed acyclic graph modeling, usually followed by topological order DP or reachability-style transitions.",
+      "parent": "graph",
+      "created_reason": "Existing graph tag is too coarse for problems whose core is converting a partial order into a DAG and solving on it.",
+      "status": "candidate",
+      "importance": "primary",
+      "evidence": "核心转化是把“始终在下方”关系建成偏序 DAG，并在图上求最长链。",
+      "solution_variant": "parabola-poset-dag-dp"
+    },
+    {
+      "tag": "dp/graph-dp",
+      "importance": "primary",
+      "evidence": "答案由 DAG 上到点和从点出发的最长路 DP 合成。",
+      "solution_variant": "parabola-poset-dag-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "判断边时需要分析二次函数图像是否相交、是否存在全局上下关系。",
+      "solution_variant": "parabola-poset-dag-dp"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "comp(f,g) 本质是在验证 f(x)<g(x) 对所有实数 x 成立。",
+      "solution_variant": "parabola-poset-dag-dp"
+    }
+  ]
+}

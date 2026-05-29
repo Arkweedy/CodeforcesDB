@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2195,
+    "title": "Codeforces Round 1080 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2195,
+    "index": "H",
+    "title": "Codeforces Heuristic Contest 001",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "geometry",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2195/problem/H",
+      "notes": "题面：在 3n by 3n 格点中输出最大数量的面积 1/2 且互不相交的三角形。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2195H",
+      "notes": "用于补充读取题面、输出格式和 n<=166 约束。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.nowcoder.net/n/4bbcf444bb15448b90355e50dc8f3bc9",
+      "notes": "中文记录交叉确认构造方向：偶数 n 使用 2x3 局部块，奇数 n 用 9x9 基础块补齐，其余区域继续平铺。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2195H",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "在 3n x 3n 的格点集合中，构造最大数量的面积为 1/2 的三角形，要求任意两个三角形无公共交点，输出任意一种最优方案。",
+    "constraints": "t<=30, n<=166, sum n^2<=166^2；输出规模为 Θ(n^2)，构造必须显式生成所有三角形。",
+    "core_idea": "上界很直接：共有 9n^2 个格点，每个三角形使用 3 个不同顶点，且三角形之间连顶点都不能共享，因此最多 3n^2 个。关键是达到上界。使用若干互不相交的小局部图案平铺整个 3n x 3n 点阵，每个图案内部把所有点划成面积 1/2 的三角形；偶数规模可以用 2x3 一类的规律块重复，奇数规模用预先搜索/手工固定的 9x9 基础块处理余数，再对剩余长条区域平铺。输出 3n^2 个三角形即可。",
+    "complexity": "O(n^2) output size and generation time.",
+    "tricks": [
+      "用点数除以 3 给出最优上界",
+      "用固定小图案平铺达到上界",
+      "奇偶情况用不同基础块处理"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tiling-construction",
+      "summary": "证明最多只能有 3n^2 个三角形，然后用局部面积 1/2 三角形图案平铺点阵；对奇数 n 使用较大的预计算基础图案处理边界/余数。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求显式输出一组达到上界的对象，核心在构造最优方案。",
+      "solution_variant": "tiling-construction"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "对象是格点三角形，合法性依赖面积 1/2 与三角形相交关系。",
+      "solution_variant": "tiling-construction"
+    },
+    {
+      "tag": "trick/tiling",
+      "display_name": "Tiling construction",
+      "description": "Constructing a global solution by repeating small local patterns over a grid, board, or coordinate lattice.",
+      "parent": "trick",
+      "created_reason": "Existing constructive/geometry tags do not identify the reusable idea of covering a grid by repeated local patterns.",
+      "status": "candidate",
+      "importance": "primary",
+      "evidence": "达到 3n^2 上界的关键是把格点用固定局部三角形图案平铺。",
+      "solution_variant": "tiling-construction"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "奇数规模的基础块可通过小范围搜索或预计算固定图案获得。",
+      "solution_variant": "tiling-construction"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "构造把小模式周期性重复到整个 3n x 3n 点阵。",
+      "solution_variant": "tiling-construction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "主要风险在正确生成大量坐标并处理奇偶分块边界。",
+      "solution_variant": "tiling-construction"
+    }
+  ]
+}
