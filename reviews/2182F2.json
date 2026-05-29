@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2182,
+    "title": "Educational Codeforces Round 186 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2182,
+    "index": "F2",
+    "title": "Christmas Reindeer (hard version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "data structures",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2182/problem/F2",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149733",
+      "notes": "Official Educational Round 186 editorial page; used with the provided official solution code to confirm the frequency-maintained hard version."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2182F2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain the same reindeer subset-count query as F1 under updates to the available multiset.",
+    "constraints": "The hard version has many online updates, so per-query work must depend only on the number of binary levels, not on the number of reindeer.",
+    "core_idea": "Keep frequency counts of available reindeer by binary level and precompute factorials, inverse factorials, and powers of two. For each query target x, compute the same binary-carry requirement vector as in the easy version. Sweep levels from high to low: add all subsets that first exceed the requirement at the current level, multiply by the equal-count choice C(freq_i, req_i), and let all lower levels be free through powers of two. Updates only increment/decrement one frequency bucket.",
+    "complexity": "O(B) per update/query after O(N+B) precomputation for B binary levels.",
+    "tricks": [
+      "maintain frequency buckets online",
+      "binary carry requirement vector",
+      "first greater level counting"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Maintain level frequencies and answer each target by the descending lexicographic subset-count formula with precomputed combinations.",
+      "complexity": "O(B) per operation",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/binary-carry",
+      "importance": "primary",
+      "evidence": "The same carry-normalized requirement vector from F1 is the core target representation.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "Each query counts valid subsets of a dynamic multiset by frequency class.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "The per-level equal/exceed choices are computed with combinations and powers of two.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "The dynamic multiset can be represented as frequency buckets keyed by level.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The target and levels are processed by binary bits.",
+      "solution_variant": "main"
+    }
+  ]
+}

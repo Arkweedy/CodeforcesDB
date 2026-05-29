@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2182,
+    "title": "Educational Codeforces Round 186 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2182,
+    "index": "G",
+    "title": "Short Garland",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2182/problem/G",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149733",
+      "notes": "Official Educational Round 186 editorial page; used with the provided official solution code to confirm tree DP merging and small-to-large state maintenance."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2182G",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid short garland configurations on a tree with subtree-dependent constraints.",
+    "constraints": "The tree is large, and each node's DP state may have variable length, so naive merging over all child-state pairs is too slow.",
+    "core_idea": "Root the tree and compute a DP vector for each subtree. The state is indexed by a distance/height-like parameter and is shifted when moving through an edge. For a node, pick the child with the largest DP vector as the base and merge smaller child vectors into it, updating prefix/suffix products and local contributions. Lazy affine updates handle shifts and multiplicative factors so that each DP entry moves only through a small-to-large merge path.",
+    "complexity": "O(n log n) or near-linear depending on implementation details of the vector merges.",
+    "tricks": [
+      "tree DP vectors by depth",
+      "small-to-large child merging",
+      "lazy affine update on DP arrays"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Run DFS, keep the largest child DP vector as the base, merge smaller vectors with prefix/suffix products, and apply lazy shifts/factors.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The main recurrence combines DP vectors from children in a rooted tree.",
+      "solution_variant": "main",
+      "description": "Dynamic programming over rooted trees or tree subproblems.",
+      "parent": "dp",
+      "created_reason": "Tree DP is a frequent contest technique and should be searchable directly.",
+      "status": "active"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "The implementation keeps the largest child vector and merges smaller child states into it to control total work.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/lazy-affine-update",
+      "importance": "secondary",
+      "evidence": "DP arrays are shifted and scaled with lazy add/multiply style transformations during merges.",
+      "solution_variant": "main",
+      "description": "Maintain an array or DP state under lazy affine transformations such as multiply/add/shift.",
+      "parent": "trick",
+      "created_reason": "Lazy affine state maintenance is a reusable optimization distinct from ordinary lazy propagation.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The DP counts configurations and combines independent child choices multiplicatively.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The input structure and recurrence are on a tree.",
+      "solution_variant": "main"
+    }
+  ]
+}

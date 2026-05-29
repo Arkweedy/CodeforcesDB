@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2182,
+    "title": "Educational Codeforces Round 186 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2182,
+    "index": "D",
+    "title": "Christmas Tree Decoration",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2182/problem/D",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149733",
+      "notes": "Official Educational Round 186 editorial page; used with the provided official solution code to confirm the average-capacity test and multinomial count."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2182D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid ways to distribute tree decorations after normalizing every color/group to the same target amount.",
+    "constraints": "The input sizes allow linear scans and factorial precomputation, so the hard part is deriving a closed combinatorial formula.",
+    "core_idea": "Let the target amount be the average k. Each non-special group can keep at most k items; deficits are supplied by the special/root group. After filling every deficit, the remaining counts must be feasible: no non-special group may have leftover more than 1 and the root stock cannot become negative. If z non-special groups end at zero and the root has a0 remaining, the count reduces to arranging indistinguishable slots, giving z! * (n-z+a0)! / a0! modulo MOD.",
+    "complexity": "O(n) per test case after factorial precomputation.",
+    "tricks": [
+      "normalize by average target",
+      "root stock fills deficits",
+      "closed-form multinomial count"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Check average feasibility, greedily fill deficits from the root count, then compute the remaining arrangement count with factorials.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "primary",
+      "evidence": "The final answer is a factorial quotient counting arrangements of zero groups and remaining root items.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "Feasibility is characterized by average divisibility, root stock not going negative, and every non-special leftover being at most one.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The deficits below the average are filled greedily from the root stock because only the total remaining root stock matters.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution is a counting formula after a feasibility reduction.",
+      "solution_variant": "main"
+    }
+  ]
+}

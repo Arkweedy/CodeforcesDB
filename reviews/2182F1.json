@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2182,
+    "title": "Educational Codeforces Round 186 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2182,
+    "index": "F1",
+    "title": "Christmas Reindeer (easy version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2182/problem/F1",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149733",
+      "notes": "Official Educational Round 186 editorial page; used with the provided official solution code to confirm the binary carry requirement vector and subset counting."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2182F1",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Answer dynamic queries about how many subsets of available reindeer can meet or exceed a binary target value under carry rules.",
+    "constraints": "The easy version keeps the universe small enough that the subset-count formula can be recomputed directly from frequency counts.",
+    "core_idea": "Transform the target x into a required frequency vector by scanning its bits from high to low; every higher chosen bit shifts later requirements because of binary carries. For the current multiset frequency by level, count subsets whose chosen-count vector is lexicographically greater than or equal to the required vector from high levels down. At the first level where the chosen count is greater, all lower levels are free; if equal, multiply by C(freq_i, req_i) and continue.",
+    "complexity": "O(B^2) or O(B log MOD) per query for B binary levels, depending on precomputation.",
+    "tricks": [
+      "binary carry requirement vector",
+      "lexicographic dominance over count vectors",
+      "first greater level frees lower choices"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Build the target requirement vector and count valid subsets by descending binary level with binomial choices.",
+      "complexity": "O(B^2) per query",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/binary-carry",
+      "importance": "primary",
+      "evidence": "The target x is converted to per-level requirements by tracking how higher bits/carries shift lower requirements.",
+      "solution_variant": "main",
+      "description": "Use binary carry propagation or carry-normalized digit counts as the main state transformation.",
+      "parent": "trick",
+      "created_reason": "Carry propagation is a recurring bit/combinatorics technique not captured by generic bitmask tags.",
+      "status": "active"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "The answer sums binomial counts of subsets with chosen frequencies meeting the requirement vector.",
+      "solution_variant": "main",
+      "description": "Count subsets satisfying structural conditions, usually via binomial coefficients or frequency classes.",
+      "parent": "math/combinatorics",
+      "created_reason": "This is more precise than broad combinatorics for subset-selection counting problems.",
+      "status": "active"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "All target requirements are derived from the binary representation of x.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "secondary",
+      "evidence": "Counting choices at each level uses binomial coefficients C(freq_i, chosen_i).",
+      "solution_variant": "main"
+    }
+  ]
+}

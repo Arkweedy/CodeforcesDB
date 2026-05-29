@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2182,
+    "title": "Educational Codeforces Round 186 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2182,
+    "index": "E",
+    "title": "New Year's Gifts",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2182/problem/E",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149733",
+      "notes": "Official Educational Round 186 editorial page; used with the provided official solution code to confirm the event sweep and ordered-set greedy."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2182E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Maximize the number/value of New Year gifts chosen under time/order constraints and a limited upgrade budget.",
+    "constraints": "Gift events are processed by coordinate/order, and dynamic choices require deletion of the currently most expensive optional upgrade.",
+    "core_idea": "Sort all gift-related events by their position/time and sweep them in reverse. Optional gifts contribute an upgrade cost delta into an ordered multiset. When a forced checkpoint is met, take one available gift by removing the largest currently usable delta; this maximizes the number of forced gifts handled before spending the residual budget. After all checkpoints, greedily buy remaining optional deltas in increasing cost while budget allows.",
+    "complexity": "O(n log n) from sorting and ordered multiset operations.",
+    "tricks": [
+      "reverse event sweep",
+      "keep currently available upgrades",
+      "choose largest for forced slots, cheapest for leftover budget"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Sweep events in reverse, maintain available gift deltas in an ordered multiset, and combine forced picks with a final cheapest-first pass.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The solution makes local extremal choices: largest currently available delta for forced events and smallest remaining deltas for budget fill.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "The sweep needs to insert costs and repeatedly remove/query largest or smallest available values with duplicates.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "secondary",
+      "evidence": "The event order/deadline structure determines when gifts become available and when a forced selection occurs.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Events and leftover costs are processed in sorted order.",
+      "solution_variant": "main"
+    }
+  ]
+}
