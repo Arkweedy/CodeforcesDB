@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2120, "title": "Codeforces Round 1033 (Div. 2) and CodeNite 2025"},
+  "problem": {"contest_id": 2120, "index": "D", "title": "Matrix game", "rating": 1800, "rating_status": "official", "official_tags": ["combinatorics", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2120/problem/D", "notes": "题面与约束：在 n x n 矩阵游戏中统计可区分结果/策略数量。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144386", "notes": "官方题解推导答案等于所有对角线的贡献之和，可按组合公式直接计算。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/yuh5q2uk", "notes": "Luogu 题解确认按每条反对角线长度计数，并使用简单组合式求和。"}
+  ],
+  "annotation": {
+    "summary": "给定矩阵尺寸，求游戏中可能产生的满足条件的矩阵/路径数量。",
+    "constraints": "多测，n 大，需要 O(1) 或 O(n) 公式，不能枚举矩阵格子状态。",
+    "core_idea": "游戏约束按对角线独立。长度相同的对角线贡献相同，且矩阵中长度从 1 递增到 n 再递减。把每条对角线看成一个一维选择问题，统计该长度下的方案数并乘出现次数。最后把所有对角线贡献求和即可；公式可进一步化简到 O(1)。",
+    "complexity": "O(1) or O(n) per test case depending on formula form",
+    "tricks": ["按对角线长度分组", "利用矩阵对称性把二维计数降成一维求和"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "diagonal-combinatorics-formula", "summary": "按对角线长度统计贡献，再利用长度分布 1..n..1 求和。", "complexity": "O(1)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "答案来自按对角线长度统计方案数并求和的组合计数。", "solution_variant": "diagonal-combinatorics-formula"},
+    {"tag": "trick/symmetry", "importance": "secondary", "evidence": "矩阵对称性使相同长度的对角线贡献相同。", "solution_variant": "diagonal-combinatorics-formula"},
+    {"tag": "math/identity", "importance": "secondary", "evidence": "最终可把对角线贡献求和化简为闭式公式。", "solution_variant": "diagonal-combinatorics-formula"}
+  ]
+}

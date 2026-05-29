@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2120, "title": "Codeforces Round 1033 (Div. 2) and CodeNite 2025"},
+  "problem": {"contest_id": 2120, "index": "C", "title": "Divine Tree", "rating": 1400, "rating_status": "official", "official_tags": ["constructive algorithms", "greedy", "math", "sortings", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2120/problem/C", "notes": "题面与约束：构造一棵有根树，使所有点的 divineness 之和等于给定 m。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144386", "notes": "官方题解确认可按目标和选择根并用星形/链式调整每个点的贡献。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2120C", "notes": "Luogu 候选题解页；本次草稿未实际引用正文。"}
+  ],
+  "annotation": {
+    "summary": "对根树中每个点定义从根到该点路径上的最小编号，要求构造 n 点树使这些值之和为 m。",
+    "constraints": "多测，n 可大，需要 O(n) 构造边；若 m 不在可达区间需输出 -1。",
+    "core_idea": "最小总和是 n：选择根 1 时所有点路径最小值都为 1。最大总和是 n(n+1)/2：选择根 n，并让编号递减形成链，可使每个点贡献自身编号。因此先判断 m 是否在区间内。构造时从最大链或合适根的星形基准出发，将部分点直接挂到根或挂到较小编号点下，单点调整它的路径最小值，从而把总和精确降到 m。",
+    "complexity": "O(n)",
+    "tricks": ["可达和区间为 [n, n(n+1)/2]", "用根和父亲编号控制每个点路径最小值", "从极值构造逐点调整"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "construct-by-controlling-path-minima", "summary": "先选一个可提供足够基础和的根，再通过改变部分节点父亲来控制各点路径最小值。", "complexity": "O(n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出树，主解是直接构造父边以精确达到目标和。", "solution_variant": "construct-by-controlling-path-minima"},
+    {"tag": "graph/tree", "importance": "primary", "evidence": "贡献由根到节点路径上的最小编号决定，构造对象就是一棵树。", "solution_variant": "construct-by-controlling-path-minima"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "调整目标和时逐点消耗剩余差值，优先让节点贡献变小或变大。", "solution_variant": "construct-by-controlling-path-minima"},
+    {"tag": "math/inequality", "importance": "secondary", "evidence": "先用最小/最大可能总和判断 m 是否可达。", "solution_variant": "construct-by-controlling-path-minima"}
+  ]
+}

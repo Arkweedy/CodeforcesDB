@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2120, "title": "Codeforces Round 1033 (Div. 2) and CodeNite 2025"},
+  "problem": {"contest_id": 2120, "index": "F", "title": "Superb Graphs", "rating": 2600, "rating_status": "official", "official_tags": ["2-sat", "graphs"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2120/problem/F", "notes": "题面与约束：给图上局部约束，判断是否存在一种二元选择/方向/颜色使所有约束成立。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144386", "notes": "官方题解确认把每个可选状态编码为布尔变量，冲突关系转成 2-SAT 子句。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.me/article/l7yqfu0z", "notes": "Luogu 题解交叉确认：对每条限制枚举不合法二元组合，加入蕴含边并用 SCC 判定。"}
+  ],
+  "annotation": {
+    "summary": "给定图上的若干二元选择限制，要求判断是否能构造满足所有局部图约束的方案。",
+    "constraints": "点边数较大，需要线性或近线性建图判定；每个对象只有两种状态。",
+    "core_idea": "把每个图对象的两种可选状态表示成布尔变量。对于任意一条局部约束，枚举两个变量状态组合，若组合不合法，就加入子句 !(x=a and y=b)，等价于两条蕴含边。最终在 implication graph 上求 SCC；若某变量与其反变量处于同一 SCC，则无解，否则有解。",
+    "complexity": "O(V+E) over implication graph",
+    "tricks": ["把局部图约束转成禁止二元组合", "禁止组合转 2-SAT 蕴含边", "SCC 判定变量和反变量冲突"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "forbidden-pairs-2sat", "summary": "为每个二元选择建变量，所有不合法相邻状态对转成 2-SAT 子句，再用 SCC 判定。", "complexity": "O(V+E)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/2-sat", "importance": "primary", "evidence": "主解法将所有局部二元冲突写成 2-SAT 子句并用 SCC 判定。", "solution_variant": "forbidden-pairs-2sat"},
+    {"tag": "graph/connectivity", "importance": "secondary", "evidence": "2-SAT 判定依赖 implication graph 的强连通分量。", "solution_variant": "forbidden-pairs-2sat"},
+    {"tag": "algorithm/bitmask", "importance": "secondary", "evidence": "实现中常把二元状态和反变量用 bit/xor 1 编码。", "solution_variant": "forbidden-pairs-2sat"}
+  ]
+}

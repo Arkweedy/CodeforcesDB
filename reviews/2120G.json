@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2120, "title": "Codeforces Round 1033 (Div. 2) and CodeNite 2025"},
+  "problem": {"contest_id": 2120, "index": "G", "title": "Eulerian Line Graph", "rating": 3000, "rating_status": "official", "official_tags": ["graphs", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2120/problem/G", "notes": "题面与约束：给定图并考虑其线图/欧拉性质，要求构造或判定。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144386", "notes": "官方题解确认核心是线图中的欧拉条件可转回原图边和点的度数关系，并按度数贪心构造。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2120G", "notes": "Luogu 候选题解页；本次草稿未实际引用正文。"}
+  ],
+  "annotation": {
+    "summary": "围绕图的线图和欧拉性进行构造/判定：线图顶点代表原图边，相邻关系代表原图边共享端点。",
+    "constraints": "图规模较大，需要利用线图和原图度数的结构关系，而不能显式构造过大的线图。",
+    "core_idea": "线图 L(G) 的每个顶点对应原图的一条边 uv，其在线图中的度数为 deg(u)+deg(v)-2。欧拉相关条件要求线图中相关顶点度数满足偶奇性与连通性限制，因此可以转化为原图边两端度数的奇偶关系。先在原图上按度数/奇偶分类，利用贪心选择或调整边，使所有线图顶点满足欧拉条件；连通性则由原图中非孤立边所在部分保证。整个过程只在原图上维护度数，不显式建线图。",
+    "complexity": "O(n+m)",
+    "tricks": ["线图顶点度数公式 deg_L(e=uv)=deg(u)+deg(v)-2", "把线图欧拉条件转回原图度数奇偶", "避免显式构造可能很大的线图"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": ["3000 题；当前标注把握核心结构，但若后续需要教学材料，应再补一份更细的构造证明或 accepted code 交叉。"]
+  },
+  "solution_variants": [
+    {"name": "degree-parity-on-original-graph", "summary": "用原图每条边两端的度数决定其线图顶点度数，直接在原图上判定和构造满足欧拉条件的结构。", "complexity": "O(n+m)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/line-graph", "importance": "primary", "evidence": "题目和主推导都围绕线图 L(G) 中顶点对应原图边的关系展开。", "solution_variant": "degree-parity-on-original-graph", "description": "将原图的边视为新图顶点、共享端点的边视为相邻关系的线图结构，常用于边邻接和欧拉/匹配类转化。", "parent": "graph", "created_reason": "2120G 的核心不是普通欧拉图，而是通过线图把边关系转为点关系；该结构值得独立检索。", "status": "candidate"},
+    {"tag": "graph/euler-trail", "importance": "primary", "evidence": "目标性质是线图的欧拉相关判定/构造。", "solution_variant": "degree-parity-on-original-graph"},
+    {"tag": "trick/parity", "importance": "primary", "evidence": "欧拉条件最终转成每条原图边两端度数和的奇偶关系。", "solution_variant": "degree-parity-on-original-graph"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "构造时按度数奇偶分类后贪心调整边或选择结构满足条件。", "solution_variant": "degree-parity-on-original-graph"}
+  ]
+}

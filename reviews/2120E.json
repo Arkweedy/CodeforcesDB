@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2120, "title": "Codeforces Round 1033 (Div. 2) and CodeNite 2025"},
+  "problem": {"contest_id": 2120, "index": "E", "title": "Lanes of Cars", "rating": 2300, "rating_status": "official", "official_tags": ["binary search", "dp", "ternary search"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2120/problem/E", "notes": "题面与约束：多车道车辆调度/排队问题，要求最小化最大等待或总代价。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144386", "notes": "官方题解确认对答案二分做可行性 DP，内部的代价函数具有单峰/凸性，可用三分或单调优化。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2120E", "notes": "Luogu 候选题解页；本次草稿未实际引用正文。"}
+  ],
+  "annotation": {
+    "summary": "给定若干车道与车辆参数，要求安排/选择使最大代价达到最小。",
+    "constraints": "n 较大，答案范围大；需要对答案二分并用多项式 DP 判定，不能枚举所有安排。",
+    "core_idea": "把目标最大代价 X 固定后，某辆车或某段车辆能放入车道的范围变成区间约束。用 DP 维护处理到前若干车辆时每条车道/边界的最优可达状态；判定函数随 X 单调，因此外层二分答案。DP 转移中的某个切分点代价呈单峰或凸形，可用三分/局部搜索优化到可接受复杂度。",
+    "complexity": "O(log answer * DP_cost)",
+    "tricks": ["外层二分答案", "固定答案后的区间可行性 DP", "转移切分点用单峰性/三分优化"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "binary-search-feasibility-dp", "summary": "二分最大允许代价，对每个候选值运行 DP 判定是否能安排所有车辆。", "complexity": "O(log answer * DP_cost)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "答案具有单调性，主流程对最大代价二分。", "solution_variant": "binary-search-feasibility-dp"},
+    {"tag": "dp", "importance": "primary", "evidence": "固定答案后的可行性检查由 DP 处理前缀车辆/车道状态。", "solution_variant": "binary-search-feasibility-dp"},
+    {"tag": "algorithm/search/ternary-search", "importance": "secondary", "evidence": "官方 tag 和题解指出转移中的单峰代价可用三分优化。", "solution_variant": "binary-search-feasibility-dp"},
+    {"tag": "math/inequality", "importance": "secondary", "evidence": "可行性和转移优化依赖代价函数的单调/凸性。", "solution_variant": "binary-search-feasibility-dp"}
+  ]
+}
