@@ -1,0 +1,150 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "H",
+    "title": "23 Rises Again",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["brute force", "dfs and similar", "dp", "flows", "graph matchings", "graphs", "greedy", "implementation", "probabilities", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/problemset/problem/2127/H",
+      "notes": "题面与约束：给 n<=30 的简单连通图，每个点属于至多 5 个简单环；求最大边数子图，使每个点度数至多 2。sum n^2<=900。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认主解：DFS 树中每个点经过的 back-edge 至多 5；选 DFS 树 centroid，枚举经过 centroid 的被选 back-edge，删除 centroid 后每个分量大小 <=n/2，再对每个分量做 degree-cap bitmask DP。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1041",
+      "notes": "独立题解复核 H 的核心：度数<=2 的最大子图可视为路径/环集合；利用低环参与次数约束和 centroid split 把指数 DP 控制到半边大小。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/i5t99mtq",
+      "notes": "Luogu 题解给出随机贪心/反复洗边的可通过实现，和官方 apology 中提到的 randomized unexpected solutions 相符；本次仅作为非主解/低置信 variant 参考，不作为主要 tag 依据。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127H",
+      "notes": "Luogu problem solution 聚合入口；本次实际参考的是其中可检索到的具体专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "在一个每个点最多属于 5 个简单环的无向连通图中，选择尽量多的边，使所选子图每个点度数不超过 2；也就是最大化由若干路径和环组成的子图边数。",
+    "constraints": "t<=50, n<=30, sum n^2<=900；图稀疏性可由特殊约束推出 m<=3n，但直接全图 2^n DP 仍偏大，需要拆成 <=n/2 的分量。",
+    "core_idea": "任意 candy graph 的连通块是路径或环。先取 DFS 树；由于每个点属于至多 5 个简单环，经过任意点的非树边/back-edge 数量至多 5。选择 DFS 树的 centroid v，枚举最终答案中哪些经过 v 的 back-edge 被选中，每条被选边消耗两个端点的剩余度数。删除 v 和这些跨分量 back-edge 后，各 DFS 子树分量大小至多 n/2。对每个分量，在给定每点剩余容量 d_i∈{0,1,2} 下，用 bitmask DP 维护已经处理的顶点集合，以及当前正在构造的一条路径端点 (u,v) 和长度是否为 1；转移包括新开路径、延长路径、闭合成环、跳过点。分量还需分别计算是否使用连接 centroid 的树边，从而消耗该分量根一点度数；最后用 centroid 的剩余度数把各分量贡献合并。",
+    "complexity": "O(2^5 * 2^(n/2) * n^2) using m<=3n under the cycle-participation constraint",
+    "tricks": ["把最大度<=2子图转成路径/环集合选择", "DFS tree + back-edge 结构化环", "枚举经过 centroid 的少量 back-edge", "centroid split 把最大分量降到 n/2", "带剩余度数上限的 bitmask path DP", "对连接 centroid 的树边做二态分量求解并合并"],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "main_agent_review_notes": [
+      "官方 intended solution 清晰；不过官方 apology 和 Luogu 题解显示存在 randomized/matching/backtracking 等意外可过方案。建议主 agent 不把 probability/randomized 标成默认检索 tag，除非之后专门收录弱测/随机化通过策略。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "official-centroid-backedges-bitmask-dp",
+      "summary": "选 DFS tree centroid，枚举经过 centroid 的被选 back-edge；删除 centroid 后每个分量大小 <=n/2，对每个分量做 degree-cap bitmask DP 选择最大路径/环集合，再按 centroid 剩余度数合并。",
+      "complexity": "O(2^5 * 2^(n/2) * n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "degree-constrained-matching-or-flow-family",
+      "summary": "题目可抽象成容量 b_i=2 的最大 degree-constrained edge subset，官方标签和 apology 提到 matching/flow 方向存在可过实现；本 worker 未完整复原该类精确建模。",
+      "complexity": "unknown or implementation-dependent",
+      "confidence": "low",
+      "is_primary": false
+    },
+    {
+      "name": "randomized-greedy-accepted",
+      "summary": "Luogu 题解展示随机打乱边序、贪心加入不超度数边并多轮取最大值的做法在当时测试中可通过；属于非 intended 且缺乏严格正确性保证的通过策略。",
+      "complexity": "heuristic, about O(iterations * m)",
+      "confidence": "low",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "官方主解在每个 <=n/2 的分量上用 mask 表示已处理顶点集合，并维护路径端点状态求最大边数。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "dp/subset-dp",
+      "importance": "primary",
+      "evidence": "分量子问题的状态 ans_mask 与 dp_mask,u,v,l1 都是对子集 mask 的最优值转移，决定指数部分复杂度。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "graph/tree-centroid",
+      "importance": "primary",
+      "evidence": "必须在 DFS 树上选择 centroid，使删除该点后的最大分量大小不超过 n/2，从而把 2^n 降为 2^(n/2)。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "trick/back-edge-enumeration",
+      "importance": "primary",
+      "evidence": "特殊条件保证经过任意点的 back-edge 至多 5；主解正是枚举经过 centroid 且被选入答案的 back-edge 来分离各分量。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp",
+      "description": "在 DFS 树上利用少量非树边/back-edge 的结构约束，枚举会跨越某个分割点或分割边的非树边，从而把图问题拆成若干独立子问题。",
+      "parent": "trick",
+      "created_reason": "现有 graph/dfs、graph/tree-centroid、paradigm/brute-force 不能准确表达“由环参与次数约束推出少量 back-edge 并枚举切断”的核心技巧；该技巧可复用于低环数/近树图上的指数或 DP 分解题。",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "算法从 DFS 树出发定义 tree edge/back-edge，并用 DFS 子树作为 centroid 分裂后的分量。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "虽然原图不是树，但核心分解结构是 DFS tree，分量大小和 centroid 都在树上定义。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "主解显式枚举经过 centroid 的至多 5 条 back-edge 的选择情况，即 2^5 小规模暴力。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "题目目标等价于选择最大边集且每点容量为 2，是 b-matching/degree-constrained subgraph 风格；官方标签和 apology 也提到 matching 方案。",
+      "solution_variant": "degree-constrained-matching-or-flow-family"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "官方标签包含 flows，且 degree-constrained selection 可有流/匹配建模方向；但 intended 题解主要是 centroid + bitmask DP。",
+      "solution_variant": "degree-constrained-matching-or-flow-family"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "incidental",
+      "evidence": "Luogu 和官方 apology 提到随机化贪心可过，但它不是 intended exact solution，不应作为默认检索命中。",
+      "solution_variant": "randomized-greedy-accepted"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "代码需要维护分量编号、剩余度数、路径 DP 和 centroid 合并状态，但实现细节不是主要算法分类。",
+      "solution_variant": "official-centroid-backedges-bitmask-dp"
+    }
+  ]
+}

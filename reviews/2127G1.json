@@ -1,0 +1,122 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "G1",
+    "title": "Inter Active (Easy Version)",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "constructive algorithms", "interactive", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2127/G1",
+      "notes": "题面与约束：隐藏无固定点排列 p，先固定 k；每次询问一个排列 q，返回满足 q^{-1}(i)<q^{-1}(p_i) 且 q^{-1}(i) != k 的有向边数量；Easy 版最多 15n 次询问，n<=100。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认主解：把排列看作有向 functional graph；固定 q_k=i，询问 q 与除 k 外反序 q，使大部分边贡献抵消/固定，从 a+b 判断 predecessor 所在半区，再对每个 i 二分 predecessor。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1041",
+      "notes": "独立题解复核 G1/G2 的交互模型、反序询问和查询计数；用于交叉确认 query-differencing 的方向。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/fyi0k2om",
+      "notes": "Luogu 题解给出基于 jiangly 代码的更短方案：先找一条基准边，再用循环移位与二进制签名区分距离关系，总询问约 9n；作为非主解 variant 记录。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127G1",
+      "notes": "Luogu problem solution 聚合入口；本次实际参考的是其中可检索到的具体专栏题解。"
+    }
+  ],
+  "annotation": {
+    "summary": "在交互模型下恢复一个长度 n 的无固定点隐藏排列 p；询问排列 q 时得到 p 的有向边在 q 中向右的数量，但出发点位于固定位置 k 的那条边不计。",
+    "constraints": "t<=500, n<=100, sum n^2<=1e4；Easy 版查询上限 15n，因此可以对每个点用 O(log n) 次查询定位 predecessor。",
+    "core_idea": "把 p 看作每点出度为 1 的有向图。若固定 q_k=i，则 i 的出边被屏蔽；再把除 k 外的 q 反序，绝大多数与 i 无关的边在两次询问中总贡献为 1，而 predecessor -> i 的边是否贡献取决于 predecessor 被放在外侧区间还是中间区间。因此 a+b 只会在 n-1 与 n-2 间变化，给出候选集合半区信息。选择 k≈n/4，使外侧容量足够容纳一半候选，对每个 i 重复二分 predecessor，最终得到 p_j=i。",
+    "complexity": "约 O(n log n) 次查询，具体为 2n log(n-1) 以内；本地 hack 复杂度 O(n^2 log n) 构造/模拟量级。",
+    "tricks": ["把排列视作 functional graph", "固定 q_k 屏蔽一条出边", "询问 q 与除 k 外反序 q 让无关贡献抵消", "按候选集合二分 predecessor", "Luogu variant 使用循环移位与二进制距离签名"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official-reverse-pair-binary-search",
+      "summary": "对每个目标点 i，固定 q_k=i；把候选 predecessor 分成两类区域，询问 q 与除 k 外反序 q，通过两次答案和判断 predecessor 所在半区，二分到唯一点。",
+      "complexity": "O(n log n) queries, within 15n for n<=100",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "short-cyclic-shift-signature",
+      "summary": "先通过反序配对找一条基准边，再构造若干轮循环移位/二进制签名排列，利用每轮所有循环移位的答案恢复每个点的相对距离类别；Luogu 题解称总询问约 9n。",
+      "complexity": "O(n log n) queries, about 9n in the cited implementation",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "题目本质是通过受限 oracle 查询恢复隐藏排列，查询次数上限是核心约束。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "目标是从 oracle 返回的边计数中完整重构隐藏排列 p，而不是只判定某个性质。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "官方主解对每个 i 维护 predecessor 候选集合，每轮用两次查询判断半区并二分缩小。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "主解比较 q 与除 k 外反序 q 的两次 oracle 返回值，使无关边的总贡献固定，只留下 predecessor 所在区域的信息。",
+      "solution_variant": "official-reverse-pair-binary-search",
+      "description": "在交互/查询题中，对同一对象做两次受控变换查询，比较返回值差或和，使大多数贡献抵消或固定，从而暴露少量未知结构。",
+      "parent": "trick",
+      "created_reason": "现有 interactive、binary-search、decision-tree 无法表达“成对查询差分抵消贡献”这一可复用核心技巧；该技巧也出现在本题 G2 的循环移位差分中。",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/functional-graph",
+      "importance": "secondary",
+      "evidence": "官方题解明确把排列 p 看作 i -> p_i 的有向图，边贡献由 q 中端点相对顺序决定。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "解法的关键不是套模板，而是构造 q 中各候选点的位置区域，使 oracle 返回值可区分半区。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "整体查询过程是一棵自适应决策树：每次答案决定下一轮候选集合。",
+      "solution_variant": "official-reverse-pair-binary-search"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Luogu/jiangly variant 用多轮二进制签名排列区分相对距离类别，是非主解中的核心编码方式。",
+      "solution_variant": "short-cyclic-shift-signature"
+    }
+  ]
+}

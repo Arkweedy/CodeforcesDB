@@ -1,0 +1,137 @@
+{
+  "contest": {
+    "contest_id": 2127,
+    "title": "Atto Round 1 (Codeforces Round 1041, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2127,
+    "index": "G2",
+    "title": "Inter Active (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["binary search", "bitmasks", "constructive algorithms", "graphs", "implementation", "interactive", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2127/problem/G2",
+      "notes": "题面与约束：与 G1 相同的隐藏无固定点排列恢复任务；Hard 版查询上限降为 10n，n<=100，需要比逐点 2logn 二分更紧的全局查询编码。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145357",
+      "notes": "官方题解确认 Hard 主线：先按 functional graph 区分 2-cycle 与 >=3-cycle；用按 bit 分组的循环移位查询一次性得到每个点前驱和后继编码的 xor，再对 >=3-cycle 只需找一条边即可顺推整环，对 2-cycle 用扣除已知贡献后的二分恢复。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1041",
+      "notes": "独立题解复核 Hard 与 Easy 解法关系，强调先获得一批已知边/边方向，再利用排列图结构扩展恢复；用于交叉确认 functional graph cycle casework 与查询预算。"
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/problemset/status/2127/problem/G2",
+      "notes": "公开 AC 列表包含 tourist、jiangly、Benq 等提交；本次未能直接读取提交源码，只用于确认官方方案之外存在多份赛中 AC 实现。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2127G2",
+      "notes": "候选 Luogu 题解入口；本次未找到并实际采用可交叉确认的具体 G2 正文。"
+    }
+  ],
+  "annotation": {
+    "summary": "Hard 版同样要恢复隐藏无固定点排列 p，但查询上限为 10n，不能简单对每个点做 Easy 版的 2logn 二分。",
+    "constraints": "t<=500, n<=100, sum n^2<=1e4；最多 10n 次查询，官方方案最坏约 n log n + sum log(n-1-2i)，n=100 时约 986 次，卡入 10n。",
+    "core_idea": "仍把 p 视作 functional graph。先利用循环移位的两次查询差分：当某个点 i 在分组边界移动时，只有 predecessor -> i -> successor 相关贡献可能变化；按平衡二进制编码 c_i 分组做所有循环移位，可在 O(n log n) 查询内得到每个 i 的 c_predecessor xor c_successor，从而判断 i 是否位于 2-cycle。对 >=3-cycle，xor 值非零；再用一次二分找出环上一条相邻边，之后由 xor 关系顺推整环。剩余 2-cycle 中 p_i=j 与 p_j=i 成对，用 k≈n/2 的查询和已知边贡献扣除来二分匹配对象。",
+    "complexity": "O(n log n) queries, under 10n for n<=100; local construction/simulation O(n^2 log n)",
+    "tricks": ["functional graph cycle-length case split", "平衡 bit 编码避免分组严重不均", "循环移位查询差分批量提取 xor signature", "非 2-cycle 找一条边后沿 xor signature 推完整环", "对 2-cycle 扣除已知贡献后做二分匹配"],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "main_agent_review_notes": [
+      "官方题解和 Maspy 独立题解均确认主线；公开 status 能确认多份 AC，但本 worker 未能直接读取 CF 提交源码。若主 agent 希望更严谨，可补查可访问的 accepted code mirror。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "official-xor-signature-cycle-reconstruction",
+      "summary": "对每一 bit 构造平衡分组并做组内循环移位查询，批量得到每个点 predecessor 与 successor 的编码 xor；先恢复 >=3 cycles，再用已知贡献修正查询来恢复 2-cycles。",
+      "complexity": "O(n log n) queries, worst case within 10n for n<=100",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "easy-reverse-binary-search-not-enough",
+      "summary": "G1 的逐点反序配对二分可恢复排列，但查询数约 2nlogn，Hard 版 10n 上限下不足，需要全局 bit/cycle 批处理。",
+      "complexity": "O(n log n) queries but above hard limit in worst case",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "题目核心约束是通过受限 oracle 查询恢复隐藏排列，查询次数设计决定可行性。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "算法最终要完整输出隐藏排列 p，所有 query 都是在构造用于重构的判别信息。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "graph/functional-graph",
+      "importance": "primary",
+      "evidence": "Hard 主解强依赖把排列看作若干有向环，并按 2-cycle 与 >=3-cycle 分治恢复。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "官方主解给每个点分配平衡二进制编码 c_i，并逐 bit 分组查询以恢复 predecessor/successor 的 xor signature。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "主解比较循环移位前后的 oracle 值，使只有穿过分组边界的 predecessor -> i -> successor 贡献变化，从而提取 bit 信息。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction",
+      "description": "在交互/查询题中，对同一对象做两次受控变换查询，比较返回值差或和，使大多数贡献抵消或固定，从而暴露少量未知结构。",
+      "parent": "trick",
+      "created_reason": "Hard 版的核心不是普通 bitmask 或 binary search，而是循环移位前后查询值差分暴露局部边关系；该技巧与 G1 的反序差分同源且可复用。",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "在得到 xor signature 后，>=3-cycle 需要二分找环上一条边；2-cycle 部分也通过二分候选匹配对象完成。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "解法需要精心构造平衡 bit 分组、循环移位排列和带 k 的二分查询排列。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "math/information-theory",
+      "importance": "secondary",
+      "evidence": "平衡编码与全局批量查询是在查询预算下最大化每轮信息量，属于编码/信息提取视角。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "后半部分对未知 2-cycle 匹配对象做自适应二分，每次查询结果决定候选集合。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "官方代码实现中需要维护编码、逆映射、已知边贡献 calc 和多类查询结果表，但这不是检索主轴。",
+      "solution_variant": "official-xor-signature-cycle-reconstruction"
+    }
+  ]
+}
