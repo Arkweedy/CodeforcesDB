@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2189,
+    "title": "Codeforces Round 1075 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2189,
+    "index": "F",
+    "title": "Zhora the Vacuum Cleaner",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "implementation",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2189/problem/F",
+      "notes": "题面给定有坚果数量的树；一次预处理可选顶点 v，让所有坚果向 v 方向移动一条边，之后以 p/q 成本优化总电量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150452",
+      "notes": "官方题解给出虚树 + 换根 DP + 数据结构维护的方向。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/cewned52",
+      "notes": "用于交叉确认：最优只对一个点重复操作，虚树上杀死时间等于当前子树坚果数，换根时只改变两个点的时间。"
+    }
+  ],
+  "annotation": {
+    "summary": "树上每个点有若干坚果；每次可选择一个点 v，让所有非 v 点的坚果向 v 走一步。之后吃掉所有剩余含坚果点，移动一次和吃一个点分别有不同代价，求最小总成本。",
+    "constraints": "多测，sum n<=2e5，坚果数和代价较大；需要只在含坚果点及 LCA 构成的压缩树上工作。",
+    "core_idea": "不同操作点混用不优，最优可以视为固定一个点 u 反复操作 i 次。只需要考虑所有有坚果点形成的虚树；在以 u 为根时，一个虚树点 v 还会产生吃点贡献的持续时间等于它的子树坚果总数。对每个候选 u，总代价是 i*p + alive(i)*q 的最小值。换根沿虚树边移动时，只有当前点和儿子两个方向的子树大小/杀死时间改变，因此可用换根 DP，并用带区间加、全局最小值的动态线段树维护所有 i 的代价。",
+    "complexity": "O(n log V) per test case after virtual tree construction, where V is the value range for operation count.",
+    "tricks": [
+      "证明只对同一个点重复操作最优",
+      "只保留含坚果点和 LCA 构成虚树",
+      "换根时只有两个 kill time 发生变化",
+      "用线段树维护 i*p+alive(i)*q 的全局最小值"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "virtual-tree-rerooting",
+      "summary": "构造含坚果点的虚树，初始化每个虚树点的子树坚果和对应贡献区间；DFS 换根时撤销/加入两个方向的区间贡献，并查询线段树最小值。",
+      "complexity": "O(n log V)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/virtual-tree",
+      "display_name": "Virtual tree",
+      "description": "Compress a tree to marked vertices and their LCAs, preserving ancestor relationships needed by the solution.",
+      "status": "candidate",
+      "parent": "graph/tree",
+      "created_reason": "The solution explicitly builds and works on the virtual tree of nut-containing vertices, which is more specific than generic tree DFS.",
+      "importance": "primary",
+      "evidence": "只含坚果点及相邻 DFS 序 LCA 的虚树是后续 DP 的实际工作图。",
+      "solution_variant": "virtual-tree-rerooting"
+    },
+    {
+      "tag": "dp/rerooting-dp",
+      "display_name": "Rerooting DP",
+      "description": "Dynamic programming over a tree where answers are updated while moving the root across edges.",
+      "status": "candidate",
+      "parent": "dp/tree-dp",
+      "created_reason": "The key DP transition is rerooting across virtual tree edges, not a one-way subtree DP.",
+      "importance": "primary",
+      "evidence": "从虚树根换到孩子时只更新两个方向的贡献并递归求所有根的答案。",
+      "solution_variant": "virtual-tree-rerooting"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "需要维护每个操作次数 i 的成本，支持区间加和全局最小值查询。",
+      "solution_variant": "virtual-tree-rerooting"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "核心结构观察是选择不同操作点不优，只需固定一个点重复操作。",
+      "solution_variant": "virtual-tree-rerooting"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "secondary",
+      "evidence": "构造虚树需要按 DFS 序加入相邻标记点的 LCA。",
+      "solution_variant": "virtual-tree-rerooting"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要 DFS 序、深度、LCA 预处理和虚树上的 DFS 换根。",
+      "solution_variant": "virtual-tree-rerooting"
+    }
+  ]
+}
