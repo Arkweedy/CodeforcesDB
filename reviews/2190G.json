@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "G",
+    "title": "Maximize Determinant",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/G",
+      "notes": "题面给 n 行区间矩阵 A，每行可花 a_i 改成任意区间；要求最小成本使 det(A) 达到所有区间矩阵中的最大值 X。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256",
+      "notes": "官方题解将每行差分后转为 n+1 点图的边 (l_i,r_i+1)，非零 determinant 等价于图为树，并进一步处理 determinant 符号与最小修改成本。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190G",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "每一行是一个全 1 连续区间，并带有修改该行的成本；可把任意行改成任意区间，求使 determinant 达到最大可能值 1 的最小成本。",
+    "constraints": "多测，sum n<=1e6；需要近线性或 O(n log n) 图算法。",
+    "core_idea": "给矩阵补一列并对每行做差分后，每行只有两个非零端点，对应图中一条边 (l_i,r_i+1)。det(A)=0 当且仅当这 n 条边在 n+1 个点上成环；非零时图是树，且 determinant 只可能为 ±1。若已经是 +1 成本为 0；若是 -1，需要找单行修改能翻转符号的最小成本，否则改两条最便宜边。若图不连通/有环，则问题变成用最小修改成本把现有边集变成一棵树；组件数>=3 时是带保留收益的 MST/最大生成树式选择，两个组件时还需同时处理符号条件。",
+    "complexity": "O(n log n) with DSU/MST-style processing.",
+    "tricks": [
+      "对区间行做差分，把矩阵行变成图边",
+      "determinant 非零等价于 n+1 点 n 边图为树",
+      "树上 determinant 符号由根向父边方向和边编号排列奇偶决定",
+      "把最小修改成本转成选择要保留的边的 MST 问题"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "graph-determinant-mst",
+      "summary": "将每行映射为边 (l_i,r_i+1)。先用 DSU 判断图是否为树并计算 determinant 符号；若需修改，按边成本做 MST/换边式选择，并在树情形下用子树最大/外部最小判定单边能否翻转符号。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/determinant",
+      "display_name": "Determinant",
+      "description": "Use determinant properties or determinant-preserving transformations as a central part of the solution.",
+      "status": "candidate",
+      "parent": "math/linear-algebra",
+      "created_reason": "The solution specifically relies on determinant nonzero/sign properties, not just generic matrix work.",
+      "importance": "primary",
+      "evidence": "题目目标就是最大化 determinant，解法核心是判定 det 为 0、+1、-1。",
+      "solution_variant": "graph-determinant-mst"
+    },
+    {
+      "tag": "graph/mst",
+      "importance": "primary",
+      "evidence": "当初始图不是合适的树时，最小修改成本等价于保留最大收益边形成生成树。",
+      "solution_variant": "graph-determinant-mst"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "需要用 DSU 判断连通/成环，并在 MST 阶段维护连通分量。",
+      "solution_variant": "graph-determinant-mst"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "primary",
+      "evidence": "把区间矩阵每行转成差分后，行恰好对应两个端点的图边。",
+      "solution_variant": "graph-determinant-mst"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "非零 determinant 的结构是 n+1 个点、n 条边构成的树，并需在树上计算符号与换边条件。",
+      "solution_variant": "graph-determinant-mst"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "determinant 符号由父边方向计数和边编号排列奇偶共同决定。",
+      "solution_variant": "graph-determinant-mst"
+    }
+  ]
+}

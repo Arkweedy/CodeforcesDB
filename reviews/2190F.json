@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "F",
+    "title": "Xor Product",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/F",
+      "notes": "题面定义 S(x,y,k)={(x+i) xor (y+j)}，给 x,k，要求对所有 y 最大化 |S(x,y,k)|。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256",
+      "notes": "官方题解推导 XOR Cartesian product 的区间公式，得到 |S(x,y,k)| 的闭式，并用 digit DP 优化 y。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 x,k，定义 S(x,y,k) 为两个长度 k 连续整数区间 [x,x+k-1] 与 [y,y+k-1] 的所有异或值集合；求选择非负 y 后 |S| 的最大值。",
+    "constraints": "多测，x,k<=1e17；需要 O(log k) 或 O(log^2 k)，不能枚举区间或 y。",
+    "core_idea": "先研究两个区间的 XOR Cartesian product。去掉 x..x+k-1 和 y..y+k-1 的公共高位前缀不会改变集合大小；在首个跨越的 2^p 处分成左右两段，四个子区间异或积可化成两个不相交区间。令 f(n,m) 为 0<=i<=n,0<=j<=m 的最大 i xor j，可得 |S(x,y,k)| 的公式只依赖若干 a,b,c,d。最后把选择 y 的问题转成按二进制位选择 c,d 的数位 DP。",
+    "complexity": "O(log k) states with a large constant, or O(log^2 k) depending on implementation.",
+    "tricks": [
+      "把连续区间异或积拆成两个不相交值域区间",
+      "公共高位前缀只会整体 xor 平移，不改变集合大小",
+      "用最大 xor 函数 f(n,m) 写出闭式后做 digit DP"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "formula-digit-dp",
+      "summary": "推导 |S(x,y,k)| 的闭式后，将 y 的可选高低位关系编码进 digit DP，逐位最大化两个 min(...) 项之和。",
+      "complexity": "O(log k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/digit-dp",
+      "importance": "primary",
+      "evidence": "最终选择 y 最大化闭式值时按二进制位做 DP。",
+      "solution_variant": "formula-digit-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "所有公式都建立在区间异或、最高位拆分和最大 xor 计算上。",
+      "solution_variant": "formula-digit-dp"
+    },
+    {
+      "tag": "trick/common-prefix-cancellation",
+      "display_name": "Common-prefix cancellation",
+      "description": "Remove a shared high-bit prefix because it cancels or shifts all candidates without changing the relevant answer.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "The common-prefix removal is central to reducing large x,y to the first differing bit in this XOR interval problem.",
+      "importance": "primary",
+      "evidence": "官方题解反复利用区间两端共同高位前缀在 xor 中抵消或只造成整体平移。",
+      "solution_variant": "formula-digit-dp"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "核心闭式来自把 XOR 结果集合证明为若干连续区间并求大小。",
+      "solution_variant": "formula-digit-dp"
+    },
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "secondary",
+      "evidence": "f(n,m) 最大 xor 的计算使用最高可分歧位填满低位的按位思想。",
+      "solution_variant": "formula-digit-dp"
+    }
+  ]
+}
