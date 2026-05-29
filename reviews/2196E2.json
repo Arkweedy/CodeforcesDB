@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "E2",
+    "title": "Fuzzy Concatenation (Hard version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "bitmasks",
+      "data structures",
+      "dp",
+      "greedy",
+      "string suffix structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/E2",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151052?locale=en",
+      "notes": "官方题解给出后缀数组 + 后缀序二分代码；评论区提到可用 wavelet matrix 做到更优复杂度。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196E2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Hard 版同样要求用 s 的子串、每段最多改一个字符，最少次数拼出 t。",
+    "constraints": "Hard 版总 n <= 5e5，总 m <= 5e4；不能靠 easy 版的大量枚举，需要高效维护 s 后缀与 t 后缀的最长近似匹配。",
+    "core_idea": "仍然先证明最远可达贪心：当前位置若一次操作能覆盖到 r，覆盖更短前缀不会带来优势。难点是快速求每个位置的一次操作最远端点。官方做法在 s + 分隔符 + t 上建后缀数组，把“某一位允许替换成某字符”转化为比较两段 LCP，并在后缀序上二分寻找 s 的候选后缀；更强实现可以用 wavelet matrix 对后缀序范围做查询优化。",
+    "complexity": "Official suffix-array implementation: O((n + m) log(n + m) + 26m log n). Wavelet-matrix variant: O((n + m) log(n + m)).",
+    "tricks": [
+      "最远可达贪心分段。",
+      "把一次失配拆成失配前 LCP、替换字符、失配后 LCP 的后缀比较。",
+      "在后缀数组顺序上找最接近的 s 后缀候选。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official-suffix-array",
+      "summary": "对 s + '%' + t 建后缀数组和 LCP RMQ。对 t 的每个位置和可能替换字符，利用后缀序二分找 s 后缀候选，计算该次操作能覆盖的最远端点，最后按最远端点贪心统计段数。",
+      "complexity": "O((n + m) log(n + m) + 26m log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "wavelet-matrix-optimized",
+      "summary": "用 wavelet matrix 在后缀序/位置范围中查询候选 s 后缀，避免对每个字符做较重的二分枚举，可把 hard 版做到接近 O((n + m) log(n + m))。",
+      "complexity": "O((n + m) log(n + m))",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/suffix-array",
+      "importance": "primary",
+      "evidence": "官方 hard 解法的核心数据结构是 s 与 t 拼接串的后缀数组，并用 LCP/RMQ 比较候选后缀。",
+      "solution_variant": "official-suffix-array"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "每一步只需取当前位置能由一次操作覆盖的最远端点；最长合法段的贪心直接决定最少段数。",
+      "solution_variant": "official-suffix-array"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "官方代码在后缀数组排序顺序中二分候选 s 后缀，定位能与带一次替换的 t 段匹配的范围。",
+      "solution_variant": "official-suffix-array"
+    },
+    {
+      "tag": "string/suffix-structures",
+      "importance": "secondary",
+      "evidence": "题目的瓶颈是近似子串匹配，需要后缀数组/LCP 这类后缀结构支撑。",
+      "solution_variant": "official-suffix-array"
+    },
+    {
+      "tag": "data-structure/wavelet-matrix",
+      "importance": "secondary",
+      "evidence": "官方题解评论指出可用 wavelet matrix 优化 hard 版的后缀范围候选查询。",
+      "solution_variant": "wavelet-matrix-optimized",
+      "description": "支持序列值域/排名范围查询的静态数据结构；用于在排序后的后缀位置范围内快速筛选候选下标。",
+      "parent": "data-structure",
+      "created_reason": "现有 data-structure 标签无法表达 hard 版另一种经典优化数据结构；wavelet matrix 可复用于字符串、区间统计和二维离线查询题。",
+      "status": "candidate"
+    }
+  ]
+}

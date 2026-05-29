@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2196,
+    "title": "Codeforces Round 1079 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2196,
+    "index": "F",
+    "title": "Indivisible",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2196/problem/F",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151052?locale=en",
+      "notes": "官方题解给出构造代码：先处理小规模例外，再构造稀疏图或其补图。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2196/problem/F",
+      "notes": "根据题面条件与官方构造代码推导 tag：等分条件等价于度数序列的子集和命中 m。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2196F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "构造一个 n 点 m 边简单无向图，使得无法把点集分成两部分并让两部分的度数和相等。",
+    "constraints": "n <= 1e5，m <= min(2e5, n(n-1)/2)，多测总 n <= 1e5、总 m <= 2e5；需要线性输出边并正确判断少量不可能情形。",
+    "core_idea": "一个点集的度数和只取决于被选顶点的度数序列；总度数是 2m，因此坏划分等价于存在一个顶点子集，其度数和正好为 m。构造目标转化为设计一个图的度数序列，使 m 不是任何子集和。官方代码对小 n 的例外值直接判无解，稀疏时构造一个阈值形状的图来控制度数序列，稠密时转到补图构造再取补边输出。",
+    "complexity": "O(n + m) output size, with O(1) / small-table exceptional checks.",
+    "tricks": [
+      "把图划分条件化为度数序列的子集和问题。",
+      "小规模例外值单独判定。",
+      "稠密情形通过补图转换为稀疏构造。"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "degree-sequence-construction",
+      "summary": "先判断 m=1 和 n=12 的若干小例外。可构造时，在稀疏侧生成一个具有受控度数序列的图，使不存在度数和为 m 的点集；若原图太稠密，则构造缺边图并输出补图。",
+      "complexity": "O(n + m)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求直接构造满足不可等分性质的图，并且官方解法核心就是构造稀疏图或补图。",
+      "solution_variant": "degree-sequence-construction"
+    },
+    {
+      "tag": "graph/degree-sequence",
+      "importance": "primary",
+      "evidence": "不可划分条件被转化为“度数序列不存在子集和为 m”，构造也是围绕控制每个顶点度数展开。",
+      "solution_variant": "degree-sequence-construction",
+      "description": "围绕图的顶点度数多重集/序列进行判定或构造，常见于图构造、图实现性和度数和不变量问题。",
+      "parent": "graph",
+      "created_reason": "仅使用 graph + constructive 无法表达本题关键是控制度数序列并避免特定子集和；该标签可复用于度数序列构造类题。",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph",
+      "importance": "secondary",
+      "evidence": "构造对象是简单无向图，解法要维护边数、度数和补图输出。",
+      "solution_variant": "degree-sequence-construction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "incidental",
+      "evidence": "一些简单可行族可由全偶度数和奇数 m 的奇偶性解释，但完整官方构造并不只依赖奇偶性。",
+      "solution_variant": "degree-sequence-construction"
+    }
+  ]
+}
