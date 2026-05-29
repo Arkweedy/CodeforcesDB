@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2185,
+    "title": "Codeforces Round 1074 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2185,
+    "index": "E",
+    "title": "The Robotic Rush",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2185/problem/E",
+      "notes": "题面给定机器人、尖刺位置和 L/R 指令串；每步后输出仍存活机器人数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150288?locale=en",
+      "notes": "官方提示指出机器人彼此独立，只需最近左右尖刺和全局位移；代码按死亡位移分桶。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2185E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "若所有机器人按同一 L/R 指令同步移动，机器人碰到尖刺就死亡；每条指令后输出还活着的机器人数量。",
+    "constraints": "多测，机器人、尖刺和指令总规模较大，需要 O((n+m+k)log m) 或近线性。",
+    "core_idea": "所有机器人共享同一个全局位移 current_pos。一个机器人会死亡只取决于 current_pos 是否等于它到最近左尖刺的负距离或到最近右尖刺的正距离；预处理这些死亡位移，把机器人编号放进 map/bucket。模拟指令时更新 current_pos，只处理当前 bucket 内尚未死亡的机器人并清空该桶。",
+    "complexity": "O((n+m)log m+k+total deaths) per test case.",
+    "tricks": [
+      "把绝对坐标运动转成全局位移",
+      "只考虑每个机器人最近的左右尖刺",
+      "按死亡位移分桶并清空已处理桶"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "排序尖刺位置；对每个机器人二分最近左右尖刺并记录两个可能死亡位移。随后模拟指令的全局位移并从桶中删除死亡机器人。",
+      "complexity": "O((n+m)log m+k+n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/distance-signature",
+      "importance": "primary",
+      "evidence": "每个机器人死亡条件被压缩为一个或两个相对位移值。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "implementation",
+      "importance": "primary",
+      "evidence": "主要难点是正确维护死亡桶、重复位移和已死亡机器人。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "排序尖刺后用 lower_bound 找每个机器人最近的左右尖刺。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "按死亡位移将机器人列表分桶，需要映射位移到待删除机器人集合。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "尖刺位置排序后才能二分最近尖刺。",
+      "solution_variant": "main"
+    }
+  ]
+}

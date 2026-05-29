@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2185,
+    "title": "Codeforces Round 1074 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2185,
+    "index": "F",
+    "title": "BattleCows",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "divide and conquer",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2185/problem/F",
+      "notes": "题面是 2^n 头牛的固定淘汰赛；每个查询临时修改一头牛技能，问它最终上方有多少牛。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150288?locale=en",
+      "notes": "官方提示强调单头牛只经历 n 场、栈技能为 XOR 且顺序不影响技能和目标牛最终位置；代码用前缀 XOR 模拟目标牛所在块逐层比赛。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2185F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "2^n 头牛按相邻栈两两比赛合并，栈技能为栈内技能 XOR，胜者栈叠到败者上方；每个独立查询临时修改一头牛技能，求该牛最终上方牛数。",
+    "constraints": "n<=18，sum 2^n<=2^18，sum q<=2e5；每个查询只能 O(n) 或更快。",
+    "core_idea": "查询只会影响包含目标牛的那一条淘汰赛路径，共 n 场。任意块的技能是区间 XOR，可用前缀 XOR O(1) 得到；再把目标牛原技能替换成查询技能。逐层比较目标所在块和相邻敌方块的 XOR，若目标块输掉，则敌方块整块会压在目标牛上方，答案加上当前块大小。",
+    "complexity": "O(2^n+q n) per test case.",
+    "tricks": [
+      "只模拟目标牛所在的 n 层比赛",
+      "用前缀 XOR O(1) 得到任意完整块技能",
+      "输掉某层时答案增加敌方块大小"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "预处理 prefix_xor；每个查询从大小 1 的块向上枚举，计算目标块替换后的 XOR 和兄弟块 XOR，按胜负更新目标牛上方数量。",
+      "complexity": "O(qn)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-xor",
+      "display_name": "Prefix XOR",
+      "description": "Use prefix XOR values to answer range XOR queries or simulate XOR-based intervals.",
+      "status": "candidate",
+      "parent": "algorithm/prefix-sums",
+      "created_reason": "The solution depends specifically on XOR range queries, which are not well represented by generic prefix sums.",
+      "importance": "primary",
+      "evidence": "每层敌我块的技能都通过区间 XOR 计算，前缀 XOR 是 O(1) 查询的关键。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "淘汰赛结构是长度 2^n 的完全二叉分治树，查询沿目标叶子到根逐层处理。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "块大小和层级都用 2 的幂表示，索引关系依赖位运算/整除。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "需要小心处理平局时左侧获胜以及目标块在左/右兄弟的方向。",
+      "solution_variant": "main"
+    }
+  ]
+}

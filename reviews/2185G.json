@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2185,
+    "title": "Codeforces Round 1074 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2185,
+    "index": "G",
+    "title": "Mixing MEXes",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2185/problem/G",
+      "notes": "题面要求枚举一次把某个数组中的一个元素移动到另一个数组的所有操作，并求操作后所有数组 mex 之和的总和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150288?locale=en",
+      "notes": "官方提示把删除和添加拆贡献：添加只在加入值等于目标数组 mex 时改变 mex，删除只在被删值是唯一且小于 mex 时改变 mex。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2185G",
+      "notes": "用于交叉确认 mex、second mex 与按值聚合添加贡献的写法。"
+    }
+  ],
+  "annotation": {
+    "summary": "有 n 个数组，枚举所有有序操作 (i,j,k)：把 a_i 的第 j 个元素移到另一个数组 a_k，求每次操作后所有数组 mex 之和的总和。",
+    "constraints": "多测，n 和所有数组总长度均到 2e5，元素值到 1e6；必须按元素/数组聚合贡献。",
+    "core_idea": "把一次移动拆成“从源数组删除一个值”和“向目标数组添加一个值”的独立贡献。添加值 v 只会影响那些 mex 正好等于 v 的目标数组，使其 mex 变为 second mex；删除值 v 只会在 v< mex 且 v 在源数组中唯一出现时，把源数组 mex 降为 v。预处理每个数组的 mex、second mex、频次唯一性以及全局每个值出现次数，即可线性累加所有操作贡献。",
+    "complexity": "O(total length log total length) with sorting per array, or O(total length) using frequency marking.",
+    "tricks": [
+      "把移动拆成删除贡献和添加贡献",
+      "添加只关心 value == target mex",
+      "删除只关心源数组内唯一且小于 mex 的值"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "对每个数组求 mex 与 second mex；枚举源数组元素累加删除后的 mex 总和贡献，再按全局值频次对 mex 等于该值的数组累加添加贡献。",
+      "complexity": "O(total length log total length)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "display_name": "MEX",
+      "description": "Use minimum excluded value behavior or contribution changes as a central part of the solution.",
+      "status": "candidate",
+      "parent": "math",
+      "created_reason": "Existing math/data-structure tags do not identify MEX-specific contribution reasoning.",
+      "importance": "primary",
+      "evidence": "整题围绕删除或添加元素后各数组 mex 如何变化进行贡献拆分。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "总和通过分别计算删除端与添加端对 mex 和的贡献得到。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "需要统计全局值出现次数和数组内值频次/唯一性。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "细节集中在去重、唯一出现判断、mex/second mex 的正确计算。",
+      "solution_variant": "main"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2185,
+    "title": "Codeforces Round 1074 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2185,
+    "index": "H",
+    "title": "BattleCows 2",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2185/problem/H",
+      "notes": "题面要求对每头牛统计将其取出并插入任意位置后，允许它最多作弊 k 次时能成为最终唯一剩余牛的位置数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/150288?locale=en",
+      "notes": "官方提示与代码将每头牛视作从位置 0 开始模拟，用前缀和、二分和少量 bad positions 推出所有可行插入位置。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2185H",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "顺序锦标赛中，每次队首两牛比赛，胜者技能变为两者技能和，败者离开；对每头牛，统计把它插入任意位置后，在它最多作弊 k 次的前提下最终获胜的位置数。",
+    "constraints": "多测，sum n<=2e5，a_i<=1e9；需要对每头牛接近 O(log A log n) 或均摊较小复杂度。",
+    "core_idea": "固定一头牛，把其它牛的相对顺序保持不变，等价于模拟它从最前面开始不断吸收前缀。牛只有在会输时才需要作弊，且每次作弊后技能至少翻倍，所以真正的失败位置数量只有 O(log max a)。用前缀和和忽略自身的区间和二分，找出这头牛在从位置 0 模拟时的 bad positions；根据 bad positions 数量与 k 的关系，用官方提示中的分类统计所有插入位置。",
+    "complexity": "O(n log A log n) per test case in the direct implementation from the editorial code.",
+    "tricks": [
+      "把任意插入位置归约到从位置 0 的一次模拟",
+      "只记录需要作弊的 bad positions",
+      "用前缀和与二分跳到下一次失败位置"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "对每头牛用前缀和函数计算忽略自身后的区间和，二分找到下一段能吸收到的位置；收集 bad positions 后按 bad count 与 k 的大小关系计数可行插入位置。",
+      "complexity": "O(n log A log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "每头牛的模拟通过二分前缀和跳到下一次会输的位置。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "必须快速计算去掉当前牛后的前缀/区间技能和。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "牛能赢就不作弊、只有输时才作弊是最优策略，之后技能按吸收前缀单调增长。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "技能和前缀和单调增长，支撑二分寻找下一个 bad position。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "每头牛只需显式枚举 O(log max a) 个 bad positions。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 dp，但主实现更像前缀和二分加贪心模拟，没有显式 DP 状态转移。",
+      "solution_variant": "main"
+    }
+  ]
+}
