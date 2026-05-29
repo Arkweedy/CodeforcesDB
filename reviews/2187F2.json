@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "F2",
+    "title": "Al Fine (Counting Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/F2",
+      "notes": "题面延续两个 DFS 序的公共树设定；F2 要求统计不同公共树数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解在 F1 的 good interval/括号结构上做 DP，按区间树统计不同大小的方案数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187F2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定两个 DFS 序 a,b，统计有多少棵不同的根树能够同时产生这两个 DFS 序，答案对 998244353 取模。",
+    "constraints": "n 较大，需要利用 F1 的区间结构，不能枚举所有子集。",
+    "core_idea": "比较两个 DFS 序中同一节点孩子的相对顺序，可把互相颠倒的孩子连成 maximal entangled sets。大小大于 1 的 entangled set 在任何合法树中必须接到同一个父亲并作为一个可递归子问题；收缩后两个 DFS 序相同。剩下问题等价于统计满足若干叶子约束的括号序列/DFS 入栈出栈序列，用 O(n^2) DP 完成，并乘上各 entangled set 的递归答案。",
+    "complexity": "O(n^2) in the straightforward tree DP used for counting version, with optimizations depending on implementation.",
+    "tricks": [
+      "把颠倒相对顺序的孩子连成 maximal entangled sets",
+      "收缩 entangled set 后转为相同 DFS 序计数",
+      "用括号序列 DP 处理叶子约束"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tree-polynomial-dp",
+      "summary": "递归处理 maximal entangled sets；收缩后对相同 DFS 序构造括号序列 DP，强制指定节点为叶子，并把子问题答案相乘。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bracket-dp",
+      "display_name": "Bracket-structure DP",
+      "description": "Dynamic programming over a parenthesis, interval nesting, or bracket-tree structure.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "The counting version depends specifically on DP over the nested interval/bracket structure from F1.",
+      "importance": "primary",
+      "evidence": "收缩 entangled sets 后，公共树计数变为带叶子约束的 DFS 括号序列计数。",
+      "solution_variant": "tree-polynomial-dp"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "maximal entangled sets 及其子树在两个 DFS 序中都是区间，形成可递归的嵌套结构。",
+      "solution_variant": "tree-polynomial-dp"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "括号嵌套结构可看作树，在树上合并子节点贡献。",
+      "solution_variant": "tree-polynomial-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "需要统计不同公共树数量，并将多个递归 entangled set 的方案数相乘。",
+      "solution_variant": "tree-polynomial-dp"
+    }
+  ]
+}

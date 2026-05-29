@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "G",
+    "title": "Many Cartesian Trees",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/G",
+      "notes": "题面给出所有 p_i 的笛卡尔树父边并集 S 的邻接矩阵，其中 p_i 由反复给当前最小值加 n 得到；要求恢复任意原排列 q。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解观察可令某个位置 v 的 q_v=n；若已知 v，q=n-1 的位置只能是 v 的最左或最右 child，并用跨过 v 的父边判定是哪一个。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187G",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定矩阵 S，S 记录在 q 及其逐次把当前最小值加 n 后的所有笛卡尔树中出现过的父边并集；恢复任意合法排列 q。",
+    "constraints": "多测，sum n^2<=9e6；需要 O(n^2) 预处理矩阵。",
+    "core_idea": "值可以整体循环平移，因此可假设某个位置 v 放 n。令 Child_v 是矩阵中曾以 v 为父亲的节点，若 q_v=n，则 q=n-1 的位置只能是 Child_v 中最左或最右的极端 child。若所有 child 在 v 一侧则直接确定；若两侧都有 child，则真正的 n-1 不能拥有跨过 v 的父边，而另一个极端 child 必然有，于是用每个节点的父边最左/最右位置判断并递归/迭代确定整个排列。",
+    "complexity": "O(n^2), dominated by reading and preprocessing the matrix.",
+    "tricks": [
+      "利用值循环平移固定 q_v=n",
+      "q=n-1 只能在最左/最右 child 中选择",
+      "用是否存在跨过 v 的父边区分两个极端 child"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "recursive-cartesian-construction",
+      "summary": "预处理每个节点作为父亲的最左/最右 child，以及每个节点作为 child 时父亲的最左/最右位置；从值 n 开始逐步确定 n-1,n-2,... 的位置。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer/cartesian-tree",
+      "importance": "primary",
+      "evidence": "题目核心对象是 q 与 p_i 的笛卡尔树父边并集，恢复过程依赖笛卡尔树父边性质。",
+      "solution_variant": "recursive-cartesian-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求显式构造满足目标的排列。",
+      "solution_variant": "recursive-cartesian-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "恢复每个下一大值时在最左/最右 child 中贪心判定唯一候选。",
+      "solution_variant": "recursive-cartesian-construction"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "q=n-1 的位置只可能是当前最大值位置的最左或最右 child。",
+      "solution_variant": "recursive-cartesian-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "需要分类处理 child 全在左侧、全在右侧、两侧都有三种情况。",
+      "solution_variant": "recursive-cartesian-construction"
+    }
+  ]
+}

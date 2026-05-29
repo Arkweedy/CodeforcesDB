@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "F1",
+    "title": "Al Fine (Maximizing Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "divide and conquer",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/F1",
+      "notes": "题面给出两棵以 0 为根的树可能产生的 DFS 序 a,b；要求在所有能同时产生这两个 DFS 序的公共树中最大化深度。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解先把 b 重标成自然序，再用连续值域区间刻画公共子树；valid segments 形成 laminar family，最大深度即最大嵌套深度。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187F1",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定两个 DFS 序 a,b，问是否存在同一棵根树能产生二者，并求所有公共树中最大可能深度。",
+    "constraints": "多测，sum n<=1e6；F1 需要 O(n log n) 级别算法。",
+    "core_idea": "先按 b 的位置重标 a，使 b 变成自然序。DFS 序中任意子树都是连续段，重标后公共子树对应一个段 c[l..r]：首元素是该段最小值，且 max-min=r-l。官方用分治高效找出这些 valid segments；它们形成 laminar family，因此最大公共树深度就是这些段的最大嵌套深度。",
+    "complexity": "O(n log n).",
+    "tricks": [
+      "把两个 DFS 序重标成一个排列上的区间问题",
+      "分治枚举跨中点区间并维护 min/max",
+      "用区间嵌套深度表示最大答案"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interval-depth",
+      "summary": "重标后分治求出每个左端点的 valid interval；把这些区间按端点扫描，用栈/括号匹配计算最大嵌套深度。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "求 good interval 的核心子程序按中点分治并处理跨中点区间。",
+      "solution_variant": "interval-depth"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "display_name": "Laminar family",
+      "description": "Exploit a family of intervals or sets where any two relevant members are nested or disjoint, enabling tree/stack/parenthesis processing.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "This problem's retrieval value is the laminar/nested interval structure, not just generic divide-and-conquer.",
+      "importance": "primary",
+      "evidence": "所有可用于答案的 good intervals 可按嵌套深度处理，类似括号结构。",
+      "solution_variant": "interval-depth"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "公共子树段的判定依赖 c[l] 是否为段最小值以及 max-min 是否等于段长。",
+      "solution_variant": "interval-depth"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "可用 RMQ/线段树辅助维护或查询区间 min/max；官方实现也使用有序/树状结构思想。",
+      "solution_variant": "interval-depth"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "区间嵌套关系等价为一棵树，最大答案是深度。",
+      "solution_variant": "interval-depth"
+    }
+  ]
+}
