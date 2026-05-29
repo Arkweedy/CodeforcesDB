@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "B",
+    "title": "Battle of Arrays",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "games",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/B",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2181/problem/B",
+      "notes": "Could not rely on an official Codeforces editorial in this pass; tags are based on reasoning from the statement and common max-heap simulation for the game."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181B",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Two players own arrays. On a turn, a player chooses one of their current values and attacks the opponent's maximum value; the opponent value is removed if it is not larger, otherwise it is decreased. Determine the winner under optimal play.",
+    "constraints": "Values can be large and arrays have many elements, so the play should be simulated on current maxima rather than scanning arrays every turn.",
+    "core_idea": "Choosing the player's current maximum is dominant: it deals at least as much damage and is not consumed by choosing it. With this observation, the game becomes deterministic. Maintain both arrays as max-heaps; each turn, compare the attacker's maximum x with the defender's maximum y, pop y if y <= x, otherwise replace it with y - x. The player who empties the opponent's heap wins. A practical implementation can batch repeated subtraction in Euclidean-style cases, but the key tagging point is the greedy max-choice plus priority-queue simulation.",
+    "complexity": "O((n + m) log(n + m) log V) with Euclidean-style batching; straightforward heap simulation is the conceptual model.",
+    "tricks": [
+      "dominant choice is current maximum",
+      "simulate only heap maxima",
+      "repeated subtraction resembles Euclidean reduction"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Reduce optimal play to repeatedly using the current maximum value and maintain both sides in max-heaps.",
+      "complexity": "O((n + m) log(n + m) log V) with batching",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The main decision is proving that always attacking with the current maximum is optimal and removes all strategic branching.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "primary",
+      "evidence": "The remaining deterministic game only needs repeated access to each player's current maximum.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "secondary",
+      "evidence": "The problem is a two-player perfect-information game, though after the greedy dominance proof it becomes deterministic simulation.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "Using a larger owned value can only make the opponent's maximum smaller sooner, which justifies the dominance proof.",
+      "solution_variant": "main"
+    }
+  ]
+}
