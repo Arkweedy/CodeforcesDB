@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "M",
+    "title": "Deformed Balance",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/M",
+      "notes": "题面与约束：为括号串 S 添加最短前缀 X 和后缀 Y，使 X+S+Y 具有 deformed balance。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 通过 modified bracket system 刻画 grammar，跟踪两个 balance (x,y)，并把 X 限制到三种 canonical forms 后做 O(n) 不等式搜索。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206M",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定括号串 S，求最短总长度的 X 和 Y，使 X+S+Y 在追加一个额外右括号后满足 deformed balance。",
+    "constraints": "多测总 n<=1e6，需要对输入总长度线性处理。",
+    "core_idea": "把 deformed grammar E ::= R | E R E | L E L 中的 L 用交替辅助括号重解释，可得到两个非负计数器的判定：x 是原括号 balance，y 是辅助括号 nesting。扫描时 R 使 (x,y)->(x-1,y)，L 使 x+1 且 y 根据 x+y 奇偶加一或减一；全程 x,y>=0 且最终 (1,0) 即可。对原题，只需考虑三种 canonical prepend forms：L^f、L^f R L^g、L^f R L^g R，因为额外尾部 L 块可前移。固定一种形式后，扫描 S 得到关于 f,g 的仿射约束与终态常数，后缀 Y 的最短长度可由最终 (x,y) 显式算出，遍历三种形式取最小。",
+    "complexity": "O(n) per total input length.",
+    "tricks": ["用辅助括号重解释 grammar", "双计数器 balance", "前缀 X 的三种 canonical forms", "关于 f,g 的线性不等式最小化"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "uncertainty_points": ["官方 analysis 给出了结构推导，但实现层面的三种形式不等式细节较紧；保持 medium confidence。"]
+  },
+  "solution_variants": [
+    {
+      "name": "grammar-two-counter-inequalities",
+      "summary": "用 (x,y) 双计数器刻画 deformed balance，把前缀 X 归约成三种 canonical forms，扫描 S 得到约束并计算最短后缀 Y。",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "本题是非标准括号语言补全问题，合法性通过括号 balance 风格计数器刻画。",
+      "solution_variant": "grammar-two-counter-inequalities"
+    },
+    {
+      "tag": "string/formal-grammar",
+      "importance": "primary",
+      "evidence": "决定性步骤是分析 BNF grammar E ::= R | E R E | L E L，并转换为辅助括号 grammar。",
+      "solution_variant": "grammar-two-counter-inequalities",
+      "description": "Use a formal grammar, BNF, or context-free language characterization to derive validity, parsing, or completion conditions for strings.",
+      "parent": "string",
+      "created_reason": "Existing bracket-sequence and parsing tags do not capture grammar-level language characterization as the main solution idea.",
+      "status": "candidate",
+      "aliases": ["formal grammar", "context-free grammar", "bnf grammar"]
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "普通括号 balance x 被扩展为带辅助 brace balance y 的状态，使 grammar 判定变成局部扫描。",
+      "solution_variant": "grammar-two-counter-inequalities"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "添加前缀 X 的最优化依赖拆分为 L^f、L^f R L^g、L^f R L^g R 三种 canonical forms。",
+      "solution_variant": "grammar-two-counter-inequalities"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "固定 X 的 canonical form 后，可行性和后缀长度由 f,g 上的线性约束推出。",
+      "solution_variant": "grammar-two-counter-inequalities"
+    }
+  ]
+}

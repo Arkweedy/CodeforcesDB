@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "I",
+    "title": "Growth Factor",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/I",
+      "notes": "题面与约束：计数满足 1<=b_i<=a_i 且 b_i | b_{i+1} 的序列。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 确认 suffix-min normalization、按 ending value 的 f_v(l) DP、binomial-basis 表示和 divisor/multiple 系数转移。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206I",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "计数序列 b：每个 1<=b_i<=a_i，且相邻项满足 b_i 整除 b_{i+1}。",
+    "constraints": "n<=2e5 且 a_i<=2e5，可以按值域枚举，但不能直接做位置和值的朴素转移。",
+    "core_idea": "由于 divisibility chain 中 b 非降，先把每个 a_i 替换为后缀最小值而不改变可行序列。设 left(v) 为 v 第一次被允许的位置，f_v(l) 为长度 l 且以 v 结尾的合法前缀数。若从 proper divisor u 转移到 v，需要对 f_u(j) 在一个下界范围上求和。把每个 f_v(l) 表示为少量二项式 C(l,k) 的线性组合，利用 hockey-stick identity 把位置前缀和变成从 D_u[k] 到 D_v[k+1] 的系数更新和常数修正。严格整除链每步至少使值翻倍，因此每个值只需 O(log M) 个系数。",
+    "complexity": "O(n + M log^2 M) time and O(M log M) memory, where M=max a_i after suffix-min normalization.",
+    "tricks": ["后缀最小值归一化", "整除偏序上的 DP", "二项式系数基", "hockey-stick identity 求前缀和", "严格整除链长度对数界"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binomial-basis-divisor-dp",
+      "summary": "用二项式基保存 f_v(l) 的系数；枚举 u 及其 proper multiples v，根据允许位置阈值执行官方系数转移。",
+      "complexity": "O(n + M log^2 M)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "解法定义 f_v(l) 为长度 l、以值 v 结尾的前缀数，并通过整除相关 ending value 的转移得到答案。",
+      "solution_variant": "binomial-basis-divisor-dp"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "核心优化是把 f_v(l) 表示成 C(l,k) 的线性组合，并用 hockey-stick identity 对位置范围求和。",
+      "solution_variant": "binomial-basis-divisor-dp"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "primary",
+      "evidence": "系数转移通过枚举每个值 u 及其 proper multiples v 完成，运行在 divisor/multiple lattice 上。",
+      "solution_variant": "binomial-basis-divisor-dp"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "状态图和转移阈值直接来自相邻 distinct values 之间的 u | v 条件。",
+      "solution_variant": "binomial-basis-divisor-dp"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "第一步利用 b 的非降性，把每个 a_i 替换成后缀最小值来简化约束。",
+      "solution_variant": "binomial-basis-divisor-dp"
+    }
+  ]
+}
