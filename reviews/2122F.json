@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2122, "title": "Order Capital Round 1 (Codeforces Round 1038, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2122, "index": "F", "title": "Colorful Polygon", "rating": 3400, "rating_status": "official", "official_tags": ["constructive algorithms", "divide and conquer", "geometry"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2122/problem/F", "notes": "题面与约束：n <= 8, sum a_i <= 100，构造至多 333 个顶点的简单多边形，使三角剖分数等于 multinomial (sum a)! / prod a_i!。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144876", "notes": "官方 tutorial 页面；当前文本视图中正文动态加载，结合独立题解确认二项式 gadget、乘法 gadget 与分治构造方向。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1038", "notes": "独立题解说明 multinomial 可拆成若干二项式系数；三角形两边放点可产生 binomial，强制某个三角形可让剖分数相乘，并用接近平衡的二叉合并控制顶点数。"}
+  ],
+  "annotation": {
+    "summary": "给定最多 8 个正整数，构造简单多边形，使其三角剖分数量恰为对应多项式系数。",
+    "constraints": "sum a_i <= 100, output vertices <= 333；题目只要求构造任意合法坐标。",
+    "core_idea": "把 multinomial 系数按一棵近似平衡的二叉合并树拆成若干 binomial 系数 C(L+R,L)。一个三角形的两条边上分别放 L 和 R 个可选点时，三角剖分与从一边走到另一边的网格路径对应，数量为 C(L+R,L)。再用非常靠近某条边的点或凹陷结构强制某个分隔三角形必须出现，使多个子多边形的剖分数量相乘。递归拼接这些 binomial gadget，就得到目标 multinomial，且每个 a_i 只参与 O(log n) 层，顶点数能压在 333 内。",
+    "complexity": "Construction O(sum a_i log n)",
+    "tricks": ["multinomial 拆成二项式乘积", "三角剖分与网格路径对应", "强制三角形使剖分数相乘", "平衡二叉合并控制顶点数"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": ["3400 构造题，已理解 binomial gadget 与 product gadget 的主线，但没有在当前 worker 阶段完整复原官方坐标细节。", "建议主 agent 复核实际输出构造是否在所有退化共线/简单多边形限制下都成立，尤其是强制三角形 gadget 的坐标实现。"]
+  },
+  "solution_variants": [
+    {"name": "balanced-binomial-gadget-product", "summary": "用平衡二叉树把 multinomial 分解为二项式系数乘积；每个二项式用三角形两边点的 triangulation gadget 实现，再用强制分隔三角形拼成乘积。", "complexity": "O(sum a_i log n) vertices/construction work", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目不是计算答案，而是要显式输出一个三角剖分数量等于目标值的多边形。", "solution_variant": "balanced-binomial-gadget-product"},
+    {"tag": "math/geometry", "importance": "primary", "evidence": "主解依赖构造简单多边形、强制三角形以及利用三角剖分结构实现计数 gadget。", "solution_variant": "balanced-binomial-gadget-product"},
+    {"tag": "math/combinatorics/binomial-identity", "importance": "primary", "evidence": "multinomial 被拆成多个 C(L+R,L)，每个 gadget 的三角剖分数就是对应二项式系数。", "solution_variant": "balanced-binomial-gadget-product"},
+    {"tag": "math/combinatorics/multinomial", "importance": "secondary", "evidence": "目标值本身是 multinomial，构造围绕其二叉合并分解展开。", "solution_variant": "balanced-binomial-gadget-product"},
+    {"tag": "trick/recursive-construction", "importance": "secondary", "evidence": "为了满足 333 顶点限制，按平衡二叉树递归合并颜色块，而不是线性前缀拆分。", "solution_variant": "balanced-binomial-gadget-product"}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2122, "title": "Order Capital Round 1 (Codeforces Round 1038, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2122, "index": "C", "title": "Manhattan Pairs", "rating": 1700, "rating_status": "official", "official_tags": ["constructive algorithms", "geometry", "greedy", "math", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2122/problem/C", "notes": "题面与约束：偶数个二维点，输出 n/2 对点，使配对曼哈顿距离总和最大；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144876", "notes": "官方 tutorial 页面；当前文本视图中正文动态加载，结合独立题解确认按 x/y 高低半区构造的主结论。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1038", "notes": "独立题解确认 x、y 两维可以同时达到各自最优，并用四个高低象限计数相等来配对。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2122C", "notes": "Candidate source checked; not used as a substantive solution source in this draft."}
+  ],
+  "annotation": {
+    "summary": "给定偶数个平面点，要求构造一组完美匹配，使所有配对的曼哈顿距离之和最大。",
+    "constraints": "多测，sum n <= 2e5，需要排序级别构造。",
+    "core_idea": "对任意一维坐标，最大配对贡献是上半部分坐标和减下半部分坐标和。分别按 x、y 划分高低半区，得到四类点：x高y高、x高y低、x低y高、x低y低。由行列计数都是 n/2 可得对角类数量相等，因此配 x高y高 与 x低y低、配 x高y低 与 x低y高，就能同时让 x 和 y 两维都达到各自最大贡献。",
+    "complexity": "O(n log n)",
+    "tricks": ["分别优化曼哈顿距离的两个坐标贡献", "四象限计数平衡", "任意匹配相等大小的对角类"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "coordinate-halves-cross-pairing", "summary": "按 x 和 y 各自排序标记高低半区，将点分成四类后配对对角类。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/geometry", "importance": "primary", "evidence": "核心是利用曼哈顿距离可按坐标分解，并证明二维高低半区能同时满足最优。", "solution_variant": "coordinate-halves-cross-pairing"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出具体配对，主解直接构造达到上界的匹配。", "solution_variant": "coordinate-halves-cross-pairing"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "需要分别按 x、y 排序来确定每个点属于高半区还是低半区。", "solution_variant": "coordinate-halves-cross-pairing"}
+  ]
+}

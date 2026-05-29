@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2122, "title": "Order Capital Round 1 (Codeforces Round 1038, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2122, "index": "D", "title": "Traffic Lights", "rating": 2400, "rating_status": "official", "official_tags": ["brute force", "data structures", "divide and conquer", "dp", "graphs", "greedy", "shortest paths"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2122/problem/D", "notes": "题面与约束：时间 t 在点 u 时可等待或沿第 t mod deg(u)+1 条边走；求到 n 的最短总时间及其中最少等待时间；sum n <= 5000, sum m <= 5e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144876", "notes": "官方 tutorial 页面；当前文本视图中正文动态加载，结合独立题解确认 O(n) 时间上界和时间展开 DP。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1038", "notes": "独立题解说明答案时间 T 可由无权最短路路径证明为 O(n)，随后在 (vertex,time) 状态上做 O(nT) DP。"}
+  ],
+  "annotation": {
+    "summary": "在边顺序随时间取模决定的无向图上，从 1 走到 n；每秒可等待或走当前时刻指定的边，先最小化总时间，再最小化等待次数。",
+    "constraints": "sum n <= 5000, sum m <= 5e5；可接受 O(n^2 + m) 或 O(nT + m)，但不能按所有时间无限搜索。",
+    "core_idea": "先证明最早到达时间存在 O(n) 上界：沿普通无权最短路前进，绕开不在路径上的错误出口的总等待/绕行次数可线性界住。然后只需展开前 O(n) 个时刻，令 dp[t][v] 为时刻 t 到达 v 的最少等待数，转移为等待到 (t+1,v) 或沿当前指定边到 (t+1,to)。最早出现可达 n 的 t 即最短总时间，该层 dp 值给出最少等待。",
+    "complexity": "O(nT + m), T = O(n), so O(n^2 + m)",
+    "tricks": ["用普通最短路证明时间截断上界", "按时间取模的动态图 DP", "字典序优化 time, waits"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "bounded-time-expanded-dp", "summary": "用线性上界截断时间层，在每个时刻对所有可达点执行等待/移动转移，按最早时间和最小等待取答案。", "complexity": "O(n^2 + m)", "confidence": "high", "is_primary": true},
+    {"name": "dijkstra-on-time-residue-states", "summary": "也可把等待和强制出边看作时间相关边，在足够小的时间边界内用最短路式松弛维护二元代价。", "complexity": "O(n^2 log n + m)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "dp/graph-dp", "importance": "primary", "evidence": "主解法是在图顶点和时间层组成的状态图上维护最少等待次数并转移。", "solution_variant": "bounded-time-expanded-dp"},
+    {"tag": "graph/shortest-path", "importance": "primary", "evidence": "可行的时间截断依赖普通无权最短路路径；目标也是先最短时间再最小等待的最短路式优化。", "solution_variant": "bounded-time-expanded-dp"},
+    {"tag": "trick/state-compression", "importance": "secondary", "evidence": "虽然真实时间无界，但通过 O(n) 到达时间上界只保留有限时间层。", "solution_variant": "bounded-time-expanded-dp", "description": "将看似无界或高维的过程压缩到有限状态、有限时间层或等价状态集合后再搜索/DP。", "parent": "trick", "created_reason": "本题的关键不是普通最短路本身，而是证明时间展开只需保留 O(n) 层；现有 graph/shortest-path 和 dp/graph-dp 不能单独表达这个检索点。", "status": "candidate"}
+  ]
+}

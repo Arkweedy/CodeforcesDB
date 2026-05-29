@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2122, "title": "Order Capital Round 1 (Codeforces Round 1038, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2122, "index": "E", "title": "Greedy Grid Counting", "rating": 2600, "rating_status": "official", "official_tags": ["combinatorics", "dp", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2122/problem/E", "notes": "题面与约束：补全 2 x n 网格，使每个子网格中存在一条 greedy path 达到所有右/下路径最大值；n,k <= 500, sum n <= 500。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144876", "notes": "官方 tutorial 页面；当前文本视图中正文动态加载，结合独立题解确认差分条件和 DP 计数。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1038", "notes": "独立题解给出关键化简：令 x_i = bottom_i - top_i，坏条件等价于存在 x_i > 0 且 x_i + ... + x_j < 0；可按列做 DP。"}
+  ],
+  "annotation": {
+    "summary": "统计部分未知的 2 x n 网格补全方案数，使任意子矩形内 greedy path 都能达到最大路径和。",
+    "constraints": "n,k <= 500, sum n <= 500，答案模 998244353；需要多项式计数，不能枚举 k^(2n)。",
+    "core_idea": "把第 i 列上下差记为 x_i = bottom_i - top_i。对 2 行子网格，极小反例只需比较“先向右若干步再下”和“先下再向右若干步”：若存在区间起点 i 满足 x_i > 0，但某个后缀到 j 的和 x_i+...+x_j < 0，则 greedy 会先下却输给晚下路径，条件失败；反之所有子网格都安全。于是从左到右枚举每列可产生的 x_i 值及方案数，用状态维护当前所有以正差开头的区间和的最小值/危险程度，并用前缀和优化转移。",
+    "complexity": "O(nk) to O(nk log k) depending on transition implementation",
+    "tricks": ["上下行差分化简", "极小反例只比较一次下移位置", "用 DP 维护正起点区间的最小前缀状态"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "column-difference-counting-dp", "summary": "逐列统计可能的差值 x_i；DP 状态记录当前所有 x_start > 0 区间的最小累积和，禁止其变负。", "complexity": "O(nk) with prefix-sum optimized transitions", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/counting-dp", "importance": "primary", "evidence": "主解法按列计数所有合法补全，并用状态聚合历史约束。", "solution_variant": "column-difference-counting-dp"},
+    {"tag": "trick/difference-transform", "importance": "primary", "evidence": "性质判定的核心是把每列变成 bottom-top 的差分 x_i，路径比较变成区间和符号条件。", "solution_variant": "column-difference-counting-dp"},
+    {"tag": "dp/prefix-sum-optimization", "importance": "secondary", "evidence": "固定未知格产生的差值区间后，转移可用前缀和/区间加速从朴素多项式降到 O(nk) 级别。", "solution_variant": "column-difference-counting-dp"},
+    {"tag": "math/combinatorics", "importance": "secondary", "evidence": "每列差值的方案数由上下格取值组合数或固定/未知情况统计得到。", "solution_variant": "column-difference-counting-dp"}
+  ]
+}

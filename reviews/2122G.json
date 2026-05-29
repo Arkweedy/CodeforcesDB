@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2122, "title": "Order Capital Round 1 (Codeforces Round 1038, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2122, "index": "G", "title": "Tree Parking", "rating": 3300, "rating_status": "official", "official_tags": ["combinatorics", "fft", "math", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2122/problem/G", "notes": "题面与约束：对所有 n 点 k 叶标号树，求合法进出停车时间序列数量之和；root 不算 leaf；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144876", "notes": "官方 tutorial 页面；当前文本视图中正文动态加载，结合独立题解和官方评论区线索确认组合/生成函数方向。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1038", "notes": "独立题解给出树 DP 计数式、二元生成函数微分方程、按叶数取系数的推导，并指出可归约到 Eulerian-number 风格计数。"}
+  ],
+  "annotation": {
+    "summary": "统计所有 n 点、k 叶标号树上的合法停车进出时间序列总数，其中每辆车进入和离开沿根到自身路径，停放时会阻塞经过该点的其他车。",
+    "constraints": "t <= 1e4, sum n <= 2e5, modulo 998244353；需要预处理后快速回答每个 (n,k)。",
+    "core_idea": "固定根树时，合法时间序列可按根的若干子树独立生成再交错合并：子树内部有自己的进入/离开序列，整棵树的序列由分配标签、合并各子树操作序列、再插入根车操作组成。令 a_{n,k} 计数带 k 叶的标号根树和合法操作序列，归一化 b_{n,k}=a_{n,k}/(n!(2n)!) 后，子树的无序集合组合给出指数型生成函数方程；加入叶子标记变量 y 后得到类似 2 dB/dx = exp(B)+y-1 的微分方程。解方程并取 [x^n y^k]，可化为 Eulerian-number/排列下降数风格的封闭求和或用多项式卷积预处理。",
+    "complexity": "O(n) to O(n log n) precomputation depending on coefficient extraction implementation",
+    "tricks": ["将合法停车序列视为树上递归操作序列", "标号分配与操作序列交错合并", "二元指数生成函数按叶数取系数", "Eulerian-number 风格化简"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": ["3300 计数题，已复原生成函数主线和叶数变量处理方向，但没有完全展开官方 FFT/系数提取实现细节。", "建议主 agent 复核最终公式中 root 不计 leaf 的边界项，特别是 n=1、k=0/1 和题面 k<n 的处理。"]
+  },
+  "solution_variants": [
+    {"name": "egf-eulerian-coefficient-extraction", "summary": "建立按点数和叶数的指数生成函数，解微分方程后把答案化为 Eulerian-number 风格的系数求和并预处理回答。", "complexity": "O(n) or O(n log n) after algebraic simplification", "confidence": "medium", "is_primary": true},
+    {"name": "official-convolution-precomputation", "summary": "保留生成函数/多项式形式，用卷积或 NTT 加速批量系数计算。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "答案来自对标号树、叶数、子树标签分配和合法操作序列交错方式的组合计数。", "solution_variant": "egf-eulerian-coefficient-extraction"},
+    {"tag": "math/generating-function", "importance": "primary", "evidence": "主推导用二元生成函数 B(x,y) 编码点数和叶数，并通过微分方程取系数得到答案。", "solution_variant": "egf-eulerian-coefficient-extraction"},
+    {"tag": "math/combinatorics/eulerian-number", "importance": "primary", "evidence": "独立推导指出最终系数可归约为 Eulerian-number/排列下降数风格的计数。", "solution_variant": "egf-eulerian-coefficient-extraction", "description": "涉及 Eulerian numbers、排列下降数或等价的有理生成函数系数提取；用于把排列统计或树/调度计数化成经典欧拉数形式。", "parent": "math/combinatorics", "created_reason": "本题的最终检索核心不是泛泛 combinatorics，而是归约到 Eulerian-number 风格系数；该模式在排列统计和生成函数题中可复用。", "status": "candidate"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "递归计数基于根树子树分解，叶数 k 也是树结构参数。", "solution_variant": "egf-eulerian-coefficient-extraction"},
+    {"tag": "math/transform/fft", "importance": "secondary", "evidence": "官方标签包含 fft；若按多项式卷积批量提取系数，可用 NTT/FFT 加速预处理。", "solution_variant": "official-convolution-precomputation"}
+  ]
+}
