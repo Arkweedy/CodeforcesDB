@@ -105,7 +105,7 @@ def contest_status_rows(
                     THEN 1 ELSE 0
                 END) AS reviewed_problems,
                 SUM(CASE
-                    WHEN COALESCE(a.review_status, 'raw') IN ('raw', 'auto_seeded')
+                    WHEN COALESCE(a.review_status, 'raw') IN ('raw', 'auto_seeded', 'needs_manual_review')
                      AND (p.rating IS NULL OR p.rating >= ?)
                     THEN 1 ELSE 0
                 END) AS pending_review,

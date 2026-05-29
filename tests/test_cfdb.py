@@ -186,6 +186,28 @@ class CfDbTests(unittest.TestCase):
                 results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], [problem_uid])
 
+    def test_excluded_payload_does_not_require_tags_or_appear_in_search(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            payload["problem"]["index"] = "G"
+            payload["problem"]["title"] = "Output Only"
+            payload["annotation"]["review_status"] = "excluded"
+            payload["annotation"]["summary"] = "Non-standard fixed-output problem."
+            payload["annotation"]["core_idea"] = "Excluded from the ICPC-style searchable set."
+            payload["solution_variants"] = []
+            payload["tags"] = []
+            with connect(db) as conn:
+                problem_uid = apply_reviewed_payload(conn, payload)
+                annotation = conn.execute(
+                    "SELECT review_status FROM problem_annotations WHERE problem_uid = ?",
+                    (problem_uid,),
+                ).fetchone()
+                self.assertEqual(annotation["review_status"], "excluded")
+                results = search_problems(conn, rating_min=1800, rating_max=1800)
+                self.assertEqual(results, [])
+
     def test_review_template_includes_luogu_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db = Path(tmp) / "test.sqlite"
@@ -383,6 +405,9 @@ class CfDbTests(unittest.TestCase):
                         ('cf_problem:10:C', 10, 'C', 'Too Easy', 1300, 'official',
                          'https://codeforces.com/contest/10/problem/C',
                          'https://codeforces.com/problemset/problem/10/C'),
+                        ('cf_problem:10:D', 10, 'D', 'Excluded', 1700, 'official',
+                         'https://codeforces.com/contest/10/problem/D',
+                         'https://codeforces.com/problemset/problem/10/D'),
                         ('cf_problem:14:A', 14, 'A', 'Done', 1800, 'official',
                          'https://codeforces.com/contest/14/problem/A',
                          'https://codeforces.com/problemset/problem/14/A')
@@ -395,13 +420,14 @@ class CfDbTests(unittest.TestCase):
                         ('cf_problem:10:A', 'reviewed'),
                         ('cf_problem:10:B', 'auto_seeded'),
                         ('cf_problem:10:C', 'auto_seeded'),
+                        ('cf_problem:10:D', 'excluded'),
                         ('cf_problem:14:A', 'reviewed')
                     """
                 )
 
             rows = {row["contest_id"]: row for row in contest_status_rows(db, 10, 16)}
             self.assertEqual(rows[10]["status"], "pending_review")
-            self.assertEqual(rows[10]["tracked_problems"], 3)
+            self.assertEqual(rows[10]["tracked_problems"], 4)
             self.assertEqual(rows[10]["reviewed_problems"], 1)
             self.assertEqual(rows[10]["pending_review"], 1)
             self.assertEqual(rows[11]["status"], "unextracted")

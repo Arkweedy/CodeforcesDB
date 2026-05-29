@@ -1,0 +1,49 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "G",
+    "title": "Codeforces Heuristic Contest 1001",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2201/G",
+      "notes": "Statement has fixed inputs n in {5,1001}, disabled hacks, and requires printing a large induced cycle."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official editorial/comments describe constructive pattern and search-assisted gadget ideas."
+    },
+    {
+      "source_type": "accepted_submission",
+      "url": "https://codeforces.com/contest/2201/submission/364106211",
+      "notes": "Accepted implementation used as a sanity check for the output-only geometric construction style."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201G",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Excluded from the searchable ICPC-style problem set: fixed-input output-only construction problem.",
+    "constraints": "Only two inputs exist, hacks are disabled, and the output is a large grid pattern rather than a normal algorithm over arbitrary tests.",
+    "core_idea": "Although rated on Codeforces, this problem is closer to a fixed-output/geometric construction challenge than a reusable ICPC-style algorithmic problem. Keeping it in normal tag search would pollute high-rating constructive/geometry queries, so it is recorded as excluded while preserving sources and rationale.",
+    "complexity": "Excluded; no normal reusable per-test algorithm is recorded.",
+    "tricks": ["fixed input", "output-only construction", "non-standard searchable training target"],
+    "confidence": "high",
+    "review_status": "excluded"
+  },
+  "solution_variants": [],
+  "tags": []
+}

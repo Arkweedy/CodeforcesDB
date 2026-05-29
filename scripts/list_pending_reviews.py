@@ -25,7 +25,7 @@ def main() -> None:
             FROM problems p
             JOIN contests c ON c.contest_id = p.contest_id
             LEFT JOIN problem_annotations a ON a.problem_uid = p.problem_uid
-            WHERE COALESCE(a.review_status, 'raw') IN ('raw', 'auto_seeded')
+            WHERE COALESCE(a.review_status, 'raw') IN ('raw', 'auto_seeded', 'needs_manual_review')
               AND (p.rating IS NULL OR p.rating >= ?)
               AND (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
             ORDER BY p.contest_id, p.problem_index

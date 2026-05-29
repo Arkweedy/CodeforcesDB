@@ -13,7 +13,7 @@ from .tags import TagInput, add_alias, ensure_tag, resolve_tag, slugify_tag
 ALLOWED_CONFIDENCE = {"low", "medium", "high"}
 ALLOWED_IMPORTANCE = {"primary", "secondary", "incidental"}
 ALLOWED_RATING_STATUS = {"official", "pending_cf_rating", "no_cf_rating", "unknown"}
-ALLOWED_REVIEW_STATUS = {"reviewed", "verified"}
+ALLOWED_REVIEW_STATUS = {"reviewed", "verified", "excluded", "needs_manual_review"}
 REVIEWED_TAG_SOURCES = {"manual", "ai_reviewed"}
 
 
@@ -76,7 +76,10 @@ def _validate_annotation(annotation: dict[str, Any]) -> None:
         raise ReviewedPayloadError(f"invalid annotation.confidence: {confidence}")
     review_status = annotation.get("review_status", "reviewed")
     if review_status not in ALLOWED_REVIEW_STATUS:
-        raise ReviewedPayloadError(f"review_status must be reviewed or verified, got {review_status}")
+        raise ReviewedPayloadError(
+            "review_status must be reviewed, verified, excluded, or needs_manual_review, "
+            f"got {review_status}"
+        )
     tricks = annotation.get("tricks", [])
     if not isinstance(tricks, list) or any(not isinstance(item, str) or not item.strip() for item in tricks):
         raise ReviewedPayloadError("annotation.tricks must be a list of non-empty strings")
@@ -173,10 +176,19 @@ def validate_payload(conn: sqlite3.Connection, payload: dict[str, Any], min_rati
     _require_text(problem.get("title"), "problem.title")
     _validate_rating(problem, min_rating)
     _validate_annotation(annotation)
+    review_status = annotation.get("review_status", "reviewed")
     variants = _as_list(payload.get("solution_variants"), "solution_variants")
-    variant_names = _validate_variants(variants)
+    if review_status == "excluded":
+        variant_names: set[str] = set()
+    else:
+        variant_names = _validate_variants(variants)
     _validate_sources(_as_list(payload.get("sources"), "sources"))
-    _validate_tags(conn, _as_list(payload.get("tags"), "tags"), variant_names)
+    tags = _as_list(payload.get("tags"), "tags")
+    if review_status == "excluded":
+        if tags:
+            _validate_tags(conn, tags, variant_names)
+    else:
+        _validate_tags(conn, tags, variant_names)
 
 
 def _upsert_contest(conn: sqlite3.Connection, contest: dict[str, Any]) -> None:

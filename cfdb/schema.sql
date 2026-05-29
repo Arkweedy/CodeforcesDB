@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS problem_annotations (
     confidence TEXT NOT NULL DEFAULT 'low'
         CHECK (confidence IN ('low', 'medium', 'high')),
     review_status TEXT NOT NULL DEFAULT 'raw'
-        CHECK (review_status IN ('raw', 'auto_seeded', 'reviewed', 'verified')),
+        CHECK (review_status IN ('raw', 'auto_seeded', 'reviewed', 'verified', 'excluded', 'needs_manual_review')),
     last_reviewed_at TEXT,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

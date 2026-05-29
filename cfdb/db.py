@@ -37,12 +37,54 @@ def _columns(conn: sqlite3.Connection, table: str) -> set[str]:
     return {row["name"] for row in rows}
 
 
+def _migrate_problem_annotations_review_status(conn: sqlite3.Connection) -> None:
+    row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'problem_annotations'"
+    ).fetchone()
+    if row and "excluded" in str(row["sql"]):
+        return
+
+    conn.execute(
+        """
+        CREATE TABLE problem_annotations_new (
+            problem_uid TEXT PRIMARY KEY REFERENCES problems(problem_uid) ON DELETE CASCADE,
+            summary TEXT,
+            constraints_text TEXT,
+            core_idea TEXT,
+            complexity TEXT,
+            tricks_json TEXT NOT NULL DEFAULT '[]',
+            confidence TEXT NOT NULL DEFAULT 'low'
+                CHECK (confidence IN ('low', 'medium', 'high')),
+            review_status TEXT NOT NULL DEFAULT 'raw'
+                CHECK (review_status IN ('raw', 'auto_seeded', 'reviewed', 'verified', 'excluded', 'needs_manual_review')),
+            last_reviewed_at TEXT,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO problem_annotations_new(
+            problem_uid, summary, constraints_text, core_idea, complexity,
+            tricks_json, confidence, review_status, last_reviewed_at, updated_at
+        )
+        SELECT
+            problem_uid, summary, constraints_text, core_idea, complexity,
+            tricks_json, confidence, review_status, last_reviewed_at, updated_at
+        FROM problem_annotations
+        """
+    )
+    conn.execute("DROP TABLE problem_annotations")
+    conn.execute("ALTER TABLE problem_annotations_new RENAME TO problem_annotations")
+
+
 def migrate_db(conn: sqlite3.Connection) -> None:
     annotation_columns = _columns(conn, "problem_annotations")
     if "constraints_text" not in annotation_columns:
         conn.execute("ALTER TABLE problem_annotations ADD COLUMN constraints_text TEXT")
     if "tricks_json" not in annotation_columns:
         conn.execute("ALTER TABLE problem_annotations ADD COLUMN tricks_json TEXT NOT NULL DEFAULT '[]'")
+    _migrate_problem_annotations_review_status(conn)
 
     problem_columns = _columns(conn, "problems")
     if "canonical_problem_uid" not in problem_columns:
