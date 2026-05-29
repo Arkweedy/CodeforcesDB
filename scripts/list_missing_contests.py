@@ -20,6 +20,12 @@ ACTIONABLE_STATUSES = {
 }
 
 
+def _queue_reports_missing_contest(queue: dict[str, Any]) -> bool:
+    if queue.get("queue_status") != "failed":
+        return False
+    return "not found in Codeforces contest.list" in str(queue.get("last_error") or "")
+
+
 def _fetch_by_id(conn, query: str, params: tuple[Any, ...]) -> dict[int, dict[str, Any]]:
     rows = conn.execute(query, params).fetchall()
     return {int(row["contest_id"]): dict(row) for row in rows}
@@ -54,6 +60,7 @@ def _status_for(contest: dict[str, Any] | None, counts: dict[str, Any]) -> str:
 
 def _action_for(status: str) -> str:
     return {
+        "not_found": "-",
         "not_in_db": "bootstrap",
         "needs_manual_review": "inspect",
         "failed": "retry_bootstrap",
@@ -128,6 +135,8 @@ def contest_status_rows(
         queue = queues.get(contest_id, {})
         row_counts = counts.get(contest_id, {})
         status = _status_for(contest, row_counts)
+        if contest is None and _queue_reports_missing_contest(queue):
+            status = "not_found"
         rows.append(
             {
                 "contest_id": contest_id,
