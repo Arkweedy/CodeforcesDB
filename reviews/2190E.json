@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2190,
+    "title": "Codeforces Round 1073 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2190,
+    "index": "E",
+    "title": "Median Permutation",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2190/problem/E",
+      "notes": "题面给定部分位置值为 -1 的排列，要求统计补全后所有长度为 3 的子数组 median 两两不同的排列数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150256?locale=ru&mobile=false",
+      "notes": "官方题解证明合法排列等价于奇偶位置分别单调，并按奇偶值集合用组合数计数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2190E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个长度 n 的部分排列，未填位置为 -1；统计补成 1..n 的排列后，每个长度 3 连续段的中位数都互不相同的方案数。",
+    "constraints": "多测，sum n<=2e5，取模 998244353；需要 O(n log n) 或 O(n)。",
+    "core_idea": "相邻两个长度 3 窗口的 median 只可能在某些相邻/隔位比较中重复。官方等价刻画为：奇数位置上的值必须单调，偶数位置上的值也必须单调，并且两条链方向相反（一个升、一个降；或反过来）。对于固定方向，已给定值必须满足各自链的单调性；剩余未填值只需按大小顺序分配到两条链，方案数可由组合数按区间缺口相乘得到。两个方向的答案相加，注意重叠情况去重。",
+    "complexity": "O(n log n) with sorting/missing-value processing.",
+    "tricks": [
+      "把 median 互异条件转成奇偶位置两条单调链",
+      "按给定值把缺口分段并用组合数分配缺失值",
+      "枚举两种相反方向并处理交集"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-chain-combinatorics",
+      "summary": "分别检查奇偶位置在某个方向下的已知值是否单调；将未使用的值按区间分给两个链的空位，用预处理组合数计算方案。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "主问题是计数满足两条单调链约束的补全排列。",
+      "solution_variant": "two-chain-combinatorics"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "median 互异条件被等价为排列在奇偶位置上的结构性单调约束。",
+      "solution_variant": "two-chain-combinatorics"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "合法性检查和计数都依赖奇偶两条链的单调性。",
+      "solution_variant": "two-chain-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "secondary",
+      "evidence": "缺失值分配到链上各段时使用组合数乘积。",
+      "solution_variant": "two-chain-combinatorics"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "题目被拆成奇数位置链与偶数位置链分别处理。",
+      "solution_variant": "two-chain-combinatorics"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "需要按值顺序处理缺失数字和已知值边界。",
+      "solution_variant": "two-chain-combinatorics"
+    }
+  ]
+}
