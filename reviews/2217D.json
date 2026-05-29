@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2217,
+    "title": "Codeforces Round 1091 (Div. 2) and CodeCraft 26"
+  },
+  "problem": {
+    "contest_id": 2217,
+    "index": "D",
+    "title": "Flip the Bit (Hard Version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2217/problem/D",
+      "notes": "题面：二进制数组、多个特殊位置，操作为翻转包含至少一个特殊位置的区间。n 总和不超过 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152772",
+      "notes": "官方题解将数组转为边界计数，多个特殊点把边界划分成 k+1 段，答案为 max(S/2, X)。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2217D",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定二进制数组和若干特殊下标，特殊下标处值相同；每次可翻转一个至少包含一个特殊下标的区间，求把所有位置变成初始特殊值的最少操作数。",
+    "constraints": "多测，sum n <= 2e5，需要线性统计边界，不能逐操作模拟。",
+    "core_idea": "把是否等于目标值转成 0/1，并在两端补 1。一次区间翻转只会切换两个端点边界；区间必须跨过某个特殊点，因此两个边界只有位于不同特殊点分割出的区域时才能被一次操作配对消去。令 S 为总边界数，X 为单个区域最多边界数，若没有区域超过一半则全部配对，答案 S/2；否则多数区域剩余边界只能单独处理，答案 X。",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "把翻转区间问题改写成边界消去问题",
+      "按特殊点把边界分区后做跨区配对"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "boundary-pairing",
+      "summary": "统计每个特殊点分隔区域内相邻不同的边界数，总边界 S 和最大区域 X 决定最少操作 max(S/2, X)。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/difference-transform",
+      "importance": "primary",
+      "evidence": "主解把区间翻转转化为只影响两个边界的差分/边界表示。",
+      "solution_variant": "boundary-pairing"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "答案来自尽可能跨区域配对边界；若某区域过大，其剩余边界必须单独处理，是贪心配对最优性。",
+      "solution_variant": "boundary-pairing"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "区间必须包含特殊点这一限制转化为两个边界是否能跨区域配对。",
+      "solution_variant": "boundary-pairing"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "需要正确处理补位、特殊点分段和边界下标。",
+      "solution_variant": "boundary-pairing"
+    }
+  ]
+}

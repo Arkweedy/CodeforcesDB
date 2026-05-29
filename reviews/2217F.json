@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2217,
+    "title": "Codeforces Round 1091 (Div. 2) and CodeCraft 26"
+  },
+  "problem": {
+    "contest_id": 2217,
+    "index": "F",
+    "title": "Interval Game",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "constructive algorithms",
+      "dp",
+      "games",
+      "greedy",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2217/problem/F",
+      "notes": "题面：Alice 先选第一个区间，第二个区间均匀随机，之后双方玩区间扩张游戏；sum x1, sum x2 均不超过 5e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152772",
+      "notes": "官方题解把两个区间的左右空余长度建成四堆 Nim，并用 a+b=(a xor b)+2(a&b) 统计随机区间的异或贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2217F",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "Alice 先选择 [1,x1] 内的一个区间，另一个区间在 [1,x2] 内随机选择；双方轮流把某个区间向外扩张一步以上，无法操作者败。求使 Alice 胜率最大的第一个区间。",
+    "constraints": "多测，sum x1 <= 5e5 且 sum x2 <= 5e5，需要枚举 Alice 可控制的 xor 并用 O(log x2) 计数。",
+    "core_idea": "一个区间 [l,r] 对应两堆石子 l-1 与 x-r，每步向外扩张等价于减少其中一堆，所以整体是四堆 Nim。Alice 只需选择第一个区间的 xor 值 X，使随机第二个区间产生相同 xor Z=X 的次数最少。对第二个区间令 a=l2-1, b=x2-r2，需要统计 a xor b=X 且 a+b<=x2-1 的有序对。利用 a+b=(a xor b)+2(a&b)，令 K=(Y-X)/2，则要求 K<=limit 且 K&X=0；每个合法和贡献 2^popcount(X) 个有序对。枚举 X 并按位统计 K 的数量即可。",
+    "complexity": "O(x1 log x2) per test case",
+    "tricks": [
+      "把区间扩张游戏转为四堆 Nim",
+      "把随机区间失败次数转为固定 xor 的 pair 计数",
+      "使用 sum/xor/and 恒等式降维计数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "nim-xor-counting",
+      "summary": "枚举 Alice 能构造的 X，统计随机第二个区间 xor 也为 X 的数量，选择失败次数最少的 X 后构造 [1, x1-X]。",
+      "complexity": "O(x1 log x2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "区间游戏被建模为四堆 Nim，胜负完全由 nim-sum 是否为 0 决定。",
+      "solution_variant": "nim-xor-counting"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "核心计数是枚举 xor 掩码 X，并统计 K&X=0 的整数数量。",
+      "solution_variant": "nim-xor-counting"
+    },
+    {
+      "tag": "trick/sum-xor-identity",
+      "importance": "primary",
+      "evidence": "使用 a+b=(a xor b)+2(a&b) 把 pair 计数化为 K 与 X 位不相交的计数。",
+      "solution_variant": "nim-xor-counting",
+      "description": "使用 a+b=(a xor b)+2(a&b) 或等价关系，把给定和/异或的二元数对计数、构造或可行性问题转成按位约束。",
+      "parent": "trick",
+      "created_reason": "现有 bitmask 和 xor 相关 tag 无法明确检索这种经典 sum/xor/and 恒等式转化题。",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/digit-dp",
+      "importance": "secondary",
+      "evidence": "统计 K<=limit 且 K&X=0 可看作二进制数位 DP/按位 tight 计数。",
+      "solution_variant": "nim-xor-counting"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "优化目标是最大化对均匀随机第二个区间的胜率，即最小化失败事件 Z=X 的数量。",
+      "solution_variant": "nim-xor-counting"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "选出最优 X 后需要构造第一个区间 [1, x1-X]。",
+      "solution_variant": "nim-xor-counting"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2217,
+    "title": "Codeforces Round 1091 (Div. 2) and CodeCraft 26"
+  },
+  "problem": {
+    "contest_id": 2217,
+    "index": "H",
+    "title": "Closer",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2217/problem/H",
+      "notes": "题面：2n 个树上顶点，每个交易编号出现两次；可选择一组匹配边并交换端点人员，最大化相邻同编号交易的权值和。sum n <= 1e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152772",
+      "notes": "官方题解利用匹配边使每个顶点最多移动一步的局部性，设计 f[u][x] 表示 u 最终拿到来自 x 的 badge 的树形 DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2217H",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "树上有 2n 个人，每种 badge 出现两次，选择一组不相邻的边进行交换后，若同 badge 两人相邻则获得对应收益，求最大收益。",
+    "constraints": "多测，sum n <= 1e5；匹配交换限制导致每个 badge 最多移动一条边，需要线性或 O(n log n) 树 DP。",
+    "core_idea": "被选择的边形成匹配，所以每个顶点的 badge 最多来自自己、父亲或某个儿子；距离至少 4 的同 badge 即使双双移动一步也不可能相邻。Root 后令 f[u][x] 表示子树内已结算、且 u 最终拿到原本在 x 的 badge 时的最大收益，其中 x 只可能是 u、parent(u) 或 child(u)。先把每个孩子取 best 的贡献求和；若 badge 从某个孩子来，则该孩子被迫进入 f[child][u]；若此 badge 的另一份在 u 的孩子或孙子附近，还可以替换对应孩子状态并加权收益。由于每个状态只牵涉至多两个孩子的局部修正，整体状态总数线性。",
+    "complexity": "O(n log n) per test case with map-based states; O(n) possible with indexed storage",
+    "tricks": [
+      "匹配交换带来的每点最多移动一步局部性",
+      "以 badge 来源扩展树 DP 状态",
+      "用默认子树 best 加少数局部修正完成转移"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "local-source-tree-dp",
+      "summary": "Root 树后，维护 u 最终 badge 来源 x 的状态；默认合并孩子 best，再对 badge 到达和能否在 u 附近成交做局部替换。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解是按根树自底向上合并子树状态的 DP。",
+      "solution_variant": "local-source-tree-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "必须在状态中记录 u 最终拿到的 badge 来自哪个邻近顶点，才能判断局部成交和匹配冲突。",
+      "solution_variant": "local-source-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "问题结构是树，转移依赖父子关系和子树边界。",
+      "solution_variant": "local-source-tree-dp"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "允许交换的边必须构成匹配，这给出了每点最多参与一次交换的核心限制。",
+      "solution_variant": "local-source-tree-dp"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "实现需要 DFS 建父子关系并自底向上计算 DP。",
+      "solution_variant": "local-source-tree-dp"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2217,
+    "title": "Codeforces Round 1091 (Div. 2) and CodeCraft 26"
+  },
+  "problem": {
+    "contest_id": 2217,
+    "index": "G",
+    "title": "Down the Pivot",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2217/problem/G",
+      "notes": "题面：统计 n 个结点的 0/1 标号二叉树，使通过翻转经过根的路径清零的最少操作数恰为 k；sum n <= 1e6。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152772",
+      "notes": "官方题解引入 x(v)=a(v) xor a(left) xor a(right)，把根到点路径翻转变成只切换一个 x(v)，再用 Catalan 数和二项式前缀和计数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2217G",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计有 n 个结点的不同 0/1 标号二叉树，其最少需要 k 次翻转经过根的简单路径才能把所有标号变为 0。",
+    "constraints": "多测，sum n <= 1e6，需要预处理阶乘、逆元、Catalan 数和二项式前缀式，单个测试 O(n) 或均摊线性。",
+    "core_idea": "先对每个结点定义 x(v)=a(v) xor a(left) xor a(right)。翻转一条从当前根到某结点的路径只会切换终点的 x(v)，因此对子树使用根到点路径清零的代价就是 x=1 的数量，且大小为 m 的子树有恰好 C(m,s) 种标号产生代价 s，与形状无关。整棵树的一次合法路径可同时处理左右子树各一条根路径，左右代价 S(L),S(R) 的配对成本为 max；根标号只会再带来 0/1 的一位修正。因此 cost=k 等价于 max(S(L),S(R)) 属于 {k,k-1}，对左右子树大小拆分，用 Catalan 数乘二项式前缀和统计 max<=t，再做差得到恰好 k。",
+    "complexity": "O(n) per test case after O(max n) precomputation",
+    "tricks": [
+      "用 xor 差分变量把路径翻转局部化到终点",
+      "用 max 配对左右子树代价",
+      "用 Catalan 数与二项式前缀和统计二叉树结构和标号"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-change-of-basis-combinatorics",
+      "summary": "将标号映射为 x(v) 后，子树代价只取决于 x 中 1 的个数；枚举左右子树大小，用 Catalan 数和二项式前缀和统计 max(SL,SR) 的分布。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/difference-transform",
+      "importance": "primary",
+      "evidence": "x(v)=a(v) xor a(left) xor a(right) 是把路径翻转代价转成点独立计数的核心转化。",
+      "solution_variant": "xor-change-of-basis-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "最终答案是对二叉树结构和标号数的组合计数。",
+      "solution_variant": "xor-change-of-basis-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics/catalan",
+      "importance": "primary",
+      "evidence": "大小为 i 的二叉树结构数使用 Catalan 数，左右子树大小拆分也依赖 Catalan 卷积结构。",
+      "solution_variant": "xor-change-of-basis-combinatorics",
+      "description": "涉及 Catalan 数、二叉树/括号序列/非交叉结构等经典 Catalan 对象的计数或递推。",
+      "parent": "math/combinatorics",
+      "created_reason": "现有组合数学 tag 无法单独检索 Catalan 结构计数题，而这类题在二叉树和括号结构中较常见。",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "secondary",
+      "evidence": "固定树结构后，代价分布由二项式系数 C(m,s) 和其前缀和表示。",
+      "solution_variant": "xor-change-of-basis-combinatorics"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "推导从根分解左右子树；实现中按二叉树大小拆分汇总子树贡献。",
+      "solution_variant": "xor-change-of-basis-combinatorics"
+    }
+  ]
+}

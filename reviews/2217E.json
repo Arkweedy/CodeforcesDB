@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2217,
+    "title": "Codeforces Round 1091 (Div. 2) and CodeCraft 26"
+  },
+  "problem": {
+    "contest_id": 2217,
+    "index": "E",
+    "title": "Definitely Larger",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "data structures",
+      "graphs",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2217/problem/E",
+      "notes": "题面：给定排列 p 和每个 i 被支配的数量 d_i，构造排列 q；sum n <= 5000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152772",
+      "notes": "官方题解给出两种贪心构造：按 p_i 递减插入相对顺序，或从大到小分配 q_i。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2217E",
+      "notes": "洛谷题解候选来源；本次未作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定排列 p 和数组 d，要求构造排列 q，使得每个 i 被满足 j>i、p_j>p_i、q_j>q_i 的下标 j 支配的数量恰好为 d_i。",
+    "constraints": "sum n <= 5000，允许 O(n^2) 构造和校验。",
+    "core_idea": "按 p_i 从大到小处理时，已经处理的下标都满足 p_j>p_i，只需要控制其中 j>i 且 q_j>q_i 的数量。维护当前 q 的相对顺序列表 ord；设 m 为已处理且下标大于 i 的数量，若 d_i>m 则无解。为了让恰好 d_i 个合法 j 排在 i 后面，把 i 插入到已经跳过 m-d_i 个 j>i 的位置。最后 ord 中的位置就是 q 值。",
+    "complexity": "O(n^2) per test case",
+    "tricks": [
+      "按 p 值降序让一个支配条件自动成立",
+      "用插入位置精确控制右侧支配数量"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "decreasing-p-insertion",
+      "summary": "按 p_i 降序将下标插入未来 q 的顺序中，插入点由 d_i 和已处理的右侧下标数决定。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "assign-q-descending",
+      "summary": "等价做法是从大到小赋 q 值，每次选当前 d_i 为 0 的最小下标并更新它能支配的左侧元素。",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "目标不是判断性质而是构造任意满足支配计数的排列 q。",
+      "solution_variant": "decreasing-p-insertion"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "按 p_i 递减固定处理顺序，并用最局部的插入位置满足当前 d_i，后续不会破坏已满足条件。",
+      "solution_variant": "decreasing-p-insertion"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "支配关系被拆成 p 的顺序和 q 的相对顺序，核心是维护一个排列的相对序。",
+      "solution_variant": "decreasing-p-insertion"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "处理顺序由 p_i 降序决定；实现中可通过 p 的逆排列直接遍历。",
+      "solution_variant": "decreasing-p-insertion"
+    }
+  ]
+}
