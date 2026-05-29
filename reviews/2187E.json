@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "E",
+    "title": "Doors and Keys",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/E",
+      "notes": "题面给出线性房间、定时自动开启的门以及最多携带一把钥匙的规则；要求每个前缀房间的最早到达时间。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解代码使用大小约 320 的 DP 状态，状态表示可利用的钥匙/往返负债数量，并逐门更新最早时间。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "有 n+1 个线性房间和 n 扇门；门会在 a_i 秒自动打开，也可用钥匙提前打开。某些房间有钥匙，且最多携带一把。对每个 i 求到达房间 i+1 的最短时间。",
+    "constraints": "多测，sum n<=2e5，a_i<=2e5；官方实现利用一个约 320 大小的状态上界做 O(nB) DP。",
+    "core_idea": "把复杂的钥匙移动过程压成一个小状态 j，表示当前前缀内还可用于向右推进的钥匙/往返层数。遇到有钥匙的房间可把状态 j 增加 1；过下一扇门时，要么等待门自动打开并付出与 j 相关的移动代价，要么消耗一个已积累状态提前开门。由于有用的 j 很小，逐门维护最早时间即可输出每个前缀答案。",
+    "complexity": "O(nB) with B around 320 in the official implementation.",
+    "tricks": [
+      "把钥匙搬运过程压成小整数状态",
+      "每扇门做等待自动开门或消耗钥匙的状态转移",
+      "利用隐藏状态上界把多项式 DP 控制到可接受"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bounded-state-dp",
+      "summary": "维护 f[j] 表示处理到当前位置、状态 j 的最早时间；有钥匙时可免费提升 j，跨门时转移到 j 或 j-1 并计算等待/往返代价。",
+      "complexity": "O(nB)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "主解法是按门推进的 DP，状态 j 被限制在小常数/小上界范围内。",
+      "solution_variant": "bounded-state-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "必须在时间之外额外记录可用钥匙/往返负债状态，才能描述未来开门能力。",
+      "solution_variant": "bounded-state-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "官方实现直接枚举约 320 个状态完成转移。",
+      "solution_variant": "bounded-state-dp"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 data structures，但主要实现是数组 DP，没有专门数据结构。",
+      "solution_variant": "bounded-state-dp"
+    }
+  ]
+}

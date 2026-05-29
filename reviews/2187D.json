@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "D",
+    "title": "Cool Problem",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/D",
+      "notes": "题面定义由 0/1 递推得到的生成数组 c，并要求求所有可达 f(s)=sum c_i 的不同值之和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解代码维护四个 bitset 状态来枚举可能的最终 c_n，再用公式把 c_n 转成 f(s)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ml76e25c",
+      "notes": "用于确认恒等式 f=(c_n^2+(x-y)c_n+nxy)/(2x) 及 bitset DP 状态含义。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定含 ? 的 01 串和常数 x,y；每个补全串按 c_i=x+c_{i-1} 或 y-c_{i-1} 生成数组，求所有可能 f=sum c_i 的不同值之和。",
+    "constraints": "多测，sum n<=1e5，x,y<=1e6；需要避免枚举 2^{#?} 个补全。",
+    "core_idea": "把递推式代数化后可证明 f 只由最终值 c_n 决定：f=(c_n^2+(x-y)c_n+nxy)/(2x)。因此问题变成求所有可能的 c_n。c_n 总可表示为 t*x 或 t*x+y，且 t 的范围 O(n)，再根据正负方向和是否含 y 系数维护四个可达 bitset，处理每个字符做位移/交换转移，最后去重所有 f 值求和。",
+    "complexity": "O(n^2 / word_size) per test case using bitsets.",
+    "tricks": [
+      "用望远镜式恒等式把 f 化成只依赖 c_n",
+      "把 c_n 表示成 x 的整数倍加可选 y",
+      "用四个 bitset 同时维护符号方向和 y 系数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bitset-dp",
+      "summary": "用 bf0/bf1/br0/br1 四个 bitset 表示可达的 +t*x、+t*x+y、-t*x、-t*x+y，按字符 0/1/? 转移；枚举所有 c_n 代入公式并去重。",
+      "complexity": "O(n^2 / w)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bitset-dp",
+      "display_name": "Bitset DP",
+      "description": "Use machine-word bitsets to optimize a reachability DP over integer offsets or counts.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "The decisive technique is bitset-accelerated reachability, which is more specific than generic DP or bitmasking.",
+      "importance": "primary",
+      "evidence": "官方解法维护四个 bitset，通过左移/右移表示可达 c_n 系数集合。",
+      "solution_variant": "bitset-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "需要同时记录正负方向和是否带 y 系数，否则无法正确转移 c_i=y-c_{i-1}。",
+      "solution_variant": "bitset-dp"
+    },
+    {
+      "tag": "math/identity",
+      "display_name": "Algebraic identity",
+      "description": "Use a derived algebraic identity to collapse a sum or recurrence into a smaller state.",
+      "status": "candidate",
+      "parent": "math",
+      "created_reason": "Existing math tags do not capture that the main simplification is an identity making f depend only on c_n.",
+      "importance": "primary",
+      "evidence": "f(s) 由恒等式化为只依赖最终 c_n，从指数补全问题降到可达值集合问题。",
+      "solution_variant": "bitset-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "bitset 使用按位并/移位进行集合转移优化。",
+      "solution_variant": "bitset-dp"
+    }
+  ]
+}

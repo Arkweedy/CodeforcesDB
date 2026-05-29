@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "C",
+    "title": "Jerry and Tom",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dsu",
+      "games",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/C",
+      "notes": "题面给出非交叉额外边的有向图追逐游戏，要求求所有起点对的 f(x,y) 之和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解代码把每个 u 连到能一步到达的最大 v，构成以 n 为根的树，并用小并大统计深度贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187C",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "在带有链边和非交叉跳边的有向图上，Jerry 每回合必须前进，Tom 可前进或停留；Tom 想赢且移动次数尽量少，求所有不同起点对的最优移动次数之和。",
+    "constraints": "多测，n 总和 <=2e5，额外边非交叉；需要 O(n log n) 或接近线性。",
+    "core_idea": "非交叉跳边让每个 u 只需关心最远可达 a[u]，边 a[u]->u 构成一棵以 n 为根的树。游戏最优值可以转写为这棵树上与深度、LCA/子树分解有关的贡献：先用小并大统计同深度节点对在各祖先处产生的项，再减去按子树分割的祖先深度项，最后补上按深度排序的全局项。",
+    "complexity": "O(n log n) with small-to-large maps; the editorial mentions an O(n) bonus.",
+    "tricks": [
+      "利用非交叉边把原图压成一棵支配树",
+      "把博弈最优移动次数转成树上深度贡献",
+      "用小并大合并深度频次统计节点对"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "small-to-large",
+      "summary": "构造父亲 a[u]=max reachable endpoint；DFS 时维护当前子树内各深度出现次数，小并大合并并累加同深度跨子树节点对贡献。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "题目核心是两名玩家在图上的最优策略与 Tom 最少移动次数。",
+      "solution_variant": "small-to-large"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "非交叉有向图被转成以 n 为根的树，之后所有计算都在树上完成。",
+      "solution_variant": "small-to-large"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "官方代码在 DFS 中按 map 大小合并深度计数，统计跨子树贡献。",
+      "solution_variant": "small-to-large"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "每个节点贡献按父亲切出的子树组件分解并扣除。",
+      "solution_variant": "small-to-large"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要 DFS 求深度、父亲、子树大小并进行后序合并。",
+      "solution_variant": "small-to-large"
+    }
+  ]
+}

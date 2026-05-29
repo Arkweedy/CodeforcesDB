@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2187,
+    "title": "Codeforces Round 1077 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2187,
+    "index": "B",
+    "title": "Shortest Statement Ever",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2187/problem/B",
+      "notes": "题面要求找非负整数 p,q，使 p&q=0 且 |x-p|+|y-q| 最小。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150649?locale=en",
+      "notes": "官方题解证明存在最优解满足 p=x 或 q=y，并枚举 x&y 中冲突的最高位附近候选。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2187B",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 x,y，构造 p,q>=0，使 p&q=0 且到 (x,y) 的曼哈顿距离最小。",
+    "constraints": "多测，0<=x,y<2^30；可枚举 30 个二进制位。",
+    "core_idea": "如果 x 与 y 的当前最高位不冲突，保留该位不会变差；真正需要处理的是二者同为 1 的冲突位。官方证明存在最优解使 p=x 或 q=y，因此只需围绕每个冲突位枚举把某一边保留、另一边清低位/进位等少数候选，再取距离最小者。",
+    "complexity": "O(log max(x,y)) per test case.",
+    "tricks": [
+      "把 p&q=0 看成每一位最多给一方",
+      "证明最优解可以固定 p=x 或 q=y",
+      "只枚举 x&y 的冲突位附近候选"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "初始化候选 (x,y)，对每个 x 和 y 同为 1 的位枚举四种边界候选，检查 p&q=0 后取距离最小。",
+      "complexity": "O(30)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "primary",
+      "evidence": "最优性按二进制位冲突讨论，核心是处理 x&y 的 1 位。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出达到最小距离的一组 p,q，而不是只求值。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "候选只需取冲突位附近的清低位或进位边界，而不用搜索所有 p,q。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "可做按位 DP，但官方构造枚举边界候选更直接。",
+      "solution_variant": "main"
+    }
+  ]
+}
