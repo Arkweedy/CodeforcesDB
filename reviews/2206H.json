@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "H",
+    "title": "Reflect Sort",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": ["number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/H",
+      "notes": "题面与约束：可围绕某个 a_i 反射前缀或后缀，使序列最终正且非降，并最小化最终 a_n。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 确认相邻绝对差不变，并用 gcd(2*|a_i-a_{i+1}|) 刻画 a_1 的可达同余类。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206H",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定整数序列，反复选择一个位置并把其左侧前缀或右侧后缀关于该值反射；要求最终序列正且非降，最小化最终 a_n。",
+    "constraints": "n <= 1e5, a_i <= 1e9，需要线性或近线性数论计算。",
+    "core_idea": "反射操作不改变每个相邻绝对差 |a_i-a_{i+1}|。若最终序列非降且首项确定，则最终 a_n = a_1 + sum |a_i-a_{i+1}|，所以只需让最终 a_1 尽量小且为正。连续相邻前缀反射可让 a_1 增减 2*(a_{x+1}-a_x)，后缀反射可改变该差符号，因此 a_1 可在原值基础上加任意 gcd(2*|a_i-a_{i+1}|) 的倍数。答案取这个模数下 a_1 的最小正代表元，再加相邻绝对差总和。",
+    "complexity": "O(n log max(a_i)).",
+    "tricks": ["相邻绝对差不变量", "把最小化 a_n 转为最小化正的 a_1", "gcd 同余可达类", "全相等时 gcd 为 0 的特判"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "gcd-reachable-first-value",
+      "summary": "计算 total=sum |a_i-a_{i+1}| 和 d=gcd(2*|a_i-a_{i+1}|)。若 d=0 则答案为 a_1，否则把 a_1 调到最小正同余代表元 first，再输出 first+total。",
+      "complexity": "O(n log max(a_i))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "解法第一步是发现所有相邻绝对差在反射操作下保持不变。",
+      "solution_variant": "gcd-reachable-first-value"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "最终 a_1 的所有可达变化量由 gcd(2*|a_i-a_{i+1}|) 完整刻画。",
+      "solution_variant": "gcd-reachable-first-value"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "最终目标被改写为相邻绝对差总和加上可调首项。",
+      "solution_variant": "gcd-reachable-first-value"
+    },
+    {
+      "tag": "trick/sign-assignment",
+      "importance": "secondary",
+      "evidence": "后缀反射说明相邻差符号可翻转，从而允许 a_1 增减对应绝对差贡献。",
+      "solution_variant": "gcd-reachable-first-value"
+    }
+  ]
+}

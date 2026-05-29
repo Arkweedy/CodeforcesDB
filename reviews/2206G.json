@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "G",
+    "title": "Extra Transition",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": ["graphs"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2206/G",
+      "notes": "题面与约束：判断 transition network 是否 well-designed，并求加入仍保持 well-designed 的缺边权值乘积和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://apac26.icpc.tw/assets/championship/2026/problemset-analysis.pdf",
+      "notes": "官方 analysis 证明 well-designed network 等价于 two-terminal series-parallel graph，并用 extended series operation 刻画可加入边。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206G",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定带终端 1,n 的连通无向 transition network 和点权，判断是否 well-designed；若是，计算所有加入后仍 well-designed 的缺边 (i,j) 的 w_i w_j 之和。",
+    "constraints": "多测总 n,m <= 2e5，需要 O(m log n) 或近线性图归约。",
+    "core_idea": "well-designed 条件正是以 1,n 为终端的 two-terminal series-parallel 图。通过不断对度为 2 的点做 series reduction、对重边做 parallel reduction，若最终只剩终端边则图合法，否则不合法。对合法 SP 图，某条缺边加入后仍保持性质，当且仅当它在某次 extended series operation 中作为合法 extra edge 出现。归约过程中维护这些 exposed vertices/components 的权值聚合，累加对应 w_i w_j，并扣除已经存在的边对，只保留缺边贡献。",
+    "complexity": "O(m log n) with adjacency and multiplicity maintenance; O(n + m) memory.",
+    "tricks": ["well-designed 等价于 two-terminal series-parallel", "series/parallel reduction 识别结构", "extended series operation 刻画可加入边", "归约时聚合权值对贡献"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "series-parallel-reduction-with-weight-aggregation",
+      "summary": "用 two-terminal SP 标准归约验证结构；在 series reduction 的扩展信息中维护可加缺边的点权聚合贡献。",
+      "complexity": "O(m log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/series-parallel-graph",
+      "importance": "primary",
+      "evidence": "官方 analysis 的核心定理是题面的 well-designed network 等价于 two-terminal series-parallel graph。",
+      "solution_variant": "series-parallel-reduction-with-weight-aggregation",
+      "description": "Use or recognize two-terminal series-parallel graphs, usually through recursive series/parallel composition or reduction.",
+      "parent": "graph",
+      "created_reason": "Existing graph tags do not capture the specific SP-graph structure and reduction characterization, which is the decisive concept of this problem.",
+      "status": "candidate",
+      "aliases": ["series-parallel graph", "two-terminal series-parallel", "ttsp", "sp graph"]
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "识别 SP 结构后，答案通过归约过程中累加 weighted pair products 得到，而不是枚举所有可加边。",
+      "solution_variant": "series-parallel-reduction-with-weight-aggregation"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "实现需要维护 adjacency 和 edge multiplicity，因为 series reduction 会制造 parallel edges。",
+      "solution_variant": "series-parallel-reduction-with-weight-aggregation"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "incidental",
+      "evidence": "输入保证连通，连通性属于模型前提而非主要算法挑战。",
+      "solution_variant": "series-parallel-reduction-with-weight-aggregation"
+    }
+  ]
+}

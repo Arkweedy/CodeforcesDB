@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2206,
+    "title": "2026 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2206,
+    "index": "J",
+    "title": "Worldwide Playlist",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2206/problem/J",
+      "notes": "题面与约束：无限循环播放排列 a，希望按排列 b 完整听歌；每天持久 swap 一次，输出最少 skip 次数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2206/attachments/download/36244/analysis.pdf",
+      "notes": "官方 analysis 给出 skips=played-n，played=pos_a(b_n)+wraps*n，并说明两类 swap 都只影响 O(1) 个相邻比较。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2206J",
+      "notes": "洛谷题解候选来源；本次未作为主要依据。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定循环播放排列 a 和目标听歌顺序 b，支持交换 a 或 b 中两个位置；每天求从 a_1 开始听完整个 b 顺序所需的最少 skip 次数。",
+    "constraints": "n,d <= 2e5，更新后必须 O(1) 或 O(log n) 维护答案。",
+    "core_idea": "令 c_i=pos_a(b_i)。从 b_i 到 b_{i+1} 时，若 c_{i+1}<c_i，就必须绕过播放列表末尾一次，因此 wraps 是 c 中相邻下降数。总播放歌曲数为 pos_a(b_n)+wraps*n，skip 为该值减 n。交换 b_x,b_y 只影响 x-1,x,y-1,y 附近相邻比较；交换 a_x,a_y 只改变两首歌的 pos_a，只影响它们在 b 中所在位置附近的相邻比较。每次更新先删旧贡献、执行 swap 并更新反置数组、再加新贡献。",
+    "complexity": "O(n + d).",
+    "tricks": ["把循环次数转为相邻下降数", "只维护局部相邻贡献", "同时维护两个排列的反置位置"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "adjacent-descent-maintenance",
+      "summary": "维护 c_i=pos_a(b_i) 的相邻下降数 wraps；两类 swap 都只重算 O(1) 个受影响相邻边，并用 pos_a(b_n)+wraps*n-n 输出答案。",
+      "complexity": "O(n + d)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "每次 swap 后答案只由少数相邻下降贡献变化，核心是局部删加维护 wraps。",
+      "solution_variant": "adjacent-descent-maintenance"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "解法把两个排列通过反置位置组合成 c_i=pos_a(b_i)，答案完全取决于这个排列序列的相邻下降结构。",
+      "solution_variant": "adjacent-descent-maintenance"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "无限循环播放列表使每次相邻下降对应一次完整 wrap，played=pos_a(b_n)+wraps*n。",
+      "solution_variant": "adjacent-descent-maintenance"
+    }
+  ]
+}
