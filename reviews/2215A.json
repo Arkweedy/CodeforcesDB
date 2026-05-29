@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "A",
+    "title": "Interval Mod",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dp",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/A",
+      "notes": "Statement and constraints: repeatedly choose intervals of length at least k and apply mod p or mod q."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2215A",
+      "notes": "Luogu mirror used to cross-check statement and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Used to confirm the first-interval characterization and prefix-sum formula."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2216/problem/C",
+      "notes": "Div.2 duplicate alias of canonical 2215A."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215A",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array and two mod choices p<q, choose interval operations to minimize the final sum.",
+    "constraints": "Sum n <= 1e5 and values/moduli can be large, so an O(n) per total input solution is intended.",
+    "core_idea": "Each element can end as either b_i=a_i mod p or c_i=(a_i mod q) mod p. After the first chosen interval, other elements can be independently pushed to min(b_i,c_i). The only coupled decision is the first interval, and lengthening it is never beneficial, so enumerate all length-k first intervals and take min(sum b, sum c) inside plus min(b,c) outside.",
+    "complexity": "O(n) per test case with prefix sums.",
+    "tricks": [
+      "first interval is the only global coupling",
+      "first interval can be assumed length exactly k",
+      "prefix sums evaluate each candidate interval"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "first-interval-enumeration",
+      "summary": "Precompute b_i, c_i, and prefix sums of b, c, and min(b,c); enumerate every length-k first interval.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Outside the first interval every element should greedily be reduced to min(b_i,c_i), and the first interval should be exactly length k.",
+      "solution_variant": "first-interval-enumeration"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Prefix sums over b, c, and min(b,c) evaluate every candidate interval in O(1).",
+      "solution_variant": "first-interval-enumeration"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "The reachable values are characterized by compositions of mod p and mod q.",
+      "solution_variant": "first-interval-enumeration"
+    }
+  ]
+}

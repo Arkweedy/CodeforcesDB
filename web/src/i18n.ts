@@ -300,6 +300,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/geometry/convexity": "凸性",
   "math/geometry/convex-hull": "凸包",
   "math/geometry/convex-layers": "凸包层",
+  "math/geometry/projection-metric": "投影度量",
   "math/geometry/tangent": "切线",
   "math/inclusion-exclusion": "容斥",
   "math/inclusion-exclusion/minmax": "Min-Max 容斥",

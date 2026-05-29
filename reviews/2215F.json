@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "F",
+    "title": "Research",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "games"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/F",
+      "notes": "Statement and constraints: alternating card game with one known green card position and huge n,k,s."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Official editorial and reference implementation used for the minimax recurrence, residue cases, and O(sqrt n) jump optimization."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215F",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Alice and Bob alternately expose up to k top cards from a deck containing one known green card. Alice wants to discard it herself as late as possible for high score; Bob wants score 0 or as small as possible.",
+    "constraints": "n, k, s <= 1e9, so turn simulation is impossible; the solution needs a compressed game state and jump recurrence.",
+    "core_idea": "Reduce to f_k(n), the optimal score when Alice is about to take the green card at the top. Returning the green card is useful except at residue n == k mod 2k, where Alice cannot force the next capture and should score 1. Otherwise, after x=floor((n+k)/(2k)) rounds the game returns to a similar top-card form with pile size near n-x; delete-or-not choices form a local minimax over n-x-1, n-x, n-x+1. A local-peak property leaves only a few exceptional residue cases, and stretches with the same x can be jumped in batches, yielding O(sqrt n) states.",
+    "complexity": "O(sqrt n) memoized states per test case.",
+    "tricks": [
+      "reduce arbitrary green-card position to the top-card game",
+      "residue classes modulo 2k decide forced scoring cases",
+      "local-peak property collapses three-neighbor minimax",
+      "batch jump ordinary recurrence steps with the same x"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "residue-minimax-dp",
+      "summary": "Memoize f_k(n) for the top-card state, handle exceptional n mod 2k cases, and batch-jump repeated f(n)=f(n-x)+1 transitions while x=floor((n+k)/(2k)) is unchanged.",
+      "complexity": "O(sqrt n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The core is an optimal-play minimax game between Alice's score-maximizing choices and Bob's score-minimizing choices.",
+      "solution_variant": "residue-minimax-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The solution defines and memoizes f_k(n), then derives transitions between smaller pile sizes instead of simulating turns.",
+      "solution_variant": "residue-minimax-dp"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "The decisive cases are residues modulo 2k.",
+      "solution_variant": "residue-minimax-dp"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "secondary",
+      "evidence": "The implementation jumps many identical ordinary recurrence steps while x=floor((n+k)/(2k)) remains unchanged.",
+      "solution_variant": "residue-minimax-dp"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "A local-peak property of neighboring f values is used to collapse the general minimax into a small recurrence.",
+      "solution_variant": "residue-minimax-dp"
+    }
+  ]
+}

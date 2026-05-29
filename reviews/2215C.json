@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "C",
+    "title": "Oriented Journey",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "communication",
+      "constructive algorithms",
+      "graphs",
+      "interactive",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/C",
+      "notes": "Statement and constraints: run-twice communication problem where Alice orients a tree and Bob recovers s."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2215C",
+      "notes": "Luogu mirror used to cross-check run-twice format and no-hacks note."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Used to confirm the XOR labeling strategy and DFS decoding."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2216/problem/E",
+      "notes": "Div.2 duplicate alias of canonical 2215C."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215C",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Run-twice communication problem: Alice knows n and s and sees tree edges online, must orient each edge; Bob later receives the directed tree and must recover s.",
+    "constraints": "3 <= n <= 30 and 1 <= s <= 2^(n-1), so n-1 bits are enough to encode s-1.",
+    "core_idea": "Assign bit i-2 of s-1 to vertex i, with vertex 1 fixed to 0. Alice orients an edge according to whether endpoint labels are equal or different relative to a fixed lower-index convention. Bob interprets each directed edge as an XOR constraint between endpoint labels and DFSes from vertex 1 to recover all vertex bits, hence s. This is a communication-format problem, not a normal batch problem, but it is useful for communication-protocol search and fits the repository's `paradigm/communication` scope.",
+    "complexity": "O(n) per test case in each run.",
+    "tricks": [
+      "use tree orientations as a communication channel for n-1 bits",
+      "encode s-1 as vertex parity labels",
+      "decode edge directions as XOR constraints"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-label-communication",
+      "summary": "Alice maps s-1 to binary labels on vertices 2..n and orients each edge by endpoint XOR; Bob treats edge orientation as a parity constraint and reconstructs all labels from root 1.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/communication",
+      "importance": "primary",
+      "evidence": "The central task is to design an encoding/decoding protocol between the first and second run.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Edge orientation is interpreted as the XOR parity difference of endpoint labels.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The solution constructs an orientation rule realizing a valid code for every s and every tree.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "secondary",
+      "evidence": "The problem uses Codeforces run-twice interactive/communication format.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "Decoding relies on the graph being a tree, so parity labels are uniquely recovered from a fixed root.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "Bob performs DFS over the tree to propagate recovered parity labels.",
+      "solution_variant": "xor-label-communication"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The delivered integer s is represented by the n-1 bits of s-1.",
+      "solution_variant": "xor-label-communication"
+    }
+  ]
+}

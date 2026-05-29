@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "D",
+    "title": "EXPloration, EXPloitation, and Gain Some EXPerience!",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "dp",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/D",
+      "notes": "Statement and constraints: two-player row jumping game, total n <= 1e5, weights up to 1e9."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Used to confirm the distance >= 6 blocking lemma and backward DP over leading position, gap, side-to-move, and mask."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/vgm57mjo",
+      "notes": "Luogu article cross-checks the same bounded-gap and small-mask DP conclusion."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215D",
+      "notes": "Candidate Luogu solution index; the article listed in sources was the actually consulted Luogu source."
+    }
+  ],
+  "annotation": {
+    "summary": "Two players move pieces forward on a weighted line, blackening landed cells and gaining weight; compute Shiro's final score minus White's under optimal play.",
+    "constraints": "Total n <= 1e5, weights up to 1e9; a linear number of constant-size game states is intended.",
+    "core_idea": "If the leading piece is at least 6 positions ahead and it is the leader's turn, the leader can move by 1 repeatedly to create a four-cell barrier that the trailing piece cannot cross. This turns far-apart states into a closed-form suffix outcome. Otherwise the game state is local: leader position, gap <= 5, side to move, and an occupancy mask for cells between the pieces. A minimax DP over score difference evaluates all legal moves.",
+    "complexity": "O(n * 5 * 2^4 * 4) per test case.",
+    "tricks": [
+      "distance >= 6 is a blocking regime",
+      "only bounded frontier cells matter",
+      "score-difference minimax transition"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bounded-gap-minimax-dp",
+      "summary": "Use the blocking lemma to cap relevant gaps at 5. Memoize transitions over leading/trailing positions, side to move, and a bitmask of blackened cells between them; evaluate moves as immediate gain minus opponent continuation.",
+      "complexity": "O(n * 5 * 2^4 * 4)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "Every nonterminal state is represented by constant-size local information per position: gap <= 5, side-to-move, and bounded occupancy mask.",
+      "solution_variant": "bounded-gap-minimax-dp"
+    },
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "The game is zero-sum on score difference; each transition maximizes current gain minus the opponent continuation value.",
+      "solution_variant": "bounded-gap-minimax-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "The main insight collapses the unbounded visited-position game into equivalent bounded-frontier states plus a closed-form suffix.",
+      "solution_variant": "bounded-gap-minimax-dp"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "secondary",
+      "evidence": "The DP stores the blackened status of at most four relevant cells between the two pieces as a bitmask.",
+      "solution_variant": "bounded-gap-minimax-dp"
+    }
+  ]
+}

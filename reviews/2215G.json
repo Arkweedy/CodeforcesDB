@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "G",
+    "title": "Maze",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/G",
+      "notes": "Statement and constraints: shortest path queries in a large grid with one 4-connected obstacle component including the boundary."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Official editorial and reference code used for the four-projection reduction, interval-tree construction, and LCA query implementation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215G",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer shortest-path queries between free cells in a large grid with orthogonal cost 2 and diagonal cost 3, where obstacles form one connected component with the boundary.",
+    "constraints": "n <= 1e5 and m,q <= 3e5, so per-query graph search on cells is impossible; preprocessing must be near-linear and queries logarithmic.",
+    "core_idea": "Express the weighted 8-neighbor distance through four directional projections. For each direction, partition every line into maximal free intervals and connect intervals on adjacent lines that can be crossed by one legal move. Because obstacles plus boundary form a connected planar component, each directional interval adjacency structure is a forest; the projection distance between two cells equals tree distance between their containing intervals. Build these four forests, preprocess LCA, and combine the four distances with the editorial's linear formula to answer each query, returning -1 when component checks fail.",
+    "complexity": "O((n+m) log(n+m)) preprocessing and O(log(n+m)) per query, up to a constant factor for four directions.",
+    "tricks": [
+      "express weighted grid distance through four directional projections",
+      "turn maximal free intervals into tree vertices",
+      "connected-obstacle planar topology avoids general shortest paths",
+      "answer projection distances by LCA on four forests"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "four-projection-interval-forests",
+      "summary": "For four coordinate systems, sweep obstacle cells to build maximal free intervals, connect compatible intervals between adjacent lines, preprocess binary-lifting LCA, and combine four tree distances for every query.",
+      "complexity": "O((n+m) log(n+m) + q log(n+m))",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The main reduction replaces each directional shortest-projection query by a distance query between nodes in an interval forest.",
+      "solution_variant": "four-projection-interval-forests"
+    },
+    {
+      "tag": "math/geometry/projection-metric",
+      "importance": "primary",
+      "evidence": "The shortest path cost is recovered from projections in four geometric directions rather than by running shortest paths on the grid.",
+      "solution_variant": "four-projection-interval-forests",
+      "description": "Use projected path lengths in several directions to characterize or compute a geometric/grid metric, often replacing shortest-path search with directional distance queries.",
+      "parent": "math/geometry",
+      "created_reason": "Existing geometry tags do not capture metric decomposition by directional projections, which is the central searchable idea in this problem.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "secondary",
+      "evidence": "After building each interval forest, query distance is computed with LCA.",
+      "solution_variant": "four-projection-interval-forests"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "secondary",
+      "evidence": "The implementation groups obstacle cells by row/column/diagonal coordinate to create maximal free intervals on each line.",
+      "solution_variant": "four-projection-interval-forests"
+    },
+    {
+      "tag": "graph/planar-graph",
+      "importance": "secondary",
+      "evidence": "The connected obstacle component and enclosing boundary provide the planar-topology reason the interval adjacency structures are forests.",
+      "solution_variant": "four-projection-interval-forests"
+    }
+  ]
+}

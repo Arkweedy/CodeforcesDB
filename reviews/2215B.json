@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2215,
+    "title": "Codeforces Round 1092 (Unrated, Div. 1, Based on THUPC 2026 Finals)"
+  },
+  "problem": {
+    "contest_id": 2215,
+    "index": "B",
+    "title": "RReeppeettiittiioonn",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "implementation",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2215/problem/B",
+      "notes": "Statement and constraints: count base/block-length representations with equal digits inside every block."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2215B",
+      "notes": "Luogu mirror used to cross-check statement and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/152930",
+      "notes": "Used to confirm the p=2 divisor enumeration and p>=3 geometric-sum bound."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2216/problem/D",
+      "notes": "Div.2 duplicate alias of canonical 2215B."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2215B",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Count ordered pairs (b,p), b,p>=2, such that the base-b representation of n can be partitioned into length-p blocks whose digits are equal inside each block.",
+    "constraints": "n <= 1e12 and t <= 1000; O(sqrt n) divisor/base enumeration is intended.",
+    "core_idea": "For p=2, every equal digit pair contributes a multiple of b+1, so b+1 must divide n; enumerate divisors and verify digits. For p>=3, the repunit 1+b+...+b^{p-1} must divide n, which bounds b by n^(1/(p-1)); enumerate feasible p and small b, then verify digit blocks directly.",
+    "complexity": "O(sqrt n) dominant time per test in the editorial approach.",
+    "tricks": [
+      "split p=2 from p>=3",
+      "geometric-sum divisor condition bounds b",
+      "verify digit grouping after divisibility filtering"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "divisor-and-small-base-enumeration",
+      "summary": "Enumerate divisors d=b+1 of n for p=2, enumerate p>=3 with bases bounded by the repunit sum, and verify each candidate by scanning base-b digits in blocks.",
+      "complexity": "O(sqrt n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The main pruning comes from necessary divisibility by b+1 for p=2 and by 1+b+...+b^{p-1} for p>=3.",
+      "solution_variant": "divisor-and-small-base-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "After deriving tight bounds, the solution enumerates candidate divisors, bases, and block lengths and verifies them.",
+      "solution_variant": "divisor-and-small-base-enumeration"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "Candidate verification repeatedly takes n mod b to read base-b digits.",
+      "solution_variant": "divisor-and-small-base-enumeration"
+    }
+  ]
+}
