@@ -1,0 +1,113 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "F2",
+    "title": "Top-K Tracker (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/F2",
+      "notes": "Read statement and constraints: same top-k hidden-permutation interaction, hard version has n <= 890, total queries <= 30, at most one type-3/type-4 query."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145152",
+      "notes": "Official editorial uses 29 type-2 signature queries plus one type-3 query to resolve duplicated signature pairs with high probability."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1040",
+      "notes": "Independent notes/code cross-check the paired-signature/random disambiguation protocol."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129F2",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover a hidden permutation under the same query budget as F1 but for n up to 890, where fully unique signatures no longer fit comfortably.",
+    "constraints": "n <= 890, query count <= 30, only one top-300 query allowed; small queries return top 60, large query returns top 300.",
+    "core_idea": "Use 29 small type-2 queries to assign signatures from all subsets of size less than 3, deliberately giving each signature to two values. This reconstructs an unordered pair of possible positions rather than an exact orientation. Pair low and high values with the same signature. Then randomly choose one position from every ambiguous pair and use one type-3 top-300 query; the returned largest values reveal many pair orientations from the high end, and the editorial's probability bound makes failure negligible.",
+    "complexity": "30 queries total; O(n * 29) local decoding; randomized with negligible failure probability under the editorial analysis.",
+    "tricks": [
+      "Use duplicated signatures to trade exact identification for unordered pairs.",
+      "Pair low and high values so a top-k query reveals orientations from the high end.",
+      "Randomly choose one position per pair and rely on geometric progress from top-300 responses."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "paired-signatures-random-top300",
+      "summary": "Use 29 signature queries to recover unordered position pairs, then one randomized top-300 value query to orient the paired values with overwhelming probability.",
+      "complexity": "30 queries and O(n * 29) decoding",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "unique-signatures-easy-method",
+      "summary": "The F1 fully unique signature construction is the natural baseline but does not provide enough capacity for n <= 890 under the same query restrictions.",
+      "complexity": "30 queries but insufficient coverage for the hard bound",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The solution is a fixed interactive protocol using bounded top-k oracle calls to reconstruct the permutation.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "trick/information-encoding",
+      "importance": "primary",
+      "evidence": "The protocol first encodes each value into a query-membership signature, then intentionally allows duplicated signatures and resolves the remaining bit with one extra encoded response.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "The large top-300 query is designed so its sorted returned values reveal orientations of many unordered pairs at once.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "Correctness of the hard protocol relies on randomized pair selection and a probabilistic tail bound showing failure probability is negligible.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The duplicated signature system uses subsets of size 1 or 2 over 29 dimensions to produce many ambiguous pairs.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The initial reconstruction treats query memberships as binary signatures of values/positions.",
+      "solution_variant": "paired-signatures-random-top300"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The algorithm constructs a specific signature pairing and query protocol satisfying the top-k and query-count limits.",
+      "solution_variant": "paired-signatures-random-top300"
+    }
+  ]
+}

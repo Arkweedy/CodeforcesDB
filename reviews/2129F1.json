@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "F1",
+    "title": "Top-K Tracker (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/F1",
+      "notes": "Read statement and constraints: hidden permutation, four top-k query types, total queries <= 30, at most one type-3/type-4 query; easy version has n <= 845."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145152",
+      "notes": "Official editorial constructs distinct query-signature sets, including carefully packed size-3 sets, yielding enough distinguishable elements."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1040",
+      "notes": "Independent notes/code cross-check the signature-set interpretation and symmetric use of value/position queries."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129F1",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover a hidden permutation using a small fixed budget of top-k queries that return the largest values or positions from a chosen set.",
+    "constraints": "n <= 845, query count <= 30, at most one large top-300 query; small queries return at most 60 items.",
+    "core_idea": "Assign every value a distinct signature set of query indices. For each query index, ask the set of values whose signature contains it; the returned positions are exactly those whose hidden value has that signature bit, provided the query-size cap is respected. After all signatures are reconstructed per position, match the observed signature to the unique value. The construction uses all sets of size less than 3, then carefully packed balanced triples to fit the caps.",
+    "complexity": "30 queries; O(n * 30) local decoding.",
+    "tricks": [
+      "Represent each value by a distinct query-incidence signature.",
+      "Respect per-query top-k caps by balancing column usage.",
+      "Use symmetric value/position queries to reconstruct the permutation."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "distinct-set-signatures",
+      "summary": "Construct distinct signature sets over 30 query dimensions, ask each dimension, and decode each position by matching its returned signature.",
+      "complexity": "30 queries and O(n * 30) decoding",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "small-signatures-only",
+      "summary": "Using only empty, singleton, and pair signatures is conceptually simple but insufficient for the easy bound, so packed triples are required.",
+      "complexity": "O(30) queries but insufficient coverage",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The task is solved by issuing and decoding a bounded number of interactive top-k queries.",
+      "solution_variant": "distinct-set-signatures"
+    },
+    {
+      "tag": "trick/information-encoding",
+      "importance": "primary",
+      "evidence": "The main technique encodes each hidden value as a unique incidence set across queries, then decodes positions from returned query memberships.",
+      "solution_variant": "distinct-set-signatures"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "The query sets are designed so that each oracle response marks exactly one signature dimension for all returned positions.",
+      "solution_variant": "distinct-set-signatures"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution depends on constructing many distinct subsets/triples under bounded per-coordinate usage.",
+      "solution_variant": "distinct-set-signatures"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Each value is identified by a small binary membership signature over the selected query dimensions.",
+      "solution_variant": "distinct-set-signatures"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "A concrete family of singleton, pair, and balanced triple signatures must be constructed to meet the query caps.",
+      "solution_variant": "distinct-set-signatures"
+    }
+  ]
+}

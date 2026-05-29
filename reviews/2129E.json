@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2129,
+    "title": "Codeforces Round 1040 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2129,
+    "index": "E",
+    "title": "Induced Subgraph Queries",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "graphs",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2129/problem/E",
+      "notes": "Read statement and constraints: range induced-subgraph queries over active vertex labels; answer kth smallest maintained XOR-neighbor value."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145152",
+      "notes": "Official editorial gives modified Mo ordering by prefix update cost degree+1 and bucketed kth-smallest maintenance."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1040",
+      "notes": "Independent round notes/code cross-check the Mo-style moving interval and frequency bucket implementation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2129E",
+      "notes": "Candidate Luogu solution page; not consulted in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "For each query [l,r,k], consider the induced subgraph on vertex labels l..r and output the kth smallest value among every active vertex's XOR of active neighbors.",
+    "constraints": "Total n, m, and q are each up to 150000 over all tests; maintained XOR values fit in a bounded value universe around 2^18.",
+    "core_idea": "Maintain the current interval [l,r]. Adding or deleting one vertex only changes its own XOR value and the XOR values of currently active neighbors, so the update cost is degree(v)+1. Sort queries by blocks of prefix update cost rather than raw index to make Mo endpoint movement respect graph degrees. Maintain the multiset of current XOR values with value-frequency buckets, so point changes are O(1) and kth-smallest scans buckets in O(sqrt V).",
+    "complexity": "About O((n+m+q) sqrt(n+m) + q sqrt V), with V the XOR value domain.",
+    "tricks": [
+      "Mo ordering by prefix sum of degree+1 instead of raw index.",
+      "When toggling vertex x, XOR x into every active neighbor's maintained value.",
+      "Use bucketed frequencies over XOR values to answer kth order statistics."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "weighted-mo-frequency-buckets",
+      "summary": "Sort range queries by cost-balanced Mo blocks, maintain active vertex XOR values under endpoint moves, and answer kth value using bucketed frequency counts.",
+      "complexity": "O((n+m+q) sqrt(n+m) + q sqrt V)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "persistent-multidimensional-segment-tree-idea",
+      "summary": "The editorial mentions a persistent multidimensional segment tree direction, but the practical reviewed solution is the modified Mo approach.",
+      "complexity": "O(n log^4 n) as a conceptual alternative",
+      "confidence": "low",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition/mo-algorithm",
+      "importance": "primary",
+      "evidence": "The main solution maintains a moving interval [l,r] and answers offline range queries after sorting them in a Mo-style order.",
+      "solution_variant": "weighted-mo-frequency-buckets",
+      "description": "Offline range-query ordering that moves interval endpoints incrementally while maintaining a mutable answer state.",
+      "parent": "algorithm/sqrt-decomposition",
+      "created_reason": "Mo's algorithm is a recurring offline range-query technique more specific than generic sqrt decomposition.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "Both the query ordering and kth-smallest frequency structure rely on square-root bucket decomposition.",
+      "solution_variant": "weighted-mo-frequency-buckets"
+    },
+    {
+      "tag": "data-structure/frequency-buckets",
+      "importance": "primary",
+      "evidence": "The maintained multiset of values uses cnt[value] and block sums so kth-smallest can be found by scanning value buckets.",
+      "solution_variant": "weighted-mo-frequency-buckets",
+      "description": "Bucketed frequency table over a bounded value domain supporting O(1) point frequency updates and O(sqrt V) rank/select queries.",
+      "parent": "data-structure",
+      "created_reason": "This rank/select-by-frequency structure is common in sqrt-decomposition problems and distinct from balanced order-statistics trees.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph",
+      "importance": "secondary",
+      "evidence": "Endpoint updates iterate over graph adjacency lists and maintain values defined by active induced-subgraph neighbors.",
+      "solution_variant": "weighted-mo-frequency-buckets"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Adding or removing a vertex is handled by locally updating the XOR contribution of that vertex to each active neighbor.",
+      "solution_variant": "weighted-mo-frequency-buckets"
+    }
+  ]
+}
