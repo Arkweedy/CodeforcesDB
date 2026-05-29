@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "C",
+    "title": "War Strategy",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/C",
+      "notes": "题面给出从基地 k 每天移动任意士兵并新增一个士兵，要求 m 天后最多占领多少连续基地；约束 n 总和 2e5、m 可达 1e9。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解证明最终占领集合可视为包含 k 的区间，并给出可行条件 a+b+max(a,b)-1<=m 与线性贪心扩张。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183C",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "从 k 出发每天可把某个基地的任意士兵统一移动一格，并在 k 新增一名士兵；求 m 天后最多能让多少个基地至少有一名士兵。",
+    "constraints": "多测，1<=k<=n<=1e5，m<=1e9，sum n<=2e5；需要 O(n) 或更快，不能按天模拟。",
+    "core_idea": "最终有意义的占领集合一定能整理成包含 k 的连续区间。若向左扩张 a 个、向右扩张 b 个位置，则填满该区间当且仅当 a+b+max(a,b)-1<=m；据此交替尝试扩张左右端，或枚举一侧并计算另一侧上界。",
+    "complexity": "O(n) per test case, O(sum n) total.",
+    "tricks": [
+      "把可占领集合压缩成包含起点的连续区间",
+      "用 a+b+max(a,b)-1 刻画左右扩张的最少天数",
+      "只在可行性公式上贪心扩张，不模拟士兵"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "证明目标区间可行性后，用两个变量表示左右扩张长度，按可行条件逐步增加，答案为 a+b+1。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "enumerate-one-side",
+      "summary": "枚举向左扩张长度 a，再由公式计算向右最多能扩张多少，取最大值；可写成 O(n)，进一步可优化到 O(1)。",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "主解法的核心是把状态归约成包含 k 的区间，并用 a,b 的区间可行条件判断答案。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "在可行性条件确定后，逐步尝试扩张左右端即可得到最优区间大小。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "可行性由 a+b+max(a,b)-1<=m 这个下界/构造一致的不等式决定。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "incidental",
+      "evidence": "官方 tag 包含 binary search，但主线题解不依赖二分；可作为枚举一侧后的实现变体。",
+      "solution_variant": "enumerate-one-side"
+    }
+  ]
+}

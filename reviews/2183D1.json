@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "D1",
+    "title": "Tree Coloring (Easy Version)",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/D1",
+      "notes": "题面要求每次选若干白点染黑，任意两点不能相邻且不能同深度；Easy 只要求最少操作数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解把每层点数 t_i 作为下界，并额外考虑同父亲的一层点与父亲不能同操作，答案由 D2 构造证明。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183D1",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一棵以 1 为根的树，每次可选一组两两不同深度且不相邻的白点染黑，求染黑整棵树的最少操作数。",
+    "constraints": "多测，2<=n<=2e5，sum n<=2e5；需要线性或近线性统计深度、父子关系。",
+    "core_idea": "同一深度的点不能同一次染色，所以 max t_i 是下界；若某一层的若干点共享父亲，它们和父亲也互斥，会产生 max(t_i+1) 型下界。Easy 只需统计这些下界，构造可行性由 Hard 版本保证。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "按深度分层统计不可同操作的点数",
+      "把父子相邻限制转成层间调度下界",
+      "Easy 复用 Hard 的构造可行性证明"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "DFS 求每个点深度和父亲，统计每层点数以及会触发父子互斥的层，取对应下界最大值。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "所有约束都来自树的深度分层和父子相邻关系。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "display_name": "Layer counting",
+      "description": "Count objects by BFS/DFS depth layer and derive bounds or transitions from per-layer sizes.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "Existing tree/DFS tags do not express that the decisive lower bound is the maximum size of a depth layer.",
+      "importance": "primary",
+      "evidence": "答案的主要下界来自每个深度层的点数 t_i 以及相关的 t_i+1 约束。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要 DFS/BFS 求根树深度、父亲并按层收集节点。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "secondary",
+      "evidence": "每次操作可看作把点分配到若干时间槽，限制是同深度和相邻点不能同槽。",
+      "solution_variant": "main"
+    }
+  ]
+}

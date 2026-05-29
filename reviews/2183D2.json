@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "D2",
+    "title": "Tree Coloring (Hard Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "data structures",
+      "dfs and similar",
+      "greedy",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/D2",
+      "notes": "题面与 Easy 相同，但 Hard 还要求输出达到最少次数的一组染色操作。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解证明最多 max t_i+1 次，并围绕最大层向下、向上构造操作集合，处理父子冲突。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183D2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "在根树上把所有点分配到最少个操作集合中，每个集合内点必须深度互异且互不相邻，并输出具体分配。",
+    "constraints": "多测，2<=n<=2e5，sum n<=2e5；需要 O(n) 或 O(n log n) 构造所有集合。",
+    "core_idea": "令 T=max t_i，并选最后一个达到 T 的深度层作为锚点，把该层节点分别放入 T 个集合。向更深层扩展时，父子冲突只会限制含有上一层节点的集合，可通过保留一个孩子并轮换到可用集合解决；向更浅层构造时根据非叶孩子数量分类，必要时新增第 T+1 个集合。新增集合恰好对应某层 T 个点共享同一父亲的必要下界，因此最优。",
+    "complexity": "O(n) with arrays/vectors for layers and sets; O(n log n) variants are also possible.",
+    "tricks": [
+      "以最大深度层作为锚点构造操作集合",
+      "围绕父子冲突做集合轮换",
+      "用 max layer size 与特殊父子冲突共同证明最优性"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "按深度分层，先把最大层放入不同集合，再分别向深层和浅层维护每个节点所在集合，遇到不可放置的单父情况时开第 T+1 个集合。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "bottom-up-greedy",
+      "summary": "也可自底向上贪心维护可用集合并处理父子冲突，通常实现为 O(n log n)。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Hard 版本必须输出最优染色操作集合，主解法核心是构造这些集合。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "primary",
+      "evidence": "问题本质是把树节点调度到最少批次中，同时满足同深度和相邻限制。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "importance": "primary",
+      "evidence": "最优批次数围绕最大深度层大小 T=max t_i 及 T+1 的特殊情况确定。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "构造依赖根树深度层、父亲、孩子数量和父子相邻关系。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要 DFS 求深度、父亲、子节点数并按深度收集节点。",
+      "solution_variant": "main"
+    }
+  ]
+}

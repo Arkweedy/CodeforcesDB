@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "F",
+    "title": "Jumping Man",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/F",
+      "notes": "题面在根树上定义从子树内任意起点不断跳到当前点真子树内点形成字符串；对每个 i 求子树 i 内所有路径字符串出现次数平方和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解把平方和转为选择两条相同字符串的有序对，定义 f[i][j] 并用 DFS 序矩形和二维后缀和转移。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "树上每个节点有字符；对每个根子树 i，考虑从其子树内任意点开始、每步跳到当前点真子树内点得到的所有字符串，求各字符串出现次数平方和。",
+    "constraints": "多测，n<=5000，sum n<=5000，模 998244353；允许 O(n^2) 状态和二维前缀/后缀和。",
+    "core_idea": "平方和等于选择两条得到相同字符串的有序路径对数。设 f[u][v] 为两条字符串分别从 u、v 开始且相同的方案数，只有字符相同才非零；后续跳点 p、q 分别落在 u、v 的真子树中。DFS 序把每个子树变成连续区间，因此所有贡献 f[p][q] 是二维矩形求和，按 DFS 序逆序计算并维护二维后缀和即可。",
+    "complexity": "O(n^2) time and O(n^2) memory per test case.",
+    "tricks": [
+      "把出现次数平方和转成两条相同字符串的有序对计数",
+      "用节点对 DP 表示两个字符串同步延伸",
+      "DFS 序把子树对转成二维矩形求和"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "DFS 求 in/out，把节点按 DFS 序逆序枚举，若字符相等则 f[u][v]=1+sum f[p][q] over proper-subtree rectangles；二维后缀和支持 O(1) 矩形查询。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/pair-dp",
+      "display_name": "Pair DP",
+      "description": "Dynamic programming whose state is an ordered or unordered pair of objects, often used to synchronize two processes or count pairs.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "The existing generic dp tag does not capture that the decisive state is over pairs of tree nodes.",
+      "importance": "primary",
+      "evidence": "主状态 f[u][v] 同时描述两条路径/字符串从两个节点开始的匹配方案数。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/dfs-order-rectangle",
+      "display_name": "DFS-order rectangle",
+      "description": "Use DFS order to convert one or two subtree choices into interval or rectangle queries.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "Tree DFS and prefix sums alone do not identify the key reduction from subtree-pair choices to 2D rectangles.",
+      "importance": "primary",
+      "evidence": "f[u][v] 的后继 p,q 分别来自两个子树，DFS 序后正好成为二维矩形求和。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "必须用 DFS 序记录每个子树的连续区间，并按逆 DFS 序计算 DP。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "平方和通过组合意义转成选择两个相同字符串的路径对数量。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "二维后缀和/前缀和用于 O(1) 查询子树对矩形贡献。",
+      "solution_variant": "main"
+    }
+  ]
+}

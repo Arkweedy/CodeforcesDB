@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "G",
+    "title": "Snake Instructions",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/G",
+      "notes": "题面为可 hack 的交互题：已知蛇初始位置、未知速度 0..2，最多 3 次 L/R 指令后要确定所有速度或判定不可能。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解使用固定查询 L、LR、R，先恢复存活蛇速度，再分类处理死亡蛇，并以 010/020 不可区分作为 -1 条件。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183G",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "已知 n 条蛇的位置，速度各为 0、1、2 但未知；每次给一串 L/R 指令观察剩余蛇位置，最多三次后确定所有速度，若信息论上无法确定则输出 -1。",
+    "constraints": "多测，n 总和 <=1e5，位置严格递增且在 [1,4n]；官方交互版最多 3 次询问，hack 版给出真实速度。",
+    "core_idea": "固定询问 L、LR、R。L 与 LR 的存活数量相同，LR 后存活蛇回到初始相对位置，可和初始坐标建立对应并得到存活蛇速度。死亡蛇只需处理 01、02、0_2、12 等局部模式；其中 0?0 的 010/020 模式无法区分，应输出 -1，否则结合相邻距离和 R 查询能唯一恢复剩余速度。",
+    "complexity": "O(sum n) with two-pointer matching, or O(sum n log n) with binary search/lower_bound.",
+    "tricks": [
+      "设计固定三次查询形成决策树",
+      "用 LR 查询把存活蛇映射回初始位置",
+      "识别 010/020 不可区分模式作为唯一失败条件"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "查询 L、R、LR；用 LR 与初始位置匹配恢复存活蛇速度，再用局部碰撞模式补全死亡蛇，最后检查 0?0 不可区分模式。",
+      "complexity": "O(n) or O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "题目原形式要求主动设计最多三次查询并根据反馈恢复隐藏速度。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "primary",
+      "evidence": "核心是用固定的 L、LR、R 三个询问构成足以区分速度的决策过程。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "死亡蛇速度依赖 01、02、0_2、12 以及 010/020 不可区分模式的分类讨论。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "需要构造一组固定询问方案，并证明除唯一不可区分模式外可恢复所有速度。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "恢复剩余速度时按位置顺序局部判定相邻碰撞模式即可。",
+      "solution_variant": "main"
+    }
+  ]
+}

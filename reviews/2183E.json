@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2183,
+    "title": "Hello 2026"
+  },
+  "problem": {
+    "contest_id": 2183,
+    "index": "E",
+    "title": "LCM is Legendary Counting Master",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2183/problem/E",
+      "notes": "题面要求替换 0，使严格递增序列满足环上相邻 lcm 倒数和至少为 1；n<=m<=3000，sum m<=3000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/150585/en32",
+      "notes": "官方题解用 gcd/lcm 关系和望远镜不等式证明等号条件，再把问题化为按 x->x+d 且 d|x 的 DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2183E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定含 0 的长度 n 序列，替换 0 为 [1,m] 中的数，使序列严格递增且环上相邻 lcm 倒数和不少于 1，求方案数。",
+    "constraints": "多测，2<=n<=m<=3000，sum m<=3000；可做 O(n m log m) DP。",
+    "core_idea": "对严格递增序列，有 1/lcm(x,y)=gcd(x,y)/(xy)<= (y-x)/(xy)，前 n-1 项望远镜后再加最后一项可得总和<=1/a_1<=1。要达到题目要求只能全程取等号，因此 a_1=1 且 gcd(a_i,a_{i+1})=a_{i+1}-a_i。后者等价于差值 d 是当前值 x 的因子、下一项为 x+d，于是预处理每个值的因子并做 DP。",
+    "complexity": "O(n m log m) after divisor preprocessing, O(nm) memory in the straightforward implementation.",
+    "tricks": [
+      "用 gcd/lcm 关系建立望远镜上界",
+      "把 >=1 条件转成所有不等式同时取等号",
+      "把相邻合法转移化为枚举当前值的因子"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "预处理每个 k 的所有因子 d，令 dp[i][k] 表示前 i 项以 k 结尾的方案数，只有 k-d 能转移到 k；固定位置非 0 时只保留该值。",
+      "complexity": "O(n m log m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "最终计数通过按位置和值的 DP 累加合法前驱完成。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "关键等价条件是 gcd(a_i,a_{i+1})=a_{i+1}-a_i。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/number-theory/lcm",
+      "display_name": "LCM",
+      "description": "Use least-common-multiple identities or constraints as a central part of the solution.",
+      "status": "candidate",
+      "parent": "math/number-theory",
+      "created_reason": "Existing gcd/divisibility tags do not indicate that the original condition is expressed through lcm reciprocal terms.",
+      "importance": "primary",
+      "evidence": "题面条件直接由相邻 lcm 的倒数和构成，解法先把 lcm 转写为 gcd/(xy)。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "通过 gcd(x,y)<=y-x 和望远镜上界推出必须全程取等号。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/group-by-divisor",
+      "importance": "secondary",
+      "evidence": "DP 转移枚举差值 d|x，预处理每个值的因子集合来控制复杂度。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "gcd(x,y)=y-x 等价为 y=x+d 且 d 整除 x。",
+      "solution_variant": "main"
+    }
+  ]
+}
