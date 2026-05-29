@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2112, "title": "Educational Codeforces Round 180 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2112, "index": "D", "title": "Reachability and Tree", "rating": 1700, "rating_status": "official", "official_tags": ["constructive algorithms", "dfs and similar", "graphs", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2112/problem/D", "notes": "题面与约束：给树定向，使有向可达有序点对数恰为 n；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144148", "notes": "官方代码确认：找度数为 2 的点，在该点两侧用交替方向 DFS 构造。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/63d20zjf", "notes": "中文题解确认转化为恰好一条长度为 2 的有向路径，并用入度 * 出度计数。"}
+  ],
+  "annotation": {
+    "summary": "给一棵无向树的所有边定向，使有向图中存在路径的有序点对数量正好为 n。每条边必然贡献一个可达点对，因此只允许再多出恰好一个长度至少 2 的有向路径贡献。",
+    "constraints": "多测，sum n <= 2e5，需要线性构造。",
+    "core_idea": "所有 n-1 条有向边已经贡献 n-1 个 good pairs。要达到 n，必须恰好出现一条长度为 2 的有向路径，且不能出现更长有向路径。以某个度数为 2 的点 r 为中心，令一个邻居指向 r、r 指向另一个邻居，并在两侧子树中按深度交替定向，使除 r 外每个点不会同时有入边和出边产生额外二跳路径。若树中没有度数为 2 的点，则无法把唯一的二跳路径集中到一个中心，答案为 NO。",
+    "complexity": "O(n) per test case",
+    "tricks": ["把可达点对数转化为有向路径条数", "只允许恰好一个二跳路径", "围绕度数为 2 的中心交替定向"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "degree-two-center-orientation", "summary": "找到任意度数为 2 的点作为唯一二跳路径中心，对其两侧子树交替定向；没有这样的点则无解。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "核心是显式构造一种边定向，使全图只有一个入出相接的中心点。", "solution_variant": "degree-two-center-orientation"},
+    {"tag": "graph/edge-orientation", "importance": "primary", "evidence": "问题本质是在树边上选择方向以满足全局可达路径数量约束。", "solution_variant": "degree-two-center-orientation", "description": "给无向边定向，使所得有向图满足连通性、度数、可达性或路径计数等约束的构造/判定技巧。", "parent": "graph", "created_reason": "现有 graph/tree 与 paradigm/constructive 无法区分“边定向满足约束”这一可复用图构造模式；本批 2112D 与 2113F 都命中该模式。", "status": "candidate"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "构造依赖树上唯一简单路径和以中心切开两棵子树的结构。", "solution_variant": "degree-two-center-orientation"},
+    {"tag": "graph/dfs", "importance": "secondary", "evidence": "实现用 DFS 在两个分支中按深度奇偶交替输出边方向。", "solution_variant": "degree-two-center-orientation"},
+    {"tag": "trick/parity", "importance": "incidental", "evidence": "交替方向可用深度奇偶实现，但不是题目判定的核心。", "solution_variant": "degree-two-center-orientation"}
+  ]
+}

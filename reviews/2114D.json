@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2114, "title": "Codeforces Round 1027 (Div. 3)"},
+  "problem": {"contest_id": 2114, "index": "D", "title": "Come a Little Closer", "rating": 1400, "rating_status": "official", "official_tags": ["brute force", "greedy", "implementation", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2114/problem/D", "notes": "题面与约束：平面上 n 个怪物，可把至多一个怪物移动到空格，之后选一个轴对齐矩形消灭全部怪物，代价为面积。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143268", "notes": "官方题解确认枚举被移动点，使用最小/次小/最大/次大坐标维护剩余点包围盒。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/rwti7v5l", "notes": "中文题解确认：若剩余包围盒刚好被 n-1 个点填满，则需要向一维扩展一格。"}
+  ],
+  "annotation": {
+    "summary": "给出网格上的若干点，允许移动一个点到任意空格，问覆盖所有点的最小轴对齐矩形面积。",
+    "constraints": "多测，sum n <= 2e5，需要线性或近线性枚举。坐标范围大，不能按网格模拟。",
+    "core_idea": "枚举被移动的点，相当于先用剩余 n-1 个点确定最小包围盒。每个点删去后的上下左右边界可由对应坐标的最小/次小/最大/次大得到。若包围盒面积大于 n-1，盒内有空格可放回被移动点；若面积等于 n-1，盒子已满，必须把宽或高扩展一格，取两种扩展的较小面积。",
+    "complexity": "O(n) per test case",
+    "tricks": ["删除一个点后的包围盒", "满矩形时扩展一行或一列"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "delete-one-bounding-box", "summary": "用极值和次极值 O(1) 计算删去任意点后的包围盒，并处理盒内是否有空格。", "complexity": "O(n)", "confidence": "high", "is_primary": true},
+    {"name": "multiset-extremes", "summary": "用 multiset 动态删点取极值，逻辑更直接但复杂度为 O(n log n)。", "complexity": "O(n log n)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/geometry", "importance": "primary", "evidence": "核心对象是点集的最小轴对齐包围矩形及其面积变化。", "solution_variant": "delete-one-bounding-box"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "固定移动点后，最优放置只需判断当前最小矩形是否有空位，否则贪心扩展较短代价。", "solution_variant": "delete-one-bounding-box"},
+    {"tag": "implementation", "importance": "secondary", "evidence": "实现重点在正确维护删去一个点后的四个方向极值和边界情况。", "solution_variant": "delete-one-bounding-box"}
+  ]
+}

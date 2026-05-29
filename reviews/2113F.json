@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2113, "title": "Codeforces Round 1031 (Div. 2)"},
+  "problem": {"contest_id": 2113, "index": "F", "title": "Two Arrays", "rating": 2500, "rating_status": "official", "official_tags": ["constructive algorithms", "dfs and similar", "graphs", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2113/F", "notes": "题面与约束：每列可交换 a_i,b_i，最大化两数组不同元素个数之和并输出方案；sum n <= 1e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143785", "notes": "官方代码确认：把每列看作值之间的一条无向边，用 DFS 对边定向后输出端点到 a/b。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/zhbymb7z", "notes": "中文题解确认上界 sum min(2,cnt[x])，并将问题转化为给无向多重图每条边定向，使度数 >=2 的点至少一入一出。"}
+  ],
+  "annotation": {
+    "summary": "给两个长度 n 的数组，每一列可选择是否交换上下两个数。目标最大化 f(a)+f(b)，其中 f 是数组中不同数个数，并输出达到最大值的数组。",
+    "constraints": "值域 1..2n，sum n <= 1e5，需要线性构造。",
+    "core_idea": "每个值 x 最多能对 f(a)+f(b) 贡献 2，且贡献上界为 min(2, 出现次数 cnt[x])。把每列 (a_i,b_i) 看成值点之间的一条无向边，选择是否交换等价于给这条边定向：尾端放到 a_i，头端放到 b_i。要达到上界，所有度数至少 2 的值点都需要至少一条出边和一条入边；度数 0/1 的点上界本来只有 0/1。对每个连通块 DFS 定向，使所有可贡献 2 的值都同时出现在两个数组中。",
+    "complexity": "O(n)",
+    "tricks": ["把列交换转化为图边定向", "目标值上界为每个值 min(2, 出现次数) 的和", "DFS 定向使度数至少 2 的点同时有入边和出边"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "dfs-edge-orientation", "summary": "建值域图，每条数组列是一条带编号边；按连通块 DFS 给边定向，最后按边方向决定是否交换该列。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/edge-orientation", "importance": "primary", "evidence": "核心转化是把每列作为无向边，并通过定向决定该列上下元素归属，从而满足每个值点的入/出边约束。", "solution_variant": "dfs-edge-orientation", "description": "给无向边定向，使所得有向图满足连通性、度数、可达性或路径计数等约束的构造/判定技巧。", "parent": "graph", "created_reason": "现有 graph 与 paradigm/constructive 无法区分“边定向满足约束”这一可复用图构造模式；本批 2112D 与 2113F 都命中该模式。", "status": "candidate"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "需要输出实际数组方案，主解直接构造达到理论上界的边方向。", "solution_variant": "dfs-edge-orientation"},
+    {"tag": "graph/dfs", "importance": "secondary", "evidence": "实现通过 DFS 树边和返祖边决定每条边的方向。", "solution_variant": "dfs-edge-orientation"},
+    {"tag": "math/combinatorics", "importance": "secondary", "evidence": "先用每个值最多贡献两次推导答案上界 sum min(2,cnt[x])，再证明构造能达到上界。", "solution_variant": "dfs-edge-orientation"}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2112, "title": "Educational Codeforces Round 180 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2112, "index": "E", "title": "Tree Colorings", "rating": 2200, "rating_status": "official", "official_tags": ["combinatorics", "dfs and similar", "dp", "graphs", "math", "number theory", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2112/problem/E", "notes": "题面与约束：求恰有 m 种 beautiful coloring 的最小树点数；m <= 5e5, t <= 1e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144148", "notes": "官方代码确认两种预处理：O(M sqrt M) 因子 DP 与 O(M log M) 递归/约数 DP。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/hpcgyk7c", "notes": "中文题解确认子树方案数转移 f_u = product(f_v + 2)，以及反向最小点数 DP。"}
+  ],
+  "annotation": {
+    "summary": "每个点可染蓝/绿/黄，根必须绿，蓝绿诱导连通、黄绿诱导连通。给定 m，求存在恰好 m 种美丽染色的最小有根树点数。",
+    "constraints": "m <= 5e5，查询多，需要一次预处理后 O(1) 回答。",
+    "core_idea": "先反向理解一棵树的染色数。若 u 为绿色，则每个儿子 v 的子树要么自身按 beautiful 方案连接绿色连通块，贡献 f_v；要么整个子树全蓝或全黄，贡献 2。因此 f_u = product_v (f_v + 2)，叶子 f=1，所有可达方案数都是奇数。原题变成在乘法表达式中用最少节点表示目标 m：dp[1]=1，枚举因子把 m 拆为 already_part * (child_value+2)，转移 dp[m] = min(dp[already_part] + dp[child_value])。偶数不可达。",
+    "complexity": "O(M sqrt M) simple precompute or O(M log M) divisor precompute, M=5e5",
+    "tricks": ["先求给定树的计数公式再反向构造最小树", "子树选择贡献 f_child + 2", "仅奇数方案数可达"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "factor-dp", "summary": "设 dp[x] 为方案数 x 的最小点数，枚举 x 的因子，把根的一个子树贡献写成 factor = child_value + 2，做最小化转移。", "complexity": "O(M sqrt M)", "confidence": "high", "is_primary": true},
+    {"name": "divisor-precompute-dp", "summary": "预处理每个数的约数，用 calc/calc2 分别表示单根扩展与森林乘法组合，将复杂度降到调和级数级别。", "complexity": "O(M log M)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "dp", "importance": "primary", "evidence": "主解用 dp[x] 表示恰有 x 种染色所需的最少点数，并按因子拆分转移。", "solution_variant": "factor-dp"},
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "关键是推导 rooted tree 的染色计数乘法公式 f_u = product(f_v + 2)。", "solution_variant": "factor-dp"},
+    {"tag": "math/number-theory/divisibility", "importance": "secondary", "evidence": "反向 DP 需要枚举 m 的因子，把目标方案数拆成若干子树贡献的乘积。", "solution_variant": "factor-dp"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "计数公式依赖有根树子树独立性和父子连通块结构。", "solution_variant": "factor-dp"}
+  ]
+}

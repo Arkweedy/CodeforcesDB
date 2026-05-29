@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2113, "title": "Codeforces Round 1031 (Div. 2)"},
+  "problem": {"contest_id": 2113, "index": "D", "title": "Cheater", "rating": 2200, "rating_status": "official", "official_tags": ["binary search", "constructive algorithms", "greedy", "implementation"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2113/problem/D", "notes": "题面与约束：两人各 n 张牌，按队首比较，赢家弃牌、输家牌回到手牌顶；玩家可至多交换自己手牌任意两张，最大化得分。sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143785", "notes": "官方代码确认 merge 模拟、prefix minimum / suffix maximum，以及对目标得分做二分。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/tm9scwia", "notes": "洛谷题解摘要确认把过程转为两个指针 merge，并从输牌值单调性推导。正文抓取不稳定，主要以官方代码和自行推导为准。"}
+  ],
+  "annotation": {
+    "summary": "玩家和庄家按队首牌比较，赢家得分并弃牌，输家牌回到队首，游戏正好 n 轮。玩家可在开局前至多交换自己手牌两张，求最大得分。",
+    "constraints": "sum n <= 2e5，需要 O(n log n) 或线性级判定。",
+    "core_idea": "固定手牌顺序时，比赛等价于两个指针 merge：若 a_i > b_j，则玩家得分且 i++；否则 j++。若希望最终得分至少为 m，则有用的交换一定可规范为：把玩家前 m 张中最小的一张，与后缀 m..n-1 中最大的一张交换，再检查 merge 得分是否 >= m。因为前 m 张决定要拿到 m 分前会暴露的玩家牌，提升其中最弱牌最有利，而被换出的牌放到后面不影响前 m 分的必要过程。可达得分关于 m 单调，因此二分最大 m。",
+    "complexity": "O(n log n) per test case",
+    "tricks": ["把游戏过程转成双指针 merge", "目标得分 m 的最优交换规范化为 prefix-min 与 suffix-max", "可达目标分数单调，可二分"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "binary-search-prefix-min-suffix-max", "summary": "预处理每个前缀最小 a 的位置和每个后缀最大 a 的位置，二分目标分数 m，临时交换这两个位置后用 merge 模拟判定。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "答案按目标得分 m 单调判定，官方实现对 m 二分。", "solution_variant": "binary-search-prefix-min-suffix-max"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "判定得分至少 m 时，最优交换选择前 m 张最小值与后缀最大值，属于局部最优规范化。", "solution_variant": "binary-search-prefix-min-suffix-max"},
+    {"tag": "trick/prefix-suffix-extrema", "importance": "primary", "evidence": "需要维护 pref_min[m-1] 与 suf_max[m] 来 O(1) 找到判定交换位置。", "solution_variant": "binary-search-prefix-min-suffix-max"},
+    {"tag": "implementation", "importance": "secondary", "evidence": "固定顺序的比赛需要准确模拟两个队列的双指针过程。", "solution_variant": "binary-search-prefix-min-suffix-max"}
+  ]
+}

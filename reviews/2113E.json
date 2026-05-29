@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2113, "title": "Codeforces Round 1031 (Div. 2)"},
+  "problem": {"contest_id": 2113, "index": "E", "title": "From Kazan with Love", "rating": 2800, "rating_status": "official", "official_tags": ["dfs and similar", "graphs", "implementation", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2113/E", "notes": "题面与约束：树上 m<=200 个敌人沿最短路按时刻移动，主角可走或等待，求避开同点同刻的最早到达时刻；sum n <= 1e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143785", "notes": "官方代码确认：先列出每个时刻被敌人占据的点 block[t]，再动态维护可达点集合 ok 与候选队列 q。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/DaiRuiChen007/p/19227260", "notes": "独立博客确认朴素时空 DP f[t][v]，利用每时刻被删除点很少，动态维护新增可达点，复杂度 O(nm)。"},
+    {"source_type": "luogu_solution_candidate", "url": "https://www.luogu.com.cn/problem/solution/CF2113E", "notes": "检查过 Luogu 候选入口，未获得可用题解正文；用 Luogu 题面、官方代码和独立博客交叉。"}
+  ],
+  "annotation": {
+    "summary": "树上有若干敌人按各自最短路径从家到工作点移动并在到达后消失。主角从 x 出发，每个时刻可走到邻点或原地等待，不能在同一时刻和敌人同点，求最早到 y。",
+    "constraints": "m <= 200, sum n <= 1e5；敌人路径总长度最坏 O(nm)，时间上界可按敌人消失后再走路控制。",
+    "core_idea": "直接做时间扩展 BFS：safe_reachable[t][v] 表示时刻 t+1 能安全在 v。敌人只在其路径上的有限时刻占用点，先把每个时刻的 blocked vertices 列入 block[t]。若每层都扫全树会太慢；但相邻时刻可达集合只会因新扩展和少量 blocked/unblocked 点局部变化，于是维护 ok[v] 表示当前时刻已可达，候选队列 q 存可能新变可达的点。每个时刻先临时标记 blocked，尝试把候选中未被阻塞且有可达邻居的点加入，随后移除当前被敌人占据的旧 ok 点并把这些点及新点邻居放回候选。若 y 进入 ok 则当前时刻为答案。",
+    "complexity": "O(nm) worst-case over a test case, memory O(n + total enemy path length)",
+    "tricks": ["时间扩展 BFS 但不显式扫描所有点层", "按敌人路径预处理每时刻 blocked 点", "动态维护可达集合和受影响邻域"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "dynamic-time-expanded-bfs", "summary": "预处理所有敌人在每个时刻占据的点；按时间推进，维护当前安全可达集合 ok 和局部候选队列 q，只重算受 blocked/unblocked 与新扩展影响的邻域。", "complexity": "O(nm)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/bfs", "importance": "primary", "evidence": "主解是在时间扩展图上求最早到达，本质为逐层 BFS，只是用动态候选集合优化。", "solution_variant": "dynamic-time-expanded-bfs"},
+    {"tag": "trick/batch-simulation", "importance": "primary", "evidence": "不逐时刻扫描全体顶点，而是批量记录每层敌人占用点并只模拟受影响的可达边界。", "solution_variant": "dynamic-time-expanded-bfs"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "敌人路径唯一，能够通过树上 DFS 直接恢复每条最短路径并按时间列入 block。", "solution_variant": "dynamic-time-expanded-bfs"},
+    {"tag": "graph/dfs", "importance": "incidental", "evidence": "实现中用 DFS 找敌人的树上路径，但核心算法是动态 BFS。", "solution_variant": "dynamic-time-expanded-bfs"}
+  ]
+}

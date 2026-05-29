@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2114, "title": "Codeforces Round 1027 (Div. 3)"},
+  "problem": {"contest_id": 2114, "index": "G", "title": "Build an Array", "rating": 2200, "rating_status": "official", "official_tags": ["brute force", "constructive algorithms", "dp", "greedy", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2114/problem/G", "notes": "题面与约束：从数组构造目标，操作可视为相邻块之间的合并/拆分过程，需要判断能否达到给定规模。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143268", "notes": "官方题解使用逆向思考，将构造操作转为从目标数组反推可产生的插入次数。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/f00n7jaa", "notes": "中文题解确认枚举中心位置，并用前后缀累计每侧最多贡献次数。"}
+  ],
+  "annotation": {
+    "summary": "判断是否能通过给定数组构造规则得到目标规模，并需要在可行时给出构造。",
+    "constraints": "多测，sum n 级别，需要线性或近线性预处理每个位置左右两侧的可贡献次数。",
+    "core_idea": "把正向不断插入/扩展的操作反过来看成合并或削减。定义一个元素在邻居约束下最多能贡献多少次扩展，然后做左右前后缀累计。枚举最终保留的中心位置，若左侧与右侧可贡献次数之和足够达到 k，则可按逆过程还原出构造。",
+    "complexity": "O(n) per test case",
+    "tricks": ["逆向看构造过程", "前后缀累计可贡献次数", "枚举中心作为最终保留元素"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "reverse-contribution-prefix-suffix", "summary": "逆向计算每侧最多能贡献的操作次数，用前后缀快速判断某个中心是否可行。", "complexity": "O(n)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "trick/reverse-process", "importance": "primary", "evidence": "主思路是把正向构造改为从目标状态反推可删除/合并的贡献。", "solution_variant": "reverse-contribution-prefix-suffix"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "不仅要判定可行，还要根据中心和逆过程恢复具体构造。", "solution_variant": "reverse-contribution-prefix-suffix"},
+    {"tag": "math/number-theory/divisibility", "importance": "secondary", "evidence": "单个元素可贡献次数由相邻数值之间的整除/倍增关系限制。", "solution_variant": "reverse-contribution-prefix-suffix"},
+    {"tag": "dp/prefix-sum-optimization", "importance": "secondary", "evidence": "左右贡献用前缀/后缀累计后可 O(1) 检查中心。", "solution_variant": "reverse-contribution-prefix-suffix"}
+  ]
+}

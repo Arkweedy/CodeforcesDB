@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2112, "title": "Educational Codeforces Round 180 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2112, "index": "F", "title": "Variables and Operations", "rating": 2800, "rating_status": "official", "official_tags": ["graphs", "greedy", "shortest paths"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2112/problem/F", "notes": "题面与约束：n <= 500, m <= 4e5, q <= 1000；操作 x=min(x,y+z)，操作顺序任意，每次查询可总共减少变量至多 k。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144148", "notes": "官方代码确认建边 y->x，Floyd 全源最短路，并比较任意多边路径最优值与零/一条边可达最优值。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/c9i7bie0", "notes": "中文题解确认 k=0 时最小结果为 min(a_j+dist[j][i])，最大/一轮结果为 min(a_j+w[j][i])，并讨论 k>0 的预算阈值。"}
+  ],
+  "annotation": {
+    "summary": "给定一组 min-relaxation 操作，每个操作恰好执行一次但顺序任意。每次查询给初值和减少预算 k，需对每个变量判断能否通过减少初值使其最终值依赖操作顺序。",
+    "constraints": "n <= 500 允许 O(n^3) Floyd；q <= 1000 允许每次 O(n^2)。",
+    "core_idea": "把操作 x=min(x,y+z) 看成有向边 y->x 权 z。若某个变量 i 的多边最短路径 a_s+dist[s][i] 能严格小于任何只使用零/一条边能得到的值 min_one_edge[i]，就存在一种操作顺序让路径按顺序传播，另一种顺序无法传播到同样低值，因此 i 不稳定。预处理 dist；对查询计算 min_one_edge[i]=min_s(a_s+edge[s][i])。若存在 s 使 dist[s][i] < edge[s][i]，则把 a_s 降低到 a_s+dist[s][i] <= min_one_edge[i]-1 所需的最小预算就是候选答案，若最小候选 <= k 则输出 1。",
+    "complexity": "O(n^3 + q n^2)",
+    "tricks": ["min 操作建成有向带权松弛图", "用全源最短路表示可被某种顺序传播的最小值", "用零/一条边最优值刻画不能依赖前序操作的基准", "预算只需考虑把一个源点降低到阈值"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "floyd-threshold", "summary": "预处理直接边 e 与全源最短路 d；每个查询计算 one-edge baseline，并枚举源点 s 与终点 i 的多边更短路径所需降低预算。", "complexity": "O(n^3 + q n^2)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "graph/shortest-path", "importance": "primary", "evidence": "变量间的 min-relaxation 被转化为有向带权图，多步传播的最优效果由全源最短路给出。", "solution_variant": "floyd-threshold"},
+    {"tag": "trick/difference-transform", "importance": "primary", "evidence": "稳定性判定不是直接模拟顺序，而是比较“多边最短路径值”和“零/一条边基准值”的差距阈值。", "solution_variant": "floyd-threshold"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "查询预算只需用来降低某一个作为最短路径源点的变量，使其刚好突破 one-edge baseline。", "solution_variant": "floyd-threshold"}
+  ]
+}

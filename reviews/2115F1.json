@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "F1", "title": "Gellyfish and Lycoris Radiata (Easy Version)", "rating": 3500, "rating_status": "official", "official_tags": ["data structures"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/F1", "notes": "题面与约束：维护 n 个集合序列，支持前缀插入当前操作编号、前缀翻转、删除元素、查询某集合最小元素。Easy 版适合分块。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认按时间分块，每个块开始重建序列，块内前缀操作只切出 O(B) 段。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/iqydg0tz", "notes": "Luogu 题解说明每段维护本块插入元素队列，删除用懒标记，查询时弹出已删元素。"}
+  ],
+  "annotation": {
+    "summary": "在线维护一个由集合组成的序列，前缀插入会给前 r 个集合加入当前操作编号，前缀翻转会翻转前 r 个集合，还要支持删除元素和查询某个集合当前最小元素。",
+    "constraints": "Easy 版允许按时间分块；块内操作数 B 较小，可以让每个块只产生 O(B) 个隐式段。",
+    "core_idea": "按操作时间分块。每个块开始时把上一块的效果重建成显式序列状态。块内只处理本块新增元素：前缀插入/翻转会把序列切成若干隐式段，每段记录这一段集合共同拥有的本块新增元素队列。删除操作只标记元素失效；查询定位到所在隐式段后，从相关队列中弹出已删除元素，得到当前最小有效元素。",
+    "complexity": "About O((n+q) sqrt q) with block tuning",
+    "tricks": ["按时间分块重建", "前缀操作切分隐式段", "删除元素用懒标记"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "time-blocked-implicit-segments", "summary": "每个时间块重建一次，块内用少量隐式段和队列维护前缀插入/翻转的影响。", "complexity": "O((n+q) sqrt q)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/sqrt-decomposition", "importance": "primary", "evidence": "Easy 版主解法按时间分块，在块边界重建全局状态。", "solution_variant": "time-blocked-implicit-segments"},
+    {"tag": "data-structure/implicit-sequence", "importance": "primary", "evidence": "序列不逐集合展开，而是维护被前缀操作切出的隐式连续段。", "solution_variant": "time-blocked-implicit-segments", "description": "用平衡树、块、段或懒标记维护一个会被切分、翻转、拼接或批量更新的逻辑序列，而不是把每个位置显式逐一更新。", "parent": "data-structure", "created_reason": "2115F1/F2 的核心都是维护被前缀翻转/插入不断改写的集合序列；普通 sequence 或 segment-tree 不能准确表达这一类隐式序列维护。", "status": "candidate"},
+    {"tag": "trick/lazy-deletion", "importance": "secondary", "evidence": "删除元素时只打失效标记，查询队首时再弹出已删除元素。", "solution_variant": "time-blocked-implicit-segments", "description": "删除操作先记录失效状态，等到查询、堆顶/队首访问或结构压缩时再实际清理的技巧。", "parent": "trick", "created_reason": "该技巧在堆、队列、分块结构中经常用于避免从中间删除，2115F1/F2 都依赖它维护最小有效元素。", "status": "candidate"},
+    {"tag": "data-structure/queue", "importance": "incidental", "evidence": "每个隐式段保存本块新增元素的队列，查询时从队首清理失效元素。", "solution_variant": "time-blocked-implicit-segments", "description": "先进先出的队列结构，常用于按时间顺序维护候选元素、窗口或待处理项。", "parent": "data-structure", "created_reason": "前端和数据库此前缺少通用 queue 标签；虽然本题中是辅助结构，但队列是经典可复用数据结构。", "status": "candidate"}
+  ]
+}

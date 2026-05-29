@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2114, "title": "Codeforces Round 1027 (Div. 3)"},
+  "problem": {"contest_id": 2114, "index": "E", "title": "Kirei Attacks the Estate", "rating": 1400, "rating_status": "official", "official_tags": ["dfs and similar", "dp", "greedy", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2114/problem/E", "notes": "题面与约束：根树上每个点有权值，要求每个点向祖先走的交替符号前缀和最大值。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143268", "notes": "官方题解给出维护最大/最小 alternating sum 的树上 DP。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ugxsldo6", "notes": "中文题解确认状态转移：当前点答案依赖父亲路径上的最小反向值。"}
+  ],
+  "annotation": {
+    "summary": "对树上每个点，考虑从该点不断走向根的路径前缀，符号按 + - + - 交替，求可能前缀中的最大交替和。",
+    "constraints": "多测，sum n <= 2e5，树上一次 DFS 即可。",
+    "core_idea": "令 f_v 表示从 v 开始的最大交替和，g_v 表示从 v 开始的最小交替和。若继续接父亲路径，符号翻转，所以 f_v=max(a_v, a_v-g_parent)，g_v=min(a_v, a_v-f_parent)。从根 DFS 即可得到每个点答案。",
+    "complexity": "O(n) per test case",
+    "tricks": ["同时维护最大值和最小值", "向父亲延伸时符号翻转"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "max-min-tree-dp", "summary": "DFS 过程中维护每个点向上交替和的最大/最小值，当前答案为最大值。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/tree-dp", "importance": "primary", "evidence": "每个点的状态由父亲的两个 DP 状态转移而来，是标准树形 DP。", "solution_variant": "max-min-tree-dp"},
+    {"tag": "graph/tree-dfs", "importance": "secondary", "evidence": "需要沿根树 DFS 顺序把父亲状态传递给儿子。", "solution_variant": "max-min-tree-dp"},
+    {"tag": "paradigm/greedy", "importance": "incidental", "evidence": "转移中取 max/min，但没有独立的贪心选择证明。", "solution_variant": "max-min-tree-dp"}
+  ]
+}

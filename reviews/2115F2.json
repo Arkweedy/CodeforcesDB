@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "F2", "title": "Gellyfish and Lycoris Radiata (Hard Version)", "rating": 3500, "rating_status": "official", "official_tags": ["data structures"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/F2", "notes": "题面与约束：与 Easy 版相同，但数据范围要求全在线 polylog 级别维护。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解使用可持久化平衡树/WBLT 维护隐式序列，并处理前缀插入、翻转、删除和查询。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/1pfn22jp", "notes": "Luogu 题解说明 tag 不能简单下传，需要维护局部 tag 与父依赖队列；也提到线段树变换的替代思路。"}
+  ],
+  "annotation": {
+    "summary": "在线维护集合序列，支持前缀插入、前缀翻转、删除元素和单点查询最小元素；Hard 版需要避免按时间分块的重建代价。",
+    "constraints": "n,q 大，必须用在线数据结构保持每次操作近似对数复杂度，并处理大量懒标记和版本依赖。",
+    "core_idea": "用可持久化/可拆合的平衡树表示隐式集合序列。前缀插入 split 出前缀并给整棵子树挂新增 tag；前缀翻转打 rev 懒标记；删除通过唯一 tag 失效。由于 tag 多次下传会导致复杂依赖，节点需要把本地 tag 和来自父节点的依赖队列分开维护。查询叶子时沿依赖关系递归找最小仍有效 tag，并懒清理失效或空节点。平衡树高度保证均摊对数级。",
+    "complexity": "Amortized O(log n polylog q) per operation",
+    "tricks": ["隐式序列 split/merge", "子树懒标记和翻转标记", "查询时递归清理失效 tag"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "persistent-balanced-implicit-sequence", "summary": "用可持久化平衡树维护隐式序列，前缀操作通过 split、merge、lazy tag 和 reverse flag 完成。", "complexity": "Amortized O(log n polylog q)", "confidence": "medium", "is_primary": true},
+    {"name": "segment-tree-transform", "summary": "把前缀操作转化到线段树结构上维护依赖，复杂度通常多一个 log。", "complexity": "O(q log^2 q)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "data-structure/persistent-balanced-tree", "importance": "primary", "evidence": "Hard 版核心结构是可持久化/可拆合平衡树，用于维护隐式序列版本和依赖。", "solution_variant": "persistent-balanced-implicit-sequence", "description": "支持持久化或历史依赖的平衡树结构，常与 split/merge、隐式键、懒标记结合，用来维护动态序列或集合。", "parent": "data-structure", "created_reason": "2115F2 的关键不只是普通 balanced tree，而是带持久化节点和依赖清理的隐式平衡树。", "status": "candidate"},
+    {"tag": "data-structure/implicit-sequence", "importance": "primary", "evidence": "所有前缀插入和翻转都作用在逻辑序列区间上，需要 split/merge 而不是显式逐点维护。", "solution_variant": "persistent-balanced-implicit-sequence"},
+    {"tag": "data-structure/lazy-propagation", "importance": "primary", "evidence": "前缀插入和翻转通过子树 tag/rev 懒标记延迟下传。", "solution_variant": "persistent-balanced-implicit-sequence", "description": "在树形或分块数据结构中暂存区间更新标记，等访问子节点时再下传，以避免逐元素更新。", "parent": "data-structure", "created_reason": "现有 segment-tree 标签无法覆盖 F2 中跨平衡树节点的插入/翻转懒标记；lazy propagation 是独立且高频的数据结构技巧。", "status": "candidate"},
+    {"tag": "paradigm/online", "importance": "secondary", "evidence": "Hard 版要求按输入顺序立即处理操作，不能像 Easy 版那样依赖大块离线重建。", "solution_variant": "persistent-balanced-implicit-sequence", "description": "算法必须按事件到达顺序维护状态并即时回答查询，不能重排或完整离线处理。", "parent": "paradigm", "created_reason": "与已有 offline 标签相对，F2 的难点正是去掉分块重建后在线维护所有操作。", "status": "candidate"},
+    {"tag": "data-structure/segment-tree", "importance": "secondary", "evidence": "存在将操作依赖转到线段树上的可行替代实现。", "solution_variant": "segment-tree-transform"},
+    {"tag": "trick/lazy-deletion", "importance": "secondary", "evidence": "删除元素和失效 tag 都在查询路径上懒清理，避免从所有依赖结构中主动删除。", "solution_variant": "persistent-balanced-implicit-sequence"}
+  ]
+}

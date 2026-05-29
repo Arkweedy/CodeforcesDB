@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "C", "title": "Gellyfish and Eternal Violet", "rating": 2700, "rating_status": "official", "official_tags": ["combinatorics", "dp", "greedy", "math", "probabilities"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/C", "notes": "题面与约束：随机过程/战斗模型中需要计算期望或概率型最优结果。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认将概率 DP 状态压缩到最低血量与额外总量，并在平衡后贪心处理最大血量。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/i7d2ycut", "notes": "Luogu 题解给出按首次若干次非 flash 攻击划分，并对受限状态做 DP 的说明。"}
+  ],
+  "annotation": {
+    "summary": "在带随机性的攻击过程里，计算达到目标状态的概率/期望量，需要处理多名敌人的血量变化。",
+    "constraints": "状态空间原本很大，需要利用血量差异和总量压缩，否则无法直接枚举所有血量向量。",
+    "core_idea": "把过程按前若干次非 flash 攻击划分，DP 状态不保存完整血量数组，而保存当前最小血量及超出最小值的总和。进入相对平衡阶段后，最优/主导行为可以视为持续处理当前最大血量，使状态数量被血量上界约束住，从而完成概率转移。",
+    "complexity": "Polynomial in compressed health bounds",
+    "tricks": ["按首段非 flash 攻击划分", "用最小血量和 excess sum 压缩状态", "平衡阶段处理最大血量"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "compressed-health-probability-dp", "summary": "用最低血量与额外总量作为 DP 状态，结合阶段划分处理随机攻击过程。", "complexity": "Polynomial in compressed bounds", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/probability-dp", "importance": "primary", "evidence": "主解法是对随机攻击过程做概率 DP 转移。", "solution_variant": "compressed-health-probability-dp"},
+    {"tag": "math/probability", "importance": "primary", "evidence": "题目目标和状态转移都依赖随机事件概率。", "solution_variant": "compressed-health-probability-dp"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "在平衡阶段利用处理最大血量的策略压缩后续状态。", "solution_variant": "compressed-health-probability-dp"}
+  ]
+}

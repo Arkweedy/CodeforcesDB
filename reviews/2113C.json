@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2113, "title": "Codeforces Round 1031 (Div. 2)"},
+  "problem": {"contest_id": 2113, "index": "C", "title": "Smilo and Minecraft", "rating": 1700, "rating_status": "official", "official_tags": ["brute force", "constructive algorithms", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2113/problem/C", "notes": "题面与约束：n,m,k <= 500，sum nm <= 2.5e5；在空格放 TNT，边界金矿被收集，严格内部金矿消失。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143785", "notes": "官方代码确认统计总金矿，并在每个初始空格处用二维前缀和最小化严格内部损失。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/qnngxd2a", "notes": "中文题解确认：最优情况下只有第一次爆炸需要考虑毁掉多少金矿，之后可不再损失金矿。"}
+  ],
+  "annotation": {
+    "summary": "网格中可多次在空格处爆炸。爆炸方形边界上的金矿会被收集，严格内部金矿消失。求最多能收集多少金矿。",
+    "constraints": "sum n*m <= 2.5e5，可枚举每个空格并 O(1) 查询矩形金矿数。",
+    "core_idea": "除第一次爆炸外，可以沿着已经炸出的空地继续放 TNT，把剩余金矿逐步放在边界上收走，而不需要再损失新的金矿。因此答案等于总金矿数减去第一次爆炸严格内部的最少金矿数。对于半径 k 的爆炸，严格内部是 Chebyshev 距离 < k 的正方形，即半径 k-1 的矩形；用二维前缀和枚举所有初始空格求最小损失。",
+    "complexity": "O(nm) per test case",
+    "tricks": ["将最大收集转化为最小第一次损失", "严格内部对应半径 k-1 的正方形", "二维前缀和查询金矿数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "min-first-blast-loss", "summary": "预处理金矿二维前缀和，枚举每个空格作为第一次爆炸中心，取严格内部金矿数最小值。", "complexity": "O(nm)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/prefix-sums", "importance": "primary", "evidence": "需要用二维前缀和对每个候选爆炸中心 O(1) 统计严格内部金矿数。", "solution_variant": "min-first-blast-loss"},
+    {"tag": "trick/complement-symmetry", "importance": "primary", "evidence": "最大可收集金矿被转化为总金矿减去第一次爆炸必须损失的最小金矿。", "solution_variant": "min-first-blast-loss"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "最优策略只需贪心选择第一次爆炸损失最小的位置，后续爆炸不再影响目标值。", "solution_variant": "min-first-blast-loss"}
+  ]
+}

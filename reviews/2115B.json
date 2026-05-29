@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "B", "title": "Gellyfish and Camellia Japonica", "rating": 2100, "rating_status": "official", "official_tags": ["brute force", "constructive algorithms", "dfs and similar", "dp", "graphs", "greedy", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/B", "notes": "题面与约束：给定若干 min 赋值操作后的目标数组，判断是否存在初始数组并构造。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认从后往前传播下界，再正向模拟验证。"},
+    {"source_type": "blog", "url": "https://kobicgend.top/posts/26af8780.html", "notes": "博客题解强调操作 z=min(x,y) 的反向约束：若最终 z 至少为 v，则反向要求 x,y 至少为 v。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/what-should-I-do/articles/18960205", "notes": "中文博客给出清空被覆盖位置旧约束并最终模拟校验的实现细节。"}
+  ],
+  "annotation": {
+    "summary": "给定一系列 c_z=min(c_x,c_y) 操作和目标数组，问是否存在某个初始数组经过这些操作后得到目标数组。",
+    "constraints": "n,m 级别较大，需要线性或近线性处理操作序列，不能搜索初始数组。",
+    "core_idea": "逆向处理操作。维护每个位置最终需要满足的下界。若某次操作的 z 在之后需要至少为 v，那么在该操作之前 x 与 y 都必须至少为 v；而 z 的旧值会被这次操作覆盖，因此它之前的下界可以清空。逆序传播后取最小满足下界的初始数组，再正向模拟所有操作，若结果等于目标则可行。",
+    "complexity": "O(n+m)",
+    "tricks": ["逆向传播下界", "被赋值位置的旧约束可清空", "构造后正向模拟验证"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "reverse-lower-bound-propagation", "summary": "从后向前把目标值要求转成操作前的下界约束，构造最小初始数组后正向验证。", "complexity": "O(n+m)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "trick/reverse-process", "importance": "primary", "evidence": "主解法必须逆序处理操作，把最终目标反推为初始数组下界。", "solution_variant": "reverse-lower-bound-propagation"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "需要构造一个满足所有反向下界的初始数组，并用正向模拟证明它可行。", "solution_variant": "reverse-lower-bound-propagation"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "反推后选择每个位置的最小必要下界作为初值，是局部最小且可验证的构造。", "solution_variant": "reverse-lower-bound-propagation"}
+  ]
+}

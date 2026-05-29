@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "D", "title": "Gellyfish and Forget-Me-Not", "rating": 2900, "rating_status": "official", "official_tags": ["bitmasks", "dp", "games", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/D", "notes": "题面与约束：两方围绕异或选择进行博弈，要求最终最优结果。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认把可选变化量看作异或向量，并用带归属信息的线性基从高位判定胜负。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ceshzwdw", "notes": "中文题解确认处理 d_i=a_i xor b_i，倒序插入线性基并按最高位控制者做 minimax。"}
+  ],
+  "annotation": {
+    "summary": "给定若干二进制选择及双方目标，求在最优博弈下最终异或值的结果。",
+    "constraints": "值域按二进制位处理，选择数较多，不能枚举所有选择子集。",
+    "core_idea": "先把固定部分写成所有 a_i 的异或 base，每个选择带来的变化量为 d_i=a_i xor b_i。可达终态是 base xor 若干 d_i 的线性空间。倒序构造带玩家归属/时序信息的异或线性基：每个独立向量的最高位由当前能控制该向量的玩家决定，最终从高位到低位做 minimax 判断 Flower 是否会把该位变成 1。",
+    "complexity": "O(n log V)",
+    "tricks": ["把二选一改写成固定异或加可选差分向量", "带控制者信息的异或线性基", "从最高位进行 minimax 判定"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "tagged-xor-basis-minimax", "summary": "对差分向量建立带控制者标签的线性基，再按高位做博弈最优选择。", "complexity": "O(n log V)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/linear-algebra/xor-basis", "importance": "primary", "evidence": "可选差分向量需要用异或线性基维护独立性和最高位。", "solution_variant": "tagged-xor-basis-minimax"},
+    {"tag": "math/game-theory/minimax", "importance": "primary", "evidence": "最终每个可控最高位都按双方最优策略决定，是二人博弈的 minimax 判定。", "solution_variant": "tagged-xor-basis-minimax"},
+    {"tag": "algorithm/bitmask", "importance": "secondary", "evidence": "算法逐二进制位处理异或值和最高位。", "solution_variant": "tagged-xor-basis-minimax"},
+    {"tag": "math/linear-algebra/xor-vector-space", "importance": "secondary", "evidence": "所有可达终态构成 base 平移后的异或向量空间。", "solution_variant": "tagged-xor-basis-minimax"}
+  ]
+}

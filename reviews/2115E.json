@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "E", "title": "Gellyfish and Mayflower", "rating": 3500, "rating_status": "official", "official_tags": ["dp", "graphs"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/E", "notes": "题面与约束：DAG 上每个点有物品 cost/value，查询终点和大预算，沿 1 到 p 的路径可无限购买路径上物品，最大化价值。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认按最大 value/cost 物品 z 分层，预算大时转成模 c_z 的 residue DP。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/programmingysx/p/18903104", "notes": "博客题解说明小预算 DAG 背包与大预算按最优密度物品补齐的分界。"},
+    {"source_type": "blog", "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335", "notes": "中文题解给出鸽巢式证明：除最高密度物品外的特殊物品数量可被 cost 上界限制。"}
+  ],
+  "annotation": {
+    "summary": "在 DAG 上选择一条从 1 到 p 的路径，路径上每个点对应一种可无限购买的物品，给定大预算 r，求最大价值。",
+    "constraints": "cost <= 200，但 query budget 可达 1e9；不能按预算线性背包。",
+    "core_idea": "小预算时可直接在 DAG 上做 unbounded knapsack。大预算时，固定最终主要购买的最高密度物品 z。由于 cost 上界小，最优方案中非 z 的特殊物品数量可被鸽巢/模数调整限制在 O(c_z)，特殊总 cost 不超过常数级上界。于是对每个 z 维护经过 z 与否、终点、预算模 c_z 的 residue DP，答案为 residue 最优值加上 floor(r/c_z)*w_z。",
+    "complexity": "Polynomial in n, m and max cost; independent of large budget except modulo classes",
+    "tricks": ["最高价值密度物品主导大预算", "按预算模数压缩", "用鸽巢原理限制特殊物品总 cost"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "small-budget-dag-knapsack", "summary": "对预算较小时在 DAG 路径转移中做完全背包。", "complexity": "O((n+m)C^2)", "confidence": "medium", "is_primary": false},
+    {"name": "max-density-residue-dp", "summary": "固定最高密度物品 z，对预算模 c_z 建 DP，并用大件 z 补齐剩余预算。", "complexity": "Polynomial in n, m and max cost", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/knapsack-dp", "importance": "primary", "evidence": "路径上物品可无限购买，本质是 DAG 约束下的完全背包。", "solution_variant": "small-budget-dag-knapsack"},
+    {"tag": "dp/residue-knapsack", "importance": "primary", "evidence": "大预算解法按最高密度物品 cost 的余数维护背包状态，避免枚举 r。", "solution_variant": "max-density-residue-dp", "description": "当背包预算很大且存在可重复主物品时，按某个关键 cost 的 residue class 维护剩余小状态，再用主物品补齐预算的 DP 技巧。", "parent": "dp", "created_reason": "2115E 的核心不是普通 knapsack，而是大预算下按余数压缩的完全背包；该模式在大容量硬币/物品问题中可复用。", "status": "candidate"},
+    {"tag": "graph/dag", "importance": "primary", "evidence": "可选物品集合由从 1 到 p 的 DAG 路径决定，DP 转移沿 DAG 传播。", "solution_variant": "max-density-residue-dp"},
+    {"tag": "trick/pigeonhole-principle", "importance": "secondary", "evidence": "限制非主物品数量和特殊总 cost 的关键证明使用鸽巢式模数替换。", "solution_variant": "max-density-residue-dp"}
+  ]
+}

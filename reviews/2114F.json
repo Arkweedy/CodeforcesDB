@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2114, "title": "Codeforces Round 1027 (Div. 3)"},
+  "problem": {"contest_id": 2114, "index": "F", "title": "Small Operations", "rating": 2000, "rating_status": "official", "official_tags": ["binary search", "brute force", "dfs and similar", "dp", "math", "number theory", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2114/problem/F", "notes": "题面与约束：每步可乘或除以不超过 k 的正整数，问从 x 变到 y 的最少步数。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143268", "notes": "官方题解确认先用 gcd 拆成两侧独立问题，再在约数集合上做最短步数 DP。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/rsjn1x1d", "notes": "中文题解给出枚举约数和转移 d/prev <= k 的做法。"}
+  ],
+  "annotation": {
+    "summary": "给定 x, y, k，每次可以把当前数乘以或整除一个不超过 k 的整数，要求最少操作数。",
+    "constraints": "x, y 可较大，但需要处理的是 x/g 与 y/g 的约数状态；多测需要控制枚举复杂度。",
+    "core_idea": "设 g=gcd(x,y)。公共部分不需要改变，问题拆为把 x/g 删除到 1 和把 1 构造成 y/g 两个同型问题。对一个目标 v，枚举所有约数 d，令 dp[d] 表示从 1 到 d 的最少乘法次数；若 prev | d 且 d/prev <= k，则 dp[d]=min(dp[prev]+1)。两个方向答案相加。",
+    "complexity": "O(tau(v)^2) per side after divisor enumeration",
+    "tricks": ["用 gcd 消去公共因子", "在约数偏序上做最短步数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "divisor-dp-after-gcd", "summary": "将 x/g 和 y/g 分别化为约数 DP，转移一次乘上不超过 k 的约数比值。", "complexity": "O(tau(v)^2)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/gcd", "importance": "primary", "evidence": "第一步用 gcd 把必须删除和必须新增的质因子完全分离。", "solution_variant": "divisor-dp-after-gcd"},
+    {"tag": "dp", "importance": "primary", "evidence": "最少操作数通过约数状态上的动态规划求出。", "solution_variant": "divisor-dp-after-gcd"},
+    {"tag": "math/number-theory/divisibility", "importance": "secondary", "evidence": "状态转移依赖约数关系 prev | d 和比值 d/prev。", "solution_variant": "divisor-dp-after-gcd"}
+  ]
+}

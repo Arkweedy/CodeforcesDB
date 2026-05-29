@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2115, "title": "Codeforces Round 1028 (Div. 1)"},
+  "problem": {"contest_id": 2115, "index": "A", "title": "Gellyfish and Flaming Peony", "rating": 1500, "rating_status": "official", "official_tags": ["constructive algorithms", "dp", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2115/problem/A", "notes": "题面与约束：对数组做 gcd 类操作，目标是把所有元素变成全局 gcd。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/143418", "notes": "官方题解确认最终值必为全局 gcd；若没有现成 gcd 元素，需要先构造一个 gcd。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/37veu4x1", "notes": "中文题解确认用值域 DP/BFS 求从若干数 gcd 出全局 gcd 的最少长度。"}
+  ],
+  "annotation": {
+    "summary": "给定数组和 gcd 操作，求把所有元素都变为同一个值的最少操作数。",
+    "constraints": "多测，n 与值域允许在 gcd 状态上做 DP；直接枚举子序列不可行。",
+    "core_idea": "最终所有数只能变为全局 gcd g。若数组中已有元素等于 g，则每个非 g 元素一次操作即可变成 g，答案为 n-count_g。否则需要先用若干元素通过 gcd 操作制造出一个 g，再用它感染其余 n-1 个元素；制造 g 的最少步数可用 gcd 值状态 DP/BFS 求出。",
+    "complexity": "O(nV log V) or O(n * number_of_gcd_states)",
+    "tricks": ["最终值由全局 gcd 决定", "先制造一个 gcd 再传播"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "gcd-value-dp", "summary": "用 DP 维护取若干数 gcd 得到每个值的最短长度，找到全局 gcd 后加上传播代价。", "complexity": "O(n * number_of_gcd_states)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/gcd", "importance": "primary", "evidence": "全局 gcd 决定最终目标值，且状态转移本身就是 gcd。", "solution_variant": "gcd-value-dp"},
+    {"tag": "dp", "importance": "primary", "evidence": "需要通过 gcd 值状态 DP 求制造第一个全局 gcd 的最少步数。", "solution_variant": "gcd-value-dp"},
+    {"tag": "paradigm/constructive", "importance": "secondary", "evidence": "答案结构分为先构造一个 gcd 元素，再用它构造其余元素。", "solution_variant": "gcd-value-dp"}
+  ]
+}
