@@ -1,0 +1,76 @@
+{
+  "contest": {
+    "contest_id": 2133,
+    "title": "Codeforces Round 1044 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2133,
+    "index": "D",
+    "title": "Chicken Jockey",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2133/problem/D",
+      "notes": "Statement and constraints: stacked monsters fall and take damage when a lower monster dies; sum n <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145785",
+      "notes": "Official editorial confirms local observations about fall damage and a linear DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/5rjs0yvo",
+      "notes": "Chinese solution cross-checks adjacent fall-damage interactions and DP transitions."
+    }
+  ],
+  "annotation": {
+    "summary": "A stack of monsters has health h_i. Attacking deals 1 damage; when a monster dies, monsters above it fall and take damage. Minimize attacks to kill all monsters.",
+    "constraints": "sum n <= 200000; adjacent death order affects fall damage, so the solution must be linear.",
+    "core_idea": "A monster can take fall damage at most once. If it takes more than one fall damage, the monster below must have been killed directly, so the choice is local around neighboring monsters. This yields a prefix DP: decide whether the current monster is killed directly, takes the normal one fall damage after the lower monster dies, or is handled early to affect the monster above. Only a constant amount of boundary information is needed.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "A monster takes fall damage at most once.",
+      "Directly killing a lower monster can create larger fall damage above.",
+      "Compress adjacent-order choices into prefix DP."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-neighbor-dp",
+      "summary": "Maintain prefix minimum attacks and compare constant local cases for whether each monster is directly killed or receives fall damage.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The optimal death order cannot be fixed greedily; prefix states are needed for adjacent monster interactions.",
+      "solution_variant": "linear-neighbor-dp"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "Only constant boundary state around the current prefix is needed to model whether fall damage is available.",
+      "solution_variant": "linear-neighbor-dp"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The key transitions distinguish direct kill, one fall damage, and larger fall damage from killing the lower monster directly.",
+      "solution_variant": "linear-neighbor-dp"
+    }
+  ]
+}

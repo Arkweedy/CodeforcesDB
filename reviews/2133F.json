@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2133,
+    "title": "Codeforces Round 1044 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2133,
+    "index": "F",
+    "title": "Flint and Steel",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2133/problem/F",
+      "notes": "Statement and constraints: choose creepers to detonate; each detonation covers an interval determined by explosive power."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145785",
+      "notes": "Official editorial confirms interval-cover DP with non-intersecting midpoint constraint and two segment-tree range-min queries per state."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose the minimum number of detonations needed to destroy all creepers on a line, where detonating creeper i covers an interval centered at i and selected detonation centers must be compatible with killing order.",
+    "constraints": "sum n <= 500000; a quadratic interval DP is too slow, requiring O(n log n) optimization.",
+    "core_idea": "Model each detonated creeper i as an interval [i-e_i+1, i+e_i-1]. Unlike standard interval covering, two selected ranges cannot have intersecting midpoints, because detonating one first would kill the other. Define dp[i] as the best cost when creeper i is the rightmost detonated creeper and covers through i+e_i-1. The possible predecessor lies in one of two interval relation cases. Processing i from left to right, a segment tree stores the best cost for already reachable covered prefixes, so dp[i] is the minimum of two range-min queries; then update the endpoint i+e_i-1 with dp[i].",
+    "complexity": "O(n log n) per test case",
+    "tricks": [
+      "Turn each detonation into a coverage interval.",
+      "Account for the non-intersecting-midpoints constraint between selected detonations.",
+      "Optimize prefix-coverage DP transitions with segment-tree range minima."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interval-dp-segment-tree",
+      "summary": "Precompute each detonation interval, use DP over the rightmost selected center, and answer predecessor transitions with a segment tree.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "quadratic-interval-dp",
+      "summary": "Directly enumerate the previous detonated center and current center to understand the two predecessor cases.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The minimum detonation count is computed by states for the rightmost chosen center and the prefix it covers.",
+      "solution_variant": "interval-dp-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The optimized solution needs range-min queries over predecessor coverage states and point minimum updates.",
+      "solution_variant": "interval-dp-segment-tree"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "Transition validity is characterized by how the current interval and predecessor coverage interval overlap or touch.",
+      "solution_variant": "interval-dp-segment-tree"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "The natural processing order is by position; no comparison sorting is central to the algorithm.",
+      "solution_variant": "interval-dp-segment-tree"
+    }
+  ]
+}

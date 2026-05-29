@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2133,
+    "title": "Codeforces Round 1044 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2133,
+    "index": "C",
+    "title": "The Nether",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "graphs",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2133/problem/C",
+      "notes": "Statement and constraints: interactive DAG path reconstruction with at most 2n queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145785",
+      "notes": "Official editorial confirms querying every vertex's full-set longest path length, then reconstructing by adjacent length layers."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an interactive oracle on a hidden DAG, output any longest path within a linear query budget.",
+    "constraints": "sum n <= 1000; each test permits at most 2n oracle queries.",
+    "core_idea": "Query each vertex against the full vertex set to get d[v], the longest path length starting there. A maximum d vertex can start a longest path. If the current path endpoint has value k, the next vertex on a longest path must have d value k-1. Test candidates in that layer with a two-vertex query involving the current vertex, and append the one that returns path length 2. Every vertex is tested at most once in reconstruction.",
+    "complexity": "O(n) oracle queries and O(n^2) local candidate grouping/filtering",
+    "tricks": [
+      "Use longest-path length as a DAG layer coordinate.",
+      "Only search the next path vertex in the d-1 layer.",
+      "Probe adjacency/reachability through tiny oracle sets."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "longest-distance-layer-reconstruction",
+      "summary": "Query all d[v], start at a maximum-d vertex, then repeatedly test candidates in the next lower d-layer to build the path.",
+      "complexity": "O(n) oracle queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The main solution reconstructs a hidden path entirely from oracle answers about longest path lengths.",
+      "solution_variant": "longest-distance-layer-reconstruction"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "The strict decrease of d[v] along a longest path and the layer reconstruction both rely on DAG acyclicity.",
+      "solution_variant": "longest-distance-layer-reconstruction"
+    },
+    {
+      "tag": "trick/distance-signature",
+      "importance": "secondary",
+      "evidence": "The value d[v] acts as a layer signature used to filter possible successors on the path.",
+      "solution_variant": "longest-distance-layer-reconstruction"
+    }
+  ]
+}

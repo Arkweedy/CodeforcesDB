@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2134,
+    "title": "Codeforces Round 1045 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2134,
+    "index": "D",
+    "title": "Sliding Tree",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "greedy",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2134/problem/D",
+      "notes": "Statement and constraints: one slide operation can reattach a subtree; make the tree a path or output -1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145832",
+      "notes": "Official editorial confirms using the diameter criterion and sliding the unique off-diameter branch to a diameter endpoint."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a tree, output at most one valid slide operation that makes the tree a simple path; if it already is a path, output -1.",
+    "constraints": "sum n <= 200000; linear diameter/path recovery is needed.",
+    "core_idea": "One slide can increase the diameter by at most 1. To become a path of length n-1 after one operation, the current diameter must be n-2; if it is n-1, no operation is needed. Recover a diameter path. When the length is n-2, exactly one vertex lies outside the diameter path and is attached to a diameter vertex. Slide that off-path vertex/subtree to the farther diameter endpoint so it becomes the new path endpoint.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "Use the diameter length as the feasibility criterion.",
+      "A feasible non-path tree has exactly one off-diameter vertex.",
+      "Slide the unique branch to a diameter endpoint."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "diameter-one-slide-construction",
+      "summary": "Find a diameter by two DFS/BFS passes; if its length is n-2, locate the unique off-path neighbor and reattach it to an endpoint.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree-diameter",
+      "importance": "primary",
+      "evidence": "The possibility of a one-slide construction is determined by whether the current tree diameter is n-2 or n-1.",
+      "solution_variant": "diameter-one-slide-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution must output a concrete slide triple that turns the unique off-path branch into a path endpoint.",
+      "solution_variant": "diameter-one-slide-construction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The operation and proof depend on tree subtrees, diameter path, and off-path branch structure.",
+      "solution_variant": "diameter-one-slide-construction"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "Implementation uses DFS/BFS to find diameter endpoints, restore the diameter path, and mark path vertices.",
+      "solution_variant": "diameter-one-slide-construction"
+    }
+  ]
+}

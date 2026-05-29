@@ -315,6 +315,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/combinatorics/multinomial": "多项式系数",
   "math/combinatorics/permutation-counting": "排列计数",
   "math/combinatorics/prufer-sequence": "Prüfer 序列",
+  "math/combinatorics/run-counting": "段数计数",
   "math/combinatorics/subset-counting": "子集计数",
   "math/game-theory": "博弈论",
   "math/game-theory/minimax": "Minimax",

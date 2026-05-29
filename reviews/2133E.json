@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2133,
+    "title": "Codeforces Round 1044 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2133,
+    "index": "E",
+    "title": "I Yearned For The Mines",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2133/problem/E",
+      "notes": "Statement and constraints: construct a bounded number of tree operations, each selecting one, two, or three vertices."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145785",
+      "notes": "Official editorial confirms the bipartite coloring and component/path decomposition style construction."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/51pqts3e",
+      "notes": "Chinese solution cross-checks the tree-DP / constructive path-decomposition view."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a tree, output a sequence of allowed vertex-set operations within floor(5n/4) operations that satisfies the statement's target condition.",
+    "constraints": "sum n <= 200000; the operation count bound is tight enough to require a linear constructive proof.",
+    "core_idea": "Use the tree's bipartition and choose the smaller color class as the special side. A baseline operation handles every vertex, then deleting the special color decomposes the other color into small path-like components that can be fixed by local extra operations. The component/path accounting keeps the number of extra operations within n/4, giving the floor(5n/4) bound.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "Bipartition the tree and choose the smaller color class.",
+      "Delete one side to decompose the rest into manageable components.",
+      "Use local three-vertex operations to repair paths while preserving the global operation bound."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bipartite-color-path-decomposition",
+      "summary": "Color the tree, choose the smaller side, emit baseline operations, and add local operations for the remaining components.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "tree-dp-classification",
+      "summary": "Equivalent implementation view using DFS/DP to classify endpoints and special vertices before outputting the same linear construction.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires explicitly outputting an operation sequence and proving it respects a global count bound.",
+      "solution_variant": "bipartite-color-path-decomposition"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The construction relies on tree bipartition and the structure of components after removing one color class.",
+      "solution_variant": "bipartite-color-path-decomposition"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "primary",
+      "evidence": "After removing selected-color vertices, the remaining vertices are handled component by component and the operation bound is analyzed by components.",
+      "solution_variant": "bipartite-color-path-decomposition"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "Implementation uses DFS to color, traverse components, and output local operations.",
+      "solution_variant": "bipartite-color-path-decomposition"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "A tree-DP classification of endpoints and special vertices is an equivalent way to implement the construction.",
+      "solution_variant": "tree-dp-classification"
+    }
+  ]
+}

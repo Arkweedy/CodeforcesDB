@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2134,
+    "title": "Codeforces Round 1045 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2134,
+    "index": "F",
+    "title": "Permutation Oddness",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2134/problem/F",
+      "notes": "Statement and constraints: count permutations/arrangements by oddness contribution distribution; n <= 800."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145832",
+      "notes": "Official editorial groups values {0,2} and {1,3}, counts same-color segments by number of runs and internal oddness, then combines red/blue segment tables."
+    }
+  ],
+  "annotation": {
+    "summary": "Count arrangements with prescribed oddness contribution distribution for adjacent pairs among values 0,1,2,3.",
+    "constraints": "n <= 800; requires polynomial combinatorial DP with precomputed binomial coefficients.",
+    "core_idea": "Color values 0 and 2 red, and values 1 and 3 blue. Adjacent pairs inside one color segment contribute only 0 or 2, while boundaries between red and blue segments contribute exactly 1; the numbers of red and blue segments differ by at most one. For a fixed color group, count table r[i][j]: ways to arrange its two value types into i segments with total internal oddness j. This is done by enumerating the number of runs in the binary string, then choosing which equal/different adjacencies are split into segment cuts. Compute the analogous table for the other color, then combine matching segment counts and oddness sums by convolution-like loops.",
+    "complexity": "O(n^3)",
+    "tricks": [
+      "Split values into parity color groups {0,2} and {1,3}.",
+      "Count arrangements by number of runs in a binary string.",
+      "Cut runs into segments and combine red/blue segment tables."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "color-segment-run-counting",
+      "summary": "Build segment/oddness count tables for the two color groups by run counting, then combine red and blue segment counts to get final answers.",
+      "complexity": "O(n^3)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "The problem asks for the number of arrangements/permutations with a specified adjacent contribution profile.",
+      "solution_variant": "color-segment-run-counting"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The solution builds count tables indexed by segment count and oddness contribution, then combines them.",
+      "solution_variant": "color-segment-run-counting"
+    },
+    {
+      "tag": "math/combinatorics/run-counting",
+      "importance": "primary",
+      "evidence": "For each color group, the main count enumerates binary strings by number of runs and then cuts equal/different adjacencies into segments.",
+      "solution_variant": "color-segment-run-counting",
+      "description": "Combinatorial counting technique that groups arrangements into maximal runs of equivalent states/classes, then counts objects by the number of runs and ways to place separators or insert elements.",
+      "parent": "math/combinatorics",
+      "created_reason": "Existing permutation-counting and multinomial tags do not capture the reusable run-counting layer used here; string/run-length-encoding is string-specific and not appropriate for combinatorial DP over permutation classes.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "secondary",
+      "evidence": "The run and segment tables use binomial/multinomial-style choices to distribute equal and different adjacencies into cuts.",
+      "solution_variant": "color-segment-run-counting"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "The oddness contribution is determined by powers of two dividing adjacent differences, specialized here to values 0..3.",
+      "solution_variant": "color-segment-run-counting"
+    }
+  ]
+}

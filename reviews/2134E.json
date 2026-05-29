@@ -1,0 +1,79 @@
+{
+  "contest": {
+    "contest_id": 2134,
+    "title": "Codeforces Round 1045 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2134,
+    "index": "E",
+    "title": "Power Boxes",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dp",
+      "implementation",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2134/problem/E",
+      "notes": "Statement and constraints: interactive recovery of hidden box states using swap and throw-style queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145832",
+      "notes": "Official editorial/code confirms recovering values from adjacent jump differences and resolving unknown adjacent cases with swaps."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively recover the hidden state of power boxes using a limited number of queries whose answers encode jump/prefix behavior.",
+    "constraints": "Linear query budget; local computation must be O(n).",
+    "core_idea": "Query enough adjacent jump values so that most positions can be inferred from whether two neighboring jump counts differ by the expected amount. When two consecutive jump values are equal, the value is determined without a query; otherwise a throw query identifies the local state. Any unresolved positions are fixed by a controlled swap and one more local query. This is an oracle-reconstruction process with constant-size local state.",
+    "complexity": "O(n) queries and O(n) local computation",
+    "tricks": [
+      "Use adjacent query differences to infer local hidden values.",
+      "Exploit equal neighboring jump counts as an invariant.",
+      "Use controlled swaps to disambiguate remaining positions."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "difference-backward-reconstruction",
+      "summary": "Recover jump values from right to left, infer known positions by adjacent relations, and use swaps plus one query to resolve ambiguous entries.",
+      "complexity": "O(n) queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The goal is to recover a hidden array using oracle responses under a strict query limit.",
+      "solution_variant": "difference-backward-reconstruction"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "The solution compares neighboring query answers so global jump behavior becomes local information.",
+      "solution_variant": "difference-backward-reconstruction"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "The reconstruction scans with constant local state and adjacent dependency, equivalent to a small finite-state recurrence.",
+      "solution_variant": "difference-backward-reconstruction"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "secondary",
+      "evidence": "Equal neighboring jump values force a local relation that reduces the number of necessary oracle calls.",
+      "solution_variant": "difference-backward-reconstruction"
+    }
+  ]
+}
