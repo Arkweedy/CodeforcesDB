@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2192,
+    "title": "Codeforces Round 1081 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2192,
+    "index": "F",
+    "title": "Fish Fight",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2192/problem/F",
+      "notes": "题面给一排鱼、Alice/Bob 初始鱼位置；鱼随机吃相邻可吃鱼，不能吃时被邻居吃掉，求 Alice 获胜概率。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/151217?locale=en",
+      "notes": "官方题解分两阶段：双方鱼不相邻时各自做独立区间概率 DP；相邻后进入联合状态 DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2192F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "一排鱼中 Alice 和 Bob 各选一条鱼，轮流行动；当前鱼会均匀随机吃一个可吃相邻鱼，若无可吃相邻鱼则被邻居吃掉并输。求 Alice 最终获胜概率。",
+    "constraints": "多测，sum n<=3000；可以使用 O(n^2) 时间和空间的区间 DP。",
+    "core_idea": "分两阶段处理。第一阶段两条主鱼不相邻，各自独立扩张成一个已吞掉区间 [l,r]，概率 dp[l][r] 只取决于当前大小和左右邻鱼是否可吃；若某方无法扩张且另一方仍不相邻存活，可用预处理的按长度前后缀概率和直接计入答案。第二阶段当两条主鱼相邻时，状态可由左端 la 和总回合数确定四个端点，继续按当前行动者转移，遇到一方吃掉另一方或被普通邻鱼吃掉时结算胜率。",
+    "complexity": "O(n^2) time and O(n^2) memory.",
+    "tricks": [
+      "把双方不相邻时的过程拆成两个独立区间 DP",
+      "用区间长度对另一个玩家的存活概率做前缀/后缀求和",
+      "相邻后用总回合数压缩联合状态"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-phase-interval-dp",
+      "summary": "先分别计算 Alice/Bob 单鱼吞掉区间的概率 dp[l][r]；收集双方相邻时的联合状态概率，再做第二阶段 DP 直到一方获胜。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/interval-dp",
+      "display_name": "Interval DP",
+      "description": "Dynamic programming where the main state is an interval [l, r] or a range already processed/eaten/covered.",
+      "status": "candidate",
+      "parent": "dp",
+      "created_reason": "The central state is the interval eaten by a fish, which is a reusable DP pattern not captured by generic probability DP.",
+      "importance": "primary",
+      "evidence": "每条鱼的状态 dp[l][r] 表示它已经吞掉区间 [l,r] 的概率。",
+      "solution_variant": "two-phase-interval-dp"
+    },
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "所有转移都维护随机选择相邻可吃鱼后的胜率概率。",
+      "solution_variant": "two-phase-interval-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "答案是 Alice 获胜概率，且转移按等概率选择可吃邻鱼。",
+      "solution_variant": "two-phase-interval-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "相邻后的第二阶段用 la 和总回合数推回四个边界，压缩联合状态。",
+      "solution_variant": "two-phase-interval-dp"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "第一阶段结算非相邻死亡事件时，需要前缀/后缀和快速求另一方存活概率总和。",
+      "solution_variant": "two-phase-interval-dp"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2192,
+    "title": "Codeforces Round 1081 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2192,
+    "index": "E",
+    "title": "Swap to Rearrange",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "graph matchings",
+      "graphs",
+      "greedy",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2192/problem/E",
+      "notes": "题面给两个数组 a,b，每个位置可交换 a_i 与 b_i 至多一次，要求最终 a 是 b 的重排并输出交换位置。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/151217?locale=en",
+      "notes": "官方题解把每个位置视为无向边 {a_i,b_i}，需要给边定向使每点入度=出度；偶度图逐连通块走欧拉回路即可。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2192E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定两个长度 n 的数组；每个位置可选择是否交换上下两个数，要求操作后上数组是下数组的一个重排，输出任意可行操作集合。",
+    "constraints": "多测，sum n<=1e6；需要 O(n) 构造。",
+    "core_idea": "把每个位置 i 看作值 a_i 与 b_i 之间的一条无向边。选择是否交换等价于决定这条边方向；某个值在上数组出现次数是出度或入度，要求上下频次相等就是每个点入度=出度。可行当且仅当每个值的总出现次数为偶数，即无向图所有点度数为偶数。于是每个连通块存在欧拉回路，沿欧拉回路给边定向即可得到需要交换的边。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "把上下数组位置建模为值图上的边",
+      "交换位置等价于反转边方向",
+      "入度等于出度转化为欧拉回路定向"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "euler-orientation",
+      "summary": "检查每个值总出现次数为偶数；在每个偶度连通块中跑 Hierholzer 欧拉回路，按遍历方向确定每条边是否需要交换。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/euler-trail",
+      "importance": "primary",
+      "evidence": "可行构造直接依赖每个偶度连通块的欧拉回路来定向边。",
+      "solution_variant": "euler-orientation"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出一组交换位置，解法构造欧拉定向后直接给出操作。",
+      "solution_variant": "euler-orientation"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "secondary",
+      "evidence": "需要按值图的连通块分别找欧拉回路。",
+      "solution_variant": "euler-orientation"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "把频次差需求转成边定向后的入度/出度平衡。",
+      "solution_variant": "euler-orientation"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "incidental",
+      "evidence": "官方 tag 有 graph matchings，但主解法不是匹配，而是欧拉定向。",
+      "solution_variant": "euler-orientation"
+    }
+  ]
+}

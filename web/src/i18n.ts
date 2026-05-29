@@ -186,6 +186,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "dp/finite-state-dp": "有限状态 DP",
   "dp/graph-dp": "图上 DP",
   "dp/grid-dp": "网格 DP",
+  "dp/interval-dp": "区间 DP",
   "dp/knapsack-dp": "背包 DP",
   "dp/lis-dp": "LIS/非降子序列 DP",
   "dp/max-subarray": "最大子段和 DP",

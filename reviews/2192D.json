@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2192,
+    "title": "Codeforces Round 1081 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2192,
+    "index": "D",
+    "title": "Cost of Tree",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2192/problem/D",
+      "notes": "题面要求对每个根 r 的原树子树，最多改接一条边后最大化 sum a_u*d(r,u)。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/151217?locale=en",
+      "notes": "官方题解给出单 DFS：维护无操作 cost 和子树内已经使用操作后的最大 cost，操作增量为 sum(u)*最大可增加深度。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2192D",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定以 1 为根的带点权树；对每个 r，考虑原树中 r 的子树，允许把某个非根节点的父边删掉并接到仍可从 r 到达的任意点，求子树 cost 的最大值。",
+    "constraints": "多测，sum n<=2e5；需要一次 DFS 求所有 r 的答案。",
+    "core_idea": "无操作时 cost(r)=sum_child(cost(child)+sum(child))。若对子树 u 操作，u 子树内所有节点到 r 的距离同时增加 x，贡献增量为 sum(u)*x；对固定 u，最优 v 是删掉 u 后剩余部分中离 parent(u) 最深的点。DFS 时每个节点只需在孩子层面尝试当前根直接操作，并和孩子子树内部已经得到的最优操作取最大。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "把改接边的影响化为整棵子树距离统一增加",
+      "对固定被移动子树，最优接点是剩余部分最深点",
+      "单 DFS 同时维护无操作 cost 和已操作最大 cost"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tree-dp",
+      "summary": "DFS 求 subtree sum、cost、最深可接点信息；对每个子节点计算直接移动该子树的增量，并继承子树内部最优操作。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解法是对子树做后序 DP，维护 cost 和一次操作后的最大 cost。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "题目和操作均依赖根树子树、父子边和深度。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "固定被移动子树后，选择剩余部分最深节点作为接点是贪心最优。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "trick/linear-objective-extreme-choice",
+      "importance": "secondary",
+      "evidence": "增量为 sum(u)*x，sum(u) 固定时只需最大化距离增加 x。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要 DFS 统计子树权值和、cost 以及子树最大深度信息。",
+      "solution_variant": "tree-dp"
+    }
+  ]
+}
