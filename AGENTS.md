@@ -66,6 +66,60 @@ C:\Users\Arkweedy\.codex\skills\cf-problem-tagger
 
 详细流程见 [docs/ai-review-workflow.md](docs/ai-review-workflow.md)。
 
+## 并行 AI Review 规则
+
+长批量 AI review 应默认使用 worker 并行分析，但所有落库和提交动作必须由主 agent 串行完成。
+
+触发并行策略：
+
+- 待 review 题数 `>= 6`。
+- 或包含 `>= 3` 道 `2800+` 题。
+- 或预计单线程 review 超过约 30 分钟。
+- 若用户明确要求顺序 review、低 token，或任务很小，则不并行。
+
+worker 数量：
+
+- 默认最多开 `3` 个 worker。
+- 低中难度大批量超过 20 题时可开到 `4` 个 worker。
+- 不要为了追求数量让多个 worker 分析同一道题。
+
+主 agent 职责：
+
+- 检查范围覆盖状态，确认哪些题需要 bootstrap、AI review、跳过或排除。
+- 处理 Div.1 / Div.2 重叠题：同一共享题只分配 canonical Div.1 题，Div.2 入口只作为 alias/source。
+- 按难度切片并分配 worker。
+- 汇总并审核 worker 的 reviewed JSON 草稿。
+- 统一判断新 tag 是否应该创建，避免近义 tag、重复 tag 或错误父级。
+- 同步维护 `web/src/i18n.ts` 中的新 tag 中文翻译。
+- 串行运行 `apply_review_batch.py` 写入数据库。
+- 统一运行搜索验收、`check_tag_translations.py`、后端测试和必要的前端构建。
+- DB 自动提交后立即 push；review payload、i18n 或文档改动另行提交并 push。
+
+worker 职责：
+
+- 只分析被分配的题目并输出 reviewed JSON 草稿。
+- 每题必须阅读题面和约束，并参考 Codeforces editorial、Luogu、可靠博客、accepted code 或自行推导。
+- 每题必须输出 annotation、solution variants、tags、primary evidence。
+- 对不确定题降低 confidence，并明确列出需要主 agent 复核的点。
+- 可以提议新 tag，但不能自行决定最终 taxonomy。
+- 不得直接写 `data/cfdb.sqlite`，不得运行 `apply_review_batch.py`，不得 commit 或 push。
+
+默认切片粒度：
+
+- `1400~2299`：每 worker `4~6` 题。
+- `2300~2799`：每 worker `2~4` 题。
+- `2800~2999`：每 worker `1~2` 题。
+- `3000+`：通常一题一个 worker。
+
+并行后的主 agent 复核清单：
+
+- 是否遗漏题目或重复 review。
+- 是否错误保留了 Div.2 alias 作为独立题。
+- 是否只把 Codeforces official tags 直映射成 reviewed tags。
+- 每个 `primary` tag 是否有足够 evidence。
+- 新 tag 是否符合 [docs/tagging.md](docs/tagging.md) 的标准，是否已有近义 tag 或 alias。
+- reviewed JSON、数据库、前端翻译和查询结果是否一致。
+
 ## Git 规则
 
 - 本目录是 git 仓库。
