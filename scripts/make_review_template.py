@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cfdb.db import DEFAULT_DB_PATH, connect, init_db
+from cfdb.db import DEFAULT_DB_PATH, connect
 from cfdb.dedup import canonical_problem_uid
 from cfdb.normalize import parse_problem_ref
 
@@ -17,7 +17,6 @@ def luogu_solution_url(contest_id: int, problem_index: str) -> str:
 
 
 def build_template(db_path: str, problem_ref: str) -> dict[str, object]:
-    init_db(db_path)
     key = parse_problem_ref(problem_ref)
     with connect(db_path) as conn:
         target_uid = canonical_problem_uid(conn, key.problem_uid)

@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cfdb.db import DEFAULT_DB_PATH, connect, init_db
+from cfdb.db import DEFAULT_DB_PATH, connect
 
 
 def main() -> None:
@@ -16,7 +16,6 @@ def main() -> None:
     parser.add_argument("--min-rating", type=int, default=1400)
     args = parser.parse_args()
 
-    init_db(args.db)
     with connect(args.db) as conn:
         rows = conn.execute(
             """

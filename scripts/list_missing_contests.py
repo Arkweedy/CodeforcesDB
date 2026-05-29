@@ -8,7 +8,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from cfdb.db import DEFAULT_DB_PATH, connect, init_db
+from cfdb.db import DEFAULT_DB_PATH, connect
 
 
 ACTIONABLE_STATUSES = {
@@ -72,7 +72,6 @@ def contest_status_rows(
 ) -> list[dict[str, Any]]:
     """Return per-contest coverage status rows for an inclusive contest id range."""
 
-    init_db(db_path)
     lo, hi = sorted((start, end))
     with connect(db_path) as conn:
         contests = _fetch_by_id(
