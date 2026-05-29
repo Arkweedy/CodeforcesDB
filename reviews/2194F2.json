@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2194,
+    "title": "Codeforces Round 1078 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2194,
+    "index": "F2",
+    "title": "Again Trees... (hard version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2194/F2",
+      "notes": "Hard 版本与 Easy 相同，但 k<=10，直接 4^k 树 DP 会过大。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/topic/153052/en1",
+      "notes": "题解指出所有状态位于 b_i 的线性基生成空间内，并用 FWT/线性基优化树上 XOR DP 合并。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2194F2",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计删边后每个连通块 XOR 属于给定集合 b 的方案数；Hard 中 k<=10，需要优化状态合并。",
+    "constraints": "k<=10，sum n<=2e5；需要利用 XOR 线性空间与快速变换优化 DP。",
+    "core_idea": "Easy 的树 DP 状态实际只会落在 b_i 生成的 GF(2) 线性空间中。先对 b 建立 XOR 线性基，将每个可达 XOR 映射到基坐标，状态数为 2^rank。子节点合并本质是 XOR convolution：不切边是状态异或合并，切边是把子树剩余 XOR 配成某个 b_i 后加入状态。用 FWT 将 XOR convolution 变成逐点乘法，从而高效合并所有孩子。",
+    "complexity": "O(n * 2^rank * rank) or O(n * 2^rank log 2^rank), rank<=10.",
+    "tricks": [
+      "用 XOR 线性基压缩所有可能状态",
+      "树 DP 子树合并是 XOR convolution",
+      "FWT 把卷积合并转为点乘"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-basis-fwt-tree-dp",
+      "summary": "构造 b 的 XOR 线性基并压缩状态；每个节点维护 rank 维向量，使用 FWT/逆 FWT 或等价快速 XOR 卷积合并子节点转移。",
+      "complexity": "O(n * 2^rank * rank)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "仍然是树上删边方案的后序 DP。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    },
+    {
+      "tag": "math/linear-algebra/xor-basis",
+      "importance": "primary",
+      "evidence": "需要用 b_i 的 XOR 线性基压缩所有可能状态。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    },
+    {
+      "tag": "math/transform/fwt",
+      "importance": "primary",
+      "evidence": "子树状态合并是 XOR convolution，使用 FWT 优化。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    },
+    {
+      "tag": "dp/subset-dp",
+      "importance": "secondary",
+      "evidence": "压缩后状态仍是 2^rank 个子集/向量坐标。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "线性基坐标和 FWT 状态都以 bitmask 表示。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "删边后组件条件在树结构上递归维护。",
+      "solution_variant": "xor-basis-fwt-tree-dp"
+    }
+  ]
+}

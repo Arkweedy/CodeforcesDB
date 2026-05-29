@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2194,
+    "title": "Codeforces Round 1078 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2194,
+    "index": "F1",
+    "title": "Again Trees... (Easy Version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2194/F1",
+      "notes": "Easy 版本给树上点权 a 和 k<=4 个目标 XOR 值 b，要求统计删边后每个连通块 XOR 属于 b 的方案数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/topic/153052/en1",
+      "notes": "题解说明树 DP：dp[u][t] 表示 u 所在未切组件之外已形成美丽组件的 XOR 汇总，k<=4 时可暴力 2^k 状态。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2194F1",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一棵带 XOR 点权的树和小集合 b，统计删边集合数量，使删边后的每个连通块点权 XOR 都属于 b。",
+    "constraints": "Easy 中 k<=4，sum n<=2e5；状态数 2^k 很小，可树 DP。",
+    "core_idea": "设整棵树 XOR 为 S。对节点 u 做后序 DP，状态 t 表示在 u 子树内已经切出的美丽组件 XOR 总和。处理孩子 v 时有两种选择：不切 u-v，则孩子残余组件并入 u；切 u-v，则 v 子树剩余组件的 XOR 必须使其成为某个 b_i，并把这个 b_i 的贡献加入状态。由于所有切出组件的 XOR 都属于 b，可能的状态只在 b 的线性组合集合里，Easy 直接枚举 2^k。",
+    "complexity": "O(n * 4^k) in a direct merge, acceptable for k<=4.",
+    "tricks": [
+      "把已切出的美丽组件 XOR 汇总成小状态",
+      "树上每条父子边只有切或不切两种转移",
+      "根答案由 S xor t 是否属于 b 判断"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "subset-tree-dp",
+      "summary": "DFS 合并子节点 DP；不切边时合并残余，切边时检查子树剩余 XOR 是否属于目标集合，并更新状态。",
+      "complexity": "O(n * 4^k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解法在树上后序合并每个子节点的删边方案。",
+      "solution_variant": "subset-tree-dp"
+    },
+    {
+      "tag": "dp/subset-dp",
+      "importance": "primary",
+      "evidence": "Easy 中 k<=4，状态可直接表示 b_i 的 XOR 子集组合。",
+      "solution_variant": "subset-tree-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "状态用 2^k 个 mask 表示目标 XOR 值的线性组合。",
+      "solution_variant": "subset-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "删边后组件的 XOR 必须在树结构上自底向上维护。",
+      "solution_variant": "subset-tree-dp"
+    }
+  ]
+}

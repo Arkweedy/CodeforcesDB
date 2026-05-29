@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2194,
+    "title": "Codeforces Round 1078 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2194,
+    "index": "E",
+    "title": "The Turtle Strikes Back",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "graphs",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2194/E",
+      "notes": "题面给网格权值，Raphael 可翻转一个格子的符号，然后 Michelangelo 选最大权值单调路径；求 Raphael 能使最大值最小到多少。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/crgs2z70",
+      "notes": "题解将路径是否经过被翻转格子分两类，使用前后缀路径 DP 和同一反对角线最大/次大值。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://cfstep.com/codeforces/contests/contest-2194/problem-e/editorial/",
+      "notes": "CF Step editorial 解释 f[i][j]、g[i][j] 以及每条单调路径恰好经过一个 x+y 相同的格子的性质。"
+    }
+  ],
+  "annotation": {
+    "summary": "在 n*m 网格中先选择一个格子把权值取反，之后对手从左上到右下走最大和单调路径；求最小可能的最终最大路径和。",
+    "constraints": "多测，sum n*m<=1e6；需要 O(nm)。",
+    "core_idea": "先计算无翻转时从起点到每格的最大路径 f，以及从每格到终点的最大路径 g。若翻转 (i,j) 且最优路径经过它，候选值是 f+g-3a[i][j]；若不经过它，则每条单调路径在反对角线 i+j 上恰好经过一个格子，所以只需在该反对角线上取除 (i,j) 外最大的 f+g-a[i][j]。预处理每条反对角线最大和次大即可枚举翻转点。",
+    "complexity": "O(nm) per test case.",
+    "tricks": [
+      "正反两遍网格路径 DP",
+      "按反对角线维护最大和次大路径值",
+      "把路径是否经过翻转点分成两类"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "diagonal-top-two",
+      "summary": "计算 f/g；对每个反对角线维护 cur=f+g-a 的最大和次大。枚举翻转点，用经过点候选和不经过点候选的最大值更新答案。",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "核心预处理是从左上和右下两方向的网格最大路径 DP。",
+      "solution_variant": "diagonal-top-two"
+    },
+    {
+      "tag": "trick/group-by-diagonal",
+      "display_name": "Group by diagonal",
+      "description": "Group grid cells by i+j or i-j diagonal to use path-layer or diagonal constraints.",
+      "status": "candidate",
+      "parent": "trick",
+      "created_reason": "The solution specifically relies on every monotone path crossing exactly one cell on each anti-diagonal.",
+      "importance": "primary",
+      "evidence": "不经过翻转点的路径用同一 i+j 反对角线上的最大/次大值判定。",
+      "solution_variant": "diagonal-top-two"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "每条反对角线维护最大和次大，以便排除当前格子。",
+      "solution_variant": "diagonal-top-two"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "官方 tag 含 greedy，但主解法是 DP + 对角线极值维护。",
+      "solution_variant": "diagonal-top-two"
+    }
+  ]
+}

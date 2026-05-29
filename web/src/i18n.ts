@@ -325,6 +325,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/extreme-position": "极端位置",
   "trick/group-by-divisor": "按因子分组",
   "trick/group-by-coordinate": "按坐标分组",
+  "trick/group-by-diagonal": "按对角线分组",
   "trick/handle-special-case": "特判处理",
   "trick/highest-differing-bit": "最高不同位",
   "trick/interval-feasibility": "区间可行性",

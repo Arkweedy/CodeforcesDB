@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2194,
+    "title": "Codeforces Round 1078 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2194,
+    "index": "D",
+    "title": "Table Cut",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2194/D",
+      "notes": "题面要求从左上到右下输出一条只向右/下的切线，使两侧 1 的数量乘积最大。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Zaria-blog/p/19594739",
+      "notes": "中文题解说明先确定目标一侧 1 的数量接近总数一半，再用贪心路径逐行/逐列实现该数量。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2194D",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给 0/1 网格，从左上角到右下角画一条只向右或下的切线，把表格分成两部分，最大化两部分 1 的数量乘积并输出路径。",
+    "constraints": "多测，sum n*m<=3e5；需要线性构造切线。",
+    "core_idea": "若总共有 S 个 1，两部分数量越接近 S/2，乘积越大，因此目标是一侧拿到 floor(S/2) 或 ceil(S/2) 个 1。沿切线从左上走到右下：若向下，会把下一整行右侧尚未切过的格子加入某一侧；若向右则不加入这一行。预处理每行后缀 1 数后，贪心地在不超过目标的情况下向下，否则向右，就能构造出目标数量的切割。",
+    "complexity": "O(nm) per test case.",
+    "tricks": [
+      "乘积最大化转成两侧数量尽量平衡",
+      "切线向下时整段行后缀贡献可预处理",
+      "按目标数量贪心构造路径"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "target-half-greedy",
+      "summary": "计算总 1 数和目标 take=floor(S/2)；预处理每行每列之后的 1 数，沿路径若向下不会超过 take 就向下，否则向右。",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出实际切线，解法核心是构造达到目标 1 数的一条路径。",
+      "solution_variant": "target-half-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "沿路径每一步在不超过目标的前提下尽量向下加入贡献。",
+      "solution_variant": "target-half-greedy"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "需要预处理行后缀/区域 1 数，才能 O(1) 计算一次向下的新增贡献。",
+      "solution_variant": "target-half-greedy"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "最大化 a*(S-a) 的依据是两侧 1 数尽量接近 S/2。",
+      "solution_variant": "target-half-greedy"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "主要实现细节在于路径字符数、边界和每次新增区域的计算。",
+      "solution_variant": "target-half-greedy"
+    }
+  ]
+}
