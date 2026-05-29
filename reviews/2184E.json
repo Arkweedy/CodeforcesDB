@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2184,
+    "title": "Codeforces Round 1072 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2184,
+    "index": "E",
+    "title": "Exquisite Array",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dsu",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2184/problem/E",
+      "notes": "题面给定一个排列；对每个 k=1..n-1，统计相邻元素差至少为 k 且长度至少为 2 的子数组数量。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150033",
+      "notes": "官方题解把相邻差值等于 k 的位置作为从 k+1 到 k 的合并事件，用 DSU 维护 exquisite 连续段及贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2184E",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定长度 n 的排列 p；对每个 k，统计所有长度至少 2 且相邻差值都至少为 k 的子数组数量。",
+    "constraints": "多测，sum n<=2e5；需要一次性求出所有 k=1..n-1 的答案。",
+    "core_idea": "若一段连续位置内部所有相邻差值都 >=k，那么该段任意长度至少 2 的子数组都是 k-exquisite，贡献为 len*(len-1)/2。随着 k 从 n-1 降到 1，只有差值恰好为 k 的相邻位置会让两个段合并；用 DSU 维护连续段大小，合并时用新旧贡献差更新当前答案。",
+    "complexity": "O(n log n) per test case for sorting plus almost-linear DSU operations.",
+    "tricks": [
+      "按 k 从大到小离线扫描",
+      "相邻差值等于当前 k 时合并两侧连续段",
+      "合并连通块时动态维护组合贡献"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "把所有相邻位置按 |p_i-p_{i-1}| 分桶或排序，k 从 n-1 到 1 扫描并合并对应边；每次合并前减去两个块贡献，合并后加上新块贡献。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "主解法通过并查集合并相邻位置形成的连通块。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "所有 k 按单调顺序离线处理，边事件只加入不删除。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "k 变化时可用边集合单调，支撑离线扫描。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "每个连通块的方案数贡献依赖块大小的组合计数。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "需要按差值排序事件并按 k 顺序处理。",
+      "solution_variant": "main"
+    }
+  ]
+}

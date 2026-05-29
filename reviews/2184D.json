@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2184,
+    "title": "Codeforces Round 1072 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2184,
+    "index": "D",
+    "title": "Unfair Game",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2184/problem/D",
+      "notes": "题面给定 n=2^d 和最大步数 k；Alice 对隐藏数可做减 1 或偶数除 2，并在每步后得知当前数的 2-adic valuation。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150033",
+      "notes": "官方题解把最优步数和最高位、popcount 关联，并用组合数统计 1..n 中需要超过 k 步的数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2184D",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "Bob 从 1..n 中选一个数，n 是 2 的幂；Alice 每步可减 1 或在偶数时除 2，每步后知道当前数的 v2。求有多少初始数无法在 k 步内被最优 Alice 变成 0。",
+    "constraints": "多测，1<=n,k<=1e9 且 n=2^d；需要按二进制位组合计数，不能逐个枚举 1..n。",
+    "core_idea": "对 a<n，Alice 的最优步数等于 floor(log2 a)+popcount(a)：最高位以下的每个 1 需要一次减 1，每个二进制位下降需要一次除 2。对 a=n=2^d，步数为 d+1。于是只需统计最高位为 b、总 1 数为 c 且 b+c>k 的数，数量为 C(b,c-1)。",
+    "complexity": "O(log^2 n) per query after binomial precomputation.",
+    "tricks": [
+      "把游戏轮数转为二进制最高位和 popcount 条件",
+      "用组合数做按位计数",
+      "对最高位和 1 的数量做组合计数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "预处理组合数，枚举最高位 b 和 set bit 数 c，若 b+c>k 则加入 C(b,c-1)，最后单独处理 n 本身。",
+      "complexity": "O(log^2 n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "核心结论用 n 的二进制最高位和低位 1 的数量刻画。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/popcount-invariant",
+      "importance": "primary",
+      "evidence": "Alice 所需轮数的主要变量是低位 popcount 与最高位的组合条件。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "统计满足 popcount 条件的数时需要组合数 C(n,k)。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "可以视作简单数位计数 DP，但主实现通常是组合数按位统计。",
+      "solution_variant": "main"
+    }
+  ]
+}

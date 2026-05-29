@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2184,
+    "title": "Codeforces Round 1072 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2184,
+    "index": "G",
+    "title": "Nastiness of Segments",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2184/problem/G",
+      "notes": "题面维护一个数组，支持点修改；查询 [l,r] 中满足 min(a_l..a_{l+d})=d 的 d 个数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150033",
+      "notes": "官方题解观察 f(d)=d 递增、g(d)=prefix minimum 非增，所以最多一个交点；用线段树做区间最小值、点改和查第一个交点。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2184G",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "维护数组 a，支持点修改；对查询 [l,r]，统计 d in [0,r-l] 中满足 min(a_l..a_{l+d})=d 的个数。",
+    "constraints": "多测，sum n,sum q<=2e5；需要支持动态点修改和对数级查询。",
+    "core_idea": "固定 l,r 后，f(d)=d 单调递增，g(d)=min(a_l..a_{l+d}) 单调不增，因此 f(d)=g(d) 至多一次。只需找到最小的 d 使 f(d)>=g(d)，再验证是否相等。线段树维护区间最小值并支持点修改，同时用递归下降在 [l,r] 内找到这个首次交叉位置。",
+    "complexity": "O(log^2 n) or O(log n) per operation depending on segment-tree descent implementation.",
+    "tricks": [
+      "把 nastiness 条件看成递增函数和非增函数的交点",
+      "答案最多为 0 或 1",
+      "在线段树上找第一个交叉位置"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "线段树维护区间最小值；点修改直接更新。查询时先判断整体最小值是否过大，再递归下降找到最小交叉位置 ans，最后检查 min(a_l..a_ans)==ans-l。",
+      "complexity": "O(log^2 n) or O(log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "主解法依赖线段树维护区间最大值/最小值并查找第一个满足条件的位置。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "f(d)=d 递增、g(d)=前缀最小值非增，保证最多一个候选点。",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "在线段树上二分式下降寻找第一个满足条件的位置。",
+      "solution_variant": "main"
+    }
+  ]
+}

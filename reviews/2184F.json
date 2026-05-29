@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2184,
+    "title": "Codeforces Round 1072 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2184,
+    "index": "F",
+    "title": "Cherry Tree",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2184/problem/F",
+      "notes": "题面给一棵根树，叶子上有樱桃；每次摇一个顶点会收集其子树所有叶子，不能重复收集，要求摇的顶点数为 3 的倍数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/150033",
+      "notes": "官方题解给出两种思路：树上 DP 维护子树内已摇顶点数模 3，或用替换被摇顶点为其孩子的过程推导模 3 判定。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2184F",
+      "notes": "洛谷题解候选来源；本次未实际参考。"
+    }
+  ],
+  "annotation": {
+    "summary": "根树叶子上各有一颗樱桃；选择若干顶点摇动，摇动 v 会收集 v 子树内所有叶子的樱桃且任一叶子不能被重复收集。问是否能收集全部樱桃且摇动顶点数是 3 的倍数。",
+    "constraints": "多测，2<=n<=2e5，sum n<=2e5；树结构要求 O(n) DFS/DP。",
+    "core_idea": "设 dp[u][r] 表示在 u 的子树内合法收集所有叶子，并且摇动顶点数模 3 为 r 是否可行。若直接摇 u，则 dp[u][1]=true；若不摇 u，则必须独立处理所有孩子子树，把孩子的模 3 状态做卷积合并。最终答案是 dp[1][0]。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "只保留摇动顶点数量模 3 的有限状态",
+      "直接摇当前节点与合并所有孩子两种情况",
+      "孩子状态卷积合并"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tree-dp",
+      "summary": "DFS 维护 dp[u][0..2]；叶子只能直接摇得到模 1，非叶可以选择直接摇 u 或把所有孩子的可行模数卷积合并。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "replacement-construction",
+      "summary": "从只摇根开始，若需要细化某个被摇顶点就替换为它的孩子；摇动数量的变化只与孩子数量 modulo 3 有关，可据此做 DFS 判定。",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解法在根树上自底向上维护子树状态并决定切分。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "每个子树只需要保留摇动顶点数量 mod 3 这一压缩状态。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "题目和两种解法都依赖树的父子结构和连通块分解。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "DP 需要 DFS 后序遍历处理子树。",
+      "solution_variant": "tree-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "替换构造变体局部决定是否把一个被摇顶点替换为其孩子，并只关心孩子数模 3。",
+      "solution_variant": "replacement-construction"
+    }
+  ]
+}
