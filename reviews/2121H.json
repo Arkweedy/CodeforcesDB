@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2121, "title": "Codeforces Round 1032 (Div. 3)"},
+  "problem": {"contest_id": 2121, "index": "H", "title": "Ice Baby", "rating": 2300, "rating_status": "official", "official_tags": ["binary search", "brute force", "data structures", "dp", "implementation", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2121/problem/H", "notes": "题面与约束：每个位置给一个可选区间 [L_i,R_i]，逐前缀输出能形成的最长非降子序列长度。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/145933", "notes": "官方题解使用 LIS 的最小结尾 dp，并证明每个区间更新只需要替换一个位置。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/836e6e3n", "notes": "Luogu 题解详细解释三种转移情况，并用 multiset 维护 dp 序列。"}
+  ],
+  "annotation": {
+    "summary": "依次给出若干区间 [L_i,R_i]，每个位置可选择区间中的一个数；每加入一个区间，输出当前可构造的最长非降子序列长度。",
+    "constraints": "sum n <= 2e5，需要 O(n log n)；不能维护 O(n^2) DP 表。",
+    "core_idea": "沿用 LIS 最小结尾数组 dp[j]：长度为 j 的非降子序列最小可能末尾。处理区间 [L,R] 时，若存在第一个 dp[j]>R，则可以把长度 j 的末尾更新为 max(dp[j-1],L)。由于 dp 单调，只有一个位置会真正被 L 更新，其余位置要么不变要么相当于平移继承。用 multiset/有序结构维护 dp 值，找到第一个 >R 的元素，删除它并插入 L 或相应值；若删除的是 inf，答案增加。",
+    "complexity": "O(n log n)",
+    "tricks": ["LIS 最小结尾数组推广到区间选择", "dp 单调保证每个区间至多更新一个位置", "用 multiset 维护可替换的最小结尾"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "interval-lis-multiset", "summary": "维护 LIS 最小结尾 multiset，每个区间通过 lower_bound(R+1) 找到唯一需要替换的位置。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/lis-dp", "importance": "primary", "evidence": "主状态是最长非降子序列的最小结尾数组。", "solution_variant": "interval-lis-multiset"},
+    {"tag": "data-structure/ordered-multiset", "importance": "primary", "evidence": "需要动态维护 dp 值并查询第一个大于 R 的位置。", "solution_variant": "interval-lis-multiset"},
+    {"tag": "algorithm/search/binary-search", "importance": "secondary", "evidence": "有序结构上的 lower_bound 等价于二分定位可替换的 dp 位置。", "solution_variant": "interval-lis-multiset"},
+    {"tag": "trick/monotonicity", "importance": "secondary", "evidence": "dp 序列单调性保证每个区间至多让一个位置取 L。", "solution_variant": "interval-lis-multiset"}
+  ]
+}

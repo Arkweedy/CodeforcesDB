@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2121, "title": "Codeforces Round 1032 (Div. 3)"},
+  "problem": {"contest_id": 2121, "index": "E", "title": "Sponsor of Your Problems", "rating": 1500, "rating_status": "official", "official_tags": ["dp", "greedy", "implementation", "strings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2121/problem/E", "notes": "题面与约束：给同位数 l,r，选择 x in [l,r] 最小化 f(l,x)+f(x,r)，f 为相同数位个数。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/145933", "notes": "官方题解按最高位开始分类：相同位贡献 2，边界相差 1 时贡献 1，出现更大差距后后续可避开贡献。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/lbifrrrd", "notes": "Luogu 题解确认三种情况分类：前缀相等、当前位差为 1、当前位差至少 2。"}
+  ],
+  "annotation": {
+    "summary": "给定同位数 l 和 r，选择 l<=x<=r，使 x 与两端数字在相同位置上的相等次数之和最小。",
+    "constraints": "l,r <= 1e9 且位数相同；只需按十进制位线性扫描。",
+    "core_idea": "从最高位扫描。若 l 和 r 当前前缀仍相等，则 x 也被迫相等，该位对两边都贡献，答案加 2。第一次出现不同位时，若两位差至少 2，可选择中间数字，使当前位对两边都不相等，后续也可随意避开，直接结束。若差恰为 1，当前位必须贴近一边，贡献 1；后续只有在边界前缀继续被卡住时才会增加贡献。实现上按官方分类递推即可。",
+    "complexity": "O(number_of_digits)",
+    "tricks": ["从最高位找第一处不同", "位差至少 2 后后缀自由", "位差为 1 时继续比较边界后缀"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "digit-case-analysis", "summary": "按十进制位从高到低分类讨论两端数字是否相等、相差 1 或相差至少 2。", "complexity": "O(log r)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "trick/case-analysis", "importance": "primary", "evidence": "解法完全由当前数位的三种关系分类决定。", "solution_variant": "digit-case-analysis"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "从高位起一旦能让当前位避开两端，就贪心结束并让后缀自由。", "solution_variant": "digit-case-analysis"},
+    {"tag": "implementation", "importance": "secondary", "evidence": "需要谨慎处理字符串位、前缀约束和差为 1 的继续比较。", "solution_variant": "digit-case-analysis"},
+    {"tag": "string", "importance": "incidental", "evidence": "通常把数字转成字符串逐位处理，但字符串不是算法核心。", "solution_variant": "digit-case-analysis"}
+  ]
+}

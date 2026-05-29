@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2121, "title": "Codeforces Round 1032 (Div. 3)"},
+  "problem": {"contest_id": 2121, "index": "G", "title": "Gangsta", "rating": 1900, "rating_status": "official", "official_tags": ["data structures", "divide and conquer", "math", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2121/problem/G", "notes": "题面与约束：给二进制串，定义 f(p) 为 p 中出现次数最多字符的次数，要求统计所有子串贡献。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/145933", "notes": "官方题解将 f(p) 写成 (len+abs(balance))/2，并排序前缀 balance 求所有绝对差之和。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2121G", "notes": "Luogu 候选题解页；本次草稿未实际引用正文。"}
+  ],
+  "annotation": {
+    "summary": "对二进制串的每个子串 p，f(p)=max(count0,count1)，求所有子串 f(p) 的和。",
+    "constraints": "sum n <= 2e5，需要 O(n log n)；不能枚举 O(n^2) 子串。",
+    "core_idea": "令 1 贡献 +1、0 贡献 -1，子串 [l,r] 的 balance 是 pref[r]-pref[l-1]。有 max(c0,c1)=(len+|balance|)/2。所有子串长度总和可直接公式求，剩下需要求所有前缀 balance 两两绝对差之和。将 n+1 个前缀 balance 排序，按序累加 a_i*i - prefix_sum 即可得到所有 |a_i-a_j|。",
+    "complexity": "O(n log n)",
+    "tricks": ["把 max(count0,count1) 化为长度和绝对 balance", "所有子串 balance 变成前缀差", "排序求所有两两绝对差"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "sorted-prefix-balance-absolute-sum", "summary": "计算前缀 0/1 balance，排序后线性求两两绝对差，再加上所有子串长度贡献。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "总贡献由所有子串长度和所有前缀 balance 两两差的组合求和组成。", "solution_variant": "sorted-prefix-balance-absolute-sum"},
+    {"tag": "algorithm/prefix-sums", "importance": "primary", "evidence": "子串 0/1 差值通过前缀 balance 相减得到。", "solution_variant": "sorted-prefix-balance-absolute-sum"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "求所有前缀 balance 两两绝对差需要排序后累加。", "solution_variant": "sorted-prefix-balance-absolute-sum"},
+    {"tag": "math/identity", "importance": "secondary", "evidence": "关键恒等式是 max(c0,c1)=(len+|c1-c0|)/2。", "solution_variant": "sorted-prefix-balance-absolute-sum"}
+  ]
+}

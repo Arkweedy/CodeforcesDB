@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2121, "title": "Codeforces Round 1032 (Div. 3)"},
+  "problem": {"contest_id": 2121, "index": "F", "title": "Yamakasi", "rating": 1800, "rating_status": "official", "official_tags": ["binary search", "brute force", "data structures", "greedy", "two pointers"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2121/problem/F", "notes": "题面与约束：统计满足区间和为 s 且区间最大值为 x 的子数组数量。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/145933", "notes": "官方题解使用前缀和定位候选右端点，并用区间最大值单调性二分可行范围。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/24d35lj0", "notes": "Luogu 题解确认：按前缀和分组候选 r，使用 ST 表查询区间最大值并二分最大值等于 x 的连续区间。"}
+  ],
+  "annotation": {
+    "summary": "给定数组 a、目标和 s 与目标最大值 x，统计所有子数组 [l,r] 满足 sum=s 且 max=x。",
+    "constraints": "sum n <= 2e5，需要 O(n log n)；数组可含负数，双指针不能直接处理区间和。",
+    "core_idea": "对固定左端点 l，满足 sum(l,r)=s 等价于 prefix[r]=prefix[l-1]+s。把所有前缀和值相同的位置分组并排序，就能得到候选 r 集合。随着 r 增大，区间最大值 max(l,r) 单调不降，所以在该候选集合中，max>=x 的位置和 max>x 的位置都可二分求出；两者差就是 max 恰为 x 的候选数量。区间最大值用 Sparse Table O(1) 查询。",
+    "complexity": "O(n log n) per test case",
+    "tricks": ["按前缀和值分组候选右端点", "在同一前缀和组内对区间最大值二分", "用 ST 表做静态 RMQ"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "prefix-sum-groups-rmq-binary-search", "summary": "枚举左端点，在目标前缀和的有序位置组中二分出 max 恰好为 x 的右端点数量。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/prefix-sums", "importance": "primary", "evidence": "区间和为 s 的候选右端点由 prefix[r]=prefix[l-1]+s 定位。", "solution_variant": "prefix-sum-groups-rmq-binary-search"},
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "候选右端点按位置有序，区间最大值随 r 单调不降，可二分 max>=x 和 max>x 的边界。", "solution_variant": "prefix-sum-groups-rmq-binary-search"},
+    {"tag": "data-structure/sparse-table", "importance": "secondary", "evidence": "需要多次查询静态区间最大值。", "solution_variant": "prefix-sum-groups-rmq-binary-search"},
+    {"tag": "trick/group-by-coordinate", "importance": "secondary", "evidence": "把相同前缀和的位置归到同一组，便于在候选右端点集合中二分。", "solution_variant": "prefix-sum-groups-rmq-binary-search"}
+  ]
+}
