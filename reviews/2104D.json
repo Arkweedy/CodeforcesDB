@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2104, "title": "Educational Codeforces Round 178 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2104, "index": "D", "title": "Array and GCD", "rating": 1400, "rating_status": "official", "official_tags": ["binary search", "greedy", "math", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2104/problem/D", "notes": "题面与约束：通过增减元素和 coin balance，把保留数组变成 >=2 且两两 gcd 为 1 的 ideal array；sum n <= 4e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142472?locale=en", "notes": "官方代码将 a 降序排序，并比较保留前缀和与前若干质数前缀和。"},
+    {"source_type": "blog", "url": "https://blog.csdn.net/Doctor_Anonymous/article/details/147620652", "notes": "中文题解交叉确认 coin-sum 可行性和 prime-prefix 贪心。"}
+  ],
+  "annotation": {
+    "summary": "删除尽量少的元素，使剩余数组可在总 coin balance 非负的前提下变成所有元素 >=2 且两两互质。",
+    "constraints": "多测，sum n <= 4e5，需要预处理足够多质数并排序。",
+    "core_idea": "增减操作只关心总和是否足够：要把保留的 m 个数变成两两互质且 >=2，总目标和最小就是前 m 个质数之和。对固定 m，最优保留 m 个最大的 a_i，因此降序排序后找最大 m 满足 largest_prefix_sum[m] >= prime_prefix_sum[m]，答案 n-m。",
+    "complexity": "O(n log n) per test plus shared sieve",
+    "tricks": ["coin 操作转成总和支配", "两两互质最小和为前若干质数", "降序前缀贪心"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "prime-prefix-greedy", "summary": "预处理质数前缀和，排序 a 后扫描最大可行保留前缀长度。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/gcd", "importance": "primary", "evidence": "ideal array 的两两 gcd=1 条件转化为最小目标集合为不同质数。", "solution_variant": "prime-prefix-greedy"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "固定保留数量时保留最大的 m 个数最优，并取最大可行前缀。", "solution_variant": "prime-prefix-greedy"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "降序排序后所有保留数量检查都变为前缀和比较。", "solution_variant": "prime-prefix-greedy"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2106, "title": "Codeforces Round 1020 (Div. 3)"},
+  "problem": {"contest_id": 2106, "index": "E", "title": "Wolf", "rating": 1800, "rating_status": "official", "official_tags": ["binary search", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2106/problem/E", "notes": "题面与约束：排列上执行二分搜索，允许重排部分位置，回答最少需要选择多少位置。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142254", "notes": "官方思路固定 k 的位置，模拟二分搜索路径并统计左右两侧错误符号。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1020", "notes": "第三方题解确认答案为两类坏点数量的两倍最大值，并需检查 donor 数。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/qon22jh7", "notes": "中文题解用于核对可行性条件和计数边界。"}
+  ],
+  "annotation": {
+    "summary": "给定排列和多次询问 l,r,k，允许选择若干位置重排其值，使普通二分搜索能在区间内找到 k，求最少选择位置数。",
+    "constraints": "n,q <= 2e5；每次询问只需模拟 O(log n) 个二分中点。",
+    "core_idea": "k 的真实位置 pos[k] 必须在 [l,r]。二分过程中若 mid < pos[k]，该位置值必须小于 k；若 mid > pos[k]，该位置值必须大于 k。统计路径上左右两类不满足要求的位置 bad_small/bad_big，并检查全局剩余小于/大于 k 的数是否足够作为 donor；需要选择的最小位置数是 2*max(bad_small,bad_big)。",
+    "complexity": "O(q log n)",
+    "tricks": ["把二分搜索路径强制为通向 pos[k] 的决策序列", "左右坏点配对重排"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "forced-binary-search-path", "summary": "对每个询问模拟二分路径，统计需要改成小于/大于 k 的中点数量并做 donor 校验。", "complexity": "O(log n) per query", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "问题核心是分析固定二分搜索路径上的比较结果。", "solution_variant": "forced-binary-search-path"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "坏点只需按小于/大于两类配平，选择数量取两类最大值。", "solution_variant": "forced-binary-search-path"},
+    {"tag": "trick/sign-assignment", "importance": "secondary", "evidence": "每个中点只要求比较符号，具体值可由重排 donor 填充。", "solution_variant": "forced-binary-search-path"}
+  ]
+}

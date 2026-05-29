@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2104, "title": "Educational Codeforces Round 178 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2104, "index": "E", "title": "Unpleasant Strings", "rating": 1700, "rating_status": "official", "official_tags": ["binary search", "dp", "greedy", "strings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2104/problem/E", "notes": "题面与约束：对每个 query t，求最少追加多少允许字符使其不再是 s 的子序列；n 和总 query 长度均可达 1e6。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142472?locale=en", "notes": "官方代码构建 next-occurrence table 和每个状态的最短缺失扩展 d[state]。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/jmh26ol4", "notes": "中文题解解释 next 表、反向 DP 和 query 模拟。"}
+  ],
+  "annotation": {
+    "summary": "给定母串 s 和多个查询串 t，求往 t 右侧最少追加几个允许字母，才能让结果不再是 s 的子序列。",
+    "constraints": "n <= 1e6, k <= 26, total query length <= 1e6；需要 O(nk + total length)。",
+    "core_idea": "构建子序列自动机 nxt[pos][c]，表示在 pos 之后字符 c 的下一次出现。令 dp[pos] 为从最后匹配位置 pos 开始，最短追加多少字符会匹配失败；若某字符不存在则可一步失败，否则转移到 nxt 状态，dp[pos]=1+min dp[nxt[pos][c]]。对每个 query 先在自动机上模拟匹配，若已失败答案 0，否则输出 dp[last_pos]。",
+    "complexity": "O(nk + sum |t_i|)",
+    "tricks": ["子序列 next 自动机", "后缀状态上的最短缺失串 DP", "query 先模拟再接 DP 答案"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "next-automaton-dp", "summary": "预处理 next occurrence 和每个位置的最短失败扩展，再逐 query 自动机模拟。", "complexity": "O(nk + total query length)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp/automaton-dp", "importance": "primary", "evidence": "答案数组是在子序列自动机状态上的 DP。", "solution_variant": "next-automaton-dp"},
+    {"tag": "string/finite-automaton", "importance": "primary", "evidence": "next-occurrence table 是匹配查询串作为子序列的确定自动机。", "solution_variant": "next-automaton-dp"},
+    {"tag": "dp/finite-state-dp", "importance": "secondary", "evidence": "每个位置和失败状态构成有限状态并维护最短失败值。", "solution_variant": "next-automaton-dp"}
+  ]
+}

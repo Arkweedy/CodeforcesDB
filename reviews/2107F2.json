@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2107, "title": "Codeforces Round 1023 (Div. 2)"},
+  "problem": {"contest_id": 2107, "index": "F2", "title": "Cycling (Hard Version)", "rating": 2800, "rating_status": "official", "official_tags": ["binary search", "brute force", "data structures", "dp", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2107/problem/F2", "notes": "题面与约束：hard version 需要优化 easy version 的后缀 DP。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142642", "notes": "官方题解证明有效块终点可被大幅限制，并使用线性函数下包络优化 DP。"},
+    {"source_type": "blog", "url": "https://kmjp.hatenablog.jp/entry/2025/05/13/0930", "notes": "独立代码/题解用于交叉确认 CHT/Li Chao 优化方式。"},
+    {"source_type": "blog", "url": "https://vjudge.net/problem/CodeForces-2107F2", "notes": "题目镜像用于核对 hard version 元数据与限制。"}
+  ],
+  "annotation": {
+    "summary": "在 hard version 的大数据范围下，优化 easy version 的后缀 DP，求最优骑行策略值。",
+    "constraints": "n 大，O(n^2) 枚举块终点不可行，需要利用单调性和数据结构优化。",
+    "core_idea": "从 easy version 的块 DP 出发，证明每个状态真正需要考虑的块终点只有由后缀最小值链/previous-smaller 关系限定的少量候选，转移可写成关于前缀量的线性函数最值查询。维护这些线性函数的下包络，用 Li Chao tree 或等价 CHT 支持插入与查询，从而把 DP 优化到近线性/对数复杂度。",
+    "complexity": "O(n log n)",
+    "tricks": ["从 O(n^2) DP 中提取有效候选", "previous-smaller 单调结构", "线性函数下包络优化转移"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "cht-prefix-dp", "summary": "把 DP 转移整理成线性函数查询，用 Li Chao tree/CHT 维护最优候选。", "complexity": "O(n log n)", "confidence": "medium", "is_primary": true},
+    {"name": "bounded-value-dp", "summary": "利用值域/单调候选限制转移规模的实现变体。", "complexity": "O(n log n)", "confidence": "low", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "dp/convex-hull-optimization", "importance": "primary", "evidence": "核心优化是把 DP 转移变成线性函数最值查询。", "solution_variant": "cht-prefix-dp"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "有效候选来自后缀最小值和单调支配关系，是 DP 优化的关键结构。", "solution_variant": "cht-prefix-dp"},
+    {"tag": "data-structure/li-chao-tree", "importance": "secondary", "evidence": "可用 Li Chao tree 维护线性函数下包络。", "solution_variant": "cht-prefix-dp"},
+    {"tag": "data-structure/monotonic-stack", "importance": "secondary", "evidence": "previous-smaller/后缀最小链可用单调栈或等价结构维护。", "solution_variant": "cht-prefix-dp"},
+    {"tag": "trick/monotonicity", "importance": "secondary", "evidence": "利用候选端点的单调支配关系削减转移。", "solution_variant": "cht-prefix-dp"}
+  ]
+}

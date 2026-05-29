@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2107, "title": "Codeforces Round 1023 (Div. 2)"},
+  "problem": {"contest_id": 2107, "index": "C", "title": "Maximum Subarray Sum", "rating": 1500, "rating_status": "official", "official_tags": ["binary search", "constructive algorithms", "dp", "implementation", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2107/problem/C", "notes": "题面与约束：部分数组元素未知，要求填值后最大子段和恰为 k。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142642", "notes": "官方题解将未知位设为极小值隔断已知块，并选择一个未知位精确补足 k。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/zyf3bv1e", "notes": "中文题解确认已知块最大子段和超过 k 时无解，以及单 hole 构造。"}
+  ],
+  "annotation": {
+    "summary": "给定有些位置未知的数组，要求填入整数使整个数组最大子段和正好为 k。",
+    "constraints": "sum n <= 2e5；填充值范围很大，可使用极小负数隔断区间。",
+    "core_idea": "若没有未知位，直接检查 Kadane 最大子段和是否为 k。若有未知位，先把所有未知位视为 -INF，检查所有纯已知块的最大子段和是否超过 k；若不超过，任选一个未知位 p，计算 p 左侧非负最大后缀 L 和右侧非负最大前缀 R，令 a_p=k-L-R，其余未知位置为 -INF，即可构造最大子段和恰为 k。",
+    "complexity": "O(n) per test",
+    "tricks": ["用极小值隔断未知位置", "单个未知位精确补足目标最大子段和"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "single-hole-linear", "summary": "检查已知块最大子段和，再选一个未知位用左右贡献补足 k。", "complexity": "O(n)", "confidence": "high", "is_primary": true},
+    {"name": "binary-search-hole", "summary": "也可对某个未知位的填充值二分，但不是必要做法。", "complexity": "O(n log V)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "dp/max-subarray", "importance": "primary", "evidence": "可行性和构造都围绕最大子段和/Kadane 结构。", "solution_variant": "single-hole-linear"},
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "需要显式构造未知位置的填充值，使最大子段和恰为 k。", "solution_variant": "single-hole-linear"},
+    {"tag": "trick/interval-feasibility", "importance": "secondary", "evidence": "先检查所有已知区间最大子段和不超过 k，再用一个区间拼接达到 k。", "solution_variant": "single-hole-linear"},
+    {"tag": "algorithm/search/binary-search", "importance": "secondary", "evidence": "存在按未知位填充值二分的等价变体，但主解法可线性直接构造。", "solution_variant": "binary-search-hole"}
+  ]
+}

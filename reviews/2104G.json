@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2104, "title": "Educational Codeforces Round 178 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2104, "index": "G", "title": "Modulo 3", "rating": 2700, "rating_status": "official", "official_tags": ["data structures", "divide and conquer", "dsu", "graphs", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2104/problem/G", "notes": "题面与约束：动态修改函数图的一条出边，询问 reachable recolor 操作可得到的染色数 mod 3；n,q<=2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142472?locale=en", "notes": "官方代码使用时间线段树 + 可回滚带权 DSU；k mod 3=2 时维护 SCC 数奇偶。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/5dqf5skh", "notes": "中文题解解释 SCC/染色数归约、k^cnt、指数奇偶 mod 3，以及 weighted DSU/LCT 方案。"}
+  ],
+  "annotation": {
+    "summary": "函数图每次修改一条出边后，计算从全 1 初始染色通过“选点并重染其可达点”能得到的不同染色数，答案 mod 3。",
+    "constraints": "n,q <= 2e5；动态边更新，需要离线动态连通或等价结构。",
+    "core_idea": "同一有向环/SCC 内必须同色，缩 SCC 后的 DAG 上各 SCC 可独立选色，因此答案为 k^(#SCC)。mod 3 下 k%3 为 0/1 可直接定，k%3=2 只需 #SCC 奇偶。函数图中 SCC 对应无向伪森林里的环，边活跃区间放到时间线段树；DFS 线段树时用可回滚带权 DSU 维护路径奇偶，插边成环时得到环长奇偶对 #SCC parity 的贡献。",
+    "complexity": "O((n+q) log q * alpha(n))",
+    "tricks": ["染色数归约为 SCC 数", "mod 3 下指数只需奇偶", "边活跃区间离线处理", "带权 DSU 检测环长奇偶"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "offline-rollback-parity-dsu", "summary": "将每条边的活跃时间段插入时间线段树，递归时用可回滚 parity DSU 维护 SCC parity 并回答叶子。", "complexity": "O((n+q) log q * alpha(n))", "confidence": "high", "is_primary": true},
+    {"name": "dynamic-lct-pseudoforest", "summary": "用 LCT 维护变化的伪森林和环长；实现更复杂。", "complexity": "O(q log n)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "graph/functional-graph", "importance": "primary", "evidence": "每个点恰有一条出边，SCC 为有向环带入树，这是主结构。", "solution_variant": "offline-rollback-parity-dsu", "description": "每个顶点出度恰为 1 的有向图，通常分解为若干有向环和指向环的树。", "parent": "graph", "created_reason": "函数图的环/SCC 结构很常见，现有 graph/tree 或 connectivity 标签不够精确。", "status": "candidate"},
+    {"tag": "data-structure/dsu/rollback", "importance": "primary", "evidence": "时间线段树递归需要撤销 DSU 的 parent/rank/parity 更改。", "solution_variant": "offline-rollback-parity-dsu", "description": "带撤销栈的并查集，常用于离线动态连通或时间分治。", "parent": "data-structure/dsu", "created_reason": "已有 DSU 派生标签未覆盖 rollback DSU 这一离线动态连通经典结构。", "status": "candidate"},
+    {"tag": "algorithm/divide-and-conquer", "importance": "primary", "evidence": "按时间线段树/分治处理边活跃区间并在递归中回滚。", "solution_variant": "offline-rollback-parity-dsu"},
+    {"tag": "trick/parity", "importance": "primary", "evidence": "k≡2 mod 3 时只需维护 #SCC 的奇偶。", "solution_variant": "offline-rollback-parity-dsu"},
+    {"tag": "paradigm/offline", "importance": "secondary", "evidence": "边更新被离线转成活跃区间处理。", "solution_variant": "offline-rollback-parity-dsu"},
+    {"tag": "data-structure/dsu", "importance": "secondary", "evidence": "带权 DSU 维护连通块内距离奇偶和成环信息。", "solution_variant": "offline-rollback-parity-dsu"}
+  ]
+}

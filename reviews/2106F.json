@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2106, "title": "Codeforces Round 1020 (Div. 3)"},
+  "problem": {"contest_id": 2106, "index": "F", "title": "Goblin", "rating": 1900, "rating_status": "official", "official_tags": ["dfs and similar", "dp", "dsu", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2106/F", "notes": "题面与约束：隐式 n*n 01 网格，每行由一个规则翻转得到，要求最大连通 0 分量大小。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142254", "notes": "官方题解利用每列 0 的连续区间很少这一结构压缩连通分量。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1020", "notes": "第三方题解提供了按上下状态转移/压缩分量维护的实现视角。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/zsa22xvp", "notes": "中文题解用于确认隐式网格压缩后的连通性处理。"}
+  ],
+  "annotation": {
+    "summary": "在按规则生成的 n*n 二值网格中，求由 0 组成的最大四连通块大小。",
+    "constraints": "n 可达大规模，不能显式构造 n^2 网格；需要利用每列/每行结构压缩。",
+    "core_idea": "生成规则使每列中的 0 只形成常数个连续区间。把这些连续区间看作压缩节点，相邻列之间只需检查区间是否相交即可连边；也可以逐列维护顶部/底部分量状态做有限状态转移。这样将隐式网格的连通块问题降为 O(n) 规模的压缩图连通性。",
+    "complexity": "O(n) or O(n alpha n)",
+    "tricks": ["隐式网格按连续区间压缩", "连通块只在相邻列之间合并"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "top-bottom-component-dp", "summary": "逐列维护少量边界连通状态并更新最大分量。", "complexity": "O(n)", "confidence": "medium", "is_primary": true},
+    {"name": "compressed-dsu", "summary": "把每列 0 区间压成节点，相邻列区间相交则并查集合并。", "complexity": "O(n alpha n)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "graph/connectivity", "importance": "primary", "evidence": "目标是计算隐式网格中 0 的最大连通分量。", "solution_variant": "compressed-dsu"},
+    {"tag": "trick/component-decomposition", "importance": "primary", "evidence": "必须先把 n*n 网格分解/压缩成 O(n) 个连续区间分量。", "solution_variant": "compressed-dsu"},
+    {"tag": "dp/finite-state-dp", "importance": "secondary", "evidence": "官方线性做法可视为按列维护有限个边界连通状态。", "solution_variant": "top-bottom-component-dp"},
+    {"tag": "data-structure/dsu", "importance": "secondary", "evidence": "压缩图变体使用并查集合并相交区间。", "solution_variant": "compressed-dsu"}
+  ]
+}

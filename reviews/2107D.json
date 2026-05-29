@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2107, "title": "Codeforces Round 1023 (Div. 2)"},
+  "problem": {"contest_id": 2107, "index": "D", "title": "Apple Tree Traversing", "rating": 2100, "rating_status": "official", "official_tags": ["brute force", "dfs and similar", "greedy", "implementation", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2107/problem/D", "notes": "题面与约束：树上反复选择一条路径收集苹果并输出字典序最大的操作序列。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142642", "notes": "官方题解每次在当前连通块中选择字典序最大的直径并删除路径。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ffqg2s9r", "notes": "中文题解用于确认直径端点比较规则和递归删除路径后的组件处理。"}
+  ],
+  "annotation": {
+    "summary": "树上每次选择一条仍有苹果的简单路径并删除路径上苹果，要求输出字典序最大的操作序列。",
+    "constraints": "sum n <= 1.5e5；需要在删除路径后处理多个剩余连通块。",
+    "core_idea": "字典序首先最大化当前操作的路径长度，因此每个当前连通块中必须选择直径；若有多条直径，再按端点编号规则取字典序最大的那条。删除该直径路径后，各剩余子树互不影响，使用优先队列维护每个连通块的最优直径，反复取出全局最优并分裂。",
+    "complexity": "O(n log n) with priority queue plus DFS work; simpler实现可接近 O(n sqrt n)",
+    "tricks": ["局部最优直径决定全局字典序", "删除路径后独立组件递归处理"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "recursive-diameter-removal", "summary": "对每个连通块求最优直径，删除直径路径后递归处理剩余子树。", "complexity": "O(n log n) with scheduling", "confidence": "high", "is_primary": true},
+    {"name": "dynamic-diameter-pq", "summary": "用优先队列保存所有当前组件的最优直径，逐步弹出并分裂。", "complexity": "O(n log n)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "graph/tree-diameter", "importance": "primary", "evidence": "每一步的最优路径必须是当前连通块的直径。", "solution_variant": "recursive-diameter-removal"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "按字典序逐步选择当前全局最优直径，后续组件独立，不会反悔。", "solution_variant": "dynamic-diameter-pq"},
+    {"tag": "graph/tree-dfs", "importance": "secondary", "evidence": "需要 DFS 求直径、标记删除路径和分裂子组件。", "solution_variant": "recursive-diameter-removal"},
+    {"tag": "data-structure/priority-queue", "importance": "secondary", "evidence": "高效实现中用优先队列按操作三元组取全局最优组件。", "solution_variant": "dynamic-diameter-pq"},
+    {"tag": "data-structure/ordered-multiset", "importance": "secondary", "evidence": "也可用有序集合维护当前组件候选直径。", "solution_variant": "dynamic-diameter-pq"}
+  ]
+}

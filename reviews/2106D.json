@@ -1,0 +1,27 @@
+{
+  "contest": {"contest_id": 2106, "title": "Codeforces Round 1020 (Div. 3)"},
+  "problem": {"contest_id": 2106, "index": "D", "title": "Flower Boy", "rating": 1500, "rating_status": "official", "official_tags": ["binary search", "dp", "greedy", "two pointers"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2106/problem/D", "notes": "题面与约束：允许插入至多一朵花，要求按顺序选出满足 b_i 阈值的花；sum n,sum m <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142254", "notes": "官方题解使用前后缀可匹配位置判断删除/插入某个需求后的可行性。"},
+    {"source_type": "blog", "url": "https://maspypy.com/codeforces-round-1020", "notes": "第三方题解确认前缀 earliest 与后缀 latest 的线性判定。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/2wwlxcld", "notes": "中文题解用于交叉确认插入花等价于覆盖某个 b_i。"}
+  ],
+  "annotation": {
+    "summary": "给定花的美丽值 a 和要依次满足的阈值 b，求插入一朵花的最小美丽值，使得能按顺序选出 m 朵满足要求的花；若本来可行则为 0，不可行则 -1。",
+    "constraints": "多测，sum n,sum m <= 2e5，需要线性或近线性处理。",
+    "core_idea": "插入一朵美丽值为 k 的花，等价于让它负责某一个需求 b_i，其余需求必须由原数组前缀和后缀分别匹配。预处理 pref[i] 为匹配前 i 个需求所需最早位置，suf[i] 为匹配 i..m 所需最晚位置；若 pref[i-1] < suf[i+1]，就能把第 i 个需求交给新花，候选答案为 b_i，取最小值。",
+    "complexity": "O(n+m) per test",
+    "tricks": ["插入一项转化为跳过一个需求", "前缀最早匹配与后缀最晚匹配拼接"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "prefix-suffix-greedy", "summary": "双指针预处理需求前缀/后缀的可匹配边界，枚举被插入花承担的需求。", "complexity": "O(n+m)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "前缀和后缀都采用能尽早/尽晚匹配的贪心边界，边界最优性决定可行性。", "solution_variant": "prefix-suffix-greedy"},
+    {"tag": "algorithm/two-pointers", "importance": "primary", "evidence": "线性扫描 a 与 b 构造 pref/suf，是主判定结构。", "solution_variant": "prefix-suffix-greedy"},
+    {"tag": "trick/reverse-process", "importance": "secondary", "evidence": "从右往左构造 suffix 边界以和左侧 prefix 拼接。", "solution_variant": "prefix-suffix-greedy"}
+  ]
+}

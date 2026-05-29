@@ -1,0 +1,28 @@
+{
+  "contest": {"contest_id": 2104, "title": "Educational Codeforces Round 178 (Rated for Div. 2)"},
+  "problem": {"contest_id": 2104, "index": "F", "title": "Numbers and Strings", "rating": 2600, "rating_status": "official", "official_tags": ["binary search", "brute force", "dfs and similar", "dp", "implementation", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2104/problem/F", "notes": "题面与约束：S(x) 为 x 与 x+1 拼接后排序数字，问 1..n 有多少不同 S(x)；n <= 1e9-2。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142472?locale=en", "notes": "官方代码枚举候选数字模式，计算 S(x)，对签名保留最小代表，再对 n upper_bound。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com/article/bd93j5ag", "notes": "中文题解解释候选 first representative 的必要条件和暴力验证。"}
+  ],
+  "annotation": {
+    "summary": "统计 1<=x<=n 时，十进制 x 与 x+1 拼接后排序数字所得字符串的不同数量。",
+    "constraints": "n 最大 1e9-2，但只有 9 位；多测，适合预处理所有首次代表。",
+    "core_idea": "每个字符串只在产生它的最小 x 处首次出现。官方做法 DFS 枚举一个较小的候选首次代表超集，把每个候选转成数字并计算 S(x)，按签名排序后只保留最小 x；再把这些 first representatives 排序，每个询问用 upper_bound(n) 回答。",
+    "complexity": "Precompute over a bounded candidate set; O(log M) per query",
+    "tricks": ["统计首次代表而非所有 x", "数字模式剪枝枚举", "按 S(x) 排序去重"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "official-candidate-enumeration", "summary": "DFS 生成候选 first representatives，计算签名去重，按代表值二分回答。", "complexity": "precompute O(M log M * digits), query O(log M)", "confidence": "medium", "is_primary": true},
+    {"name": "digit-dp-characterization", "summary": "讨论区变体刻画 first representative 并用数位 DP 计数。", "complexity": "poly(digits, states)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "paradigm/brute-force", "importance": "primary", "evidence": "官方主解枚举剪枝后的候选超集并逐个计算 S(x) 验证。", "solution_variant": "official-candidate-enumeration"},
+    {"tag": "algorithm/sorting", "importance": "primary", "evidence": "S(x) 本身是数字排序，去重也依赖按签名排序。", "solution_variant": "official-candidate-enumeration"},
+    {"tag": "algorithm/search/binary-search", "importance": "secondary", "evidence": "预处理首次代表后，每个 n 用 upper_bound 查询。", "solution_variant": "official-candidate-enumeration"},
+    {"tag": "dp/digit-dp", "importance": "secondary", "evidence": "存在按 first representative 刻画做数位 DP 的非主流解法。", "solution_variant": "digit-dp-characterization"}
+  ]
+}

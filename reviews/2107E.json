@@ -1,0 +1,30 @@
+{
+  "contest": {"contest_id": 2107, "title": "Codeforces Round 1023 (Div. 2)"},
+  "problem": {"contest_id": 2107, "index": "E", "title": "Ain and Apple Tree", "rating": 2600, "rating_status": "official", "official_tags": ["binary search", "constructive algorithms", "greedy", "math", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2107/problem/E", "notes": "题面与约束：构造一棵 n 点树，使题目定义的苹果树函数值为 k。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142642", "notes": "官方题解从极值树形开始，用三角数分解差值来构造父亲。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/4fflzk2n", "notes": "中文题解用于确认最大值 C(n,3)+1 与 greedy triangular decomposition。"},
+    {"source_type": "blog", "url": "https://kmjp.hatenablog.jp/entry/2025/05/13/0930", "notes": "独立代码/题解用于交叉确认构造细节。"}
+  ],
+  "annotation": {
+    "summary": "给定 n,k，构造一棵树使所有点对相关的 LCA 深度和达到指定值 k，或判断无解。",
+    "constraints": "n 可达 2e5 量级；需要输出父亲数组，构造必须线性或近线性。",
+    "core_idea": "该函数的最大值出现在一条链/极端形态上，可表示为 C(n,3)+1。若 k 超过最大值则无解；否则从最大形态出发，需要减少的 deficit 可用若干三角数 C(p,2) 贪心分解。每次通过把一段节点重新挂接到合适位置来精确减少对应贡献，最终得到目标 k。",
+    "complexity": "O(n)",
+    "tricks": ["从最大极值构造反向减少", "用三角数分解贡献差", "通过重接父亲调整 LCA 深度和"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "triangular-deficit-greedy", "summary": "计算最大贡献与目标差值，用三角数贪心拆分并据此重接节点。", "complexity": "O(n)", "confidence": "medium", "is_primary": true},
+    {"name": "endpoint-rewire-greedy", "summary": "等价地从链形端点逐步改父亲，按贡献减少量构造。", "complexity": "O(n)", "confidence": "medium", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求直接构造满足精确 k 的树。", "solution_variant": "triangular-deficit-greedy"},
+    {"tag": "math/combinatorics", "importance": "primary", "evidence": "可行范围和贡献减少都依赖 C(n,3) 与三角数 C(p,2)。", "solution_variant": "triangular-deficit-greedy"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "用最大三角数逐步分解 deficit 并完成构造。", "solution_variant": "triangular-deficit-greedy"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "构造对象是树，操作是指定父亲关系。", "solution_variant": "triangular-deficit-greedy"},
+    {"tag": "trick/extreme-position", "importance": "secondary", "evidence": "从达到最大贡献的极端树形出发反向修正。", "solution_variant": "triangular-deficit-greedy"}
+  ]
+}

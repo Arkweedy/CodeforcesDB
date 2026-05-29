@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2107, "title": "Codeforces Round 1023 (Div. 2)"},
+  "problem": {"contest_id": 2107, "index": "F1", "title": "Cycling (Easy Version)", "rating": 2300, "rating_status": "official", "official_tags": ["binary search", "brute force", "dp", "greedy"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2107/problem/F1", "notes": "题面与约束：easy version 数据范围允许较慢 DP，计算最优骑行策略。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142642", "notes": "官方题解使用后缀 DP，枚举当前块的终点。"},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/CF2107F1", "notes": "Luogu 页面用于核对题意和版本差异；该题中文题解较少。"}
+  ],
+  "annotation": {
+    "summary": "在 easy version 的限制下，求一类分段骑行选择的最优值。",
+    "constraints": "easy version 可接受 O(n^2) 枚举块终点。",
+    "core_idea": "把决策划分为若干连续块。对当前位置 i，当前后缀的第一个最小值会支配下一段结构；枚举本段结束位置 j 后，转移到 j+1 的后缀子问题。由于 easy version 范围较小，直接后缀 DP 加枚举即可。",
+    "complexity": "O(n^2)",
+    "tricks": ["按后缀最小值划分块", "枚举块终点做转移"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "suffix-minimum-dp", "summary": "定义后缀 DP，枚举当前块终点并利用后缀最小值控制转移。", "complexity": "O(n^2)", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "dp", "importance": "primary", "evidence": "主解法是按后缀子问题定义状态并转移。", "solution_variant": "suffix-minimum-dp"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "后缀首个最小值对块划分有支配性，是转移简化的关键。", "solution_variant": "suffix-minimum-dp"},
+    {"tag": "paradigm/brute-force", "importance": "secondary", "evidence": "easy version 直接枚举每个块的终点。", "solution_variant": "suffix-minimum-dp"}
+  ]
+}

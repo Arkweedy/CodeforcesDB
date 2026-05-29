@@ -1,0 +1,26 @@
+{
+  "contest": {"contest_id": 2106, "title": "Codeforces Round 1020 (Div. 3)"},
+  "problem": {"contest_id": 2106, "index": "G1", "title": "Baudelaire (easy version)", "rating": 2200, "rating_status": "official", "official_tags": ["binary search", "constructive algorithms", "divide and conquer", "greedy", "interactive", "trees"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2106/problem/G1", "notes": "题面与约束：交互式树上权值重构，easy version 的树为星形。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/142254", "notes": "官方题解通过翻转中心并二分叶子判断根的位置，再用路径和差分恢复权值。"}
+  ],
+  "annotation": {
+    "summary": "在星形树交互模型中，通过询问路径和及翻转操作恢复隐藏根和点权。",
+    "constraints": "交互题；easy version 结构为星形，查询预算要求对叶子使用二分而非逐个检查。",
+    "core_idea": "星形树只有中心和叶子两类。先比较翻转中心前后的路径和变化，利用某个叶子路径和是否受影响来二分找到根所在叶子/中心；确定根后，再用每个点到根路径和之间的差分恢复点权。",
+    "complexity": "O(n + log n) queries conceptually",
+    "tricks": ["翻转前后差分定位根", "星形结构把根查找化为叶子二分"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "star-root-binary-search", "summary": "利用星形树路径结构，翻转中心后对叶子集合二分定位隐藏根，再由路径和差分恢复。", "complexity": "O(n + log n) queries", "confidence": "medium", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/interactive/oracle-reconstruction", "importance": "primary", "evidence": "主任务是在交互 oracle 下恢复隐藏根和权值。", "solution_variant": "star-root-binary-search"},
+    {"tag": "algorithm/search/binary-search", "importance": "primary", "evidence": "easy version 的关键优化是在叶子集合上二分定位根。", "solution_variant": "star-root-binary-search"},
+    {"tag": "trick/difference-transform", "importance": "primary", "evidence": "翻转操作前后的路径和差值揭示根所在方向和点权。", "solution_variant": "star-root-binary-search"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "路径和与根定位都依赖树结构。", "solution_variant": "star-root-binary-search"}
+  ]
+}
