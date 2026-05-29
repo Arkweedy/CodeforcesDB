@@ -1,0 +1,131 @@
+{
+  "contest": {
+    "contest_id": 2128,
+    "title": "Codeforces Round 1039 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2128,
+    "index": "E2",
+    "title": "Submedians (Hard Version)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["binary search", "constructive algorithms", "data structures", "math", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2128/problem/E2",
+      "notes": "题面与约束：n,k <= 3e5，sum n <= 3e5，需要输出所有 submedian 以及每个值的一个对应区间。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145080",
+      "notes": "官方题解确认：先用 Easy 的判定找到最小/最大 submedian，再利用区间端点连续变化时中位数集合相交来覆盖整个值域。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1039",
+      "notes": "Maspy 题解交叉确认关键观察：给集合加一个元素后中位数区间与原中位数区间相交，因此从最小 witness 走到最大 witness 会覆盖所有中间中位数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/fengjianming/p/19247378",
+      "notes": "博客园题解独立说明：所有 submedian 构成一个连续大区间；找到 mn/mx 后让对应区间连续变化即可给中间值构造 witness。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2128E2",
+      "notes": "Luogu 候选汇总页；本草稿未直接使用该汇总页。"
+    }
+  ],
+  "annotation": {
+    "summary": "找出所有能作为某个长度至少 k 子数组中位数的值，并为每个值输出一个对应区间。",
+    "constraints": "t <= 50000，1 <= k <= n <= 300000，sum n <= 300000，需要接近 O(n log n)。",
+    "core_idea": "先复用 E1 的阈值判定分别找最大 submedian 和最小 submedian 及其 witness。关键性质：一个区间增加或删除一个端点时，新旧中位数集合相交，所以从实现最小值的区间连续移动端点到实现最大值的区间，过程中出现的中位数会覆盖整个 [mn,mx]。维护当前区间的动态中位数集合，并在路径上为每个尚未记录的中位数保存当前区间。",
+    "complexity": "O(n log n) per test case",
+    "tricks": ["submedian 集合是连续区间", "把 witness 区间连续变形来构造所有中间答案", "动态维护当前区间的上下中位数"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "endpoint_binary_search",
+      "summary": "用 E1 的 +1/-1 前缀判定二分最大 submedian；对相反方向同理求最小 submedian，并记录两个 witness 区间。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "continuous_interval_walk",
+      "summary": "把最小 witness 区间通过端点增删连续变到最大 witness 区间，使用 Fenwick tree 或双 multiset 维护当前区间可取的中位数并填充答案。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "wavelet_matrix_variant",
+      "summary": "也可按 Maspy 题解，在构造的端点变化路径上用 wavelet matrix 查询区间中位数，减少手写动态平衡集合的复杂度。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "题目的决定性观察是所有可行 submedian 值形成连续区间，只需求出端点再覆盖中间。",
+      "solution_variant": "continuous_interval_walk"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Hard 版不仅判断/求最值，还必须为每个 submedian 构造一个 witness 区间。",
+      "solution_variant": "continuous_interval_walk"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "沿端点变化路径维护区间内值频率，并用 order statistic 查询当前可输出的中位数，可用 Fenwick tree 完成。",
+      "solution_variant": "continuous_interval_walk"
+    },
+    {
+      "tag": "trick/median-threshold",
+      "importance": "secondary",
+      "evidence": "求最小/最大 submedian 的端点仍依赖 E1 的中位数阈值 +1/-1 转化。",
+      "solution_variant": "endpoint_binary_search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "端点 submedian 值通过单调可行性二分得到。",
+      "solution_variant": "endpoint_binary_search"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "二分 check 中使用前缀和与最小前缀和寻找长度至少 k 的 witness。",
+      "solution_variant": "endpoint_binary_search"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "从一个 witness 区间移动到另一个 witness 区间时，本质是端点增删的双指针式连续变形。",
+      "solution_variant": "continuous_interval_walk"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "动态中位数也可用维护上下两半的 multiset 实现。",
+      "solution_variant": "continuous_interval_walk"
+    },
+    {
+      "tag": "data-structure/wavelet-matrix",
+      "importance": "secondary",
+      "evidence": "Maspy 的替代实现用 wavelet matrix 查询路径上每个区间的中位数。",
+      "solution_variant": "wavelet_matrix_variant"
+    }
+  ]
+}

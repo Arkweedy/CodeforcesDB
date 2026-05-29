@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2128,
+    "title": "Codeforces Round 1039 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2128,
+    "index": "D",
+    "title": "Sum of LDS",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2128/problem/D",
+      "notes": "题面与约束：给定满足 max(p_i,p_{i+1})>p_{i+2} 的排列，sum n <= 5e5，求所有子数组 LDS 长度之和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145080",
+      "notes": "官方题解确认关键性质：特殊排列中子数组的 LDS 可由相邻下降/上升关系线性计数。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9o997iea",
+      "notes": "洛谷题解用 f_i 单调性和前缀贡献解释同一结构性质，作为交叉参考。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1039",
+      "notes": "Maspy 题解把序列按相邻下降切成长度 1/2 的上升段，并证明每段最多取一个且段尾可组成下降子序列。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2128D",
+      "notes": "Luogu 候选汇总页；本草稿实际参考的是具体专栏文章。"
+    }
+  ],
+  "annotation": {
+    "summary": "对满足局部限制的排列，计算所有子数组的最长下降子序列长度总和。",
+    "constraints": "t <= 10000，3 <= n <= 500000，sum n <= 500000，需要 O(n) 或 O(n log n) 以内。",
+    "core_idea": "条件禁止连续三个严格上升。对任意子数组，可以按相邻下降位置把它划成若干长度至多 2 的上升段，每段最多为 LDS 贡献 1，并且每段末尾可以组成下降子序列。因此 LDS 长度等于这些段数，也就是 1 加上子数组内部相邻下降边数量。于是每条下降边 i,i+1 对所有包含它的子数组贡献 l_count * r_count，累加即可。",
+    "complexity": "O(n) per test case",
+    "tricks": ["用局部排列限制把 LDS 转化为相邻下降边计数", "按边对所有包含它的子数组做贡献统计"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "descent_contribution",
+      "summary": "证明 LDS([l,r]) = 1 + 子数组内下降边数量，然后用每条下降边被多少子数组包含来贡献计数。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "最终答案不是逐个子数组求 LDS，而是把每条相邻下降边对所有包含它的子数组的贡献一次性累加。",
+      "solution_variant": "descent_contribution"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "每条边 i,i+1 的贡献次数是可选左端点数乘可选右端点数，本质是子数组包含关系的组合计数。",
+      "solution_variant": "descent_contribution"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "局部约束 max(p_i,p_{i+1})>p_{i+2} 保证分段后的段尾构成下降序列，是 LDS 公式成立的不变量。",
+      "solution_variant": "descent_contribution"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "也可以把子数组分数写成左右端点函数或前缀形式后线性求和。",
+      "solution_variant": "descent_contribution"
+    },
+    {
+      "tag": "dp/lis-dp",
+      "importance": "incidental",
+      "evidence": "题面对象是 LDS，但解法没有使用经典 LIS/LDS 动态规划，只利用特殊结构直接计数。",
+      "solution_variant": "descent_contribution"
+    }
+  ]
+}

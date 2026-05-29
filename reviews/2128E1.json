@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2128,
+    "title": "Codeforces Round 1039 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2128,
+    "index": "E1",
+    "title": "Submedians (Easy Version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "dp", "greedy", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2128/problem/E1",
+      "notes": "题面与约束：n,k <= 3e5，sum n <= 3e5，只需找最大 submedian 及一个长度至少 k 的区间。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145080",
+      "notes": "官方题解确认二分答案，把 a_i>=x 映射为 +1，否则 -1，用长度至少 k 的非负区间和判定。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ye5gmwq4",
+      "notes": "洛谷题解给出同一 check：维护 r-k 之前的最小前缀和，若 s_r-min_prefix>=0 则可行。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1039",
+      "notes": "Maspy 题解从 Hard 版统一说明 Easy：中位数 >= x 等价于 +1/-1 后存在非负和区间。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2128E1",
+      "notes": "Luogu 候选汇总页；本草稿实际参考的是具体专栏文章。"
+    }
+  ],
+  "annotation": {
+    "summary": "在所有长度至少 k 的子数组中，找最大的可作为中位数的整数 v，并输出一个对应区间。",
+    "constraints": "t <= 50000，1 <= k <= n <= 300000，sum n <= 300000，需要 O(n log n) 级别。",
+    "core_idea": "二分答案 x。把 a_i>=x 记为 +1，否则记为 -1。某个区间的中位数至少为 x，当且仅当该区间 +1/-1 和非负。对长度至少 k 的区间，扫描右端点 r，维护所有合法左端点前一位的最小前缀和 min_prefix；若 prefix[r]-min_prefix>=0，就找到可行区间。二分最大 x 并记录 witness。",
+    "complexity": "O(n log n) per test case",
+    "tricks": ["中位数阈值转 +1/-1 判定", "长度至少 k 的最大子段和判定用最小前缀和"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary_search_prefix_check",
+      "summary": "对答案 x 二分；每次 check 用 +1/-1 前缀和与最小前缀和判断是否存在长度至少 k 的非负和区间，并返回区间。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-threshold",
+      "importance": "primary",
+      "evidence": "核心转化是判断某个 x 能否成为中位数：把元素按是否 >=x 转为 +1/-1。",
+      "solution_variant": "binary_search_prefix_check"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "可行性关于 x 单调，最大 submedian 通过二分答案得到。",
+      "solution_variant": "binary_search_prefix_check"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "每次可行性检查完全依赖 +1/-1 数组的前缀和与最小前缀和差值。",
+      "solution_variant": "binary_search_prefix_check"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "长度至少 k 的区间条件被转化为 prefix[r]-min_prefix>=0。",
+      "solution_variant": "binary_search_prefix_check"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "secondary",
+      "evidence": "check 等价于求长度下界约束下是否存在非负最大子段和，可用动态维护最小前缀实现。",
+      "solution_variant": "binary_search_prefix_check"
+    }
+  ]
+}

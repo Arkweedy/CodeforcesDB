@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2128,
+    "title": "Codeforces Round 1039 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2128,
+    "index": "F",
+    "title": "Strict Triangle",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": ["graphs", "greedy", "shortest paths"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2128/problem/F",
+      "notes": "题面与约束：无向图，边权可在 [l_i,r_i] 内选择；n,m 总和 <= 2e5，判断是否能让 dist(1,n) != dist(1,k)+dist(k,n)。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145080",
+      "notes": "官方题解给出 robber/cops 解释：先用 r 权从 k 跑最短路，再用 l 权跑带危险阈值的改造 Dijkstra。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4h5mw44s",
+      "notes": "洛谷题解交叉确认极值化：存在解时可令某条目标路径边取 L，其余边取 R，并把条件化为路径前缀 DP 后跑 Dijkstra。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1039",
+      "notes": "Maspy 题解独立证明 L/R 极值化与 P_{vw}<d_v+d_w 的充要条件，并给出 Dijkstra 式 DP。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2128F",
+      "notes": "Luogu 候选汇总页；本草稿实际参考的是具体专栏文章。"
+    }
+  ],
+  "annotation": {
+    "summary": "给每条边在 [l,r] 中选权，判断是否能让 1 到 n 的最短距离严格小于经 k 的距离之和，即不存在等长最短路必须经 k。",
+    "constraints": "t <= 10000，4 <= n <= 200000，n-1 <= m <= 200000，sum n,sum m <= 200000，边权上界到 1e9，需要 O((n+m)log n)。",
+    "core_idea": "由于三角不等式总有 dist(1,n) <= dist(1,k)+dist(k,n)，目标是制造严格小于。若存在解，可固定一条 1->n 候选路径 P，使 P 上边取 L，其余边取 R。先在全 R 权图上从 k 跑 Dijkstra 得 d[v]。路径 P 合法等价于对 P 上任意 u,v，P 段长 < d[u]+d[v]。把该全局条件压成到达每个点时的单个危险值 x：经过 L 边 u->v 后 x' = max(x + L_e, -d[v])，若 x >= d[u] 则当前位置已不安全。按最小 x 的 Dijkstra 方式扩展，若能安全到 n 则 YES。",
+    "complexity": "O((n+m) log n) per test case",
+    "tricks": ["把连续边权选择压到路径边取 L、非路径边取 R 的极值结构", "用 k 到各点的 R 权最短路作为危险阈值", "把任意两点路径不等式压缩成可 Dijkstra 维护的一维状态"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official_robber_dijkstra",
+      "summary": "先用 R 权从 k 跑普通 Dijkstra 得警察到达阈值 d[v]；再从 1 出发用 L 权和状态 x 跑改造 Dijkstra，状态转移为 max(x+L_e,-d[v])，只扩展 x<d[u] 的点。",
+      "complexity": "O((n+m) log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "prefix_dp_dijkstra",
+      "summary": "把路径合法性写成对所有前缀点的 P_{uv}<d[u]+d[v]，维护到当前点的最坏 P_{uv}-d[u] 值，转移同样可用 Dijkstra 式贪心确定。",
+      "complexity": "O((n+m) log n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "display_name": "Dijkstra",
+      "description": "Shortest path problems whose main algorithm is Dijkstra's algorithm or a Dijkstra-style priority-queue relaxation over nonnegative edge transitions; use for ordinary and modified Dijkstra when the priority key is the decisive state.",
+      "parent": "graph/shortest-path",
+      "created_reason": "Existing graph/shortest-path is too broad for querying problems specifically solved by Dijkstra or Dijkstra-like greedy relaxation.",
+      "status": "candidate",
+      "aliases": ["dijkstra", "dijkstra-algorithm"],
+      "importance": "primary",
+      "evidence": "The solution performs an ordinary Dijkstra from k under R weights, then a second Dijkstra-style priority queue relaxation over the danger state.",
+      "solution_variant": "official_robber_dijkstra"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "primary",
+      "evidence": "A crucial proof reduces arbitrary chosen edge weights to an extreme assignment: one candidate 1->n path uses L, all other edges use R.",
+      "solution_variant": "official_robber_dijkstra"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "The path-wide strict triangle condition is compressed into an augmented scalar state x carried by Dijkstra.",
+      "solution_variant": "official_robber_dijkstra"
+    },
+    {
+      "tag": "graph/bottleneck-path",
+      "importance": "secondary",
+      "evidence": "The modified transition uses x' = max(x+L_e,-d[v]), so the path key is a minimax-style value rather than a plain sum.",
+      "solution_variant": "official_robber_dijkstra"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Correctness of the second phase relies on settling the currently best danger value first, analogous to Dijkstra's greedy invariant.",
+      "solution_variant": "official_robber_dijkstra"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "The graph condition is transformed through the strict inequality P_{uv}<d[u]+d[v] for all pairs of points on the chosen path.",
+      "solution_variant": "prefix_dp_dijkstra"
+    }
+  ]
+}
