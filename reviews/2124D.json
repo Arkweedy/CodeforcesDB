@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2124, "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2124, "index": "D", "title": "Make a Palindrome", "rating": 1700, "rating_status": "official", "official_tags": ["greedy", "sortings", "two pointers"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2124/D", "notes": "题面与约束：可在长度至少 k 的子数组中删除一个第 k 小元素，问能否最终得到回文；t <= 1e4。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/topic/145016/en5?locale=en&mobile=false", "notes": "官方题解确认只要保留 k-1 个最小元素，其余元素可任意删除；过滤到 <= cutoff 后双指针贪心删 cutoff。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2124D", "notes": "Candidate checked; not included in sources because no usable rendered solution content was consulted."}
+  ],
+  "annotation": {
+    "summary": "数组允许反复删除某个子数组中的第 k 小元素，判断是否能删成回文。",
+    "constraints": "多测，排序找第 k-1 小阈值后线性双指针即可。",
+    "core_idea": "操作的本质限制是最小的 k-1 个元素永远不能全部被删掉；反过来，只要这些元素仍在，就可以通过收缩子数组删除任意其他元素。设 x 为第 k-1 小元素，所有 >x 的元素都没必要保留；保留 <=x 的序列 b 后，只能在需要时删除值为 x 的元素，且要尽量少删以保证最终长度至少 k-1。对 b 双指针匹配：相等则保留两端，不等时若一端是 x 就删这一端，否则无解。",
+    "complexity": "O(n log n)",
+    "tricks": ["k-1 smallest deletion invariant", "filter values by cutoff", "two-pointer minimal deletion"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "cutoff-filter-two-pointers", "summary": "排序得到第 k-1 小值 x，过滤掉 >x 的元素，在剩余序列上双指针匹配并只删除必要的 x。", "complexity": "O(n log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "trick/invariant", "importance": "primary", "evidence": "核心删除能力由“k-1 个最小元素必须保留”这个不变量完全刻画。", "solution_variant": "cutoff-filter-two-pointers"},
+    {"tag": "algorithm/two-pointers", "importance": "primary", "evidence": "过滤后的序列需要用左右指针贪心决定是否保留两端或删除一端 cutoff 值。", "solution_variant": "cutoff-filter-two-pointers"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "当两端不等时，若能删只能删等于 cutoff 的一端；每次删最少元素以保留足够长度。", "solution_variant": "cutoff-filter-two-pointers"},
+    {"tag": "algorithm/sorting", "importance": "secondary", "evidence": "需要排序找到第 k-1 小阈值 cutoff，把元素分成必须保留、可删和无需保留三类。", "solution_variant": "cutoff-filter-two-pointers"}
+  ]
+}

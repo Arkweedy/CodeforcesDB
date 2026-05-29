@@ -1,0 +1,31 @@
+{
+  "contest": {"contest_id": 2123, "title": "Codeforces Round 1034 (Div. 3)"},
+  "problem": {"contest_id": 2123, "index": "G", "title": "Modular Sorting", "rating": 2100, "rating_status": "official", "official_tags": ["brute force", "data structures", "greedy", "math", "number theory", "sortings"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2123/G", "notes": "题面与约束：点修改数组；查询给定 k 时能否通过 a_i=(a_i+k) mod m 使数组非降；sum n,sum q <= 1e5, m <= 5e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144363?locale=en", "notes": "官方题解确认 gcd(k,m) 同余类可达性、贪心最小非降代表，以及维护所有 m 的因子对应的差分 residue 和/下降次数。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2123G", "notes": "Candidate checked; not included in sources because no usable rendered solution content was consulted."}
+  ],
+  "annotation": {
+    "summary": "动态数组中，每次查询 k 独立判断是否能把每个元素反复加 k modulo m 后变成非降数组。",
+    "constraints": "sum n,sum q <= 1e5, m <= 5e5；每次查询不能线性扫数组，需要按 m 的因子维护状态。",
+    "core_idea": "对固定 k，令 d=gcd(k,m)。单个 a_i 只能且可以变成所有与 a_i 同余 mod d 的值。于是从左到右贪心选择每个位置同余类内不小于前一个值的最小代表，若最终值 < m 则可行。为了动态维护这个贪心结果，把数组转为差分 diff_i=a_i-a_{i-1}；对于每个 d|m，sum_i ((diff_i mod d)+d)%d 正好是贪心后最小可能的 a_n。点修改只影响两个差分项，所以可对所有 d|m 更新并用 ans[gcd(k,m)]<m 回答。",
+    "complexity": "O((n+q) * tau(m)) per test case, where tau(m) is the number of divisors of m",
+    "tricks": ["reachable values are one gcd residue class", "greedy minimal representative scan", "difference transform telescopes final greedy value", "only maintain divisors of m"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "gcd-residue-difference-maintenance", "summary": "对每个 d|m 维护所有相邻差分的最小非负 residue 和；查询 k 时取 d=gcd(k,m)，若该和小于 m 则可排序。", "complexity": "O((n+q) * tau(m))", "confidence": "high", "is_primary": true},
+    {"name": "residue-grid-descent-count", "summary": "把 0..m-1 按 mod d 分列，维护相邻 residue 下降次数；查询要求下降次数小于 m/d。", "complexity": "O((n+q) * tau(m))", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/gcd", "importance": "primary", "evidence": "可达集合完全由 d=gcd(k,m) 决定，查询也只需查看这个 d 对应的维护值。", "solution_variant": "gcd-residue-difference-maintenance"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "primary", "evidence": "每个元素在 modulo m 下反复加 k，核心可达性是同余类与模逆/约化模数性质。", "solution_variant": "gcd-residue-difference-maintenance"},
+    {"tag": "paradigm/greedy", "importance": "primary", "evidence": "判定固定 k 时，从左到右选择同余类内不小于前值的最小代表；该贪心最终值决定可行性。", "solution_variant": "gcd-residue-difference-maintenance"},
+    {"tag": "trick/difference-transform", "importance": "primary", "evidence": "动态优化的关键是把数组变成相邻差分，利用 telescope 让 residue 和等于贪心后的最小末值。", "solution_variant": "gcd-residue-difference-maintenance"},
+    {"tag": "math/number-theory/divisibility", "importance": "secondary", "evidence": "只需要为 m 的所有因子 d 维护状态，因为 gcd(k,m) 必然是 m 的因子。", "solution_variant": "gcd-residue-difference-maintenance"}
+  ]
+}

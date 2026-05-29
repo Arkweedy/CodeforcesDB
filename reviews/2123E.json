@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2123, "title": "Codeforces Round 1034 (Div. 3)"},
+  "problem": {"contest_id": 2123, "index": "E", "title": "MEX Count", "rating": 1400, "rating_status": "official", "official_tags": ["binary search", "data structures", "greedy", "sortings", "two pointers"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2123/E", "notes": "题面与约束：对每个 k=0..n，统计删除恰好 k 个元素后可能的 MEX 数量；sum n <= 2e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144363?locale=en", "notes": "官方题解确认候选 MEX i 的充要区间 freq(i) <= k <= n-i，并给出差分数组做法。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2123E", "notes": "Candidate checked; not included in sources because no usable rendered solution content was consulted."}
+  ],
+  "annotation": {
+    "summary": "给定非负整数数组，对每个删除数量 k，求删除恰好 k 个元素后 MEX 可能取多少种值。",
+    "constraints": "多测，sum n <= 2e5，0 <= a_i <= n，需要线性或 O(n log n) 总复杂度。",
+    "core_idea": "只需考虑原数组 MEX 以内的候选值 i。若最终 MEX 为 i，则必须删除所有 i，所以 k >= freq(i)；同时要保留 0..i-1 各至少一个，所以剩余长度 n-k >= i，即 k <= n-i。官方证明这两个条件也是充分的。因此每个 i 对答案数组贡献一个区间 [freq(i), n-i]，用差分区间加后缀恢复所有 k 的答案。",
+    "complexity": "O(n) per test case after frequency counting",
+    "tricks": ["MEX 候选值的删除数量区间", "区间贡献转差分", "只枚举到原数组 MEX"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "mex-interval-difference-array", "summary": "枚举 i=0..mex(a)，对 k 的可行区间 [freq(i), n-i] 做差分加一，最后前缀和得到每个 k 的答案。", "complexity": "O(n)", "confidence": "high", "is_primary": true},
+    {"name": "online-eligible-mex-set", "summary": "按 k 从小到大维护当前合法 MEX 集合，随着长度上界和频次下界变化插入/删除候选值。", "complexity": "O(n log n)", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/mex", "importance": "primary", "evidence": "核心判定直接围绕候选 MEX i：小于 i 的值必须保留，i 的所有出现必须删除。", "solution_variant": "mex-interval-difference-array"},
+    {"tag": "data-structure/difference-array", "importance": "primary", "evidence": "每个候选 MEX 对删除数量 k 贡献一个连续区间，主解用差分数组批量统计所有区间贡献。", "solution_variant": "mex-interval-difference-array"},
+    {"tag": "algorithm/prefix-sums", "importance": "secondary", "evidence": "差分数组需要前缀和恢复 ans[k]。", "solution_variant": "mex-interval-difference-array"}
+  ]
+}

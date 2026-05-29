@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2124, "title": "EPIC Institute of Technology Round Summer 2025 (Codeforces Round 1036, Div. 1 + Div. 2)"},
+  "problem": {"contest_id": 2124, "index": "E", "title": "Make it Zero", "rating": 2100, "rating_status": "official", "official_tags": ["constructive algorithms", "greedy", "math"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2124/E", "notes": "题面与约束：每次选择 0<=b_i<=a_i 且 b 有某个前缀和等于后缀和，然后 a-=b；要求最少步清零并输出方案；sum n <= 5e4。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/topic/145016/en5?locale=en&mobile=false", "notes": "官方题解确认答案只可能为 -1/1/2；不可行为总和奇数或最大元素超过总和一半，否则用跨过半和的位置构造两步。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2124E", "notes": "Candidate checked; not included in sources because no usable rendered solution content was consulted."}
+  ],
+  "annotation": {
+    "summary": "每步可减去一个自身可行、且存在某个切分点使前后和相等的数组 b，求清零最少步数并构造操作。",
+    "constraints": "n 总和 <= 5e4，a_i <= 1e12；需要 O(n) 构造。",
+    "core_idea": "一次操作减去的 b 总和必为偶数，且任何单个位置在总操作中不能承担超过总和一半的配对量；因此总和为奇数或 max(a)>sum/2 时无解。若某个前缀和正好为 sum/2，则一次输出 b=a 即可。否则找前缀首次跨过 sum/2 的位置，把数组分成左块 x、中间 y、右块 z；利用 sum 偶数和 max<=sum/2 保证可在中间和右侧分出相等配对量，把官方三步思路的前两步合并，输出两个合法 b 数组清零。",
+    "complexity": "O(n)",
+    "tricks": ["even total sum necessity", "max element at most half of total", "prefix crossing half-sum split", "merge three-step balancing into two operations"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "half-sum-split-two-operations", "summary": "先判 sum parity 与 max<=sum/2；若已有半和前缀则一步，否则在跨过半和的位置构造两个互补的平衡减法数组。", "complexity": "O(n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出最少操作的具体 b 数组，主解显式构造一到两步清零方案。", "solution_variant": "half-sum-split-two-operations"},
+    {"tag": "math/inequality", "importance": "primary", "evidence": "可行性和构造都依赖 max(a) <= sum/2；若最大元素超过其余元素总和则无法被平衡操作完全扣掉。", "solution_variant": "half-sum-split-two-operations"},
+    {"tag": "trick/invariant", "importance": "primary", "evidence": "每次操作扣除的 b 必须能切成相等前后和，因此总扣除量偶性和最大元素配对上界是必要不变量。", "solution_variant": "half-sum-split-two-operations"},
+    {"tag": "algorithm/prefix-sums", "importance": "secondary", "evidence": "构造需要找到前缀和首次达到或超过 sum/2 的位置，并据此划分左/中/右三块。", "solution_variant": "half-sum-split-two-operations"}
+  ]
+}

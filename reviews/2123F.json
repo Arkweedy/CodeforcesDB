@@ -1,0 +1,29 @@
+{
+  "contest": {"contest_id": 2123, "title": "Codeforces Round 1034 (Div. 3)"},
+  "problem": {"contest_id": 2123, "index": "F", "title": "Minimize Fixed Points", "rating": 1700, "rating_status": "official", "official_tags": ["constructive algorithms", "number theory"]},
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/problemset/problem/2123/F", "notes": "题面与约束：构造排列 p，使 gcd(p_i,i)>1 for 2<=i<=n，并最小化 fixed points；sum n <= 1e5。"},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/144363?locale=en", "notes": "官方题解确认不可避免 fixed points 为 1 与大于 n/2 的质数，并按最大质因子分组循环构造。"}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2123F", "notes": "Candidate checked; not included in sources because no usable rendered solution content was consulted."}
+  ],
+  "annotation": {
+    "summary": "构造满足 gcd(p_i,i)>1 的排列，并让 p_i=i 的位置数最少。",
+    "constraints": "多测，sum n <= 1e5，可预处理质数并按倍数分组构造。",
+    "core_idea": "若 i=1，或 i 是质数且 2i>n，则没有其他 j!=i 与它 gcd>1，这些 fixed point 不可避免。其余数可以按某个共同质因子放入长度至少 2 的循环。官方做法从大到小遍历质数 p，收集尚未赋值的 p 的倍数并循环移位；这样每个循环内所有数都被 p 整除，故每个位置 i 映到 p_i 时 gcd(i,p_i)>1，同时 p<=n/2 的质数会和 2p 同组而不固定。",
+    "complexity": "O(N log log N) preprocessing plus O(n log log n) total grouping over prime multiples",
+    "tricks": ["不可避免 fixed point 判定", "按最大质因子分组", "同质因子循环移位"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "largest-prime-factor-cycles", "summary": "从大质数到小质数收集未分配的倍数，循环移位形成同质因子环，最后剩下的 1 和大质数自映射。", "complexity": "O(n log log n)", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "题目要求输出一个最优排列，主解直接构造按质因子分组的循环。", "solution_variant": "largest-prime-factor-cycles"},
+    {"tag": "math/number-theory/gcd", "importance": "primary", "evidence": "可行性条件就是每个 i 与 p_i 的 gcd 大于 1，循环分组也依赖共享质因子保证 gcd 条件。", "solution_variant": "largest-prime-factor-cycles"},
+    {"tag": "trick/permutation-structure", "importance": "primary", "evidence": "fixed point 最小化通过排列的 cycle decomposition 实现：除不可避免位置外全部放入非平凡循环。", "solution_variant": "largest-prime-factor-cycles"},
+    {"tag": "math/number-theory/divisor-sieve", "importance": "secondary", "evidence": "实现需要预处理质数并枚举每个质数的倍数来建立循环。", "solution_variant": "largest-prime-factor-cycles"}
+  ]
+}
