@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2125,
+    "title": "Educational Codeforces Round 181 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2125,
+    "index": "D",
+    "title": "Segments Covering",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["dp", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2125/problem/D",
+      "notes": "Statement and constraints: n segments with independent probabilities p/q; compute probability every point 1..m is covered by exactly one segment."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144998",
+      "notes": "Official editorial/code confirms factoring absent probabilities and running DP over segment endpoints."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2125D",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Given random segments on [1,m], find the probability that each integer point is covered by exactly one chosen segment.",
+    "constraints": "n,m up to contest-sized linear limits; modular arithmetic under 998244353; an O(n+m) endpoint DP is intended.",
+    "core_idea": "For a valid outcome, selected segments must form an exact non-overlapping partition of [1,m]. Factor out the probability that all segments are absent, then choosing a segment [l,r] contributes odds p/(1-p). Let dp[x] be the weighted probability of exactly covering prefix [1,x]; each segment adds dp[r] += dp[l-1] * odds.",
+    "complexity": "O(n + m)",
+    "tricks": ["factor all-absent probability", "turn exact cover into interval partition DP", "use odds p/(1-p) for selected segments"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "odds-interval-cover-dp",
+      "summary": "Initialize dp[0] with product of all absent probabilities; process segments by right endpoint and extend exact prefix covers by multiplying the selected segment odds.",
+      "complexity": "O(n + m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "The main state is the probability weight for exactly covered prefixes, and transitions multiply segment odds.",
+      "solution_variant": "odds-interval-cover-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "The reduction depends on independent segment probabilities and odds p/(1-p).",
+      "solution_variant": "odds-interval-cover-dp"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "The exact-cover condition becomes a prefix DP over covered coordinates.",
+      "solution_variant": "odds-interval-cover-dp"
+    }
+  ]
+}

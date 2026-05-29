@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2126,
+    "title": "Codeforces Round 1037 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2126,
+    "index": "F",
+    "title": "1-1-1, Free Tree!",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "dfs and similar", "graphs", "implementation", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2126/problem/F",
+      "notes": "Statement and constraints: maintain a colored weighted tree under vertex recolor queries; after each query output total weight of edges whose endpoints have different colors."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144845",
+      "notes": "Official editorial/code roots the tree and stores, for each vertex, sums of child-edge weights grouped by child color to update answers."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2126F",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "A tree has colored vertices and weighted edges. After each recolor query, output the sum of weights of edges whose endpoints have different colors.",
+    "constraints": "Sum n and q are large; total per-query work must avoid scanning the whole tree.",
+    "core_idea": "Root the tree. Maintain the global bad-edge weight. For every vertex v, store a map from color to total weight of child edges leading to that color. Recoloring v changes all child edges by cnt[v][old]-cnt[v][new], and changes the parent edge separately. Also update v's contribution in its parent's color map.",
+    "complexity": "O((n+q) log n) with ordered maps, or expected O(n+q) with hash maps",
+    "tricks": ["rooted tree turns one incident edge into parent plus child buckets", "maintain color-to-edge-weight sums per vertex"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rooted-child-color-maps",
+      "summary": "DFS to root the tree, initialize child color sums and global answer, then update only v's child bucket sums and parent edge on each recolor.",
+      "complexity": "O((n+q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "heavy-degree-color-cache",
+      "summary": "Alternative common implementation stores color sums only for high-degree vertices and scans low-degree adjacency lists.",
+      "complexity": "O((n+q) sqrt n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The update formula relies on rooting the tree and separating parent and child edges.",
+      "solution_variant": "rooted-child-color-maps"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "primary",
+      "evidence": "Each vertex needs a color-keyed map of adjacent child edge weights to update recolors efficiently.",
+      "solution_variant": "rooted-child-color-maps"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "A DFS roots the tree and initializes parent edges, child edge weights, and color buckets.",
+      "solution_variant": "rooted-child-color-maps"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "secondary",
+      "evidence": "A known alternative groups vertices by degree and caches only heavy-neighbor color sums.",
+      "solution_variant": "heavy-degree-color-cache"
+    }
+  ]
+}

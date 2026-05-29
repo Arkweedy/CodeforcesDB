@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2126,
+    "title": "Codeforces Round 1037 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2126,
+    "index": "G2",
+    "title": "Big Wins! (hard version)",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "divide and conquer", "dsu", "trees", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2126/problem/G2",
+      "notes": "Statement and constraints: maximize med(subarray)-min(subarray), hard version has a_i <= n and sum n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144845",
+      "notes": "Official editorial/code confirms monotonic value sweep, nearest-smaller spans, and a segment tree storing max subarray/prefix/suffix sums of the +/-1 threshold array."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2126G2",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the maximum possible upper-median minus minimum value over all subarrays when values may range up to n.",
+    "constraints": "Sum n <= 2e5, so the easy O(value_range*n) threshold enumeration is too slow.",
+    "core_idea": "Use the same median-threshold +/-1 balance idea, but sweep the minimum value mn and maintain the largest feasible median threshold monotonically. A monotonic stack gives for every position the maximal interval where it can serve as the minimum. A segment tree over the current threshold array stores max prefix, suffix, subarray sum, and total sum, so for an occurrence of mn it can test whether some subarray inside its nearest-smaller span and containing that occurrence has nonnegative balance. As the threshold increases, positions of that value flip from +1 to -1.",
+    "complexity": "O(n log n)",
+    "tricks": ["median threshold as +/-1 balance", "nearest smaller span for fixed minimum", "monotone sweep of the median threshold"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "value-sweep-segment-tree",
+      "summary": "Sweep minimum values, maintain the current median threshold array in a segment tree, and test each minimum occurrence over its nearest-smaller interval.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "small-value-enumeration",
+      "summary": "The easy-version method enumerates thresholds and uses prefix extrema; it works only when the value range is small.",
+      "complexity": "O(Vn)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-threshold",
+      "importance": "primary",
+      "evidence": "The hard solution still relies on turning median >= x into a nonnegative +/-1 subarray balance.",
+      "solution_variant": "value-sweep-segment-tree",
+      "description": "Replace a median/order-statistic condition by testing a value threshold and converting elements to +/-1 balance.",
+      "parent": "trick",
+      "created_reason": "This is a standard reusable reduction for median subarray problems and is more specific than generic binary search or dp.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The algorithm needs range queries of maximum prefix, suffix, subarray sum, and total sum under point flips.",
+      "solution_variant": "value-sweep-segment-tree"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "Nearest strictly smaller elements define the maximal interval where each position can be the subarray minimum.",
+      "solution_variant": "value-sweep-segment-tree"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "secondary",
+      "evidence": "Segment tree nodes merge max subarray, prefix, and suffix DP values for the +/-1 array.",
+      "solution_variant": "value-sweep-segment-tree"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The median threshold pointer only increases during the sweep over minimum values.",
+      "solution_variant": "value-sweep-segment-tree"
+    }
+  ]
+}

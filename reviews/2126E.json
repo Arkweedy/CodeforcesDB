@@ -1,0 +1,71 @@
+{
+  "contest": {
+    "contest_id": 2126,
+    "title": "Codeforces Round 1037 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2126,
+    "index": "E",
+    "title": "G-C-D, Unlucky!",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2126/problem/E",
+      "notes": "Statement and constraints: given desired prefix gcds and suffix gcds, decide whether an array can realize both."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144845",
+      "notes": "Official editorial/code confirms constructing candidate a_i=lcm(prefix_i,suffix_i) and validating gcds."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2126E",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Given arrays p and s, decide if there exists an array whose prefix gcd array is p and suffix gcd array is s.",
+    "constraints": "Sum n up to 2e5 style; values fit 64-bit lcm checks; linear validation is intended.",
+    "core_idea": "Any feasible a_i must be divisible by both p_i and s_i, so lcm(p_i,s_i) is the minimal canonical candidate. If any solution exists, replacing every a_i by this lcm candidate preserves the required divisibility constraints enough to test feasibility. Recompute prefix and suffix gcds of the candidate and compare with p and s.",
+    "complexity": "O(n log V)",
+    "tricks": ["minimal lcm candidate", "validate by recomputing prefix/suffix gcds"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lcm-candidate-validation",
+      "summary": "Set a_i=lcm(p_i,s_i), then check all prefix and suffix gcds match the input arrays.",
+      "complexity": "O(n log V)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The problem is exactly about realizing and validating prefix/suffix gcd arrays.",
+      "solution_variant": "lcm-candidate-validation"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The lcm candidate follows from every element needing to be divisible by both its prefix and suffix gcd requirements.",
+      "solution_variant": "lcm-candidate-validation"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The decision is made by constructing a canonical candidate array and checking it.",
+      "solution_variant": "lcm-candidate-validation"
+    }
+  ]
+}

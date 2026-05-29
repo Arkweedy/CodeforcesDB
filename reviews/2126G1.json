@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2126,
+    "title": "Codeforces Round 1037 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2126,
+    "index": "G1",
+    "title": "Big Wins! (easy version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "dp", "dsu", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2126/problem/G1",
+      "notes": "Statement and constraints: maximize med(subarray)-min(subarray), easy version has a_i <= min(n,100)."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144845",
+      "notes": "Official editorial/code confirms enumerating median threshold and using +/-1 prefix sums with prefix minima and suffix maxima."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2126G1",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a subarray maximizing upper-median minus minimum value; in the easy version values are at most 100.",
+    "constraints": "Sum n <= 2e5 and a_i <= 100, allowing enumeration of all candidate median thresholds.",
+    "core_idea": "For a fixed threshold x, convert a_j to +1 if a_j>=x and -1 otherwise. A subarray has median at least x iff its transformed sum is nonnegative. For each position j as the minimum candidate, prefix-min and suffix-max arrays test whether there exists a valid subarray ending at j or starting at j with nonnegative sum; then update answer with x-a_j.",
+    "complexity": "O(100n)",
+    "tricks": ["median threshold becomes +/-1 balance", "prefix minimum and suffix maximum test nonnegative subarray through a minimum position"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-threshold-prefix-balance",
+      "summary": "Enumerate threshold x, build +/-1 prefix sums, and test each position with prefix minima/suffix maxima.",
+      "complexity": "O(100n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-threshold",
+      "importance": "primary",
+      "evidence": "The median condition is transformed into a nonnegative sum after mapping values by a threshold.",
+      "solution_variant": "enumerate-threshold-prefix-balance",
+      "description": "Replace a median/order-statistic condition by testing a value threshold and converting elements to +/-1 balance.",
+      "parent": "trick",
+      "created_reason": "This is a standard reusable reduction for median subarray problems and is more specific than generic binary search or dp.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "Prefix minima and suffix maxima determine whether a nonnegative transformed-sum subarray can include the chosen minimum position.",
+      "solution_variant": "enumerate-threshold-prefix-balance"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "The solution sweeps all threshold values and evaluates all positions for each threshold.",
+      "solution_variant": "enumerate-threshold-prefix-balance"
+    }
+  ]
+}

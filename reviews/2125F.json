@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2125,
+    "title": "Educational Codeforces Round 181 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2125,
+    "index": "F",
+    "title": "Timofey and Docker",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": ["binary search", "divide and conquer", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2125/problem/F",
+      "notes": "Statement and constraints: edit the string to choose a count of non-overlapping occurrences of 'docker' that maximizes invited friends, then minimize edits."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144998",
+      "notes": "Official editorial/code confirms interval-count sweep for the best occurrence count and Lagrangian DP with binary search for creating occurrences."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2125F",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose how many times the word 'docker' appears after editing the string to maximize satisfied interval requests, and among such choices minimize changed characters.",
+    "constraints": "n and number of requests are large enough that exact-count string DP for every k is too slow; occurrences of 'docker' are length 6 and cannot overlap with another valid occurrence.",
+    "core_idea": "First count existing occurrences and use a difference array over requested [l,r] occurrence counts to find the best target k. For k <= current occurrences, delete extra occurrences with one change each. For k > current occurrences, selecting occurrences is a weighted non-overlapping interval DP over length-6 blocks. Add a penalty per chosen block, binary-search the penalty (Aliens trick), and run a linear DP that either skips a position or places 'docker' there with mismatch cost plus penalty; this recovers the minimum edit cost for the smallest optimal target k above the current count.",
+    "complexity": "O((n + q) + n log n log C) style, depending on penalty bounds",
+    "tricks": ["'docker' has no self-overlap", "choose target occurrence count by request coverage", "Lagrangian penalty turns exact count into unconstrained DP"],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "main_agent_review_notes": "The DP and penalty search match the official implementation, but the full optimality proof for choosing the smallest optimal k above the current count should be rechecked by the main agent."
+  },
+  "solution_variants": [
+    {
+      "name": "aliens-nonoverlap-word-dp",
+      "summary": "Binary-search a per-occurrence penalty and run linear DP over positions, with transitions skip or place a non-overlapping 'docker' block.",
+      "complexity": "O(n log C)",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "delete-existing-occurrences",
+      "summary": "If the optimal target count is not above the current number of occurrences, change one character in each surplus existing occurrence.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The hard case is solved by a position DP selecting non-overlapping length-6 blocks.",
+      "solution_variant": "aliens-nonoverlap-word-dp"
+    },
+    {
+      "tag": "dp/aliens-trick",
+      "importance": "primary",
+      "evidence": "A binary-searched penalty controls the number of selected occurrences in the DP.",
+      "solution_variant": "aliens-nonoverlap-word-dp"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The penalty parameter is binary-searched to reach the required occurrence count.",
+      "solution_variant": "aliens-nonoverlap-word-dp"
+    },
+    {
+      "tag": "trick/non-overlap",
+      "importance": "secondary",
+      "evidence": "The word has no border, so valid occurrences can be treated as disjoint length-6 intervals in the DP.",
+      "solution_variant": "aliens-nonoverlap-word-dp",
+      "description": "Use a structural reason that chosen patterns or intervals cannot overlap, reducing a string/interval problem to disjoint selection.",
+      "parent": "trick",
+      "created_reason": "The no-self-overlap property is a reusable string/interval selection reduction not captured by plain dp.",
+      "status": "candidate"
+    }
+  ]
+}

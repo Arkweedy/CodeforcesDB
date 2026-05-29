@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2125,
+    "title": "Educational Codeforces Round 181 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2125,
+    "index": "E",
+    "title": "Sets of Complementary Sums",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["brute force", "combinatorics", "dp", "math", "two pointers"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2125/problem/E",
+      "notes": "Statement and constraints: count possible complementary-sum sets Q of size n with all elements in [1,x]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/144998",
+      "notes": "Official editorial/code confirms canonicalizing by distinct values and counting excess with an unbounded knapsack-style DP."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2125E",
+      "notes": "Candidate checked by search/open attempt; not used as a consulted solution source."
+    }
+  ],
+  "annotation": {
+    "summary": "Count distinct sets Q of n complementary sums that can come from a positive integer multiset and have maximum value at most x.",
+    "constraints": "The useful n range ends once the minimum possible maximum n(n+1)/2-1 exceeds x; remaining work is coefficient DP over the excess.",
+    "core_idea": "A set Q determines a canonical multiset A: one value is 1 with some multiplicity, and the other n-1 values are distinct increasing values >=2. The smallest maximum complementary sum is n(n+1)/2-1. Extra budget above that minimum can be distributed among the multiplicity of 1 and the nondecreasing gaps of the distinct values, giving generating function 1/(1-z)^2 * product_{w=2}^{n-1} 1/(1-z^w). Compute coefficients by unbounded knapsack and sum all maxima <= x.",
+    "complexity": "O(n * (x - n(n+1)/2)) when nonzero",
+    "tricks": ["canonical representative with one repeated value 1", "convert strict increasing values to gap variables", "unbounded knapsack over excess budget"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-gap-knapsack",
+      "summary": "After canonicalization, count ways to distribute the excess maximum value using two unit generators and generators 2..n-1.",
+      "complexity": "O(n * extra)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The answer is a coefficient/counting problem over canonical multisets and gap variables.",
+      "solution_variant": "canonical-gap-knapsack"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The coefficient extraction is implemented as a DP counting representations of each excess value.",
+      "solution_variant": "canonical-gap-knapsack"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "secondary",
+      "evidence": "The recurrence is an unbounded knapsack over allowed gap weights.",
+      "solution_variant": "canonical-gap-knapsack"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "secondary",
+      "evidence": "The key reduction is choosing a unique representative multiset with repeated 1s and distinct larger values.",
+      "solution_variant": "canonical-gap-knapsack",
+      "description": "Reduce equivalent objects to a unique normalized representative before counting or optimizing.",
+      "parent": "trick",
+      "created_reason": "This problem's decisive step is not just DP/combinatorics; the canonical representative removes multiset equivalence and makes the count tractable.",
+      "status": "candidate"
+    }
+  ]
+}
