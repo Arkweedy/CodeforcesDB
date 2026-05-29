@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "F1",
+    "title": "Control Car (Easy Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/F1",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm the four-state DP with entry direction and local wall orientation, and the conversion from probability of failure to number of valid orientations."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180F1",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Count orientations of all grid intersection points such that the control car, which always tries to move down before right and stops if blocked or outside, stops inside the grid.",
+    "constraints": "Easy version has up to 1e4 tests with 1 <= n, m <= 5000, so all answers can be handled by precomputing an O(N^2) grid DP over modular probabilities.",
+    "core_idea": "Instead of enumerating orientations, compute the probability that a random orientation makes the car eventually leave through the bottom-right direction/state, then multiply the complement by 4^{(n+1)(m+1)}. A cell state must remember both the direction from which the car entered and whether the relevant adjacent corner wall has the blocking orientation. These four states give local transitions to the cell below or to the right with fixed probabilities such as 3/16, 3/8, 1/16, and 5/16. Fill the DP from bottom-right toward top-left.",
+    "complexity": "O(N^2 + t) precomputation for N=5000, with O(1) query extraction.",
+    "tricks": [
+      "augment DP state with entry direction",
+      "convert counting to probability times total orientations",
+      "reverse grid DP"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Precompute a four-state probability DP for all n,m up to 5000 and answer each query by multiplying the failure complement by the total number of orientations.",
+      "complexity": "O(N^2 + t)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "The main table is indexed by grid cell and filled from neighboring cells below and to the right.",
+      "solution_variant": "main",
+      "description": "Dynamic programming over cells or lattice positions of a grid, usually with transitions between adjacent cells.",
+      "parent": "dp",
+      "created_reason": "Many grid-local transition problems should be searchable without relying only on the broad dp tag.",
+      "status": "active"
+    },
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "The DP values are probabilities that a random orientation eventually reaches the losing/escaping state.",
+      "solution_variant": "main",
+      "description": "Dynamic programming where states store probabilities or expected random-process outcomes under modular arithmetic.",
+      "parent": "dp",
+      "created_reason": "This is distinct from generic probability and important for random process DP retrieval.",
+      "status": "active"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "The naive cell DP is insufficient; the solution adds entry direction and a local wall-orientation flag.",
+      "solution_variant": "main",
+      "description": "Add hidden local information to a state so transitions become Markovian or locally decidable.",
+      "parent": "trick",
+      "created_reason": "The decisive insight is not just DP but choosing extra state dimensions to make transitions valid.",
+      "status": "active"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "The count is computed via the probability of invalid movement under uniformly random orientations.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The final count multiplies a probability by 4^{(n+1)(m+1)}, the number of orientation assignments.",
+      "solution_variant": "main"
+    }
+  ]
+}

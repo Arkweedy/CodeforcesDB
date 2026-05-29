@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2180,
+    "title": "Codeforces Global Round 31 (Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2180,
+    "index": "F2",
+    "title": "Control Car (Hard Version)",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "matrices",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2180/problem/F2",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/149318",
+      "notes": "Used to confirm that the easy DP can be viewed as identical column transfers, then exponentiated as a transition matrix for very large m."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2180F2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid grid orientations for the same control-car process as F1, but with n <= 50 and m up to 1e15.",
+    "constraints": "The grid has small height but enormous width, so direct O(nm) DP is impossible and the repeated column transition must be exponentiated.",
+    "core_idea": "Reuse the four-state probability DP idea, but compress a whole column into a transfer operator over vertical positions and local state flags. Because every column uses the same transition rules, moving across m columns is applying the same linear operator repeatedly. Build the transition matrix/operator for one column, binary-exponentiate it to the m-th power, apply it to the initial state, and convert the invalid probability to a valid orientation count by multiplying by 4^{(n+1)(m+1)}.",
+    "complexity": "O(n^3 log m) in the editorial formulation, with n <= 50.",
+    "tricks": [
+      "column transfer operator",
+      "matrix exponentiation over DP states",
+      "small height, huge width compression"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Represent one column's DP as a linear transition over augmented states and exponentiate that transition for m columns.",
+      "complexity": "O(n^3 log m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "easy-dp-base",
+      "summary": "The hard solution is derived from the same four-state grid probability DP used in F1.",
+      "complexity": "O(nm) before compression",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/matrix-exponentiation",
+      "importance": "primary",
+      "evidence": "The solution forms a constant transition matrix/operator for one column and raises it to the m-th power.",
+      "solution_variant": "main",
+      "description": "Use fast exponentiation of a matrix or linear transition operator to apply repeated DP transitions many times.",
+      "parent": "math/linear-algebra/matrix",
+      "created_reason": "The existing matrix tag does not distinguish repeated-transition exponentiation, which is a central retrieval target.",
+      "status": "active"
+    },
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "The linear operator comes from the same probabilistic DP states as in the easy version.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "The transfer state still needs entry direction and wall-orientation flags to be Markovian.",
+      "solution_variant": "easy-dp-base"
+    },
+    {
+      "tag": "dp/grid-dp",
+      "importance": "secondary",
+      "evidence": "The compressed operator is derived from a local grid DP over rows and columns.",
+      "solution_variant": "easy-dp-base"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "The DP values are modular probabilities of the random orientation process.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The final answer converts probability to count using the total number of orientation assignments.",
+      "solution_variant": "main"
+    }
+  ]
+}
