@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "I",
+    "title": "Irrigation Interlock",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "geometry"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/I",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the convex-hull classification, tangent arc representation, and circular sweep over tangent intervals."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181I",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Given two point sets, find intersecting segments with endpoints chosen from the sets, or prove none exist.",
+    "constraints": "Large point sets require convex hulls, logarithmic point classification/tangents, and a sweep over O(n) events.",
+    "core_idea": "Build the convex hull of one set and classify points of the other as inside or outside; if one set has both an inside and outside point, their segment crosses the hull boundary, giving an intersection with a hull edge. In the harder case all points of one set lie outside the other hull. Two outside points yield a segment crossing the hull exactly when they cannot see each other around the hull. For each outside point compute the two tangents to the hull; these tangents define an arc of directions on the circle. Finding two points whose arcs do not intersect can be done by sorting tangent directions and sweeping interval events on the circle.",
+    "complexity": "O((n + m) log(n + m)) from convex hull construction, point containment/tangent queries, and circular sweep.",
+    "tricks": [
+      "inside/outside convex hull classification",
+      "visibility via tangent arcs",
+      "circular interval sweep"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Use convex hull containment for the easy crossing case; otherwise convert outside-point visibility to tangent arcs and sweep circular intervals.",
+      "complexity": "O((n + m) log(n + m))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/convex-hull",
+      "importance": "primary",
+      "evidence": "The algorithm repeatedly builds and queries convex hulls of the opposite point set.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/geometry/tangent",
+      "importance": "primary",
+      "evidence": "For outside points, left/right tangents to the convex hull define the visibility arcs used in the sweep.",
+      "solution_variant": "main",
+      "description": "Use tangents from points to convex polygons or circles as the central geometric primitive.",
+      "parent": "math/geometry",
+      "created_reason": "Tangent-based convex-geometry problems are distinct from generic convex hull construction.",
+      "status": "active"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The final case is solved by sorting tangent directions and sweeping interval endpoints on the circle.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/circular-interval",
+      "importance": "secondary",
+      "evidence": "Visibility is represented as arcs/ranges on the circular order of tangent directions.",
+      "solution_variant": "main",
+      "description": "Represent constraints as intervals on a circle and handle wrap-around or circular ordering explicitly.",
+      "parent": "trick",
+      "created_reason": "Circular interval sweeps occur in geometry and scheduling and are useful to search separately.",
+      "status": "candidate"
+    }
+  ]
+}

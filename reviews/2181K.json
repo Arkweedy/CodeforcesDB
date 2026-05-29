@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "K",
+    "title": "Knit the Grid",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "2-sat",
+      "constructive algorithms",
+      "graphs",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/K",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the cell-parity transformation, row propagation, diagonal xor constraints, and 2-SAT reduction."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181K",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Construct or reject a set of non-intersecting grid cycles satisfying local frog color constraints.",
+    "constraints": "The grid is large enough that the solution must reduce local constraints to a linear-size satisfiability instance.",
+    "core_idea": "Put a 0/1 value in each cell indicating whether it is inside an odd number of cycles. A grid edge is in a cycle exactly when adjacent cell values differ. Frog colors give parity constraints on the four neighboring cells, and non-crossing/existence of cycles is equivalent to forbidding all-equal or chessboard 2x2 patterns. Once the top row variables x_j are chosen, all lower rows are forced by row-by-row propagation from frog color equations. Diagonal xor values in every 2x2 square can therefore be expressed as either x_j or not x_j, turning all local constraints, including the bottom row, into clauses on at most two variables. Solve this 2-SAT instance and reconstruct the cycles from adjacent-cell differences.",
+    "complexity": "O(rc) variables/clauses and O(rc) implication graph processing.",
+    "tricks": [
+      "cell parity encodes cycle boundaries",
+      "top row determines whole grid",
+      "local 2x2 constraints become 2-SAT clauses"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Transform cycles to cell parity variables, propagate all cells from the top row, derive 2-variable constraints, solve 2-SAT, then reconstruct boundaries.",
+      "complexity": "O(rc)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/2-sat",
+      "importance": "primary",
+      "evidence": "All feasibility constraints are transformed into boolean formulas of at most two top-row variables.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Cycles are represented by parity of cell-inside values and constraints are xor relations.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "dp/grid-dp",
+      "importance": "secondary",
+      "evidence": "Given the top row variables, the rest of the grid is determined row by row from local constraints.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "math/linear-algebra/xor-vector-space",
+      "importance": "secondary",
+      "evidence": "Cell values and diagonal constraints are manipulated as xor expressions of top-row boolean variables.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "After satisfiability, the actual cycles are reconstructed from differing adjacent cell values.",
+      "solution_variant": "main"
+    }
+  ]
+}

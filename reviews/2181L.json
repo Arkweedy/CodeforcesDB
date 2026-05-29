@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "L",
+    "title": "LLM Training",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "math",
+      "string suffix structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/L",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the entropy loss formula, trie prefix contribution, reversed suffix-array grouping, and DSU small-to-large maintenance."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181L",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "For every context length k, compute the optimal language-model training loss over the given token texts.",
+    "constraints": "Computing each k independently is quadratic, so all context lengths must be processed with shared string data structures.",
+    "core_idea": "For a fixed context, the optimal next-token distribution is empirical frequency, and its contribution is |N_ctx| log |N_ctx| minus sum count(next) log count(next). For short contexts that are prefixes, build a trie and add each node's contribution to all applicable k. For exact-length contexts, reverse all texts and build one string with separators; contexts become prefixes of suffixes. Sort suffixes with suffix array/LCP, process k from large to small, and merge adjacent suffix components when their LCP reaches k. Each DSU component stores token count and a map of next-token frequencies; merging maps small-to-large lets the global loss be updated efficiently.",
+    "complexity": "O(n log n) or O(n log^2 n), depending on map implementation.",
+    "tricks": [
+      "empirical distribution minimizes cross-entropy",
+      "reverse strings so contexts become suffix prefixes",
+      "DSU over suffix-array LCP events"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Compute prefix-context contributions with a trie and exact-length context contributions by suffix-array components merged via DSU and small-to-large maps.",
+      "complexity": "O(n log n) or O(n log^2 n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/suffix-array",
+      "importance": "primary",
+      "evidence": "Exact-length contexts are grouped by sorting reversed-text suffixes and using LCP values.",
+      "solution_variant": "main",
+      "description": "Use suffix array and LCP information as a main string-processing structure.",
+      "parent": "string/suffix-structures",
+      "created_reason": "The existing suffix-structures tag is broad; suffix array is a common precise retrieval target.",
+      "status": "active"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "Suffix-array components are merged by LCP events, and each component's token-count map is merged small-to-large.",
+      "solution_variant": "main",
+      "description": "Maintain component data by merging smaller maps/sets into larger ones to bound total movement.",
+      "parent": "data-structure/dsu",
+      "created_reason": "This DSU merge pattern is a frequent technique distinct from plain DSU connectivity.",
+      "status": "active"
+    },
+    {
+      "tag": "data-structure/trie",
+      "importance": "primary",
+      "evidence": "Prefix contexts of all strings are handled by building a trie and accumulating node contributions.",
+      "solution_variant": "main",
+      "description": "Prefix tree over strings or token sequences.",
+      "parent": "data-structure",
+      "created_reason": "Trie is a standard data structure and should be directly searchable.",
+      "status": "active"
+    },
+    {
+      "tag": "math/information-theory/entropy",
+      "importance": "primary",
+      "evidence": "The loss formula is an empirical cross-entropy expression using x log x terms for context and next-token counts.",
+      "solution_variant": "main",
+      "description": "Use entropy or cross-entropy formulas, typically with count log count expressions.",
+      "parent": "math/information-theory",
+      "created_reason": "This problem's math component is information-theoretic, not just generic math.",
+      "status": "candidate"
+    },
+    {
+      "tag": "string/suffix-structures",
+      "importance": "secondary",
+      "evidence": "The suffix array and LCP array drive the exact-context grouping.",
+      "solution_variant": "main"
+    }
+  ]
+}

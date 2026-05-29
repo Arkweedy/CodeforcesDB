@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2181,
+    "title": "2025-2026 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2181,
+    "index": "E",
+    "title": "Elevator Against Humanity",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2181/problem/E",
+      "notes": "题面与约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.itmo.ru/archive/2025/nef-2025-tutorial.pdf",
+      "notes": "Official NERC tutorial; used to confirm the absolute-value sign assignment, high/low group construction, and corner cases."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2181E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "Arrange elevator pickup/drop-off visits to maximize total travel distance while respecting that each pickup precedes its corresponding drop-off.",
+    "constraints": "All relevant floors can be sorted, and the optimal value must be computed by formulas over sorted order plus constructive feasibility cases.",
+    "core_idea": "Write the route cost as a sum of absolute differences over the visit order. Once the order is chosen, each visited floor contributes with signs; most floors appear twice and one final floor appears once. Ignoring precedence, the maximum assigns plus signs to large floors and minus signs to small floors, so split the sorted floors into low and high halves and try each possible final drop-off floor. The tutorial proves constructively that the sign patterns are achievable by alternating between high and low groups, with special handling for the case where all pickups are low, all drop-offs are high, and the top pickup/bottom drop-off belong to the same passenger.",
+    "complexity": "O(n log n) for sorting plus linear scans of candidate final floors.",
+    "tricks": [
+      "open absolute value brackets into signs",
+      "high/low group split",
+      "constructive realization of sign pattern"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "main",
+      "summary": "Sort all floors, compute candidate signed sums by final floor position, and use constructive cases to show the chosen maximum is feasible.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The proof must construct an elevator order realizing the optimal signed-sum pattern under pickup-before-drop-off constraints.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/sign-assignment",
+      "importance": "primary",
+      "evidence": "The route length is optimized by rewriting absolute differences as signed contributions of sorted floors.",
+      "solution_variant": "main",
+      "description": "Transform an absolute-value or ordering objective into choosing plus/minus signs for sorted values.",
+      "parent": "trick",
+      "created_reason": "This is a reusable optimization pattern not covered by generic sorting or constructive tags.",
+      "status": "active"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "The high/low grouping and signed formulas are based on sorted floor order.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "Several corner cases depend on whether pickups/drop-offs lie in different sorted halves and whether key endpoints belong to the same passenger.",
+      "solution_variant": "main"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "After sorting, the optimal sign pattern greedily gives positive signs to large floors and negative signs to small floors.",
+      "solution_variant": "main"
+    }
+  ]
+}
