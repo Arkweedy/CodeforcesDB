@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2208,
+    "title": "Codeforces Round 1086 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2208,
+    "index": "D2",
+    "title": "Tree Orientation (Hard Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "greedy",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2208/problem/D2",
+      "notes": "Statement and constraints: same reconstruction task as D1, but hard version requires avoiding the cubic triple check."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152714/diff/en6/en7",
+      "notes": "Used to confirm the hard-version greedy reconstruction by reachability-set size and removing already assigned reachable parts."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2208D2",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Reconstruct the directed tree from its reachability matrix under larger constraints than the easy version.",
+    "constraints": "The hard version needs a near-quadratic reconstruction over the n by n matrix rather than all triples.",
+    "core_idea": "A vertex that reaches many still-unassigned vertices should be processed before vertices below it in the reachability order. Sort vertices by the size of their reachability set. For each vertex, greedily connect it to the maximal remaining reachable components that are not already covered by a previously chosen child; after assigning such covers, remove or mark the newly covered vertices. This constructs the cover relations of the reachability partial order without testing every triple. Finally verify connectivity/tree size and matrix consistency.",
+    "complexity": "O(n^2 log n) or O(n^2 alpha(n)) depending on implementation details for sorting and set/DSU bookkeeping.",
+    "tricks": [
+      "process vertices by reachability-set size",
+      "recover cover relations without enumerating all intermediates",
+      "verify the produced orientation against the matrix"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "size-ordered-transitive-reduction",
+      "summary": "Sort vertices by how many vertices they reach, then greedily add only cover edges to currently uncovered reachable parts while maintaining components/assigned sets.",
+      "complexity": "O(n^2 log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/transitive-reduction",
+      "importance": "primary",
+      "evidence": "The desired oriented tree edges are the cover relations preserving the given reachability matrix.",
+      "solution_variant": "size-ordered-transitive-reduction",
+      "description": "Problems that recover or use the minimal edge set preserving reachability in a DAG-like relation.",
+      "parent": "graph",
+      "created_reason": "This is more precise than generic graph/tree tags and is reusable for reachability-matrix reconstruction problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The hard solution processes vertices in reachability-size order and greedily assigns uncovered cover edges.",
+      "solution_variant": "size-ordered-transitive-reduction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The reconstructed object must be an orientation of a tree, and verification checks the tree edge count/connectivity.",
+      "solution_variant": "size-ordered-transitive-reduction"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting by the number of reachable vertices is the organizing step that replaces the easy version's cubic intermediate test.",
+      "solution_variant": "size-ordered-transitive-reduction"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "A DSU-style implementation can maintain which reachable parts have already been covered during reconstruction.",
+      "solution_variant": "size-ordered-transitive-reduction"
+    }
+  ]
+}

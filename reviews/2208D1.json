@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2208,
+    "title": "Codeforces Round 1086 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2208,
+    "index": "D1",
+    "title": "Tree Orientation (Easy Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "greedy",
+      "matrices",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2208/problem/D1",
+      "notes": "Statement and constraints: reconstruct an orientation of a tree from a reachability matrix; easy version has small enough n for cubic checks."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152714/diff/en6/en7",
+      "notes": "Used to confirm the transitive-reduction criterion: an edge u->v exists iff u reaches v and no third vertex lies between them in reachability order."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2208D1",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the reachability matrix of an unknown directed orientation of an undirected tree, reconstruct the directed tree or report impossibility.",
+    "constraints": "Easy version permits direct O(n^3) reasoning over triples of vertices.",
+    "core_idea": "The reachability relation of an oriented tree is a partial order. A directed edge u->v is exactly a cover relation: u reaches v, u != v, and there is no third vertex w such that u reaches w and w reaches v. Therefore scan all ordered pairs and add the pair as an edge when no intermediate vertex exists. After constructing these cover edges, verify that the undirected graph is a tree and that its reachability matches the input matrix.",
+    "complexity": "O(n^3) to test all possible intermediates and verify reachability.",
+    "tricks": [
+      "view the reachability matrix as a partial order",
+      "recover only cover relations",
+      "verify the reconstructed directed tree"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cubic-transitive-reduction",
+      "summary": "For every reachable ordered pair, check all possible intermediate vertices. Pairs without an intermediate are exactly the directed edges.",
+      "complexity": "O(n^3)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/transitive-reduction",
+      "importance": "primary",
+      "evidence": "The reconstructed edges are exactly the cover relations of the reachability partial order, i.e. the transitive reduction of the directed tree.",
+      "solution_variant": "cubic-transitive-reduction",
+      "description": "Problems that recover or use the minimal edge set preserving reachability in a DAG-like relation.",
+      "parent": "graph",
+      "created_reason": "This is more precise than generic graph/tree tags and is reusable for reachability-matrix reconstruction problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The hidden graph is an orientation of a tree, and the final reconstruction must be verified as a tree.",
+      "solution_variant": "cubic-transitive-reduction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The output is an explicit orientation/reconstructed edge list satisfying the matrix.",
+      "solution_variant": "cubic-transitive-reduction"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The easy version directly checks all triples to determine whether an intermediate vertex exists.",
+      "solution_variant": "cubic-transitive-reduction"
+    }
+  ]
+}

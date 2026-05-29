@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2208,
+    "title": "Codeforces Round 1086 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2208,
+    "index": "E",
+    "title": "Counting Cute Arrays",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2208/problem/E",
+      "notes": "Statement and constraints: count arrays satisfying the cute interval/maximum condition modulo 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/152714/diff/en6/en7",
+      "notes": "Used to confirm the interval characterization, monotonic-stack reconstruction, and DP with prefix-sum optimization."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2208E",
+      "notes": "Candidate Luogu solution page; not used as evidence in this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Count arrays compatible with a set of cute constraints, where each constraint imposes a maximum/nearest-greater style interval condition.",
+    "constraints": "The input size requires an O(n^2) or optimized DP after deriving the structural constraints; answers are modulo 998244353.",
+    "core_idea": "Each fixed value determines a valid interval in which it can be the controlling maximum; the constraints must form a non-crossing/laminar structure. A monotonic stack captures exactly the nearest greater boundaries and validates that the imposed intervals do not cross. After sorting/organizing these intervals, count possible arrays by dynamic programming over prefix length and stack/active-interval states. Prefix sums optimize transitions that choose where the next interval/value is placed.",
+    "complexity": "O(n^2) after preprocessing in the intended DP formulation.",
+    "tricks": [
+      "turn local cute constraints into non-crossing intervals",
+      "use a monotonic stack to recover nearest greater boundaries",
+      "optimize counting transitions with prefix sums"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "laminar-interval-stack-dp",
+      "summary": "Validate the interval structure with a monotonic stack, then count legal completions with DP over the induced laminar order using prefix sums.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "The structural validation relies on nearest-greater boundaries, which are computed and checked by a monotonic stack.",
+      "solution_variant": "laminar-interval-stack-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "After deriving the laminar interval structure, the number of arrays is computed by dynamic programming.",
+      "solution_variant": "laminar-interval-stack-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The problem is a counting problem over all arrays satisfying the structural constraints.",
+      "solution_variant": "laminar-interval-stack-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "secondary",
+      "evidence": "DP transitions over possible previous positions are accelerated by prefix sums.",
+      "solution_variant": "laminar-interval-stack-dp"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "secondary",
+      "evidence": "The valid constraint intervals must be nested or disjoint; crossing intervals invalidate the structure.",
+      "solution_variant": "laminar-interval-stack-dp"
+    }
+  ]
+}

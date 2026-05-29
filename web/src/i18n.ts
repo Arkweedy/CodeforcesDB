@@ -232,6 +232,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/shortest-path": "最短路",
   "graph/tree": "树",
   "graph/tree-dfs": "树上 DFS",
+  "graph/transitive-reduction": "传递约简",
   "graph/virtual-tree": "虚树",
   "algorithm/hashing": "哈希",
   "algorithm/majority-vote": "多数投票",
