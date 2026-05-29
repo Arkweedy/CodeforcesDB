@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2200,
+    "title": "Codeforces Round 1084 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2200,
+    "index": "F",
+    "title": "Mooclear Reactor 2",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["brute force", "data structures", "greedy", "implementation", "sortings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2200/F",
+      "notes": "Choose compatible particles maximizing total energy; answer each shop particle query."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151625",
+      "notes": "Official solution sweeps possible chosen counts downward and maintains largest eligible energies."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/xqlltsac",
+      "notes": "Cross-check for top-k sum view and persistent segment tree variant."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/czyczy/p/19713569",
+      "notes": "Cross-check for heap/top-k maintenance and shop-particle replacement."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2200F",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Preprocess Bessie's particles so each shop particle query can return the best total energy when that extra particle is available.",
+    "constraints": "Sum n and sum m are each <= 2e5; preprocessing all possible reactivity bounds and answering each query in O(1) is intended.",
+    "core_idea": "For a fixed chosen count k without a shop particle, every chosen particle must have y >= k - 1, and the optimal subset is the k largest energies among eligible particles. Sweep k downward, insert newly eligible particles, and maintain the top energies. Also precompute the best value when a shop particle with reactivity y is forced in by allowing at most y original particles and replacing the weakest chosen original particle if needed.",
+    "complexity": "O(n log n + m) per test case.",
+    "tricks": ["fix selected count", "maintain top energies by reactivity threshold", "precompute forced-shop prefix maxima"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "decreasing-k-top-set",
+      "summary": "Sort particles by reactivity, sweep the allowed selected count downward, keep the largest eligible energies in a heap/multiset, and answer shop queries from prefix maxima.",
+      "complexity": "O(n log n + m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "persistent-segment-tree-top-k",
+      "summary": "Sort by reactivity and use persistent segment trees over energy values to query top-k sums for each count.",
+      "complexity": "O(n log V + m)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For any fixed number of selected particles, choosing the largest energies among eligible particles is optimal.",
+      "solution_variant": "decreasing-k-top-set"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "primary",
+      "evidence": "The sweep maintains current top eligible energies and removes the smallest selected value when capacity shrinks.",
+      "solution_variant": "decreasing-k-top-set"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "All y thresholds are preprocessed before answering independent shop-particle queries.",
+      "solution_variant": "decreasing-k-top-set"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Particles are processed in sorted reactivity order so eligibility changes monotonically.",
+      "solution_variant": "decreasing-k-top-set"
+    }
+  ]
+}

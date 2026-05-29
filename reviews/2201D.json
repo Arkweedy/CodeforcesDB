@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "D",
+    "title": "Binary Not Search and Queries",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["data structures", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2201/problem/D",
+      "notes": "Statement and point-update query requirements."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official Round 1082 tutorial checked as the main source."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201D",
+      "notes": "Used to cross-check the first/last occurrence span and active-interval maintenance."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201D",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "After each point update, find the maximum length k for which two different length-k subarrays have equal multisets, and count triples attaining that maximum.",
+    "constraints": "n and q are large, so each update must touch only the old and new values' occurrence sets and global summaries.",
+    "core_idea": "For any value with first-last occurrence span d, adjacent subarrays between these endpoints have equal multisets, so k is at least d. Conversely, any two equal-multiset length-k subarrays imply some matched equal value spans distance at least k. Thus kmax is the maximum first-last span over values. The count is maintained by marking starts for values with span kmax; consecutive marked starts form components contributing c(c+1)/2 pairs.",
+    "complexity": "O(log n) or O(log^2 n) per update depending on the interval-set implementation.",
+    "tricks": ["maximum answer equals maximum first-last occurrence span", "count triples by components of consecutive active starts", "remove and reinsert only changed values"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dynamic-span-components",
+      "summary": "Maintain each value's ordered occurrence set, the maximum span multiset, and component contributions of starts whose values attain each span.",
+      "complexity": "O((n + q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "The solution maintains ordered occurrence sets per value and a global multiset of current first-last spans under updates.",
+      "solution_variant": "dynamic-span-components"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "primary",
+      "evidence": "The optimal k depends only on the first and last occurrence of each value, not on all equal pairs.",
+      "solution_variant": "dynamic-span-components"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The number of optimal triples is maintained by updating component contributions of consecutive active starts.",
+      "solution_variant": "dynamic-span-components"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The implementation has careful set updates, but implementation detail is not the main retrieval point.",
+      "solution_variant": "dynamic-span-components"
+    }
+  ]
+}

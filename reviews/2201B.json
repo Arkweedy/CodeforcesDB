@@ -1,0 +1,70 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "B",
+    "title": "Recollect Numbers",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2201/problem/B",
+      "notes": "Statement and greedy recollection process."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official Round 1082 tutorial checked as the main source."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201B",
+      "notes": "Used to confirm feasible range and construction."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201B",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a length-2n array containing each number 1..n exactly twice so the fixed recollection process finishes in exactly k operations, or report impossible.",
+    "constraints": "The output itself has size 2n, so an O(n) construction is required.",
+    "core_idea": "The number of operations is always between n and 2n-1. Let x = k - n + 1. Build a block on numbers 1..x that forces the maximum 2x-1 operations, then append each remaining value twice consecutively so each costs one operation. This gives (2x-1) + (n-x) = k.",
+    "complexity": "O(n) per test case.",
+    "tricks": ["split target operations into one maximal hard block plus easy adjacent pairs", "construct an interleaving with maximal recollection cost"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "max-block-plus-pairs-construction",
+      "summary": "Use the maximal-cost construction on the first x labels and adjacent duplicate pairs for the remaining labels.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly building a duplicate permutation realizing any feasible k.",
+      "solution_variant": "max-block-plus-pairs-construction"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "The construction uses a maximal-cost block as an extreme building piece and fills the rest with minimum-cost pairs.",
+      "solution_variant": "max-block-plus-pairs-construction"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2200,
+    "title": "Codeforces Round 1084 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2200,
+    "index": "G",
+    "title": "Operation Permutation",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "math", "probabilities"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2200/G",
+      "notes": "Randomly permute arithmetic operations and compute expected final value modulo 1e9+7."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151625",
+      "notes": "Official solution normalizes subtraction/division and computes expected multiplier suffix products with DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/pnvh120w",
+      "notes": "Cross-check for merging additive operations and elementary symmetric DP."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2200G",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an initial value and operations +, -, *, /, compute the expected result after applying a uniformly random permutation of the operations.",
+    "constraints": "n <= 3000 and sum n^2 <= 3000^2, so O(m^2) DP over multiplicative operations fits.",
+    "core_idea": "Normalize '-' into adding a negative value and '/' into multiplying by modular inverse. Multiplicative operations commute, and additive operations can be combined by linearity of expectation. If exactly k multipliers appear after an additive term, their average product is the kth elementary symmetric sum divided by C(m,k), and the insertion position contributes probability 1/(m+1). Compute all elementary symmetric sums with one-dimensional DP.",
+    "complexity": "O(m^2 + n log MOD), where m is the number of multiplication/division operations.",
+    "tricks": ["linearity of expectation", "combine additive operations", "elementary symmetric sums", "division as modular inverse"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "elementary-symmetric-expectation-dp",
+      "summary": "Normalize operations, compute elementary symmetric sums of multipliers, and average suffix products by subset size.",
+      "complexity": "O(m^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "divide-and-conquer-polynomial-product",
+      "summary": "For larger constraints, multiply polynomials (1 + b_i z) by divide-and-conquer or NTT-style batching to get the same coefficients faster.",
+      "complexity": "O(m log^2 m) with suitable polynomial multiplication",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "The solution computes expected contributions over all random operation permutations.",
+      "solution_variant": "elementary-symmetric-expectation-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "A one-dimensional DP computes elementary symmetric sums of the multiplicative factors.",
+      "solution_variant": "elementary-symmetric-expectation-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The expected multiplier uses elementary symmetric sums, binomial denominators, and averaging over positions.",
+      "solution_variant": "elementary-symmetric-expectation-dp"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "Division and expected fractions are evaluated modulo 1e9+7 using modular inverses.",
+      "solution_variant": "elementary-symmetric-expectation-dp"
+    }
+  ]
+}

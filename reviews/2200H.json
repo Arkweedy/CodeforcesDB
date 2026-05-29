@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2200,
+    "title": "Codeforces Round 1084 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2200,
+    "index": "H",
+    "title": "Six Seven",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": ["divide and conquer", "math", "number theory", "strings", "trees"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2200/H",
+      "notes": "Find the minimum common increment making every a_i special, where special means f_6(x) > f_7(x)."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151625",
+      "notes": "Official solution uses the recursive rule by divisibility by 42."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/qv8s35s6",
+      "notes": "Cross-check for enumerating answer modulo 42 and recursing on the divisible-by-42 class."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2200H",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array, find the smallest t such that every a_i + t has more factors of 6 than factors of 7, or report impossible.",
+    "constraints": "Total n <= 2e5 and a_i <= 1e9; the solution must avoid searching t directly and recurse through base-42 residue classes.",
+    "core_idea": "If 42 does not divide x, then x is special exactly when x mod 42 is a positive multiple of 6. If 42 divides x, both f_6 and f_7 decrease by one after dividing by 42, so specialness is inherited by x/42. Enumerate t modulo 42. Residues that cannot make every value a multiple of 6 are impossible; for the unique residue class that becomes divisible by 42, divide shifted values by 42 and solve recursively.",
+    "complexity": "O(n log_42 A) up to the constant factor from checking 42 residues per recursion level.",
+    "tricks": ["recursive special-number definition", "answer modulo 42", "only recurse on the class divisible by 42"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mod42-recursive-residue-split",
+      "summary": "Enumerate the increment modulo 42, discard already-special residue classes, and recurse only on shifted values divisible by 42.",
+      "complexity": "O(n log_42 A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The core criterion is expressed through divisibility exponents of 6, 7, and 42.",
+      "solution_variant": "mod42-recursive-residue-split"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "The algorithm enumerates t modulo 42 and uses residues modulo 6 and 7 to decide immediate specialness.",
+      "solution_variant": "mod42-recursive-residue-split"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "After fixing t mod 42, solved residue classes are discarded and the divisible-by-42 class is divided by 42 and solved recursively.",
+      "solution_variant": "mod42-recursive-residue-split"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "Large values and unbounded t are reduced to repeated residue decisions and quotient values after division by 42.",
+      "solution_variant": "mod42-recursive-residue-split"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "F1",
+    "title": "Monotone Monochrome Matrices (Medium Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["data structures", "hashing"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2201/F1",
+      "notes": "Statement and medium constraints n, q <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official editorial and comments used to confirm the chain/Ferrers invariant."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sxr8azbm",
+      "notes": "Hard-version O(n+q) invariant solution, also valid for medium."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201F1",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Cells of an initially white n by n matrix are turned black online; after each insertion, decide if row/column permutations can avoid the forbidden alternating 2x2 pattern.",
+    "constraints": "sum n <= 200000 and sum q <= 200000.",
+    "core_idea": "A valid matrix is exactly a Ferrers/chain-graph matrix after permuting rows and columns: sorted rows have nested neighborhoods. Maintain the actual row-pair contribution and the canonical Ferrers contribution induced by column heights. The matrix is valid iff these contribution sums are equal.",
+    "complexity": "O(n+q) time and O(n) memory per total input.",
+    "tricks": ["represent the matrix as a bipartite chain graph", "compare row-degree contribution with canonical column-height contribution", "update both sums in O(1)"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "degree-contribution-invariant",
+      "summary": "Maintain sr = sum C(row_black_count,2) and sc = sum over column-height layers C(count_ge_height,2); answer YES iff sr == sc.",
+      "complexity": "O(n+q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/chain-graph",
+      "importance": "primary",
+      "evidence": "The monotone condition is equivalent to the black-cell bipartite graph being a chain graph with nested row neighborhoods.",
+      "solution_variant": "degree-contribution-invariant",
+      "description": "Bipartite graphs whose neighborhoods on one side are nested; equivalently Ferrers or monotone binary matrices with no induced 2K2.",
+      "parent": "graph/bipartite-graph",
+      "created_reason": "The existing bipartite-graph tag is too broad for Ferrers/chain-matrix characterizations used in matrix and graph problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The online solution works by updating two contribution sums after each inserted black cell.",
+      "solution_variant": "degree-contribution-invariant"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "secondary",
+      "evidence": "The invariant acts as a compact fingerprint of row-pair contributions for the actual and canonical matrices.",
+      "solution_variant": "degree-contribution-invariant"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The characterization relies on rows and columns being sortable into a monotone Ferrers shape.",
+      "solution_variant": "degree-contribution-invariant"
+    }
+  ]
+}

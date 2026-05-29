@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2202,
+    "title": "Codeforces Round 1082 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2202,
+    "index": "G1",
+    "title": "Monotone Monochrome Matrices (Easy Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": ["data structures"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2202/problem/G1",
+      "notes": "Easy version of the online monotone monochrome matrix problem."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official Round 1082 editorial used for the Ferrers/chain-graph invariant."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sxr8azbm",
+      "notes": "Cross-check source for the O(n+q) contribution invariant, also valid for the easy version."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2202G1",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Cells of an initially white matrix are turned black online; after each insertion, decide whether row and column permutations can make the black cells monotone.",
+    "constraints": "Easy version constraints are smaller than the hard version, but the same linear invariant works comfortably.",
+    "core_idea": "A matrix is valid iff its black-cell bipartite graph is a chain graph, equivalently its rows can be ordered by nested neighborhoods into a Ferrers shape. Maintain the actual row-pair contribution and the canonical contribution induced by column heights. Equality of the two sums is necessary and sufficient for the Ferrers shape.",
+    "complexity": "O(n+q) time and O(n) memory.",
+    "tricks": ["Ferrers/chain-graph characterization", "constant-time contribution update per black cell", "compare actual and canonical row-pair counts"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ferrers-contribution-invariant",
+      "summary": "Maintain row-pair contribution of the actual matrix and the canonical Ferrers matrix determined by column heights; answer YES iff they match.",
+      "complexity": "O(n+q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/chain-graph",
+      "importance": "primary",
+      "evidence": "The monotone matrix condition is exactly the chain-graph/Ferrers condition with nested row neighborhoods.",
+      "solution_variant": "ferrers-contribution-invariant"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The online algorithm is based on updating row and column-height contribution sums after each inserted black cell.",
+      "solution_variant": "ferrers-contribution-invariant"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "Rows and columns must be sortable into a monotone Ferrers shape.",
+      "solution_variant": "ferrers-contribution-invariant"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "The implementation maintains row counts, column counts, and height frequencies under updates.",
+      "solution_variant": "ferrers-contribution-invariant"
+    }
+  ]
+}

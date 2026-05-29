@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "A2",
+    "title": "Lost Civilization (Hard Version)",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dp"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2201/problem/A2",
+      "notes": "Statement and constraints for the hard version."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official Round 1082 tutorial checked as the main source."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201A2",
+      "notes": "Used to cross-check the depth-prefix-minimum interpretation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201A2",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "For every subarray, compute the minimum number of initial roots needed to generate it under the lost-civilization preorder rule, and sum this value over all subarrays.",
+    "constraints": "The hard version has large total n, so all subarrays cannot be processed separately; a linear contribution method is needed.",
+    "core_idea": "Parse the sequence as preorder forest subtrees and record each position's depth. For a subarray, the answer is the number of positions that become a new prefix minimum depth inside that subarray. Each position contributes to left endpoints after the previous position with strictly smaller depth and to all right endpoints at or after it; a monotonic stack finds the previous-smaller boundary.",
+    "complexity": "O(n) per test case after parsing depths.",
+    "tricks": ["convert generated forest to depth array", "subarray answer equals count of prefix depth minima", "monotonic-stack contribution counting"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "depth-prefix-minima-contribution",
+      "summary": "Parse the preorder forest into depths, then sum each index's contribution using the nearest previous strictly smaller depth.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "The final summation needs the nearest previous position with strictly smaller depth for every index.",
+      "solution_variant": "depth-prefix-minima-contribution"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "The generated-subarray value is transformed into counting prefix minima in the depth array.",
+      "solution_variant": "depth-prefix-minima-contribution"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Each position is counted over all subarrays where it is a new prefix minimum.",
+      "solution_variant": "depth-prefix-minima-contribution"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "incidental",
+      "evidence": "The sequence is interpreted as a preorder forest, but no general tree algorithm is needed.",
+      "solution_variant": "depth-prefix-minima-contribution"
+    }
+  ]
+}

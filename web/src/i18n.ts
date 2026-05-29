@@ -129,6 +129,7 @@ const RATING_STATUS_TEXT: Record<Locale, Record<RatingStatus, string>> = {
 const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
   zh: {
     "accepted-code": "通过代码",
+    accepted_submission: "通过提交",
     "auto-seeded": "自动种子",
     auto_seeded: "自动种子",
     blog: "博客",
@@ -147,6 +148,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
   },
   en: {
     "accepted-code": "Accepted code",
+    accepted_submission: "Accepted submission",
     "auto-seeded": "Auto seeded",
     auto_seeded: "Auto seeded",
     blog: "Blog",
@@ -203,6 +205,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/bfs": "BFS",
   "graph/bridge": "桥",
   "graph/cactus": "仙人掌",
+  "graph/chain-graph": "链图",
   "graph/connectivity": "连通性",
   "graph/dag": "DAG",
   "graph/degree-sequence": "度数序列",
@@ -297,6 +300,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/number-theory/gcd": "GCD",
   "math/number-theory/gcd-convolution": "GCD 卷积",
   "math/number-theory/lcm": "LCM",
+  "math/number-theory/mobius-inversion": "莫比乌斯反演",
   "math/number-theory/modular-arithmetic": "模运算",
   "math/number-theory/multiplicative-order": "乘法阶",
   "math/number-theory/mobius": "莫比乌斯",
@@ -380,6 +384,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "cartesian-tree": "笛卡尔树",
   "case-analysis": "分类讨论",
   "cactus": "仙人掌",
+  "chain-graph": "链图",
   "chinese-remainder-theorem": "中国剩余定理",
   "circular-interval": "环形区间",
   "classify-overlap": "重叠分类",
@@ -465,6 +470,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "misra-gries": "Misra-Gries",
   "minmax": "Min-Max",
   "mobius": "莫比乌斯",
+  "mobius-inversion": "莫比乌斯反演",
   "monotonic-stack": "单调栈",
   "monotonicity": "单调性",
   "mst": "最小生成树",

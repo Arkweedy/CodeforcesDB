@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "F2",
+    "title": "Monotone Monochrome Matrices (Hard Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "data structures", "hashing", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2201/F2",
+      "notes": "Statement and hard constraints n, q up to 2000000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official editorial and comments used to confirm the O(n+q) invariant."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sxr8azbm",
+      "notes": "Explains Ferrers transformation and O(1) contribution updates."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201F2",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Same online monotone-matrix decision as F1, with very large total n and q.",
+    "constraints": "sum n <= 2000000 and sum q <= 2000000; requires linear memory and time.",
+    "core_idea": "Use the hard invariant directly: valid matrices are exactly those row/column-permutable into a Ferrers shape. Maintain the actual row-pair contribution and the canonical Ferrers contribution induced by column heights; equality is necessary and sufficient.",
+    "complexity": "O(n+q) time and O(n) memory over each test batch.",
+    "tricks": ["use arrays/frequency counters only", "column-height layers build canonical Ferrers row counts", "equality of contribution sums certifies the chain-graph condition"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-ferrers-invariant",
+      "summary": "On inserting (r,c), update sr by the previous row count and sc by the previous number of columns at the new height; answer YES iff sr == sc.",
+      "complexity": "O(n+q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/chain-graph",
+      "importance": "primary",
+      "evidence": "The forbidden alternating 2x2 pattern is exactly an induced 2K2 obstruction to a bipartite chain graph/Ferrers matrix.",
+      "solution_variant": "linear-ferrers-invariant",
+      "description": "Bipartite graphs whose neighborhoods on one side are nested; equivalently Ferrers or monotone binary matrices with no induced 2K2.",
+      "parent": "graph/bipartite-graph",
+      "created_reason": "The existing bipartite-graph tag is too broad for Ferrers/chain-matrix characterizations used in matrix and graph problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The hard constraints are met by maintaining sr and sc with constant-time contribution deltas per inserted black cell.",
+      "solution_variant": "linear-ferrers-invariant"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "secondary",
+      "evidence": "The proof compares compact contribution fingerprints of actual row counts and canonical Ferrers row counts.",
+      "solution_variant": "linear-ferrers-invariant"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "incidental",
+      "evidence": "The proof constructs the canonical row/column-permuted Ferrers matrix, but the online algorithm is invariant maintenance.",
+      "solution_variant": "linear-ferrers-invariant"
+    }
+  ]
+}

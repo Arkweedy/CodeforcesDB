@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "E",
+    "title": "ABBA Counting",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["fft", "math", "number theory", "strings"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2201/E",
+      "notes": "Statement: count wildcard completions S = A+B+B+A, sum n <= 400000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official editorial and comments used to confirm shift-conflict handling."
+    },
+    {
+      "source_type": "accepted_submission",
+      "url": "https://codeforces.com/contest/2201/submission/364151963",
+      "notes": "Accepted solution used as implementation cross-check for conflict counting over shifts."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201E",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a pattern T over a, b, and ?, count distinct binary strings S matching T that can be written as A+B+B+A.",
+    "constraints": "Up to 10000 tests, even n, total n <= 400000, modulo 998244353.",
+    "core_idea": "Let m = n/2. If S = A+B+B+A, then the second half is a cyclic shift of the first half. Count compatible pairs of length-m strings where one is a rotation of the other, while avoiding overcounting periodic first halves. For each divisor d of m, compress constraints by residues modulo d, evaluate all valid cyclic shifts with convolution/correlation, then invert over divisors to recover exact minimal periods.",
+    "complexity": "About O(sum_{d|m} d log d) per test with NTT-style cyclic convolutions, plus divisor inversion overhead.",
+    "tricks": ["convert ABBA split to rotation of the first half", "count by exact period to avoid duplicate rotations", "use cyclic convolutions to evaluate all shifts"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "period-rotation-convolution",
+      "summary": "For each period divisor, aggregate forced letters by residue, compute every cyclic shift's conflicts/free residues, sum 2^free over valid shifts, and subtract smaller-period contributions.",
+      "complexity": "O(sum_{d|m} d log d)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/transform/fft",
+      "importance": "primary",
+      "evidence": "The solution needs cyclic convolution/correlation to evaluate conflicts and free residues for all rotations efficiently.",
+      "solution_variant": "period-rotation-convolution"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "A string can correspond to multiple ABBA splits exactly because its first half is periodic; counting by minimal period is essential.",
+      "solution_variant": "period-rotation-convolution"
+    },
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "Counts over periods dividing d are inverted over divisors of m to isolate strings with exact minimal period.",
+      "solution_variant": "period-rotation-convolution",
+      "description": "Mobius-style inversion on a divisor lattice to recover exact-period or exact-divisibility counts from cumulative divisor counts.",
+      "parent": "math/number-theory",
+      "created_reason": "Existing number-theory tags do not distinguish divisor-lattice inversion, a reusable high-rating counting technique.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The answer counts wildcard assignments under rotation constraints.",
+      "solution_variant": "period-rotation-convolution"
+    },
+    {
+      "tag": "string",
+      "importance": "incidental",
+      "evidence": "The object is a binary string pattern, but no classical string data structure is used.",
+      "solution_variant": "period-rotation-convolution"
+    }
+  ]
+}

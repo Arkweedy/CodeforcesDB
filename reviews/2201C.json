@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2201,
+    "title": "Codeforces Round 1082 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2201,
+    "index": "C",
+    "title": "Rigged Bracket Sequence",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "greedy"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2201/problem/C",
+      "notes": "Statement about subsequences whose cyclic right shift remains regular."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151515",
+      "notes": "Official Round 1082 tutorial checked as the main source."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201C",
+      "notes": "Used to cross-check the prefix-balance DP/counting idea."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2201C",
+      "notes": "Luogu problem solution candidate."
+    }
+  ],
+  "annotation": {
+    "summary": "Count non-empty subsequences of a regular bracket sequence such that cyclically shifting the chosen positions to the right still leaves the whole sequence regular.",
+    "constraints": "n is large enough that enumerating subsequences is impossible; the count must be maintained with linear DP and prefix balances modulo 998244353.",
+    "core_idea": "The cyclic shift can create an interval where prefix balances decrease by 2. Therefore the original prefix balance between affected endpoints must remain at least 2. Scan the string while maintaining aggregate DP sums of selectable subsequence states and reset unsafe left states whenever the global balance drops below the safety threshold.",
+    "complexity": "O(n) time with O(1) or O(n) auxiliary storage depending on implementation.",
+    "tricks": ["model cyclic shift as an interval balance decrease", "prefix balance >= 2 safety condition", "maintain aggregate DP sums"],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-balance-aggregate-dp",
+      "summary": "Scan left to right, maintaining aggregate counts of subsequence states that remain safe under the possible -2 balance interval caused by the shift.",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bracket-dp",
+      "importance": "primary",
+      "evidence": "The count is obtained by dynamic programming over bracket-prefix-balance states and aggregate subsequence classes.",
+      "solution_variant": "prefix-balance-aggregate-dp"
+    },
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "The central correctness condition is whether all prefix balances remain nonnegative after the selected cyclic shift.",
+      "solution_variant": "prefix-balance-aggregate-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "The DP counts valid selected subsequences among exponentially many subsequences.",
+      "solution_variant": "prefix-balance-aggregate-dp"
+    },
+    {
+      "tag": "trick/tight-loose-state",
+      "importance": "secondary",
+      "evidence": "States are separated by whether a future -2 interval is still safe, with resets when balance becomes too small.",
+      "solution_variant": "prefix-balance-aggregate-dp"
+    }
+  ]
+}

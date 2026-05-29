@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2200,
+    "title": "Codeforces Round 1084 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2200,
+    "index": "E",
+    "title": "Divisive Battle",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": ["games", "greedy", "math", "number theory"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2200/E",
+      "notes": "Game on an array; players split composite elements until the array is non-decreasing or no move remains."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/151625",
+      "notes": "Official editorial used for the prime-base classification."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2200E",
+      "notes": "Luogu candidate; not used for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array splitting game, decide whether Alice can prevent the final array from becoming non-decreasing.",
+    "constraints": "Total n <= 1e5 and a_i <= 1e6, so each value can be factorized directly or with a smallest-prime sieve.",
+    "core_idea": "If the original array is already non-decreasing, Bob wins. Otherwise classify each value as 1, a prime power's unique prime base, or a multi-prime value. A multi-prime value gives Alice an immediate winning split. If all values are 1 or prime powers, future splits preserve the same prime base, so Bob wins exactly when the prime-base sequence is non-decreasing.",
+    "complexity": "O(n sqrt A) by trial division, or O(A log log A + n log A) with sieve preprocessing.",
+    "tricks": ["prime-base classification", "first-move winning certificate", "sortedness of reduced sequence"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "primebase-game-classification",
+      "summary": "Factor each value to its unique prime base or mark it multi-prime, then decide from original sortedness, existence of a multi-prime value, and sortedness of the prime-base sequence.",
+      "complexity": "O(n sqrt A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The solution is a win/loss classification under optimal play.",
+      "solution_variant": "primebase-game-classification"
+    },
+    {
+      "tag": "math/number-theory/prime-factor-count",
+      "importance": "primary",
+      "evidence": "The decisive case split depends on whether a value has zero, one, or multiple distinct prime factors.",
+      "solution_variant": "primebase-game-classification"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Prime powers preserve the same underlying prime base under every split.",
+      "solution_variant": "primebase-game-classification"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "If Alice can win, the key move is an immediate split exposing a bad small prime factor.",
+      "solution_variant": "primebase-game-classification"
+    }
+  ]
+}
