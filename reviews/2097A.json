@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2097,
+    "title": "Codeforces Round 1021 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2097,
+    "index": "A",
+    "title": "Sports Betting",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "2-sat",
+      "brute force",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2097/problem/A",
+      "notes": "Statement and constraints: decide whether a guaranteed winning betting strategy exists for adjacent binary outcomes."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial for Codeforces Round 1021; used to confirm the frequency-pattern condition."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9j8kbt5n",
+      "notes": "Luogu writeup cross-checks the condition: a count at least 4, or a consecutive block with both ends having count at least 2 and middle counts positive."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1021",
+      "notes": "Independent writeup used to cross-check the adversarial reading and frequency-run characterization."
+    }
+  ],
+  "annotation": {
+    "summary": "Given several bets on adjacent positions of an unknown binary string, decide whether one can choose guesses so that at least one bet is guaranteed correct.",
+    "constraints": "n is small enough to aggregate equal positions; the binary string length is huge, so only the frequencies of queried positions matter.",
+    "core_idea": "Compress all bets by their starting position. If some position appears at least four times, all four binary pairs can be covered. Otherwise, a guaranteed strategy exists exactly when there is a consecutive block of queried positions whose two ends have frequency at least two and every middle position appears at least once. The strategy uses the left endpoint to force knowledge of the next bit if it has not already won, propagates through the positive-frequency middle positions, and finishes at the right endpoint. Without such a frequency pattern, an adversary can choose outcomes that avoid all selected guesses.",
+    "complexity": "O(n log n) per test case",
+    "tricks": [
+      "Compress bets by starting position frequency.",
+      "Classify winning strategies by local frequency patterns.",
+      "Use consecutive positions to propagate forced information."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "frequency-run-characterization",
+      "summary": "Sort/compress positions and check for a count at least 4 or a consecutive run whose endpoints have count at least 2.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/frequency-pattern",
+      "importance": "primary",
+      "evidence": "The whole decision reduces to detecting specific patterns in the frequency sequence over consecutive positions.",
+      "solution_variant": "frequency-run-characterization",
+      "description": "Compress input items by value or position and solve by recognizing structural patterns in the resulting frequency sequence.",
+      "parent": "trick",
+      "created_reason": "This pattern is not a generic frequency-bucket data structure; the retrieval-relevant idea is the structural condition on the frequency sequence.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "Correctness depends on separating the count>=4 immediate win case from the two-endpoint consecutive-run strategy.",
+      "solution_variant": "frequency-run-characterization"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting positions is used to compress frequencies and scan consecutive runs.",
+      "solution_variant": "frequency-run-characterization"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The proof gives an explicit way to choose guesses for the winning frequency patterns.",
+      "solution_variant": "frequency-run-characterization"
+    }
+  ]
+}

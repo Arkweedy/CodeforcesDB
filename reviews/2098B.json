@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2098,
+    "title": "Codeforces Round 1021 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2098,
+    "index": "B",
+    "title": "Sasha and the Apartment Purchase",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2098/problem/B",
+      "notes": "Statement and constraints: choose possible apartment positions after closing at most k bars."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial for Codeforces Round 1021; used to confirm the median interval solution."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/d1vimoo8",
+      "notes": "Luogu writeup cross-checks the sorted median interval after removing k bars."
+    }
+  ],
+  "annotation": {
+    "summary": "Count integer house positions that can become a minimizer of total distance to the remaining open bars after closing at most k bars.",
+    "constraints": "Sum n <= 100000 and coordinates up to 1e9; sorting and O(1) interval extraction per test case are sufficient.",
+    "core_idea": "For a fixed remaining multiset, the minimizers of sum |x-y| are exactly its median interval. To make x possible, it is enough to keep n-k bars whose median interval contains x; closing fewer bars can be padded to exactly k. After sorting all bar positions, the union of possible median intervals collapses to one interval: the lower endpoint is the median forced by deleting up to k largest/outer bars, and the upper endpoint is the symmetric median after deleting up to k smallest/outer bars. The answer is the length of that integer interval.",
+    "complexity": "O(n log n) per test case",
+    "tricks": [
+      "Use the median characterization of L1 minimizers.",
+      "Assume exactly k bars are closed because closing extra bars only expands possibilities.",
+      "After sorting, the possible medians form one contiguous interval."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-median-interval",
+      "summary": "Sort bar positions, compute the leftmost and rightmost possible median endpoints after removing k bars, and output their integer interval length.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/order-statistics/median-minimization",
+      "importance": "primary",
+      "evidence": "The decisive fact is that minimizing the sum of absolute distances is equivalent to lying in the median interval of the remaining bars.",
+      "solution_variant": "sorted-median-interval",
+      "description": "Use the median or median interval as the optimizer of an L1 distance objective, often after deletions or choices change the multiset.",
+      "parent": "math/order-statistics",
+      "created_reason": "Existing median-threshold tags cover +/-1 threshold transforms, not L1 median minimization intervals.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Sorting the bar positions exposes the exact median endpoints after deleting k bars.",
+      "solution_variant": "sorted-median-interval"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "All possible answers are represented as one contiguous integer interval.",
+      "solution_variant": "sorted-median-interval"
+    }
+  ]
+}
