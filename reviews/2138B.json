@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "B",
+    "title": "Antiamuny Wants to Learn Swap",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/B",
+      "notes": "Canonical Div.1 statement and constraints."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2139/problem/D",
+      "notes": "Shared Div.2 entry; canonical problem is kept as contest 2138B by the Div.1 precedence rule."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/en18",
+      "notes": "Official topic confirms the forbidden permutation-pattern characterization."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1048",
+      "notes": "Independent writeup used to cross-check the monotonic-stack interval condition."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide when a permutation can be made good under the allowed swap operation.",
+    "constraints": "n is large, requiring linear or near-linear detection of the forbidden structure.",
+    "core_idea": "The operation preserves a permutation-structure invariant. A bad case is equivalent to the existence of a 321-like forbidden pattern or an interval containment relation between nearest greater/smaller boundaries. Monotonic stacks compute those boundaries efficiently.",
+    "complexity": "O(n) or O(n log n) depending on the boundary-query implementation",
+    "tricks": [
+      "Characterize feasibility by a forbidden permutation pattern.",
+      "Use nearest greater/smaller boundaries to detect the pattern.",
+      "Treat the Div.2 statement as an alias, not a separate problem."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "forbidden-pattern-monotonic-stack",
+      "summary": "Use monotonic stacks to compute the relevant boundaries and test whether the forbidden permutation pattern exists.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "The core proof is a structural characterization of which permutations are reachable/good.",
+      "solution_variant": "forbidden-pattern-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "The accepted linear solution detects forbidden boundary relations using monotonic stacks.",
+      "solution_variant": "forbidden-pattern-monotonic-stack"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "The forbidden pattern can be checked as containment/overlap of computed intervals.",
+      "solution_variant": "forbidden-pattern-monotonic-stack"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The correctness proof depends on an invariant of the allowed swap operation.",
+      "solution_variant": "forbidden-pattern-monotonic-stack"
+    }
+  ]
+}

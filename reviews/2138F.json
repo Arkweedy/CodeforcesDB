@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "F",
+    "title": "Ode to the Bridge Builder",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "geometry"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/F",
+      "notes": "Statement and constraints: construct the target point with bounded triangle operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146172",
+      "notes": "Official editorial confirms the parallelogram-ladder construction and angle-case proof."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2138F",
+      "notes": "Luogu mirror used as a secondary statement check; no separate Luogu solution was used as evidence."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/rizynvu/p/19095574",
+      "notes": "Independent Chinese writeup used to cross-check the angle adjustment and short-final-segment cases."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a sequence of triangle additions that creates target point C=(p,q) from initial points A=(0,0), B=(1,0).",
+    "constraints": "All triangle side lengths must stay in [0.5,1], and the number of operations is at most ceil(2*sqrt(p^2+q^2)).",
+    "core_idea": "Advance an existing edge as the front of a strip. Two triangle additions form one parallelogram step, giving nearly one unit of progress while preserving legal side lengths when the direction angle lies in a safe 30-to-60 degree range. If the direct direction is outside the safe range, first add a helper triangle to rotate the usable base edge, then run the ladder and handle the final short segment by explicit cases.",
+    "complexity": "O(m) time and output where m is the operation bound",
+    "tricks": [
+      "Use two triangles as one parallelogram step.",
+      "Prove side-length legality with angle/cosine-law bounds.",
+      "Rotate the initial edge into a safe angle range.",
+      "Handle the final short segment separately to preserve the exact operation bound."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "angle-case-parallelogram-ladder",
+      "summary": "Choose a safe-angle strip, repeatedly add parallelogram cells by two triangles, and finish with a short-segment case construction.",
+      "complexity": "O(m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "Correctness depends on Euclidean angle ranges, cosine-law distance bounds, and geometric construction of triangle chains.",
+      "solution_variant": "angle-case-parallelogram-ladder"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires explicitly outputting coordinates and existing-edge choices for every triangle operation.",
+      "solution_variant": "angle-case-parallelogram-ladder"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "The construction splits by safe-angle availability and final segment length.",
+      "solution_variant": "angle-case-parallelogram-ladder"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The solution must carefully output floating-point coordinates and edge references within precision tolerances.",
+      "solution_variant": "angle-case-parallelogram-ladder"
+    }
+  ]
+}

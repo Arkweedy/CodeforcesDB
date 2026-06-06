@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "C2",
+    "title": "Maple and Tree Beauty (Hard Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/C2",
+      "notes": "Canonical Div.1 hard-version statement."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2139/problem/E2",
+      "notes": "Shared Div.2 entry; canonical problem is contest 2138C2."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/en18",
+      "notes": "Official topic confirms using bitset/subset-sum optimization over depth counts."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1048",
+      "notes": "Independent writeup used to cross-check the hard-version optimization."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the same tree beauty quantity under larger constraints.",
+    "constraints": "The O(n^2) easy DP is too slow, so subset-sum over depth counts must be optimized.",
+    "core_idea": "As in C1, compress the tree into counts per depth. The remaining problem is subset-sum/knapsack over these counts, which can be accelerated with bitset DP; grouping repeated counts or sqrt-style batching keeps the hard version within limits.",
+    "complexity": "About O(n^2 / word_size) with bitset optimization, plus grouping overhead",
+    "tricks": [
+      "Reuse depth-layer compression.",
+      "Use bitset subset-sum for the knapsack.",
+      "Group or batch repeated layer sizes to keep the hard version fast."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "depth-count-bitset-knapsack",
+      "summary": "Count depth layers and run bitset subset-sum, with grouping/batching for repeated sizes.",
+      "complexity": "O(n^2 / w)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bitset-dp",
+      "importance": "primary",
+      "evidence": "The hard-version speedup is applying bitset subset-sum to the depth-count knapsack.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "The underlying state is still a knapsack/subset-sum over depth-layer sizes.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "importance": "primary",
+      "evidence": "The tree-specific information is compressed into counts by depth.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "secondary",
+      "evidence": "One implementation groups layer sizes by frequency/size to batch the bitset shifts.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The input structure is a rooted tree whose depth layers define the DP items.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "DFS/BFS computes all depth counts.",
+      "solution_variant": "depth-count-bitset-knapsack"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "D",
+    "title": "Antiamuny and Slider Movement",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/D",
+      "notes": "Canonical Div.1 statement and constraints."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2139/problem/F",
+      "notes": "Shared Div.2 entry; canonical problem is contest 2138D."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/en18",
+      "notes": "Official topic confirms the shifted-position representation and threshold/counting approach."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1048",
+      "notes": "Independent writeup used to cross-check the sorting and threshold decomposition."
+    }
+  ],
+  "annotation": {
+    "summary": "Count or compute outcomes of slider movements over a permutation-like state.",
+    "constraints": "The number of sliders/operations is large, so simulating every final state directly is infeasible.",
+    "core_idea": "Shift each slider position by its index to normalize movement constraints. The resulting states are determined by thresholded maximum/minimum/assignment effects. Sort the normalized values and decompose the counting by thresholds so each range contributes in bulk.",
+    "complexity": "O(n log n)",
+    "tricks": [
+      "Normalize positions by subtracting the index.",
+      "Represent operations as thresholded effects on normalized values.",
+      "Sort and count ranges instead of simulating each configuration."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "shifted-threshold-counting",
+      "summary": "Transform positions to b_i = position_i - i, sort them, and count the final effects by threshold ranges.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "The solution counts possible/order-dependent outcomes over normalized permutation-like positions.",
+      "solution_variant": "shifted-threshold-counting"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The original slider positions are compressed into normalized b_i values that preserve all needed information.",
+      "solution_variant": "shifted-threshold-counting"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "The final count is decomposed by threshold ranges of the normalized values.",
+      "solution_variant": "shifted-threshold-counting",
+      "description": "Split a counting or decision problem by threshold ranges so all values in one range have the same contribution rule.",
+      "parent": "trick",
+      "created_reason": "Threshold-range decomposition is a reusable counting trick that is more precise than generic sorting or contribution maintenance.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting normalized values enables range counting by thresholds.",
+      "solution_variant": "shifted-threshold-counting"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The normalized threshold ranges are combined by counting formulas.",
+      "solution_variant": "shifted-threshold-counting"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "E2",
+    "title": "Determinant Construction (Hard Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "math",
+      "matrices",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/E2",
+      "notes": "Statement and hard-version size bound n <= 50."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/diff/en28/en29",
+      "notes": "Official topic confirms the tridiagonal determinant recurrence and Fibonacci/golden-ratio predecessor search."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1048",
+      "notes": "Independent writeup confirms the Euclidean-style tridiagonal construction."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a sparse {-1,0,1} matrix of size at most 50 with determinant x.",
+    "constraints": "The hard size limit is too tight for the easy DAG gadget in worst cases, so a shorter recurrence-based construction is needed.",
+    "core_idea": "Use a tridiagonal matrix. The determinants of leading principal minors satisfy A_{k+1}=A_k+A_{k-1} or A_k-A_{k-1} depending on signs. Reverse the process as a subtractive Euclidean sequence on a pair (x,y), choosing y through Fibonacci/golden-ratio guided search so the sequence reaches a small base pair within 50 rows.",
+    "complexity": "O(50) recurrence generation plus bounded predecessor search",
+    "tricks": [
+      "Use tridiagonal determinant recurrence.",
+      "Reverse a subtractive Euclidean process.",
+      "Choose a short predecessor sequence with Fibonacci/golden-ratio guidance."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tridiagonal-fibonacci-predecessor",
+      "summary": "Find a suitable predecessor y, reverse the Euclidean subtraction sequence, and emit the tridiagonal matrix signs.",
+      "complexity": "O(50)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/tridiagonal-matrix",
+      "importance": "primary",
+      "evidence": "The hard solution is built around the determinant recurrence of tridiagonal matrices.",
+      "solution_variant": "tridiagonal-fibonacci-predecessor",
+      "description": "Use determinant recurrences or structural properties of tridiagonal matrices, whose nonzero entries lie on the main diagonal and adjacent diagonals.",
+      "parent": "math/linear-algebra",
+      "created_reason": "The tridiagonal determinant recurrence is a reusable construction pattern not captured by generic determinant or matrix tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/linear-algebra/determinant",
+      "importance": "primary",
+      "evidence": "The target value is controlled entirely through a determinant recurrence.",
+      "solution_variant": "tridiagonal-fibonacci-predecessor"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The recurrence is reversed by an Euclidean-style process on coprime adjacent determinant values.",
+      "solution_variant": "tridiagonal-fibonacci-predecessor"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution outputs an explicit bounded-size matrix from the recovered recurrence signs.",
+      "solution_variant": "tridiagonal-fibonacci-predecessor"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "secondary",
+      "evidence": "The constructed object is a sparse signed matrix; determinant/tridiagonal tags describe the main method.",
+      "solution_variant": "tridiagonal-fibonacci-predecessor"
+    }
+  ]
+}

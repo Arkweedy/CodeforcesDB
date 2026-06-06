@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "C1",
+    "title": "Maple and Tree Beauty (Easy Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/C1",
+      "notes": "Canonical Div.1 easy-version statement."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2139/problem/E1",
+      "notes": "Shared Div.2 entry; canonical problem is contest 2138C1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/en18",
+      "notes": "Official topic confirms reducing the tree condition to depth-layer counts and subset-sum DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2138C1",
+      "notes": "Luogu solution page used as a candidate source for cross-checking layer-count DP."
+    }
+  ],
+  "annotation": {
+    "summary": "Compute the best beauty value on a rooted tree in the easy version.",
+    "constraints": "The easy version allows ordinary O(n^2) subset-sum/knapsack over depth counts.",
+    "core_idea": "The tree condition reduces to deciding how many nodes can be selected from each depth layer. Count vertices by depth, then solve a subset-sum/knapsack over layer sizes to balance the two sides that determine the beauty.",
+    "complexity": "O(n^2) in the easy version",
+    "tricks": [
+      "Compress the tree into counts by depth.",
+      "Turn the tree beauty objective into subset-sum over layer sizes."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "depth-count-knapsack",
+      "summary": "DFS the tree to count nodes at each depth, then run ordinary knapsack/subset-sum over those counts.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "The main computation is subset-sum/knapsack over the depth-layer counts.",
+      "solution_variant": "depth-count-knapsack"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "importance": "primary",
+      "evidence": "The tree is reduced to a multiset of depth-layer sizes before DP.",
+      "solution_variant": "depth-count-knapsack"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The original structure is a rooted tree and depth layers are obtained from it.",
+      "solution_variant": "depth-count-knapsack"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "DFS/BFS is used to compute each node's depth.",
+      "solution_variant": "depth-count-knapsack"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "The solution is a dynamic programming reduction over layer counts.",
+      "solution_variant": "depth-count-knapsack"
+    }
+  ]
+}

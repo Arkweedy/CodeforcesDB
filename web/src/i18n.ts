@@ -342,6 +342,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/linear-algebra/linear-system": "线性方程组",
   "math/linear-algebra/matrix": "矩阵",
   "math/linear-algebra/matrix-exponentiation": "矩阵快速幂",
+  "math/linear-algebra/tridiagonal-matrix": "三对角矩阵",
   "math/linear-algebra/xor-basis": "异或线性基",
   "math/linear-algebra/xor-vector-space": "异或向量空间",
   "math/mex": "MEX",

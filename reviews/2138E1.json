@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2138,
+    "title": "Codeforces Round 1048 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2138,
+    "index": "E1",
+    "title": "Determinant Construction (Easy Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "math",
+      "matrices",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2138/problem/E1",
+      "notes": "Statement and easy-version sparse matrix constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/146808/diff/en28/en29",
+      "notes": "Official topic confirms the determinant-as-cycle-covers reduction and base-3 path-count construction."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/su19q68b",
+      "notes": "Luogu writeup used to cross-check the DAG path-count interpretation."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a small sparse {-1,0,1} matrix whose determinant equals a given x.",
+    "constraints": "x <= 1e7 and matrix size <= 80 in the easy version, allowing a logarithmic gadget construction.",
+    "core_idea": "Interpret the determinant expansion as weighted cycle covers. Convert a bounded-degree DAG with exactly x source-sink paths into a signed matrix so each path contributes one determinant term. The easy bound allows encoding x with a base-3 or incremental path-count gadget.",
+    "complexity": "O(log x) construction",
+    "tricks": [
+      "Interpret determinant terms as signed cycle covers.",
+      "Reduce cycle covers to counting source-sink paths in a DAG.",
+      "Encode x with a bounded-degree base-3 path-count gadget."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dag-path-count-base3",
+      "summary": "Build a DAG with exactly x source-sink paths and convert it to a sparse signed matrix whose determinant counts those paths.",
+      "complexity": "O(log x)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "tridiagonal-euclidean-recursion",
+      "summary": "Use a tridiagonal determinant recurrence and reverse an Euclidean-style sequence to realize x.",
+      "complexity": "O(80)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/determinant",
+      "importance": "primary",
+      "evidence": "The central reduction controls the value of a determinant through its expansion.",
+      "solution_variant": "dag-path-count-base3"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The output is an explicit sparse matrix built from graph/matrix gadgets.",
+      "solution_variant": "dag-path-count-base3"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "The determinant construction is reduced to building a DAG with exactly x source-sink paths.",
+      "solution_variant": "dag-path-count-base3"
+    },
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "secondary",
+      "evidence": "The easy construction encodes x using base-3 digits/path-count gadgets.",
+      "solution_variant": "dag-path-count-base3"
+    },
+    {
+      "tag": "math/linear-algebra/tridiagonal-matrix",
+      "importance": "secondary",
+      "evidence": "An alternate construction uses leading determinants of tridiagonal matrices.",
+      "solution_variant": "tridiagonal-euclidean-recursion",
+      "description": "Use determinant recurrences or structural properties of tridiagonal matrices, whose nonzero entries lie on the main diagonal and adjacent diagonals.",
+      "parent": "math/linear-algebra",
+      "created_reason": "The tridiagonal determinant recurrence is a reusable construction pattern not captured by generic determinant or matrix tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "The tridiagonal variant uses coprime adjacent determinant values in an Euclidean-style recurrence.",
+      "solution_variant": "tridiagonal-euclidean-recursion"
+    }
+  ]
+}
