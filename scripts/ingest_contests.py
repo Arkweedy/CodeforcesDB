@@ -44,6 +44,11 @@ def auto_commit_database(
     commit_paths([Path(db_path)], subject, body, script_root)
 
 
+def iter_contest_ids(start: int, end: int) -> range:
+    step = 1 if start <= end else -1
+    return range(start, end + step, step)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Ingest Codeforces contests into the local database.")
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH), help="SQLite database path.")
@@ -64,7 +69,7 @@ def main() -> None:
     duplicate_count = 0
     with connect(args.db) as conn:
         upsert_ingestion_range(conn, args.start, args.end)
-        for contest_id in range(min(args.start, args.end), max(args.start, args.end) + 1):
+        for contest_id in iter_contest_ids(args.start, args.end):
             try:
                 meta = find_contest_meta(contests, contest_id)
                 result = ingest_contest(
