@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "H",
+    "title": "Wonderful XOR Problem",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "dp",
+      "fft",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/H",
+      "notes": "Statement and constraints: count all XOR sums of choices from intervals [l_i,r_i] for m <= 18, total n <= 2e5, and total output domain size <= 2^18."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial derives XOR convolution via FWHT, transforms interval polynomials A_i, simplifies prefix sums using the lowbit of k, and reduces each factor to a two-term polynomial B_i."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9n3sy0zt",
+      "notes": "Luogu solution emphasizes the prefix-FWT cancellation by lowbit(k), the construction of G_{i,p}, and the idea of computing products of two-term set power series."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/7c955v1u",
+      "notes": "Independent Luogu writeup describes decomposing intervals by lowbit class and converting each interval contribution into a_i x^{p_i} + b_i x^{q_i}, then merging equal exponents and applying FWT."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19012861",
+      "notes": "Cnblogs solution cross-checks the closed form for prefix FWT sums, the product of (a_i + b_i x^{c_i}) factors, and an O(nm + m2^m) implementation."
+    }
+  ],
+  "annotation": {
+    "summary": "For every XOR value x, count the number of ways to choose one integer a_i from each interval [l_i,r_i] such that the XOR of all chosen values is x, then output the XOR of f_x * 2^x modulo 998244353 over all x.",
+    "constraints": "n up to 2e5, m <= 18, total n <= 2e5 and total 2^m <= 2^18. Directly building every interval's length-2^m transform would be too slow.",
+    "core_idea": "View each interval as a set polynomial A_i = x^{l_i}+...+x^{r_i}. The desired counts are the XOR convolution A_1 star A_2 star ... star A_n, so after XOR-FWT we need pointwise products of F(A_i). For a transform index k, F(A_i)[k] is a signed prefix difference f(k,r_i)-f(k,l_i-1), where f(k,r)=sum_{0<=j<=r}(-1)^{popcount(k&j)}. If p=lowbit(k), complete blocks of length 2^{p+1} cancel, so the prefix contribution depends only on the high part floor(k/2^{p+1}) and one lowbit-derived coefficient. For each fixed p, every interval contribution becomes the FWT of a two-term polynomial a_i x^{c_i}+b_i x^{d_i}. Normalize it to a_i+b_i x^{c_i xor d_i}, merge factors with the same exponent, compute the product by a FWHT/SOS-style transform, place the obtained pointwise values for all k with lowbit p, and finally inverse XOR-FWT to get all f_x.",
+    "complexity": "O(nm + m2^m) to O(nm^2 + m2^m) depending on the interval decomposition formulation; O(2^m) memory aside from input",
+    "tricks": [
+      "Turn XOR-sum counting into XOR convolution of interval set polynomials.",
+      "Use XOR-FWT so n-fold XOR convolution becomes pointwise multiplication.",
+      "Compute interval transform values through prefix differences instead of materializing each interval polynomial.",
+      "Exploit cancellation over full blocks determined by lowbit(k).",
+      "Reduce each fixed-lowbit contribution to products of two-term set polynomials."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lowbit-prefix-fwt-two-term-products",
+      "summary": "Enumerate the least significant set bit p of the transform index k. For every interval, derive the two coefficients and two high-part exponents describing F(A_i)[k]. Normalize and merge equal exponents, evaluate the product of all two-term factors with a FWHT-like pass, fill the transformed answer positions for this p, handle k=0 separately, then inverse FWT.",
+      "complexity": "O(nm + m2^m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dyadic-interval-decomposition",
+      "summary": "An equivalent derivation decomposes each [l_i,r_i] into aligned power-of-two blocks. For transform indices with fixed lowbit, only blocks small enough to avoid cancellation contribute, yielding at most two high-part exponents per interval and the same two-term polynomial product.",
+      "complexity": "O(nm^2 + m2^m) in a direct decomposition form",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/transform/fwt/xor-fwt",
+      "importance": "primary",
+      "evidence": "The central operation is an XOR convolution of interval set polynomials, solved by XOR-FWT/FWHT and inverse FWT.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products",
+      "description": "Use the XOR variant of the fast Walsh-Hadamard transform to turn XOR convolution into pointwise multiplication.",
+      "parent": "math/transform/fwt",
+      "created_reason": "The existing math/transform/fwt tag does not distinguish XOR convolution from AND/OR variants, while the repository already has a child tag for AND-FWT.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "primary",
+      "evidence": "The answer array is the n-fold XOR convolution of the interval indicator polynomials.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "math/generating-function",
+      "importance": "primary",
+      "evidence": "Each interval is represented as a set polynomial A_i, and the solution manipulates products of two-term set power series.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "algorithm/bitmask/lowbit",
+      "importance": "primary",
+      "evidence": "The simplification of each prefix FWT sum depends on the least significant set bit of the transform index k.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Full blocks cancel in pairs because the chosen lowbit contributes equal positive and negative signs.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "The interval transform value is computed as a prefix contribution F([0,r]) minus F([0,l-1]).",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "All transform indices and signs are controlled by bitwise intersections and popcount parity.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The target values count sequences chosen from intervals under a global XOR condition.",
+      "solution_variant": "lowbit-prefix-fwt-two-term-products"
+    }
+  ]
+}
