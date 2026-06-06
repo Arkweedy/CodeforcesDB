@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2097,
+    "title": "Codeforces Round 1021 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2097,
+    "index": "B",
+    "title": "Baggage Claim",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "graphs",
+      "implementation",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2097/problem/B",
+      "notes": "Statement and constraints: restore missing even-indexed cells of a simple grid path."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial for Codeforces Round 1021; used to confirm the graph component counting cases."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tev0b5ax",
+      "notes": "Luogu writeup cross-checks the candidate-cell graph and component formulas."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1021",
+      "notes": "Independent writeup summarizes the reduction to choosing endpoints of graph edges with per-vertex capacity."
+    }
+  ],
+  "annotation": {
+    "summary": "Count ways to fill the missing even cells of a simple grid path when all odd-indexed cells are known.",
+    "constraints": "Sum n*m <= 1000000; the construction graph over candidate middle cells must be processed linearly.",
+    "core_idea": "For each pair of consecutive known odd cells, their Manhattan distance must be exactly 2. If they are aligned, the missing middle cell is fixed and cannot be reused. If they are diagonal, there are exactly two candidate middle cells; create an edge between those candidate cells and choose exactly one endpoint. Reusing a cell is forbidden, so each candidate vertex can be selected at most once. Equivalently, orient each edge toward the selected endpoint and require indegree at most 1, with already fixed vertices blocked. Each connected component is then counted only by its vertex count, edge count, and number of blocked vertices: tree components give V choices if unblocked and 1 if one vertex is blocked; unicyclic components give 2 if unblocked; all overfull or overblocked cases are impossible.",
+    "complexity": "O(n*m + k) per test case",
+    "tricks": [
+      "Reduce each unknown middle cell to either one forced candidate or two diagonal candidates.",
+      "Model two-choice segments as edges between candidate cells.",
+      "Count each component by whether it is a tree or unicyclic and by blocked vertices."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "candidate-cell-pseudoforest-counting",
+      "summary": "Build the candidate-cell graph, mark forced cells as blocked, DFS each component, and multiply the tree/unicyclic component contribution.",
+      "complexity": "O(n*m + k)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "edge-orientation-view",
+      "summary": "View each two-choice segment as orienting an edge toward the chosen cell and count orientations with indegree at most one in each component.",
+      "complexity": "O(n*m + k)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/edge-orientation",
+      "importance": "primary",
+      "evidence": "Choosing one of two candidate middle cells is equivalent to orienting an edge toward the chosen endpoint under an indegree constraint.",
+      "solution_variant": "edge-orientation-view"
+    },
+    {
+      "tag": "graph/pseudoforest",
+      "importance": "primary",
+      "evidence": "Each connected component is valid only in the tree or unicyclic cases; components with more edges than vertices are rejected.",
+      "solution_variant": "candidate-cell-pseudoforest-counting",
+      "description": "A graph whose connected components contain at most one cycle, commonly handled by separate tree and unicyclic component cases.",
+      "parent": "graph",
+      "created_reason": "This component-counting pattern is more specific than generic graph connectivity or tree tags and is central to this solution.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The answer is a product of component-local orientation/choice counts modulo 1e9+7.",
+      "solution_variant": "candidate-cell-pseudoforest-counting"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "DFS is used to collect vertex count, edge count, and blocked count for each component.",
+      "solution_variant": "candidate-cell-pseudoforest-counting"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The component formula splits into tree, unicyclic, overfull, and blocked cases.",
+      "solution_variant": "candidate-cell-pseudoforest-counting"
+    }
+  ]
+}
