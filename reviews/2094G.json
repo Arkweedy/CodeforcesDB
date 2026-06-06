@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2094,
+    "title": "Codeforces Round 1017 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2094,
+    "index": "G",
+    "title": "Chimpanzini Bananini",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2094/problem/G",
+      "notes": "Statement and constraints: maintain an initially empty array under rotate-last-to-front, reverse, and append operations, outputting sum a_i*i after every operation; total q <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141796",
+      "notes": "Official editorial source for Codeforces Round 1017; used to confirm the intended O(1) maintenance of the weighted sum under the three operations."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/01ejor6r",
+      "notes": "Luogu solution derives the O(1) formulas for cyclic shift, reverse, and append using ans, size, and total sum."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/hvpdvz25",
+      "notes": "Independent Luogu solution cross-checks the deque plus reverse-flag implementation and the formula ans = (n+1)*sum - ans after reversal."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain a dynamic array under three persistent operations and output the weighted index sum sum a_i*i after each operation.",
+    "constraints": "The total number of operations is <= 2e5, so every operation must be O(1) or amortized O(1). Values can make answers require 64-bit integers.",
+    "core_idea": "Keep the current length n, total element sum S, and weighted sum W=sum a_i*i. Store elements in a deque and maintain a boolean reversed orientation. Append inserts at the logical back, which is deque back/front depending on orientation, and updates W += k*(n+1), S += k. Reversal maps every position i to n+1-i, so the new weighted sum is (n+1)*S - W; toggling the orientation flag avoids physically reversing. A cyclic shift moving the logical last element x to the logical front changes x's coefficient from n to 1 while every other element shifts one position right, so W becomes W - x*n + S; update the deque ends according to the orientation flag.",
+    "complexity": "O(q) time and O(q) memory per test case",
+    "tricks": [
+      "Maintain the weighted sum directly instead of rebuilding the array.",
+      "Use the identity reverse(W) = (n+1)*sum - W.",
+      "Use a direction flag so reverse only swaps the meaning of deque ends.",
+      "Compute the rotate contribution delta from the moved last element."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "deque-with-orientation-flag",
+      "summary": "Represent the logical array by a deque plus a reversed flag. Each operation updates the deque ends, total sum, length, and weighted sum using closed-form formulas.",
+      "complexity": "O(q)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/deque",
+      "importance": "primary",
+      "evidence": "The implementation must support pushing and popping from both logical ends while the orientation may flip after reversals.",
+      "solution_variant": "deque-with-orientation-flag",
+      "description": "Use a double-ended queue or equivalent structure where both ends are accessed or updated as part of the main algorithm.",
+      "parent": "data-structure",
+      "created_reason": "The existing data-structure/queue tag does not capture algorithms that require symmetric access to both ends.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The decisive idea is to maintain the weighted sum W and update it by formulas for append, reverse, and rotate.",
+      "solution_variant": "deque-with-orientation-flag"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "secondary",
+      "evidence": "The reversal update uses the identity W' = (n+1)*sum - W.",
+      "solution_variant": "deque-with-orientation-flag"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Careful handling of logical front/back under the reverse flag is the main source of implementation mistakes.",
+      "solution_variant": "deque-with-orientation-flag"
+    }
+  ]
+}

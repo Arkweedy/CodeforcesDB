@@ -283,6 +283,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm/two-pointers": "双指针",
   "paradigm/communication": "通信",
   "data-structure": "数据结构",
+  "data-structure/deque": "双端队列",
   "data-structure/difference-array": "差分数组",
   "data-structure/dsu": "并查集",
   "data-structure/dsu/next-pointer": "next 指针并查集",
