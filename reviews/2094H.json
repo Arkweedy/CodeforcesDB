@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2094,
+    "title": "Codeforces Round 1017 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2094,
+    "index": "H",
+    "title": "La Vaca Saturno Saturnita",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2094/problem/H",
+      "notes": "Statement and constraints: simulate f(k,a,l,r) over many range queries, with a_i and k bounded by 1e5, total n <= 1e5 and total q <= 5e4."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141796",
+      "notes": "Official editorial notes that k changes only at positions where a[i] is a divisor of current k, and each divisor value can cause at most one effective change."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1017",
+      "notes": "Maspy writeup cross-checks the direct occurrence-vector approach: enumerate divisors of k and binary-search positions of each divisor to find the next division point."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/bluewindde/p/18826741",
+      "notes": "Chinese writeup gives a threshold/sqrt-decomposition variant with next-position tables for small divisors and occurrence vectors for large divisors."
+    }
+  ],
+  "annotation": {
+    "summary": "For each query (k,l,r), run the given loop over a[l..r], repeatedly dividing k by a[i] while possible and adding the current k after every index, but answer all queries efficiently.",
+    "constraints": "a_i,k <= 1e5, total n <= 1e5, total q <= 5e4. A direct O(length) simulation per query is too slow.",
+    "core_idea": "The value of k only changes at indices i where a[i] divides the current k. Between two such indices, k is constant, so the contribution is k times the length of that skipped segment. Precompute all divisors up to 1e5 and store the sorted positions of each value appearing in the array. For a query, at current position x enumerate all divisors d of the current k, lower_bound in pos[d] to find the first occurrence at or after x, and take the minimum such position y. Add k*(y-x). If y is inside r, divide k by a[y] until it is no longer divisible and continue from y; otherwise finish by adding the tail. The loop is short because every effective step strictly decreases k by at least a factor 2 after removing all copies of the divisor.",
+    "complexity": "About O(changes * tau(k) * log n) per query with changes <= O(log k); preprocessing divisors costs O(V log V) for V=1e5",
+    "tricks": [
+      "Skip maximal stretches where k does not change.",
+      "Find the next changing position by checking occurrence lists of current divisors.",
+      "Remove all copies of a divisor at the chosen position at once.",
+      "Use the bound on repeated divisions of k to keep the simulation short."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "divisor-occurrence-jump-simulation",
+      "summary": "Precompute divisor lists and positions for every array value. During a query, enumerate divisors of current k and binary-search their next occurrence to jump directly to the next index that can change k.",
+      "complexity": "O(changes * tau(k) * log n) per query",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "small-large-divisor-threshold",
+      "summary": "For smaller divisors keep nxt[position][d], and for larger divisors keep position lists over multiples. This reduces binary searches and is a more optimized implementation variant.",
+      "complexity": "O(nB + q log V (B + log n)) depending on threshold B",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The only positions that matter for the simulation are those whose a[i] divides the current k.",
+      "solution_variant": "divisor-occurrence-jump-simulation"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "primary",
+      "evidence": "Efficient queries require precomputing the divisor list of every possible k up to 1e5.",
+      "solution_variant": "divisor-occurrence-jump-simulation"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "For each divisor of current k, the next candidate index is found by lower_bound in the sorted occurrence list of that divisor.",
+      "solution_variant": "divisor-occurrence-jump-simulation"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The algorithm still brute-forces all divisors of the current k at each effective change, relying on small value bounds.",
+      "solution_variant": "divisor-occurrence-jump-simulation"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "secondary",
+      "evidence": "An optimized variant splits small and large divisors, using next-position tables for small values and lists for large values.",
+      "solution_variant": "small-large-divisor-threshold"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "secondary",
+      "evidence": "The query loop aggregates whole unchanged segments as k*(length) instead of simulating every index.",
+      "solution_variant": "divisor-occurrence-jump-simulation"
+    }
+  ]
+}
