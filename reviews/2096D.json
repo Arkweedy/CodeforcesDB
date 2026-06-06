@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "D",
+    "title": "Wonderful Lightbulbs",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/D",
+      "notes": "Statement and constraints: recover one possible initially on bulb after repeatedly toggling a fixed four-cell shape on an infinite integer grid."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial confirms the parity invariants on vertical lines x=c and diagonals x+y=c, whose odd-count intersection gives the treasure."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0amykd7l",
+      "notes": "Luogu solution provides an additional invariant-based explanation for the toggling operation."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the final set of on bulbs after toggling a fixed four-cell pattern any number of times from one initial on bulb, output any possible initial coordinate.",
+    "constraints": "Sum n <= 200000 and coordinates are large; the solution must be linear or near-linear in the number of on bulbs.",
+    "core_idea": "Every operation toggles two bulbs on vertical line x=u and two bulbs on vertical line x=u+1, so the parity of the number of on bulbs on each vertical line is invariant except for the initial bulb's x-line. Thus exactly one x-coordinate has odd count, and it is s. The same operation toggles two bulbs on diagonal x+y=u+v and two bulbs on diagonal x+y=u+v+1, so exactly one x+y value has odd count, and it is s+t. Count final bulbs by x and by x+y, find the odd keys, and output (s, (s+t)-s).",
+    "complexity": "O(n log n) with maps or O(n) expected with hash maps",
+    "tricks": [
+      "Use parity invariants over families of lines.",
+      "Group final points by x-coordinate and by x+y diagonal.",
+      "Recover the point as the intersection of the odd vertical line and odd diagonal."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "odd-line-intersection",
+      "summary": "Maintain parity counts for every x and every x+y among lit bulbs. The guaranteed valid input ensures a unique odd x-line and odd diagonal; their intersection is a valid original bulb.",
+      "complexity": "O(n log n) or O(n) expected",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The solution depends on odd/even counts of lit bulbs on vertical lines and diagonals.",
+      "solution_variant": "odd-line-intersection"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "Each toggle operation preserves parity on every vertical-line family and every x+y diagonal family except for the original single bulb contribution.",
+      "solution_variant": "odd-line-intersection"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "primary",
+      "evidence": "Counting bulbs by x-coordinate identifies the unique vertical line containing the initial bulb.",
+      "solution_variant": "odd-line-intersection"
+    },
+    {
+      "tag": "trick/group-by-diagonal",
+      "importance": "primary",
+      "evidence": "Counting bulbs by x+y diagonal identifies the diagonal containing the initial bulb.",
+      "solution_variant": "odd-line-intersection"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The output is constructed directly as the intersection of two invariant-selected line families.",
+      "solution_variant": "odd-line-intersection"
+    }
+  ]
+}
