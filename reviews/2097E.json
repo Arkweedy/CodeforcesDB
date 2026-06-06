@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2097,
+    "title": "Codeforces Round 1021 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2097,
+    "index": "E",
+    "title": "Clearing the Snowdrift",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2097/problem/E",
+      "notes": "Statement and constraints: minimize operations clearing positive snow heights when one operation decreases all maximum-height cells inside a segment of length at most d."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial page for Codeforces Round 1021; used as contest-level editorial reference, though the rendered tutorial section is sparse in the fetched page."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1021",
+      "notes": "Independent writeup confirms the threshold activation view, greedy interval-covering interpretation, directed jump graph, and link-cut tree update approach."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/rvnbfh50",
+      "notes": "Luogu solution cross-checks both the LCT dynamic greedy-jump implementation and the segment-tree merge/split batching approach."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Chinese writeup confirms the reduction to maintaining the greedy number of length-d intervals while active maximum positions change."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/NanguX/p/19489101",
+      "notes": "Short cross-check of the LCT solution: greedily jump by d when a currently active maximum position is reached and maintain the path sum."
+    }
+  ],
+  "annotation": {
+    "summary": "Given snow heights a_i and segment length limit d, find the minimum number of operations where each operation chooses a segment and decreases all currently maximum cells inside it by one.",
+    "constraints": "Sum n <= 500000 and heights up to 1e9; the solution must avoid simulating heights and must maintain the answer across O(n) threshold changes.",
+    "core_idea": "Process snow levels by thresholds. To lower all cells with height at least h by one layer, the chosen operations only need to cover the active positions whose heights are at least h, and the minimum number of segments of length d is obtained by the leftmost greedy scan. The answer is the sum over adjacent height gaps of this greedy cover count. As positions become active in decreasing height order, maintain the greedy scan as a functional jump structure: inactive i points to i+1 with weight 0, active i points to min(i+d,n+1) with weight 1, and the current cover count is the path weight from 1 to n+1. Activating a position changes one parent edge, which can be handled by a link-cut tree. A second solution batches all greedy scans and maintains sets of pointer indices with dynamic segment-tree merge/split.",
+    "complexity": "O(n log n) per test case after sorting/ranking heights",
+    "tricks": [
+      "Decompose the objective by height thresholds instead of simulating snow removal.",
+      "Use the standard leftmost greedy for minimum interval cover of active positions by length-d intervals.",
+      "Represent the greedy pointer movement as a dynamic functional tree path-sum query.",
+      "Multiply each maintained cover count by the gap to the next lower distinct height."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lct-dynamic-greedy-jump",
+      "summary": "Sort positions by decreasing height. Maintain a functional graph on positions 1..n+1 where an inactive position jumps to i+1 with weight 0 and an active position jumps to min(i+d,n+1) with weight 1. The greedy cover count for the current active set is the weighted path from 1 to n+1. Each activation changes one outgoing edge, so link/cut and path-sum queries give O(log n) updates.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "segment-tree-merge-split-batching",
+      "summary": "Consider all possible greedy scans together, grouping pointer indices by their current position. Sweeping positions from left to right merges groups from previous positions and splits out a suffix of pointer indices that must jump to p+d; dynamic segment trees over pointer indices support merge, split, and weighted contribution updates.",
+      "complexity": "O(n log n) amortized",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For a fixed active threshold set, the minimum number of operations is exactly the leftmost greedy interval cover by segments of length d.",
+      "solution_variant": "lct-dynamic-greedy-jump"
+    },
+    {
+      "tag": "data-structure/link-cut-tree",
+      "importance": "primary",
+      "evidence": "The main implementation changes one parent edge per newly active position and queries the weighted path from 1 to n+1 in a dynamic tree.",
+      "solution_variant": "lct-dynamic-greedy-jump",
+      "description": "Maintain a dynamic forest under link/cut operations with path aggregate queries, typically using splay-based Link-Cut Trees.",
+      "parent": "data-structure",
+      "created_reason": "Existing data-structure tags include segment trees and balanced trees but do not identify dynamic-tree link/cut path-aggregate problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "The total answer is accumulated over distinct height gaps, each weighted by the active-set cover count at that threshold.",
+      "solution_variant": "lct-dynamic-greedy-jump"
+    },
+    {
+      "tag": "data-structure/segment-tree/merge-split",
+      "importance": "primary",
+      "evidence": "The alternative batched solution maintains pointer-index sets with dynamic segment-tree merge and split operations.",
+      "solution_variant": "segment-tree-merge-split-batching",
+      "description": "Use dynamic segment trees that can merge two trees and split out a prefix/suffix or range of keys while maintaining aggregate values.",
+      "parent": "data-structure/segment-tree",
+      "created_reason": "Plain segment-tree tagging is too coarse for problems whose core data structure operation is merge/split of dynamically allocated segment trees.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "Positions are ordered by height and processed as offline threshold activations rather than online updates from the input.",
+      "solution_variant": "lct-dynamic-greedy-jump"
+    }
+  ]
+}
