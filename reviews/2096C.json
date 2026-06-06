@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "C",
+    "title": "Wonderful City",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/C",
+      "notes": "Statement and constraints: choose each row/column increment at most once so that no side-adjacent grid cells have equal final heights."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial confirms that row operations only affect vertical equalities, column operations only affect horizontal equalities, and each dimension is solved by 2-state DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/x0miw8em",
+      "notes": "Luogu solution cross-checks the independence of row and column decisions and the dpC/dpR two-state formulation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/zhr0102/p/18858287",
+      "notes": "Chinese writeup verifies the local transition rules based on differences -1, 0, and 1 between adjacent rows or columns."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose a subset of rows and columns to increase by one at minimum cost so that every horizontally or vertically adjacent pair has different final heights.",
+    "constraints": "Sum n <= 1000; an O(n^2) check of all adjacent row/column pairs with constant-size DP states is sufficient.",
+    "core_idea": "Horizontal adjacent differences are unaffected by row operations, and vertical adjacent differences are unaffected by column operations. Therefore the row-worker decisions and column-worker decisions are two independent one-dimensional problems. For rows, let x_i in {0,1} indicate whether row i is incremented. A transition from x_{i-1}=y to x_i=x is allowed only if h_{i-1,j}+y != h_{i,j}+x for every column j; the transition cost adds a_i when x=1. Run this two-state DP over rows, run the same DP over columns with b_j and transposed adjacency, and add the two minima. If either dimension is impossible, return -1.",
+    "complexity": "O(n^2) time and O(n) or O(1) DP memory per test case",
+    "tricks": [
+      "Separate horizontal constraints from vertical constraints.",
+      "Model each row or column decision as a binary variable.",
+      "Check each adjacent row/column transition by scanning the whole opposite dimension."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "row-column-two-state-dp",
+      "summary": "Solve rows and columns independently. For each adjacent pair, test the four choices of previous/current increment bit; if all cells in that adjacent pair remain unequal, relax the two-state DP with the current worker cost.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "Each one-dimensional subproblem has only two states per row or column: incremented or not incremented.",
+      "solution_variant": "row-column-two-state-dp"
+    },
+    {
+      "tag": "trick/dimension-separation",
+      "importance": "primary",
+      "evidence": "The key observation is that horizontal constraints depend only on column increments and vertical constraints depend only on row increments, so the grid splits into two independent DPs.",
+      "solution_variant": "row-column-two-state-dp",
+      "description": "Separate a multidimensional constraint system into independent lower-dimensional subproblems because each operation class affects only one family of constraints.",
+      "parent": "trick",
+      "created_reason": "Existing DP tags describe the transition form but not the row/column independence observation that makes the problem simple.",
+      "status": "candidate"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The implementation must carefully check the four binary transitions for each adjacent row or column pair.",
+      "solution_variant": "row-column-two-state-dp"
+    }
+  ]
+}

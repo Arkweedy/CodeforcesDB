@@ -397,6 +397,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/convert-to-prefix": "转为前缀",
   "trick/cycle-detection": "判环",
   "trick/decision-tree": "决策树",
+  "trick/dimension-separation": "维度分离",
   "trick/difference-transform": "差分转化",
   "trick/distance-signature": "距离签名",
   "trick/dfs-order-rectangle": "DFS 序矩形化",
