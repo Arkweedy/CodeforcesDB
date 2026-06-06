@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "F",
+    "title": "Wonderful Impostors",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/F",
+      "notes": "Statement and constraints: answer whether a contiguous range of interval statements can all be simultaneously true; total n, m, q <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial source for the round; used to confirm the monotone satisfiable-window approach and the required interval data structure direction."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.acwing.com/solution/content/277870/",
+      "notes": "Chinese writeup explicitly describes using two pointers, range-add/range-min segment tree, and endpoint-indexed multisets to detect when a type-1 interval becomes fully covered."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Pizza1123/p/18847824",
+      "notes": "Independent implementation-oriented writeup cross-checks the segment-tree operations for finding uncovered boundaries and maintaining type-1 intervals."
+    }
+  ],
+  "annotation": {
+    "summary": "Given interval statements saying either every viewer in [l,r] is a crewmate or at least one viewer in [l,r] is an impostor, answer whether each queried contiguous block of statements is jointly satisfiable.",
+    "constraints": "The sums of n, m, and q over test cases are each <= 2e5, so each statement can only enter and leave the maintained window O(1) times with logarithmic data-structure work.",
+    "core_idea": "For each right endpoint r, compute the minimum left endpoint mn[r] such that statements mn[r]..r are satisfiable. Satisfiability is monotone under deleting statements, so mn[r] can be maintained with a sliding window over statement indices. In a current window, type-0 statements add coverage over viewer positions forced to be crewmates. A type-1 statement is contradictory exactly when its whole interval has positive coverage, leaving no possible impostor. Maintain coverage counts with a lazy segment tree supporting range add and range minimum / nearest-zero queries, and maintain active type-1 intervals by endpoint so that after adding or removing a type-0 interval the algorithm can detect whether any type-1 interval lies inside the newly fully covered component. Then query [l,r] is YES iff l >= mn[r].",
+    "complexity": "O((n + m + q) log n) amortized per test file, with logarithmic factors from segment tree and ordered sets",
+    "tricks": [
+      "Use monotonicity of satisfiable statement windows to reduce range queries to mn[r].",
+      "Convert type-0 statements into coverage counts over positions.",
+      "A type-1 statement fails exactly when its interval minimum coverage is positive.",
+      "When a new type-0 interval merges covered components, check endpoint-indexed active type-1 intervals contained in the covered component."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sliding-window-covered-components",
+      "summary": "Sweep the right endpoint over statements. Insert the new statement into the active window; while a contradiction exists, delete the leftmost statement and advance the left endpoint. The data structure maintains type-0 coverage over viewer positions and active type-1 intervals, so contradictions can be detected after each update without scanning all statements.",
+      "complexity": "O((n + m + q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "range-min-validation-view",
+      "summary": "For a fixed set of statements, add +1 to every type-0 interval. A type-1 interval is valid iff the minimum coverage on its range is zero. This simple characterization explains the segment-tree state, but applying it independently to every query would be too slow.",
+      "complexity": "O((m + q) log n) per independent window if used naively",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "The main algorithm computes the minimal satisfiable left endpoint for every right endpoint by moving each statement into and out of one sliding window.",
+      "solution_variant": "sliding-window-covered-components"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "primary",
+      "evidence": "The core decision problem is whether interval constraints of type all-crewmate and at-least-one-impostor can be simultaneously satisfied.",
+      "solution_variant": "sliding-window-covered-components"
+    },
+    {
+      "tag": "data-structure/segment-tree/range-add-min",
+      "importance": "primary",
+      "evidence": "The active window needs range add for type-0 intervals and range minimum / nearest uncovered-position queries to test whether type-1 intervals are fully covered.",
+      "solution_variant": "sliding-window-covered-components",
+      "description": "A lazy segment tree pattern where intervals receive additive updates and queries ask for the minimum value on a range or positions/components attaining the minimum.",
+      "parent": "data-structure/segment-tree",
+      "created_reason": "The existing segment-tree tag is too broad for problems whose decisive data structure is range-add plus minimum/zero-component maintenance.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/lazy-propagation",
+      "importance": "secondary",
+      "evidence": "Range coverage updates must be pushed lazily to keep each type-0 insertion/deletion logarithmic.",
+      "solution_variant": "sliding-window-covered-components"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "One standard implementation keeps active type-1 intervals in endpoint-indexed sets/multisets to find whether a fully covered component contains such an interval.",
+      "solution_variant": "sliding-window-covered-components"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "If a statement window is satisfiable, deleting statements preserves satisfiability; this monotonicity justifies the mn[r] threshold.",
+      "solution_variant": "sliding-window-covered-components"
+    }
+  ]
+}

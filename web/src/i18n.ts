@@ -305,6 +305,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "data-structure/queue": "队列",
   "data-structure/segment-tree": "线段树",
   "data-structure/segment-tree/merge-split": "线段树合并分裂",
+  "data-structure/segment-tree/range-add-min": "线段树区间加最小值",
   "data-structure/sparse-table": "Sparse Table",
   "data-structure/stack": "栈",
   "data-structure/wavelet-matrix": "小波矩阵",
