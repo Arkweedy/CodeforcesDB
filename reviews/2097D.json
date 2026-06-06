@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2097,
+    "title": "Codeforces Round 1021 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2097,
+    "index": "D",
+    "title": "Homework",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "math",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2097/problem/D",
+      "notes": "Statement and constraints: decide reachability between two binary strings under recursive half-addition operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial for Codeforces Round 1021; used to confirm the row-operation and bitset linear-basis solution."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1021",
+      "notes": "Independent writeup cross-checks the block matrix interpretation and row-basis equivalence."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/zsj6315/p/18929263",
+      "notes": "Chinese writeup confirms decomposing n=m*2^k and comparing the linear bases of the 2^k rows of length m."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine whether one binary string can be transformed into another by recursively adding one half of a block to the other half modulo 2.",
+    "constraints": "Sum n <= 1000000; the solution needs near-linear or bitset-optimized linear algebra over GF(2).",
+    "core_idea": "Write n = 2^k * m with m odd and view the string as a matrix with 2^k rows and m columns. The allowed operation on a block corresponds to adding one row-block to another inside a recursive binary decomposition. Using swaps built from three additions and induction over the decomposition, these operations generate arbitrary elementary row operations among the 2^k rows. Therefore s can become t if and only if the row spaces of the two matrices over GF(2) are equal. Compute a canonical XOR linear basis or row-reduced form for both matrices and compare.",
+    "complexity": "O(2^k * min(2^k,m) * m / word_size) with bitset Gaussian elimination",
+    "tricks": [
+      "Factor n into an odd block length times a power of two.",
+      "Reinterpret recursive half operations as elementary row operations.",
+      "Compare row spaces via a canonical XOR basis."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "gf2-row-space-comparison",
+      "summary": "Split each string into 2^k rows of length m, compute a bitset Gaussian-elimination basis for both row sets, and compare canonical bases.",
+      "complexity": "O(2^k * min(2^k,m) * m / w)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/xor-vector-space",
+      "importance": "primary",
+      "evidence": "Reachability is exactly equality of the GF(2) row spaces spanned by the block rows of s and t.",
+      "solution_variant": "gf2-row-space-comparison"
+    },
+    {
+      "tag": "math/linear-algebra/xor-basis",
+      "importance": "primary",
+      "evidence": "The implementation computes canonical XOR bases of the row vectors and compares them.",
+      "solution_variant": "gf2-row-space-comparison"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "primary",
+      "evidence": "The decisive representation is a binary matrix whose rows can undergo elementary row operations.",
+      "solution_variant": "gf2-row-space-comparison"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Rows are stored as bitsets/bitmasks to make Gaussian elimination fast enough.",
+      "solution_variant": "gf2-row-space-comparison"
+    }
+  ]
+}
