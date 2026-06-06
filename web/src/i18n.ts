@@ -318,6 +318,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/combinatorics/binomial-basis": "二项式基",
   "math/combinatorics/binomial-identity": "二项式恒等式",
   "math/combinatorics/catalan": "Catalan 数",
+  "math/combinatorics/coding-theory": "编码理论",
   "math/combinatorics/eulerian-number": "欧拉数",
   "math/combinatorics/multinomial": "多项式系数",
   "math/combinatorics/permutation-counting": "排列计数",

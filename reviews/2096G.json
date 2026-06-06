@@ -1,0 +1,118 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "G",
+    "title": "Wonderful Guessing Game",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/G",
+      "notes": "Statement and constraints: choose all queries before receiving a response string, exactly one query is ignored, and the strategy must use the minimum possible number of queries for n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial models queries as rows of a response table over {-1,0,1}, proves the no-erasure ternary lower bound, and adds one checksum coordinate modulo 3 to recover an ignored answer."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/unigravity/p/18873992",
+      "notes": "Chinese solution explicitly reformulates the task as choosing ternary codewords with pairwise Hamming distance at least 2 and uses digit-sum modulo 3 as the extra coordinate."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/TBSF-0207/p/18884959",
+      "notes": "Expository writeup cross-checks the ternary decision-tree construction and the layer-wise query generation where L/R groups must have equal size."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct an optimal non-adaptive strategy to identify a hidden number in [1,n] when every query splits chosen numbers into equal L/R halves, N means outside the query, and exactly one response position is erased as '?'.",
+    "constraints": "n <= 2e5 per test with total n <= 2e5, q must be minimal and is guaranteed <= 20, so the construction must generate O(n log n) table entries.",
+    "core_idea": "Represent the q queries as rows of a table and each number as a column over the alphabet {L,R,N}, encoded as {1,2,0} or {-1,1,0}. A valid query row needs equally many L and R entries. With no erased query, q >= ceil(log_3 n) is necessary and can be achieved by assigning distinct ternary columns while pairing each column with its negation so every row remains balanced. With one erased response, any two columns that differ in only one coordinate cannot be distinguished, so codewords need pairwise Hamming distance at least 2. Taking the ceil(log_3 n)-coordinate ternary decision-tree code and appending one extra coordinate equal to the negative digit sum modulo 3 gives every codeword a zero total sum modulo 3. Then any single missing coordinate is recovered from the remaining coordinates, and the original column uniquely identifies the number. Output one query per coordinate by putting all value-1 numbers in the first half and all value-2 numbers in the second half.",
+    "complexity": "O(n log n) time and O(n log n) memory, with q = ceil(log_3 n) + 1 <= 20",
+    "tricks": [
+      "View all non-adaptive queries as a response-code table.",
+      "The ignored query is a one-coordinate erasure, so columns must be distinguishable after deleting any one coordinate.",
+      "Append a modulo-3 checksum coordinate to recover the erased ternary digit.",
+      "Generate balanced query rows by assigning equal-size L/R groups in each ternary layer."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ternary-code-with-checksum",
+      "summary": "Build a ternary decision-tree labeling of the n numbers using d = ceil(log_3 n) digits while keeping each digit layer balanced between labels 1 and 2. Add digit d+1 as the modulo-3 checksum of the first d digits. After the judge returns one erased response, recover the missing digit from the checksum and scan for the matching column.",
+      "complexity": "O(n d)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "coding-theory-formulation",
+      "summary": "Equivalently, choose n ternary codewords of length q with minimum Hamming distance at least 2 and balanced coordinates. The checksum construction gives a single-erasure-correcting ternary code of length ceil(log_3 n)+1.",
+      "complexity": "Conceptual formulation; implemented by the ternary-code construction",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/information-encoding",
+      "importance": "primary",
+      "evidence": "The solution's central representation is a table whose columns encode the full response signature of every possible hidden number.",
+      "solution_variant": "ternary-code-with-checksum"
+    },
+    {
+      "tag": "math/combinatorics/coding-theory",
+      "importance": "primary",
+      "evidence": "The one-ignored-query condition becomes a ternary code requirement: columns must remain distinguishable after deleting any one coordinate, i.e. have Hamming distance at least 2.",
+      "solution_variant": "coding-theory-formulation",
+      "description": "Use codewords, Hamming distance, erasures, checksums, or related coding-theory ideas as the main combinatorial model.",
+      "parent": "math/combinatorics",
+      "created_reason": "Existing information-encoding and decision-tree tags do not distinguish problems whose core proof is a coding-theory distance or erasure argument.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is to explicitly output an optimal set of queries and a deterministic decoding procedure.",
+      "solution_variant": "ternary-code-with-checksum"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "Although all queries are printed before reading the responses, the problem is an interactive guessing protocol and the answer is decoded from judge feedback.",
+      "solution_variant": "ternary-code-with-checksum"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "The first d coordinates are generated as a ternary decision tree that splits candidates into L, R, and N branches.",
+      "solution_variant": "ternary-code-with-checksum"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "The extra coordinate is chosen so that every codeword's digit sum is 0 modulo 3, allowing recovery of the erased digit.",
+      "solution_variant": "ternary-code-with-checksum"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "Implementations may store ternary digits in arrays or masks, but bitmask operations are not the main algorithmic idea.",
+      "solution_variant": "ternary-code-with-checksum"
+    }
+  ]
+}
