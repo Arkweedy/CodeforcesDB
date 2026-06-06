@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2094,
+    "title": "Codeforces Round 1017 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2094,
+    "index": "F",
+    "title": "Trulimero Trulicina",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2094/problem/F",
+      "notes": "Statement and constraints: fill an n by m grid with numbers 1..k equally often, with no equal edge-adjacent cells; k >= 2 and k divides n*m."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141796",
+      "notes": "Official editorial source for Codeforces Round 1017; used to confirm the constructive coloring approach."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1017",
+      "notes": "Maspy writeup gives the key construction: take a prime factor p of k, use a_{i+j}=(i+j) mod p, then replace each residue x by x, x+p, x+2p, ... to distribute all k labels."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct an n by m grid using labels 1..k equally often so that edge-adjacent cells never have the same label.",
+    "constraints": "2 <= n*m <= 2e5, 2 <= k <= n*m, and k divides n*m. The total grid area over test cases is <= 2e5.",
+    "core_idea": "Pick a prime factor p of k. Since k divides n*m, p divides n or m. Color the grid by residue (i+j) mod p. If p divides m, every row contains each residue exactly m/p times; if p divides n, every column does, so each residue class has exactly n*m/p cells. Adjacent cells change the residue by 1 mod p, hence they cannot receive labels from the same residue class. Split labels into p groups by their value modulo p: r, r+p, r+2p, ... . While scanning the cells of residue r, cycle through that group's labels evenly. Because n*m/k is an integer, each of the k labels appears exactly n*m/k times.",
+    "complexity": "O(nm) time and O(k) auxiliary counters",
+    "tricks": [
+      "Use a prime factor of k so it must divide at least one grid dimension.",
+      "Color cells by diagonal residue (i+j) mod p to separate adjacent cells.",
+      "Distribute labels inside each residue class by cycling values congruent modulo p."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prime-factor-residue-grid",
+      "summary": "Choose a prime p dividing k. Use p residue classes on the grid by (i+j) mod p, then assign labels with the same residue modulo p cyclically inside each class.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task only asks for any valid grid, and the solution explicitly constructs one from modular residue classes.",
+      "solution_variant": "prime-factor-residue-grid"
+    },
+    {
+      "tag": "trick/grid-coloring",
+      "importance": "primary",
+      "evidence": "The grid is first colored by (i+j) mod p so edge-adjacent cells always belong to different color classes.",
+      "solution_variant": "prime-factor-residue-grid",
+      "description": "Use a coloring of grid cells, often by parity or modular residues, to enforce local adjacency constraints.",
+      "parent": "trick",
+      "created_reason": "Existing constructive and residue-class tags do not explicitly capture grid adjacency coloring patterns.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/residue-class-decomposition",
+      "importance": "primary",
+      "evidence": "Both cells and labels are partitioned by residues modulo p, and labels are assigned within matching residue classes.",
+      "solution_variant": "prime-factor-residue-grid"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "The construction relies on choosing a prime p|k and using k|nm to conclude p divides n or m.",
+      "solution_variant": "prime-factor-residue-grid"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "The pattern is periodic with period p along rows and columns.",
+      "solution_variant": "prime-factor-residue-grid"
+    }
+  ]
+}

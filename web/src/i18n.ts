@@ -409,6 +409,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/group-by-divisor": "按因子分组",
   "trick/group-by-coordinate": "按坐标分组",
   "trick/group-by-diagonal": "按对角线分组",
+  "trick/grid-coloring": "网格染色",
   "trick/harmonic-sum": "调和级数枚举",
   "trick/handle-special-case": "特判处理",
   "trick/helper-buffer": "辅助缓冲",
