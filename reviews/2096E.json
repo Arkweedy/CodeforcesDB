@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2096,
+    "title": "Neowise Labs Contest 1 (Codeforces Round 1018, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2096,
+    "index": "E",
+    "title": "Wonderful Teddy Bears",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2096/problem/E",
+      "notes": "Statement and constraints: repeatedly sort a chosen length-3 substring of a binary-colored sequence and minimize the number of operations needed to sort all black before pink."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142070",
+      "notes": "Official tutorial confirms the four possible operation types, inversion reduction values, the parity correction using black bears on even positions, and the formula (inversions + correction) / 2."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/3p5sirq9",
+      "notes": "Luogu solution cross-checks the same inversion-count lower bound and the correction term based on the target parity distribution of black bears."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a binary sequence of teddy bear colors, one operation sorts any length-3 substring; compute the minimum number of operations needed to make all black bears precede all pink bears.",
+    "constraints": "Sum n <= 200000; the solution must be linear or near-linear and cannot simulate swaps.",
+    "core_idea": "Treat black as 0 and pink as 1, so the target is the sorted binary sequence. Sorting a length-3 substring has four meaningful forms: 010 and 101 reduce the inversion count by 1, while 100 and 110 reduce it by 2. Let x be the total number of inversions. We would like to use only the operations that reduce two inversions, but the final sorted sequence also imposes a parity-position condition on where the black bears end up. Let a be the total number of black bears and let b be the number of black bears currently on even positions. In the sorted sequence, the number of black bears on even positions is floor(a/2). Only the one-inversion operations can change this count, so at least d = |floor(a/2)-b| such operations are necessary. After those d operations, the remaining x-d inversions can be removed two at a time, giving answer d + (x-d)/2 = (x+d)/2.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "Use inversion count as the main progress measure.",
+      "Classify all length-3 binary patterns by how many inversions sorting them removes.",
+      "Use parity-position imbalance to count how many one-inversion operations are unavoidable."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "inversion-plus-parity-correction",
+      "summary": "Scan the string to count inversions and black bears on even positions. Compute the target even-position black count in the sorted string, take the absolute difference d, and output (inversions + d) / 2.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/inversion-count",
+      "importance": "primary",
+      "evidence": "The answer is expressed in terms of the total number of pink-before-black inversions plus a correction term.",
+      "solution_variant": "inversion-plus-parity-correction",
+      "description": "Use the number of inversions or an inversion-like statistic as the main potential function, lower bound, or exact cost component.",
+      "parent": "trick",
+      "created_reason": "Existing sorting/greedy tags do not identify problems where inversion count is the decisive potential function.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The correction term counts how far the current even-position black count is from the sorted sequence's required even-position count.",
+      "solution_variant": "inversion-plus-parity-correction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The proof prioritizes operations removing two inversions and shows only the parity correction forces one-inversion operations.",
+      "solution_variant": "inversion-plus-parity-correction"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "The operation is local sorting of length-3 binary substrings and the target is the sorted binary sequence.",
+      "solution_variant": "inversion-plus-parity-correction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The even-position black count changes only under the one-inversion operation types, which creates the unavoidable correction.",
+      "solution_variant": "inversion-plus-parity-correction"
+    }
+  ]
+}

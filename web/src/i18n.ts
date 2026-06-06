@@ -412,6 +412,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/interval-feasibility": "区间可行性",
   "trick/frequency-pattern": "频次模式",
   "trick/invariant": "不变量",
+  "trick/inversion-count": "逆序对计数",
   "trick/linear-objective-extreme-choice": "线性目标取端点",
   "trick/lazy-affine-update": "懒惰仿射更新",
   "trick/lazy-deletion": "懒删除",
