@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2137,
+    "title": "Codeforces Round 1047 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2137,
+    "index": "F",
+    "title": "Prefix Maximum Invariance",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2137/problem/F",
+      "notes": "Statement and prefix maximum invariance constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146121",
+      "notes": "Official editorial confirms maintaining contributions under prefix-maximum constraints."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ld7l80oy",
+      "notes": "Luogu solution used to cross-check the monotonic stack/segment tree viewpoints."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer whether transformations preserve prefix maximum information under updates/queries.",
+    "constraints": "The input size requires logarithmic or linearithmic preprocessing and query handling.",
+    "core_idea": "A position contributes only when a suitable previous prefix maximum threshold exists. Rephrase the condition as maintaining valid contribution intervals or nearest dominating values, then use a segment tree or monotonic stack plus binary search to test each case efficiently.",
+    "complexity": "O(n log n) or O(n) preprocessing plus efficient queries depending on implementation",
+    "tricks": [
+      "Convert prefix maximum invariance into local contribution conditions.",
+      "Use nearest greater/smaller structure or segment tree queries to find the blocking threshold.",
+      "Alternative sparse-table/binary-search implementations answer the same range condition."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "contribution-threshold-query",
+      "summary": "Maintain the contribution condition with a segment tree over values/ranges and locate the first threshold that can change a prefix maximum.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "monotonic-stack-boundaries",
+      "summary": "Precompute nearest structural boundaries with a monotonic stack and answer the same feasibility condition with range queries.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The main reduction is deciding which positions still contribute to the prefix maximum structure.",
+      "solution_variant": "contribution-threshold-query"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "A common implementation keeps range contribution/threshold information in a segment tree.",
+      "solution_variant": "contribution-threshold-query"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "secondary",
+      "evidence": "An alternative solution precomputes nearest relevant boundaries with a monotonic stack.",
+      "solution_variant": "monotonic-stack-boundaries"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Binary search can locate the first position/value where a prefix maximum condition changes.",
+      "solution_variant": "contribution-threshold-query"
+    },
+    {
+      "tag": "data-structure/sparse-table",
+      "importance": "secondary",
+      "evidence": "Sparse table range maximum queries are another way to check the precomputed boundaries.",
+      "solution_variant": "monotonic-stack-boundaries"
+    }
+  ]
+}

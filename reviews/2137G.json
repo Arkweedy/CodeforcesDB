@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2137,
+    "title": "Codeforces Round 1047 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2137,
+    "index": "G",
+    "title": "Cry Me a River",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "games",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2137/problem/G",
+      "notes": "Statement and dynamic directed-game constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146121",
+      "notes": "Official editorial confirms reverse propagation of winning/losing states as vertices are updated."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1047-div-3",
+      "notes": "Independent writeup used to cross-check the dynamic DAG game DP interpretation."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain game outcomes on a directed acyclic graph while vertices change state monotonically.",
+    "constraints": "The graph and updates are large, so each edge/vertex should be processed only when its game state actually changes.",
+    "core_idea": "Game states on a DAG are determined by successor states. Since updates are monotone, a losing/winning change can be propagated backward with counters: when all outgoing options become bad or at least one good option appears, predecessor states are updated and pushed into a queue.",
+    "complexity": "O(n+m+q) amortized over all updates",
+    "tricks": [
+      "Use reverse edges for game-state propagation.",
+      "Maintain counts of currently winning/losing successors.",
+      "Exploit monotone updates so each state transition is processed once."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-dag-game-propagation",
+      "summary": "Compute and maintain DP game states on a DAG using reverse adjacency and counters under monotone updates.",
+      "complexity": "O(n+m+q) amortized",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "Each vertex outcome is a normal-play winning/losing state derived from successor outcomes.",
+      "solution_variant": "reverse-dag-game-propagation"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The solution maintains dynamic DP states over vertices based on their outgoing neighbors.",
+      "solution_variant": "reverse-dag-game-propagation"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "Acyclicity makes reverse topological/game-state propagation valid.",
+      "solution_variant": "reverse-dag-game-propagation"
+    },
+    {
+      "tag": "graph",
+      "importance": "secondary",
+      "evidence": "The state transitions are propagated along directed edges.",
+      "solution_variant": "reverse-dag-game-propagation"
+    },
+    {
+      "tag": "data-structure/queue",
+      "importance": "secondary",
+      "evidence": "Changed states are processed through a propagation queue.",
+      "solution_variant": "reverse-dag-game-propagation"
+    }
+  ]
+}

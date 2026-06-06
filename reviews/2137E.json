@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2137,
+    "title": "Codeforces Round 1047 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2137,
+    "index": "E",
+    "title": "Mexification",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2137/problem/E",
+      "notes": "Statement and constraints for repeated mex transformation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/146121",
+      "notes": "Official editorial confirms that the process quickly reaches a period-2 behavior."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/c0790z9a",
+      "notes": "Chinese solution used to cross-check the mex/frequency simulation."
+    }
+  ],
+  "annotation": {
+    "summary": "Apply a simultaneous mex-based transformation many times and output the final array.",
+    "constraints": "k can be large, so direct simulation for all steps is impossible; n is small enough for a constant number of full-array transformations.",
+    "core_idea": "For each element, the next value is the mex of the multiset after removing that element. This depends only on global frequencies and the global mex. After one or two transformations, the array falls into a simple period-2 pattern, so only the parity of the remaining steps matters.",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "Compute mex after removing one element from global frequencies.",
+      "Simulate only a constant number of steps.",
+      "Use eventual period-2 behavior for large k."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "constant-step-period-simulation",
+      "summary": "Perform one or two mex transformations using frequency counts, then select the answer by remaining parity.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "The transformation is defined by mex after excluding the current element, and all observations use mex/frequency structure.",
+      "solution_variant": "constant-step-period-simulation"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "Large k is handled by proving the transformation reaches a period-2 state after a constant number of steps.",
+      "solution_variant": "constant-step-period-simulation"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The accepted solution mainly requires careful frequency/mex updates and parity handling.",
+      "solution_variant": "constant-step-period-simulation"
+    }
+  ]
+}
