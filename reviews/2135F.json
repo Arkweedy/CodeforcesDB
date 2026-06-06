@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "F",
+    "title": "To the Infinity",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "hashing",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/F",
+      "notes": "Statement and full binary tree expression constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms comparing extremely fast-growing expressions by their asymptotic exponent structure."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/dyc2022/p/19709890",
+      "notes": "Independent Chinese writeup used to cross-check the persistent segment tree/hash comparison approach."
+    }
+  ],
+  "annotation": {
+    "summary": "Compare or order values represented by recursively defined huge expressions on a tree.",
+    "constraints": "Values are far too large to compute directly, so comparison must use structural/asymptotic signatures and efficient merging.",
+    "core_idea": "Represent each subtree expression by a canonical comparison signature describing its leading tower/exponent contribution. Merge child signatures bottom-up and compare them lexicographically by asymptotic dominance rather than numeric value. Persistent segment trees or hashed sparse vectors support fast merge and comparison of these signatures.",
+    "complexity": "Approximately O(n log n) with persistent segment tree and hashing",
+    "tricks": [
+      "Compare enormous expressions by asymptotic dominance instead of evaluating them.",
+      "Store sparse exponent/signature data persistently.",
+      "Use hashes to accelerate equality and lexicographic comparison."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "persistent-signature-comparison",
+      "summary": "Build canonical asymptotic signatures for tree expressions and compare them with persistent segment tree plus hashing.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/asymptotic-comparison",
+      "importance": "primary",
+      "evidence": "The central operation is comparing expression growth by leading asymptotic structure instead of exact values.",
+      "solution_variant": "persistent-signature-comparison",
+      "description": "Compare quantities that are too large to evaluate by their asymptotic growth, leading term, exponent tower, or dominance signature.",
+      "parent": "math",
+      "created_reason": "Some high-difficulty problems require ordering gigantic symbolic values; generic math or hashing tags do not capture this comparison technique.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "Once signatures are built, their order is determined by the first differing dominant component.",
+      "solution_variant": "persistent-signature-comparison"
+    },
+    {
+      "tag": "data-structure/persistent-segment-tree",
+      "importance": "primary",
+      "evidence": "The implementation stores and merges comparison signatures with persistent segment trees.",
+      "solution_variant": "persistent-signature-comparison"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "primary",
+      "evidence": "Hashes are used to quickly test equality and guide comparison of persistent signatures.",
+      "solution_variant": "persistent-signature-comparison"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The huge expressions are generated and merged along a tree structure.",
+      "solution_variant": "persistent-signature-comparison"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The persistent structure is a segment-tree based sparse signature representation.",
+      "solution_variant": "persistent-signature-comparison"
+    }
+  ]
+}

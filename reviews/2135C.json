@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "C",
+    "title": "By the Assignment",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dfs and similar",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/C",
+      "notes": "Statement and graph/XOR constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms decomposing the graph by bridges and analyzing parity constraints inside 2-edge-connected components."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8zgjiati",
+      "notes": "Chinese solution used to cross-check the bridge and odd-cycle cases."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide/count assignments under XOR-like graph constraints.",
+    "constraints": "The graph is large, so the solution needs linear graph decomposition and bitwise independent reasoning.",
+    "core_idea": "Bridge edges separate independent constraints. Inside each 2-edge-connected component, parity along cycles determines whether the component behaves bipartitely or has an odd-cycle freedom that fixes more values. DFS/Tarjan decomposition plus bipartite checks turn the original assignment condition into per-component choices.",
+    "complexity": "O((n+m) log A) or O(n+m) per bit depending on implementation",
+    "tricks": [
+      "Remove bridges to isolate 2-edge-connected components.",
+      "Use bipartite versus odd-cycle structure to decide degrees of freedom.",
+      "Treat bits independently."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bridge-components-and-parity",
+      "summary": "Run bridge decomposition, inspect bipartiteness/odd cycles in each component, and combine independent bit choices.",
+      "complexity": "O((n+m) log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bridge",
+      "importance": "primary",
+      "evidence": "Bridge decomposition is the main graph reduction that separates independent assignment constraints.",
+      "solution_variant": "bridge-components-and-parity"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "primary",
+      "evidence": "The behavior of each non-bridge component depends on whether its parity graph is bipartite or contains an odd cycle.",
+      "solution_variant": "bridge-components-and-parity"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The assignment constraints can be evaluated independently over bits.",
+      "solution_variant": "bridge-components-and-parity"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "DFS/Tarjan traversal is used to find bridges and color components.",
+      "solution_variant": "bridge-components-and-parity"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "After graph reduction, the answer is a product/sum of component choice counts.",
+      "solution_variant": "bridge-components-and-parity"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "E1",
+    "title": "Beyond the Palindrome (Easy Version)",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/E1",
+      "notes": "Statement and easy-version constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms the reflection/counting formula for valid binary strings."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bq0diuw6",
+      "notes": "Luogu writeup used to cross-check the prefix-walk interpretation."
+    }
+  ],
+  "annotation": {
+    "summary": "Count binary strings satisfying a palindrome-related equality condition.",
+    "constraints": "The easy version allows a direct summation/counting formula over manageable n.",
+    "core_idea": "Translate the binary string into a +/-1 prefix walk. The equality with its reversal imposes a condition on the walk's final value and extrema; the count can be obtained with reflection-principle style path counting and binomial identities.",
+    "complexity": "O(n log MOD) or O(n) after factorial precomputation",
+    "tricks": [
+      "Convert string constraints into prefix-walk extrema.",
+      "Apply reflection principle to count walks with boundary conditions.",
+      "Simplify the final count with binomial identities."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reflection-counting",
+      "summary": "Model strings as lattice walks and count valid extrema/final-value configurations using reflection and binomial coefficients.",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/reflection-principle",
+      "importance": "primary",
+      "evidence": "The valid strings are counted by reflecting prefix walks that cross a boundary.",
+      "solution_variant": "reflection-counting",
+      "description": "Count lattice paths or prefix-walk sequences with boundary constraints by reflecting invalid paths across a boundary.",
+      "parent": "math/combinatorics",
+      "created_reason": "Reflection-principle counting is a recurring combinatorics technique not captured by generic combinatorics or DP tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The main solution derives a closed counting formula for classes of binary strings.",
+      "solution_variant": "reflection-counting"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "secondary",
+      "evidence": "The final formula is expressed and simplified through binomial coefficients.",
+      "solution_variant": "reflection-counting"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "A direct DP interpretation exists, but the reviewed solution is primarily combinatorial counting.",
+      "solution_variant": "reflection-counting"
+    }
+  ]
+}

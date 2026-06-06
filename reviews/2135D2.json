@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "D2",
+    "title": "From the Unknown (Hard Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/D2",
+      "notes": "Interactive statement for the hard version with the larger hidden range."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms scaling/block constants and the candidate-encoding second query."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover the hidden width in the hard interactive version with a bounded number of queries.",
+    "constraints": "The hidden range is larger than D1, so the candidate set must be compressed by a carefully scaled first query before encoding.",
+    "core_idea": "Use a long structured first query whose answer localizes the hidden value to a short interval or block. Then construct a second query that assigns distinguishable responses to all candidates in that interval. Constants are chosen so all encoded values remain within the interactive limits.",
+    "complexity": "O(1) queries and O(K) local candidate encoding",
+    "tricks": [
+      "Scale the first query to reduce a large range to a short candidate interval.",
+      "Encode the remaining candidates in a second query.",
+      "Tune constants so the protocol stays within answer bounds."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "scaled-two-query-encoding",
+      "summary": "Use a block-scaled first probe to localize the answer, then distinguish remaining candidates by a crafted second probe.",
+      "complexity": "O(K)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The solution is a fixed query protocol for reconstructing the hidden width from oracle responses.",
+      "solution_variant": "scaled-two-query-encoding"
+    },
+    {
+      "tag": "trick/query-encoding",
+      "importance": "primary",
+      "evidence": "The hard part is making a second query whose response uniquely identifies each remaining candidate.",
+      "solution_variant": "scaled-two-query-encoding",
+      "description": "Design query values so that oracle responses encode enough information to distinguish a finite candidate set.",
+      "parent": "trick",
+      "created_reason": "This interactive encoding pattern is reusable and more specific than a generic interactive reconstruction tag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "After localization, the implementation enumerates the short candidate set.",
+      "solution_variant": "scaled-two-query-encoding"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "Candidate localization uses quotient/divisibility properties of the response.",
+      "solution_variant": "scaled-two-query-encoding"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The algorithm explicitly constructs both query arrays to force distinguishable responses.",
+      "solution_variant": "scaled-two-query-encoding"
+    }
+  ]
+}

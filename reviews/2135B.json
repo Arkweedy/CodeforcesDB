@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "B",
+    "title": "For the Champion",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "geometry",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/B",
+      "notes": "Statement and constraints for the interactive coordinate reconstruction task."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms querying extreme corners to recover the hidden champion coordinates."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the hidden point in an interactive grid using Manhattan-distance queries.",
+    "constraints": "The number of queries is small, so each query must reveal a global linear expression of the hidden coordinate.",
+    "core_idea": "A Manhattan distance to an extreme corner becomes a linear form in x+y or x-y plus constants. Querying suitable corners gives enough information to recover both coordinate sums and differences, then solve for the hidden point.",
+    "complexity": "O(1) queries and O(1) computation",
+    "tricks": [
+      "Use extreme corners so Manhattan absolute values have known signs.",
+      "Recover x+y and x-y from query answers."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "corner-distance-reconstruction",
+      "summary": "Ask distances from selected corners, transform the answers into linear equations, and recover the unique coordinate pair.",
+      "complexity": "O(1)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The solution is an adaptive query protocol whose whole goal is reconstructing the hidden coordinate from oracle answers.",
+      "solution_variant": "corner-distance-reconstruction"
+    },
+    {
+      "tag": "math/geometry/manhattan-transform",
+      "importance": "primary",
+      "evidence": "The key observation is transforming Manhattan distances at corners into x+y and x-y linear forms.",
+      "solution_variant": "corner-distance-reconstruction",
+      "description": "Use transformations of Manhattan distance, such as x+y and x-y coordinates or fixed-sign corner distances, to convert geometry constraints into linear values.",
+      "parent": "math/geometry",
+      "created_reason": "Manhattan-coordinate transformations are reusable in geometry and interactive reconstruction problems and are more precise than a generic geometry tag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The answer is obtained by explicitly designing a fixed set of informative queries.",
+      "solution_variant": "corner-distance-reconstruction"
+    }
+  ]
+}

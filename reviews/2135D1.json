@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "D1",
+    "title": "From the Unknown (Easy Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/D1",
+      "notes": "Interactive statement for recovering the hidden width in the easy version."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms the two-query interval narrowing and candidate encoding idea."
+    }
+  ],
+  "annotation": {
+    "summary": "Recover a hidden parameter through a very small number of interactive queries.",
+    "constraints": "Only a few queries are allowed; the easy limits permit a direct encoded second query after narrowing the candidate interval.",
+    "core_idea": "First ask a uniform query that turns the answer into a coarse interval for the hidden width. Then choose a second query whose values encode the remaining candidates so the response identifies the exact one.",
+    "complexity": "O(1) queries plus O(K) candidate preparation for the small interval",
+    "tricks": [
+      "Use a coarse query to shrink the candidate range.",
+      "Encode candidates in the second query so answers are distinguishable."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-query-candidate-encoding",
+      "summary": "Use one uniform probe to restrict the answer and one crafted probe to distinguish all remaining possibilities.",
+      "complexity": "O(K)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The core task is reconstructing a hidden value from the interactive judge's oracle responses.",
+      "solution_variant": "two-query-candidate-encoding"
+    },
+    {
+      "tag": "trick/query-encoding",
+      "importance": "primary",
+      "evidence": "The second query is deliberately designed so different hidden candidates produce distinguishable answers.",
+      "solution_variant": "two-query-candidate-encoding",
+      "description": "Design query values so that oracle responses encode enough information to distinguish a finite candidate set.",
+      "parent": "trick",
+      "created_reason": "This interactive encoding pattern is reusable and more specific than a generic interactive reconstruction tag.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "The response interpretation depends on quotient/divisibility behavior of the hidden width.",
+      "solution_variant": "two-query-candidate-encoding"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The solution constructs a query sequence with prescribed distinguishing behavior.",
+      "solution_variant": "two-query-candidate-encoding"
+    }
+  ]
+}

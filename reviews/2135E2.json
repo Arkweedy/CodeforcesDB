@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2135,
+    "title": "Codeforces Round 1046 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2135,
+    "index": "E2",
+    "title": "Beyond the Palindrome (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2135/problem/E2",
+      "notes": "Statement and hard-version constraints with very large total n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/145796",
+      "notes": "Official editorial confirms combining the reflection formula with divisor-style coefficient aggregation."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/wmka5mbt",
+      "notes": "Luogu solution used to cross-check the hard-version summation optimization."
+    }
+  ],
+  "annotation": {
+    "summary": "Count the same palindrome-related binary strings under much larger bounds.",
+    "constraints": "n can be extremely large across tests, so the E1 direct summation must be reorganized with number-theoretic preprocessing.",
+    "core_idea": "Keep the reflection-principle/binomial formula from E1, then group terms by divisibility structure so repeated coefficients can be accumulated with a divisor sieve or linear-sieve style preprocessing. This turns the combinatorial expression into a fast aggregated summation.",
+    "complexity": "Near-linear preprocessing over the maximum n plus fast per-test aggregation",
+    "tricks": [
+      "Reuse the reflection-principle formula from the easy version.",
+      "Group binomial-expression coefficients by divisibility.",
+      "Use sieve-style accumulation to handle the larger constraints."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reflection-formula-with-divisor-sieve",
+      "summary": "Derive the reflection/binomial formula and aggregate its hard-version coefficients using divisor-sieve preprocessing.",
+      "complexity": "O(N log N) preprocessing or better depending on sieve implementation",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/reflection-principle",
+      "importance": "primary",
+      "evidence": "The hard version still starts from the boundary-walk reflection formula for the counted strings.",
+      "solution_variant": "reflection-formula-with-divisor-sieve",
+      "description": "Count lattice paths or prefix-walk sequences with boundary constraints by reflecting invalid paths across a boundary.",
+      "parent": "math/combinatorics",
+      "created_reason": "Reflection-principle counting is a recurring combinatorics technique not captured by generic combinatorics or DP tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "primary",
+      "evidence": "The hard constraints require aggregating formula terms by divisor structure with sieve-style preprocessing.",
+      "solution_variant": "reflection-formula-with-divisor-sieve"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "The optimized expression is built from identities over binomial coefficients.",
+      "solution_variant": "reflection-formula-with-divisor-sieve"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The problem is solved by deriving and evaluating a combinatorial counting formula.",
+      "solution_variant": "reflection-formula-with-divisor-sieve"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "The grouping criterion in the fast summation is divisibility of indices.",
+      "solution_variant": "reflection-formula-with-divisor-sieve"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "DP is a possible viewpoint for small constraints, but the accepted hard solution is formula plus sieve.",
+      "solution_variant": "reflection-formula-with-divisor-sieve"
+    }
+  ]
+}
