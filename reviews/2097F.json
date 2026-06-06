@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2097,
+    "title": "Codeforces Round 1021 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2097,
+    "index": "F",
+    "title": "Lost Luggage",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "flows"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2097/problem/F",
+      "notes": "Statement and constraints: n <= 12, total m <= 2000, and each day allows luggage to stay or move to one neighboring airport with capacities."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/142316",
+      "notes": "Official editorial page for Codeforces Round 1021; checked as the contest editorial source, but the fetched English tutorial section only showed loading placeholders."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/q87lqiuu",
+      "notes": "Luogu solution confirms the max-flow to min-cut reduction, O(4^n n m) naive subset transition, and plug/profile DP optimization."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/waby4812",
+      "notes": "Luogu solution explicitly describes the layered flow graph for every k and the point-by-point profile DP over source-side/sink-side colors."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19009292",
+      "notes": "Chinese writeup gives the same time-expanded network, max-flow min-cut transformation, subset DP state, and O(n m 2^n) row transition."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Independent writeup cross-checks that transition cost is local between adjacent bits of consecutive layers and can be accumulated bit by bit."
+    }
+  ],
+  "annotation": {
+    "summary": "For every prefix of days, maximize how much lost luggage can survive the inspections while each day's movement capacities allow staying or moving to adjacent airports on a cycle.",
+    "constraints": "n <= 12 and total m <= 2000; capacities are large, so the bottleneck is exponential in n but must be nearly linear in m.",
+    "core_idea": "Build a time-expanded network. Layer 0 has source capacities s_j; each day adds edges from airport j to previous, same, and next airports with capacities a, b, and c; the answer for prefix k is the maximum flow reaching layer k. By max-flow min-cut, compute the minimum cut instead. A cut is described by which airports in a layer are on the source side, so the naive transition between previous subset T and current subset S costs O(4^n) per day. Because each current bit only interacts with three neighboring previous-layer bits on the cycle, determine the next subset bit by bit and keep a rolling profile containing the not-yet-forgotten boundary bits. This profile/plug-style DP reduces each day to O(n 2^n) states while outputting the answer after every day.",
+    "complexity": "O(n m 2^n) time and O(2^n) to O(n 2^n) memory depending on implementation",
+    "tricks": [
+      "Turn the survival maximization into a time-expanded max-flow instance.",
+      "Use max-flow min-cut to replace flow augmentation with cut-state DP.",
+      "Exploit n <= 12 and the local three-edge dependency between adjacent time layers.",
+      "Optimize the O(4^n) subset transition by processing the cycle profile bit by bit."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "min-cut-profile-dp",
+      "summary": "Maintain dp over the source-side subset of the current time layer. For one new day, process the target subset one airport at a time; the profile stores enough old/new boundary bits to add exactly the cut edges from source side to sink side. After n positions, compress back to a layer subset and print the minimum cut for the all-sink terminal layer.",
+      "complexity": "O(n m 2^n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "naive-subset-min-cut-dp",
+      "summary": "For clarity, one can first write a transition over previous subset T and current subset S, adding the capacities of all edges from T to complement(S). This is O(m 4^n) and is only a derivation step for the optimized profile DP.",
+      "complexity": "O(m 4^n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/flow/min-cut",
+      "importance": "primary",
+      "evidence": "The decisive modeling step is a time-expanded max-flow instance whose value is computed through the equivalent minimum cut.",
+      "solution_variant": "min-cut-profile-dp",
+      "description": "Use the max-flow min-cut theorem or directly model a minimum s-t cut as the central optimization object.",
+      "parent": "graph/flow",
+      "created_reason": "The existing graph/flow tag is too coarse for problems where the flow graph is only a modeling step and the actual algorithm is min-cut DP.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/profile-dp",
+      "importance": "primary",
+      "evidence": "The O(n m 2^n) solution processes each layer bit by bit while storing boundary colors of the partially processed cut.",
+      "solution_variant": "min-cut-profile-dp",
+      "description": "Dynamic programming over a moving boundary/profile, often used when local interactions allow forgetting processed cells or bits.",
+      "parent": "dp",
+      "created_reason": "Existing bitmask/state-compression tags do not distinguish moving-boundary profile transitions from ordinary subset DP.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The layer state is a subset of up to 12 airports, and all transitions operate over bitmask states.",
+      "solution_variant": "min-cut-profile-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "The small airport count is exploited by compressing each layer's source-side/sink-side partition into a bitmask.",
+      "solution_variant": "min-cut-profile-dp"
+    },
+    {
+      "tag": "graph/layered-graph",
+      "importance": "secondary",
+      "evidence": "The flow model expands the process over days into consecutive layers with edges only between adjacent layers.",
+      "solution_variant": "min-cut-profile-dp"
+    }
+  ]
+}
