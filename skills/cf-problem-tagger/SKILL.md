@@ -1,6 +1,10 @@
 ---
 name: cf-problem-tagger
-description: Use when a Codex agent must AI-review Codeforces problems for this repository: read statements, inspect editorials or common solution sources, reason about the solution, assign fine-grained hierarchical algorithm/trick tags, and write reviewed JSON into the local SQLite database.
+description: |
+  Use when a Codex agent must AI-review Codeforces problems for this repository:
+  read statements, inspect editorials or common solution sources, reason about
+  the solution, assign fine-grained hierarchical algorithm/trick tags, and write
+  reviewed JSON into the local SQLite database.
 metadata:
   short-description: AI-review Codeforces problems and tag them
 ---
