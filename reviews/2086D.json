@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2086,
+    "title": "Educational Codeforces Round 177 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2086,
+    "index": "D",
+    "title": "Even String",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "combinatorics",
+      "dp",
+      "math",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2086/problem/D",
+      "notes": "题面与约束：给定 26 个字母出现次数，统计满足相同字母任意两次出现位置差为偶数的字符串数量，模 998244353。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141425",
+      "notes": "Educational Round 177 editorial。用于确认奇偶位置拆分、子集和 DP 统计字母分配、再乘阶乘/逆阶乘的主公式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/kqu059gb",
+      "notes": "洛谷题解给出清晰推导：同一字母不能同时出现在奇偶位置，将字母数量作为 01 背包体积，统计填满奇位的字母集合数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/blind5883/p/19104151",
+      "notes": "补充实现参考：强调 26 类物品的 01 背包和阶乘组合公式。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 26 个字母的出现次数，统计有多少字符串满足相同字母出现位置的差恒为偶数。",
+    "constraints": "t <= 10000，c_i <= 5e5，单测总长度为正，所有测试总长度 <= 5e5，模数 998244353。",
+    "core_idea": "如果同一字母出现在两个位置，它们位置奇偶性必须相同，因此每个字母整体只能分配到奇数位置或偶数位置。设总长度为 S，奇位数为 (S+1)/2，偶位数为 S/2。先用 01 背包统计选择哪些字母放到奇位，使它们的出现次数总和恰好等于奇位数；每一种有效选择中，奇位内部和偶位内部分别是多重集排列，方案数为 odd! * even! / prod(c_i!)。由于分母与选择无关，答案就是 dp[odd] 乘上这个公共排列因子。",
+    "complexity": "O(26 * S) per test case total length contribution; preprocessing factorial/inverse factorial O(total S).",
+    "tricks": [
+      "把相同字母位置差为偶数转化为每个字母选择奇位或偶位之一。",
+      "用字母出现次数作为 01 背包体积，背包目标是奇数位置数量。",
+      "多重集排列的分母与奇偶分配无关，可在 DP 结果外统一乘除。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-split-knapsack-combinatorics",
+      "summary": "主解法。对每个有出现次数的字母选择放入奇位或偶位，01 背包统计填满奇位的选择数；再乘 odd! * even! / prod(c_i!) 得到字符串排列数。",
+      "complexity": "O(26 * S)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "选择一批字母放入奇数位置，字母出现次数作为体积，目标容量为奇位数量，是标准 01 背包计数。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "答案由字母集合划分数和奇偶位置内多重集排列数相乘得到。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "每个有效奇偶分配下，需要计算重复字母在奇位和偶位中的排列数。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "条件 |i-j| 为偶数完全等价于同一字母只出现在同一位置奇偶类。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "secondary",
+      "evidence": "背包 DP 统计满足容量条件的字母集合数量。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "对象是满足字符位置约束的字符串计数。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "需要在 998244353 下使用阶乘、逆元和组合计数。",
+      "solution_variant": "parity-split-knapsack-combinatorics"
+    }
+  ]
+}
