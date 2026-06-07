@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2091,
+    "title": "Codeforces Round 1013 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2091,
+    "index": "F",
+    "title": "Igor and Mountain",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2091/problem/F",
+      "notes": "Statement and constraints: count climbing routes on an n by m grid of holds with at least one and at most two holds used per row."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141047",
+      "notes": "Official editorial solution uses row DP with two states per cell and prefix sums to query horizontal ranges."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/orr0y4ax",
+      "notes": "Luogu solution derives the two transitions: from the next row within d-1 columns, then within the same row within d columns."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2091F",
+      "notes": "Luogu mirror was used to cross-check the route definition and the Euclidean distance constraint."
+    }
+  ],
+  "annotation": {
+    "summary": "Count valid climbing routes from the bottom row to the top row, using one or two holds per row and respecting distance d between consecutive holds.",
+    "constraints": "n,m,d <= 2000 and total n*m <= 4e6, so the solution needs O(nm) or near-linear work per grid.",
+    "core_idea": "Process rows from bottom to top. For a hold (i,j), there are two relevant states: the first hold used on row i and the second hold used on row i. To enter row i from row i+1, the vertical difference is 1, so the horizontal distance may be at most floor(sqrt(d^2-1)) = d-1; this transition sums previous-row states over [j-d+1, j+d-1]. After choosing one hold in row i, choosing a second distinct hold in the same row has vertical difference 0, so the horizontal distance may be at most d; this transition sums within the same row over [j-d, j+d] and excludes staying on the same hold when needed. Prefix sums over every row/state make each range sum O(1), so the whole DP is linear in the number of cells.",
+    "complexity": "O(nm) time and O(nm) or O(m) memory depending on implementation",
+    "tricks": [
+      "Separate the state by whether the current row has already used one or two holds.",
+      "Convert the Euclidean constraint between adjacent rows into horizontal radius d-1.",
+      "Use prefix sums to evaluate all range transitions in O(1)."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-state-row-dp-with-prefix-sums",
+      "summary": "For each row, compute ways to choose the first hold from the row below, then ways to choose an optional second hold in the same row, using prefix sums for both ranges.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "The DP is performed over grid cells row by row, with transitions between neighboring rows and within a row.",
+      "solution_variant": "two-state-row-dp-with-prefix-sums"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The DP counts the number of valid route sequences modulo 998244353.",
+      "solution_variant": "two-state-row-dp-with-prefix-sums"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "Every transition is a sum over a contiguous horizontal interval, optimized by row prefix sums.",
+      "solution_variant": "two-state-row-dp-with-prefix-sums"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "The implementation maintains prefix sums of DP values for O(1) interval queries.",
+      "solution_variant": "two-state-row-dp-with-prefix-sums"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "The distance condition is Euclidean and determines the horizontal transition radii d and d-1.",
+      "solution_variant": "two-state-row-dp-with-prefix-sums"
+    }
+  ]
+}
