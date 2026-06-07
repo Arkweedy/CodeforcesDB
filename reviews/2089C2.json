@@ -1,0 +1,130 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "C2",
+    "title": "Key of Like (Hard Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/C2",
+      "notes": "题面与约束：n 个人轮流试 l 把锁和 l+k 把钥匙，其中 k 把是假钥匙；每次选择当前成功概率最大的钥匙-锁对，同概率最优对中均匀随机，要求每个人打开锁数的期望。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认失败后的最优策略结构、同锁/同钥匙两类分支概率，以及按玩家编号做差分/前缀和累加贡献的实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Lyrella/p/18950909.html",
+      "notes": "中文题解详细推导：第一次失败后只应继续选同锁或同钥匙；同钥匙分支在 hard version 中可能发现假钥匙，因此 DP 需要假钥匙数量维度并用前缀和优化到 O(nlk)。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/07/30/0930",
+      "notes": "实现参考：按剩余锁数递推，维护 fake-key count 与当前玩家 offset，使用差分数组给连续轮转玩家批量加期望贡献。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/imcaigou/p/18792433.html",
+      "notes": "补充参考：从 k=0 推到 k>0，说明选择同锁/同钥匙的成功概率相等，但分支数量不同；假钥匙情况需要额外 DP 维度。"
+    }
+  ],
+  "annotation": {
+    "summary": "有 l 把真钥匙分别对应 l 把锁，另有 k 把假钥匙。n 个人循环轮流试一对钥匙和锁；每个人都基于历史信息选择成功概率最大的未匹配钥匙-锁对，同概率最优时随机。求每个人最终打开锁数量的期望。",
+    "constraints": "t <= 100，n <= 100，l <= 5000，k <= 25，所有测试 l 之和 <= 5000，答案为模 1e9+7 下的有理数期望。",
+    "core_idea": "先证明最优策略可被大幅压缩。若当前有 x 把锁、x+y 把钥匙，第一次随便试一对，成功概率为 1/(x+y)。若失败，下一步只会选择同一把锁换钥匙，或同一把钥匙换锁；这两类选择成功概率都变为 1/(x+y-1)，而换锁换钥匙同时改变的对更劣。因此后续会沿同锁或同钥匙方向连续试，直到打开一把锁，或在同钥匙方向发现该钥匙是假钥匙。于是完整历史只需记剩余锁数 i、剩余假钥匙数 j、当前轮到的玩家 c。DP 统计从这些状态出发每个玩家的期望贡献：打开一把锁后转到 (i-1,j)，若确认假钥匙则转到 (i,j-1) 并平移玩家下标。直接枚举连续尝试长度会有 O(n^2lk)，用玩家轮转下标上的前缀和/差分批量累加连续区间贡献，降到 O(nlk)。",
+    "complexity": "O(n * l * k) time per test case family after prefix/difference optimization; O(n * k) rolling memory.",
+    "tricks": [
+      "用条件概率证明失败后的最优动作只需考虑同锁或同钥匙，排除完全换锁换钥匙的候选。",
+      "把包含所有历史试验的信息压缩为剩余锁数、剩余假钥匙数和当前玩家编号。",
+      "对连续若干次同锁/同钥匙试验产生的玩家贡献使用轮转前缀和或差分数组批量加入。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "strategy-compressed-probability-dp",
+      "summary": "主解法。证明失败后最优策略只会沿同锁或同钥匙继续，并把过程压缩成剩余锁数 i、假钥匙数 j、当前玩家 c 的概率/期望 DP。成功分支转到 i-1，发现假钥匙分支转到 j-1，玩家编号按尝试次数循环平移。",
+      "complexity": "O(n * l * k) with prefix/difference optimization",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "easy-version-k0",
+      "summary": "当 k=0 时，没有发现假钥匙的分支，状态可退化为剩余锁数和当前玩家编号；hard version 在此基础上增加假钥匙维度。",
+      "complexity": "O(n * l)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "主状态直接维护随机过程下每个玩家成功次数的期望，并按成功、失败、发现假钥匙等概率分支转移。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "需要比较不同钥匙-锁选择的后验成功概率，并输出模意义下的期望值。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "math/probability/bayesian-update",
+      "importance": "primary",
+      "evidence": "第一次试验失败后，同锁换钥匙和同钥匙换锁的成功概率相等这一结论依赖对钥匙是否为真、对应锁位置的后验概率更新。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "虽然历史包含大量已试过的钥匙-锁对，但最优策略和后续分布只需由剩余锁数、假钥匙数和当前玩家下标决定。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "hard version 中 k 可以非零，必须在 easy version 的剩余锁数 DP 上增加剩余假钥匙数量维度，处理发现假钥匙后的转移。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "连续尝试会给一段循环玩家编号加相同形式的期望贡献，使用前缀和/差分把 O(n^2lk) 优化到 O(nlk)。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "所有概率和期望以模 1e9+7 的有理数形式计算，需要大量模逆元。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "整体是按剩余锁数逐层推进的动态规划。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    },
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "secondary",
+      "evidence": "每个人的期望打开数通过累加各阶段成功贡献得到，不需要记录完整联合分布。",
+      "solution_variant": "strategy-compressed-probability-dp"
+    }
+  ]
+}
