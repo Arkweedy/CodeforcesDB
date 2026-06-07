@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2092,
+    "title": "Codeforces Round 1014 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2092,
+    "index": "E",
+    "title": "She knows...",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "graphs",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2092/problem/E",
+      "notes": "Statement and constraints: count completions of a partially colored n by m grid such that the number of adjacent unequal-color pairs is even."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4k6gbkm9",
+      "notes": "Luogu solution derives the key conclusion that only boundary non-corner cells affect the parity."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.csdn.net/LancyMorry/article/details/147057324",
+      "notes": "CSDN writeup explains the same parity invariant by considering how flipping different grid cells changes the number of unequal adjacent pairs."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2092E",
+      "notes": "Luogu problem page was used to cross-check constraints and the precolored-cell input format."
+    }
+  ],
+  "annotation": {
+    "summary": "Count the number of ways to color the unfilled cells of a partially colored grid so that the number of adjacent unequal pairs is even.",
+    "constraints": "Multiple test cases with total k <= 2e5; n and m can be large, so the solution can inspect only the precolored cells and the four borders.",
+    "core_idea": "View colors as 0/1 and the number of unequal adjacent pairs as the sum over grid edges of color_u xor color_v. Over GF(2), summing all incident edge terms cancels every even-degree vertex and leaves only vertices of odd degree. In a rectangular grid, corners have degree 2, interior cells degree 4, and boundary non-corner cells degree 3, so the required parity is exactly the xor/sum of colors on boundary non-corner cells. If at least one such key cell is uncolored, exactly half of all completions satisfy the parity condition: all other cells are arbitrary and the last free key cell is forced. Otherwise, the precolored key cells already determine whether the answer is all completions or zero.",
+    "complexity": "O(k + log(nm)) time per test case for scanning fixed cells and fast exponentiation; O(1) extra memory besides input counters",
+    "tricks": [
+      "Rewrite unequal adjacent pairs as edge xor terms and sum them modulo 2.",
+      "Only odd-degree vertices survive in the parity expression.",
+      "If a free variable appears in a single parity equation, exactly half of assignments satisfy it."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "odd-degree-boundary-parity",
+      "summary": "Count fixed and free boundary non-corner cells. If any key cell is free, answer 2^(nm-k-1); otherwise answer 2^(nm-k) or 0 depending on the fixed key-cell parity.",
+      "complexity": "O(k + log(nm))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/cut-parity",
+      "importance": "primary",
+      "evidence": "The main observation is that the parity of unequal-color grid edges is a GF(2) cut parity equal to the sum of colors on odd-degree vertices.",
+      "solution_variant": "odd-degree-boundary-parity",
+      "description": "Use a graph cut or edge-disagreement parity identity to convert edge conditions into a parity expression over vertices, usually odd-degree vertices.",
+      "parent": "graph",
+      "created_reason": "Existing graph and parity tags do not specifically identify the reusable cut-parity identity used to collapse all grid edges.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The problem only asks whether the number of unequal adjacent pairs is even, and the solution works entirely modulo 2.",
+      "solution_variant": "odd-degree-boundary-parity"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "After reducing to one parity equation, the count is either 0, all 2^(free cells), or exactly half of them.",
+      "solution_variant": "odd-degree-boundary-parity"
+    },
+    {
+      "tag": "math/linear-algebra/linear-system",
+      "importance": "secondary",
+      "evidence": "The final condition is a single linear equation over GF(2) on the colors of boundary non-corner cells.",
+      "solution_variant": "odd-degree-boundary-parity"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The remaining work is counting binary assignments under a parity constraint.",
+      "solution_variant": "odd-degree-boundary-parity"
+    }
+  ]
+}
