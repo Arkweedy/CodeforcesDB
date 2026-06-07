@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2092,
+    "title": "Codeforces Round 1014 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2092,
+    "index": "D",
+    "title": "Mishkin Energizer",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "implementation",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2092/problem/D",
+      "notes": "Statement and constraints: insert the third character between two different adjacent characters until counts of L, I, T are equal, using at most 2n operations."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/13wrpgef",
+      "notes": "Luogu solution describes the greedy simulation: repeatedly try to insert the currently least frequent character."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/topic/141829/en2",
+      "notes": "Codeforces community post gives a constructive target of making all three counts equal to n within exactly 2n insertions."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.csdn.net/LancyMorry/article/details/147057324",
+      "notes": "CSDN writeup discusses local insertion patterns for increasing chosen character counts using adjacent unequal pairs."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1014",
+      "notes": "Maspy contest writeup was used as an additional cross-check for the constructive nature of the solution."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a string over L, I, T, insert the missing third character between unequal adjacent characters until all three character counts are equal, or report impossible.",
+    "constraints": "n <= 100 and at most 2n operations may be output, so an O(n^2) simulation is acceptable.",
+    "core_idea": "If the string has no adjacent unequal pair, no operation is possible; such a string is impossible unless it was already balanced. Otherwise, one can safely aim for all three counts to become n, requiring at most 2n insertions. Repeatedly choose a currently least frequent character c. If there is an adjacent pair made of the other two characters, insert c there directly. If not, insert some other character at an available unequal pair to create a new unequal pair that allows c on the next step. This keeps raising deficient counts and the 2n budget is enough to reach the common target. A simpler implementation just repeats the least-count-first scan and stops once balanced, falling back to -1 if the 2n limit is exceeded.",
+    "complexity": "O(n^2) time and O(n) memory because the string length is at most 3n during simulation",
+    "tricks": [
+      "Target all three counts equal to n so the operation budget is exactly bounded by 2n.",
+      "Use an adjacent pair of the other two letters to insert a deficient letter.",
+      "If the desired pair does not exist immediately, one auxiliary insertion can create it."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "least-count-greedy-simulation",
+      "summary": "Repeatedly sort the three letters by current count and insert the first one that is possible at some adjacent unequal pair.",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "target-n-constructive-pattern",
+      "summary": "Use local patterns around an unequal pair to increase selected letters until every letter appears exactly n times.",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for any valid sequence of operations, and the solution explicitly constructs such a sequence.",
+      "solution_variant": "least-count-greedy-simulation"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The standard simulation repeatedly inserts a character with currently minimum count whenever possible.",
+      "solution_variant": "least-count-greedy-simulation"
+    },
+    {
+      "tag": "trick/count-balancing",
+      "importance": "primary",
+      "evidence": "The construction is driven by making the three character counts equal, usually by increasing deficient letters toward a common target.",
+      "solution_variant": "least-count-greedy-simulation",
+      "description": "Construct or transform an object by maintaining category counts and repeatedly fixing deficits until all required counts match.",
+      "parent": "trick",
+      "created_reason": "Existing constructive and greedy tags do not capture the reusable count-equalization objective behind this solution.",
+      "status": "candidate"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "Operations are local insertions in a string over three symbols.",
+      "solution_variant": "least-count-greedy-simulation"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The accepted approach requires careful simulation of insertion positions and output indices.",
+      "solution_variant": "least-count-greedy-simulation"
+    }
+  ]
+}

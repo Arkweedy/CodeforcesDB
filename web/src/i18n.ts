@@ -400,6 +400,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/complement-symmetry": "补集对称",
   "trick/common-prefix-cancellation": "公共前缀消去",
   "trick/convert-to-prefix": "转为前缀",
+  "trick/count-balancing": "计数平衡",
   "trick/coverage-condition": "覆盖条件",
   "trick/cycle-detection": "判环",
   "trick/decision-tree": "决策树",
