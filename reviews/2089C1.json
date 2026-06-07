@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "C1",
+    "title": "Key of Like (Easy Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "games",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/C1",
+      "notes": "题面与约束：easy version 固定 k=0，即只有 l 把锁和 l 把真钥匙；n 个人轮流按当前最大成功概率选择钥匙-锁对，求每个人打开锁数期望。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。C2 题解包含 C1 的 k=0 退化情形：失败后只需考虑同锁或同钥匙两类最优延续，并按玩家轮转累加期望。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/postive-deviation/p/18869005.html",
+      "notes": "C1 专门题解：说明朴素 dp 状态爆炸后，可改为记录第 j 个锁被第 i 个人成功匹配的概率，从而枚举上一个成功者做 DP。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Lyrella/p/18950909.html",
+      "notes": "C2 题解中的前半部分解释了 k=0 时的概率结构：第一次失败后继续同锁/同钥匙，之后直到成功为止每一步成功概率相同。"
+    }
+  ],
+  "annotation": {
+    "summary": "有 l 把锁和 l 把真钥匙，n 个人循环轮流试钥匙-锁对。每个人都根据历史选择成功概率最大的对，同概率时随机。求每个人最终打开锁数量的期望。",
+    "constraints": "t <= 100，n <= 100，l <= 5000，k = 0，所有测试 l 之和 <= 5000，答案在模 1e9+7 下输出。",
+    "core_idea": "当还剩 x 把锁和 x 把钥匙时，第一次随便试一对的成功概率是 1/x。若失败，已知这把钥匙不对应这把锁，下一步最优选择只会是同锁换钥匙或同钥匙换锁；两者的后验成功概率都为 1/(x-1)，而完全换一把锁和一把钥匙不会更优。于是从一次失败开始，后续会沿同一锁或同一钥匙连续尝试，直到打开一把锁。由于没有假钥匙，过程每轮必然在有限步内打开一把锁，完整历史可压缩成剩余锁数和当前玩家下标。DP 统计第 j 个成功匹配由哪个玩家完成，或等价地按剩余锁数逐层推进并把连续尝试的成功概率分配到轮转玩家上。最后按线性期望累加每个玩家在所有阶段的贡献。",
+    "complexity": "O(n^2 * l) for the straightforward C1 DP described by the dedicated solution; can be optimized with prefix sums, but C1 constraints allow this bound.",
+    "tricks": [
+      "用失败后的后验概率证明同锁换钥匙和同钥匙换锁是唯一需要考虑的最优延续。",
+      "把复杂历史压缩到剩余锁数和当前玩家编号。",
+      "按每次成功匹配的贡献累加每个玩家的期望，而不是模拟完整随机过程。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "k0-probability-dp",
+      "summary": "easy version 主解法。利用 k=0 保证每个阶段最终一定打开一把锁，DP 记录上一把锁由哪个玩家打开或按剩余锁数推进，计算连续试验中成功落到各玩家的概率贡献。",
+      "complexity": "O(n^2 * l)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "hard-version-specialization",
+      "summary": "把 C2 的 O(nlk) DP 令 k=0 后得到的特化版本；没有假钥匙维度和发现假钥匙转移。",
+      "complexity": "O(n * l)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "主解法用 DP 分配每个阶段成功匹配落到各玩家的概率/期望贡献。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "需要基于历史试验计算后验成功概率，并在模意义下输出期望。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "math/probability/bayesian-update",
+      "importance": "primary",
+      "evidence": "第一次失败后判断同锁换钥匙、同钥匙换锁的成功概率都为 1/(x-1)，依赖条件概率更新。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "完整历史中试过哪些对不必逐一保留；在 k=0 下剩余锁数和当前玩家编号足以决定后续贡献分布。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "secondary",
+      "evidence": "每个玩家的答案通过累加每一轮成功事件对该玩家的期望贡献得到。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "概率和期望都以模 1e9+7 的分数形式计算，需要模逆元。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "整体按成功匹配次数或剩余锁数递推。",
+      "solution_variant": "k0-probability-dp"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "incidental",
+      "evidence": "题面是多人轮流按最优概率选择的游戏化过程，但算法核心不是博弈胜负或 minimax。",
+      "solution_variant": "k0-probability-dp"
+    }
+  ]
+}
