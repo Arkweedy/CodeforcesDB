@@ -1,0 +1,115 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "E",
+    "title": "Black Cat Collapse",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/E",
+      "notes": "题面与约束：根为 1 的树，点编号保证可作为某个 DFS 序；第 i 天主动探索一个未塌陷点，同时编号 n-i+1 的点自动塌陷；统计恰好探索 i 天且最后探索 1 的方案数。n 总和不超过 80。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认反转操作序列、DFS 区间性质，以及 f[u][i][j][k] 合并子树的主解法。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zwgzc973",
+      "notes": "洛谷题解给出更细的四维 DP 含义、按 DFS 序逆序合并儿子、用组合数统计空位与向后放置点交错的 O(n^5) 实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/imcaigou/p/18792433.html",
+      "notes": "补充参考：从后缀最大值和祖先-后代相对顺序角度描述另一种理解，但本条入库采用官方/洛谷的树形计数 DP 版本。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一棵编号可形成 DFS 序的有根树。每天可主动探索一个仍未塌陷的点，随后该点子树塌陷，并且当天末编号 n-i+1 的点也会自动塌陷。要求对每个天数 i 统计主动探索恰好 i 次且最后一次探索根 1 的合法序列数。",
+    "constraints": "t <= 10，单测 n <= 80，所有测试 n 之和 <= 80，模数 998244353。点编号满足存在 DFS 遍历访问顺序正好为 1..n，因此每个子树对应连续编号区间。",
+    "core_idea": "把主动探索序列反转并放到位置序列中：第 i 天探索的点对应位置 n-i+1，未主动探索的位置视为空。一个点 u 至少要放在位置 u 或之后；由于编号是 DFS 序，u 的子树是连续区间 [in_u,out_u]，子树内点不会放到 in_u 左侧，而放到 out_u 右侧只需继续维护祖先-后代顺序。对每个子树做四维计数 DP：状态记录为祖先预留的最左位置/是否无预留、当前区间内剩余空位数、需要放到子树右侧的点数。按 DFS 序逆序合并儿子，枚举子树向后放置的点有多少填入已有空位，并用组合数统计交错方式。合并完所有儿子后再分类处理 u 本身：不探索 u、把 u 放入祖先预留位置、把 u 放到自身位置、或把 u 放到子树外。根不能被跳过，最终由根 DP 状态读出每个探索天数的答案。",
+    "complexity": "O(n^5) per test case after combination-table preprocessing; memory O(n^4).",
+    "tricks": [
+      "将主动探索顺序反转成位置序列，使第 i 天的自动删除限制变成点 u 只能出现在位置 u 或之后。",
+      "利用 DFS 序保证子树是连续编号区间，从而可以按子树区间维护空位和向右外溢的点。",
+      "用额外维度记录祖先预留位置与子树右侧待放置数量，让兄弟子树合并时只需组合数统计交错。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dfs-interval-tree-counting-dp",
+      "summary": "官方主解法。反转探索序列并转成位置放置问题，利用 DFS 序区间对每个子树建立四维 DP。状态维护祖先预留位置、区间空位数和需要放到子树右侧的点数；逆序合并儿子并用组合数处理不同来源点的交错，最后加入当前节点并从根状态读出答案。",
+      "complexity": "O(n^5)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "suffix-maximum-chain-dp",
+      "summary": "博客补充思路。把最终位置序列按后缀最大值分段，段间合并不影响祖先-后代合法性；预处理链间可选合法点的相对顺序计数，再做按操作位置推进的 DP。该变体更偏结构观察，未作为主入库解法。",
+      "complexity": "high polynomial, source does not give a fully expanded bound",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解法在每个 rooted subtree 上维护并合并 DP 状态，儿子按 DFS 序逆序做树形背包式合并。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "DP 值表示满足塌陷与祖先顺序约束的探索序列数量，所有转移都在统计方案数并对 998244353 取模。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "合并子树时需要用组合数统计空位选择和不同子树向后放置点的交错顺序，是复杂度和正确性的核心部分。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "graph/dfs-order",
+      "importance": "primary",
+      "evidence": "题目保证编号可作为 DFS 序，主解法直接依赖每个子树形成连续区间 [in_u,out_u] 才能定义区间空位和向右外溢状态。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "普通 dp[u][k] 无法处理每天自动塌陷带来的绝对位置限制，必须额外记录祖先预留位置、区间空位数和子树外待放置点数。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "问题对象是有根树，子树塌陷和祖先-后代合法性决定 DP 的组织方式。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "方案数转移依赖组合数预处理和多类对象的交错计数。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "把原探索天数顺序反转为位置序列，是把自动删除约束转成 u 只能出现在位置 u 或之后的关键观察。",
+      "solution_variant": "dfs-interval-tree-counting-dp"
+    }
+  ]
+}
