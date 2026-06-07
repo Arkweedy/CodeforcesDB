@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "A",
+    "title": "Simple Permutation",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/A",
+      "notes": "题面与约束：构造 1..n 的排列 p，使 c_i=ceil((p_1+...+p_i)/i) 中至少 floor(n/3)-1 个为质数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认主构造：利用 Bertrand 定理找区间内质数 p，按 p,p-1,p+1,... 交替构造，使大量奇数位置的 c_i 等于 p。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/gpp5c0v4",
+      "notes": "洛谷题解给出同一确定性构造：选合适质数 a，前 floor(n/3)-1 项围绕 a 对称排列，使对应 c_i 保持为 a。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/073w9zme",
+      "notes": "随机化参考做法：利用质数分布直接随机挑选排列元素以提高 c_i 为质数的比例；本条入库不采用随机主解。"
+    }
+  ],
+  "annotation": {
+    "summary": "构造一个长度为 n 的排列，使前缀平均值上取整得到的序列 c 中至少 floor(n/3)-1 个位置是质数。",
+    "constraints": "t <= 10，2 <= n <= 1e5。题目保证一定存在答案。",
+    "core_idea": "根据 Bertrand 定理，在适当区间内一定能找到一个质数 p，官方实现直接在 n/2 附近向两侧找质数。然后按 p,p-1,p+1,p-2,p+2,... 的顺序放置前若干个数，其余数任意补齐。由于围绕 p 对称，奇数长度前缀的和等于 当前长度 * p，因此这些位置的 ceil(prefix_sum / i) 恰好为 p。可保证至少 floor(n/3)-1 个 c_i 为质数。",
+    "complexity": "O(n log log n) with sieve-based prime checking, or O(n sqrt n) worst-case with direct trial primality under n<=1e5; construction itself is O(n).",
+    "tricks": [
+      "用 Bertrand 定理保证目标区间内存在可作为固定前缀平均值的质数。",
+      "围绕质数 p 对称排列 p-1,p+1,p-2,p+2，使奇数前缀平均值保持为 p。",
+      "只需要满足 floor(n/3)-1 个质数位置，因此构造足够长的前缀后剩余元素可任意补齐。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "symmetric-prime-center-construction",
+      "summary": "官方主解法。找一个位于 n/3 到 2n/3 附近的质数 p，输出以 p 为中心的交替序列 p,p-1,p+1,p-2,p+2,...，让多个奇数前缀的上取整平均值固定为 p。",
+      "complexity": "O(n) after prime table",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "randomized-prime-average-search",
+      "summary": "洛谷参考变体。利用质数并不稀疏的事实随机选择排列元素，尽量让更多 c_i 为质数；可过但证明和稳定性弱于确定性构造。",
+      "complexity": "expected near-linear with repeated random trials",
+      "confidence": "low",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求直接输出排列，主解法给出围绕质数 p 的显式构造。",
+      "solution_variant": "symmetric-prime-center-construction"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "primary",
+      "evidence": "核心保证来自质数存在性，官方题解直接使用 Bertrand 定理来保证区间内有可用质数。",
+      "solution_variant": "symmetric-prime-center-construction"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "排列必须按以 p 为中心的对称结构组织，才能让多个前缀平均值固定为同一个质数。",
+      "solution_variant": "symmetric-prime-center-construction"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "需要用 p 所在区间与可构造前缀长度的关系证明能覆盖至少 floor(n/3)-1 个位置。",
+      "solution_variant": "symmetric-prime-center-construction"
+    }
+  ]
+}
