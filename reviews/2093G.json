@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2093,
+    "title": "Codeforces Round 1016 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2093,
+    "index": "G",
+    "title": "Shorten the Array",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "bitmasks",
+      "data structures",
+      "dfs and similar",
+      "greedy",
+      "strings",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2093/problem/G",
+      "notes": "Statement and constraints: find the shortest subarray whose maximum pairwise XOR is at least k; sum of n over tests is <= 2e5 and values are <= 1e9."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2093G",
+      "notes": "Luogu mirror of the statement was used to cross-check the definition of subarray beauty and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141434",
+      "notes": "Official editorial code stores the latest index in each binary trie node and queries the nearest previous element y with x xor y >= k."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1016",
+      "notes": "Maspy's short writeup confirms that only pairs involving the newly added endpoint need to be considered, and the predicate is handled by a binary trie."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/archer233/p/18817014",
+      "notes": "Cnblogs explanation details the high-to-low trie traversal against threshold k and the O(n log A) complexity."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array a and threshold k, find the minimum length of a subarray whose maximum XOR over all pairs inside it is at least k, or report -1.",
+    "constraints": "Up to 1e4 test cases, total n <= 2e5, 0 <= a_i,k <= 1e9. The solution needs roughly logarithmic work per element.",
+    "core_idea": "A subarray is beautiful exactly when it contains two elements with XOR at least k; the two elements can serve as the endpoints of a shorter or equal beautiful subarray. Therefore, when scanning the right endpoint r, it is enough to find the largest previous index l such that a_l xor a_r >= k, then minimize r-l+1. Store all previous values in a binary trie, and in every trie node keep the maximum index among inserted numbers in that subtree. To query x against threshold k, scan bits from high to low. If k has bit 1, the XOR must also take bit 1 to remain able to meet the threshold while equal so far. If k has bit 0, taking XOR bit 1 already makes the value larger than k at this bit, so that opposite branch contributes all of its maximum index as a candidate; then continue through the equal branch with XOR bit 0. At the end, the equal branch is also valid. The largest valid index gives the shortest segment ending at r.",
+    "complexity": "O(n log A) time and O(n log A) memory, with log A about 30",
+    "tricks": [
+      "Reduce shortest beautiful subarray to choosing the closest pair of positions with XOR at least k.",
+      "Keep the maximum index in each binary trie subtree so a threshold query returns the nearest valid left endpoint.",
+      "Compare x xor y with k bit by bit: a 0-bit in k allows the opposite branch to be accepted immediately, while a 1-bit forces the opposite branch to stay equal."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "latest-index-binary-trie",
+      "summary": "Scan r from left to right. Before or while inserting a_r, query a binary trie containing seen values for the largest index l with a_l xor a_r >= k, using max-index values stored in trie subtrees.",
+      "complexity": "O(n log A)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/trie",
+      "importance": "primary",
+      "evidence": "The main data structure is a 0-1 binary trie over value bits, with each node storing the latest inserted index in its subtree.",
+      "solution_variant": "latest-index-binary-trie"
+    },
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "primary",
+      "evidence": "The query greedily processes bits from high to low according to whether the current bit of k is 0 or 1.",
+      "solution_variant": "latest-index-binary-trie"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "The condition x xor y >= k is decomposed by the first bit where the XOR value exceeds k, allowing whole trie subtrees to become candidates.",
+      "solution_variant": "latest-index-binary-trie"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "All comparisons and trie transitions are based on the binary representation of the values and k.",
+      "solution_variant": "latest-index-binary-trie"
+    }
+  ]
+}
