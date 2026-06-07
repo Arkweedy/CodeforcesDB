@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2093,
+    "title": "Codeforces Round 1016 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2093,
+    "index": "D",
+    "title": "Skibidi Table",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2093/problem/D",
+      "notes": "Statement and constraints: answer both cell-to-value and value-to-cell queries in a recursively filled 2^n by 2^n table."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141434",
+      "notes": "Official editorial uses the recursive quadrant order top-left, bottom-right, bottom-left, top-right to descend n levels per query."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/z2m9mpry",
+      "notes": "Luogu solution gives direct recursive functions for querying a coordinate's value and a value's coordinate."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zw4z2uta",
+      "notes": "Alternative Luogu solution describes the same process as base-4 simulation over quadrant digits."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1016",
+      "notes": "Maspy writeup confirms the quadtree-like recursive interpretation and O(qn) complexity."
+    }
+  ],
+  "annotation": {
+    "summary": "For a recursively filled 2^n by 2^n table, answer queries mapping a coordinate to its number and mapping a number back to its coordinate.",
+    "constraints": "1 <= n <= 30, q up to 2e4 over tests, so the full table cannot be built and all values need 64-bit integers.",
+    "core_idea": "The table is recursively split into four equal quadrants in a fixed order: top-left, bottom-right, bottom-left, top-right. Each quadrant contains the same number of values, so for a coordinate query, determine which quadrant contains (x,y), add that quadrant's offset to the answer, and recurse into the local coordinate. For an inverse query, compare the value with the four consecutive value ranges, move to the corresponding quadrant, subtract the offset, and recurse. This is equivalent to reading or writing the base-4 digits of value-1, where each digit encodes one quadrant and changes the corresponding bit of x and y.",
+    "complexity": "O(n) per query and O(1) auxiliary memory",
+    "tricks": [
+      "Never materialize the table; descend through its recursive quadrant definition.",
+      "Each level contributes one base-4 digit / one pair of coordinate bits.",
+      "Use 64-bit arithmetic because the largest value is 2^(2n)."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "recursive-quadrant-descent",
+      "summary": "Maintain the current square and value offset. At each level choose one of four quadrants for the query and recurse.",
+      "complexity": "O(n) per query",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "base4-bit-pair-simulation",
+      "summary": "Interpret value-1 in base 4, or read coordinate bits from high to low, using the fixed quadrant-digit mapping.",
+      "complexity": "O(n) per query",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "Both query directions repeatedly split the current square into four subproblems and continue inside one quadrant.",
+      "solution_variant": "recursive-quadrant-descent"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "primary",
+      "evidence": "The table definition itself is recursive, and the solution answers queries by following that recursive construction.",
+      "solution_variant": "recursive-quadrant-descent"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The iterative variant treats each recursion level as one pair of coordinate bits or one base-4 digit of value-1.",
+      "solution_variant": "base4-bit-pair-simulation"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The main risk is carefully handling quadrant order, coordinate conventions, and 64-bit offsets.",
+      "solution_variant": "recursive-quadrant-descent"
+    }
+  ]
+}
