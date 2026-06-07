@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "B2",
+    "title": "Canteen (Hard Version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "flows",
+      "greedy",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/B2",
+      "notes": "题面与约束：可先对 a 精确减少 k 次，然后每轮 a 与 b 同位置抵消，再把 a 循环右移；要求最少轮数使 a 全为 0。hard version 中 k 无额外小范围限制。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认前缀和括号匹配理解、旋转到前缀和最小位置断环、二分轮数和单调队列判定。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qet8wy0q",
+      "notes": "洛谷题解给出另一种断环方法：构造满足所有后缀 sum(b-a)>=0 的理想旋转，再二分答案并用双端队列模拟窗口抵消。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/imcaigou/p/18792433.html",
+      "notes": "补充参考：概括为二分轮数，从某个位置向后走，超过轮数限制的剩余量由 k 次预先削减补掉。"
+    }
+  ],
+  "annotation": {
+    "summary": "有两个环形数组 a,b。可以先从 a 中总共减去 k，然后重复执行同位抵消和 a 的循环右移。求使 a 归零所需的最少轮数。",
+    "constraints": "t <= 2e4，单测 n <= 2e5，k <= 2e14，a_i,b_i <= 1e9，所有测试 n 之和 <= 2e5，sum(a) <= sum(b)，k <= sum(a)。",
+    "core_idea": "把每轮抵消和右移理解为 a_i 的单位流量沿环向后寻找 b 的容量。答案轮数 x 具有单调性：允许更多轮时，需要预先削减的 a 总量不会增加，因此可以二分 x。环上的直接判定会有重叠和回绕，先用前缀和 c_i=sum(a-b) 把序列旋转到 c 的最小位置，使需要考虑的流量在一条链上被后方 b 容量吸收，不会绕回开头。固定 x 后，从右往左处理前缀和，在距离 x 的窗口内维护最小 c_j；若窗口最小值仍大于当前 c_i，差值就是必须提前从对应 a 上削掉的量。用单调队列维护滑动窗口最小前缀和，累加所需削减量并检查是否 <= k。",
+    "complexity": "O(n log n) per test case for binary search with O(n) feasibility check; memory O(n).",
+    "tricks": [
+      "用前缀和最小位置把循环抵消问题断成不回绕的线性链。",
+      "二分轮数，把最小答案转化为检查需要预先削减的 a 总量是否不超过 k。",
+      "用单调队列维护长度为 x 的后续窗口最小前缀和，线性计算判定函数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rotated-prefix-binary-search",
+      "summary": "官方主解法。将 a_i-b_i 做前缀和，旋转到前缀和最小点以消除环回影响；二分答案 x，并用单调队列维护每个位置后 x 步内的最小前缀和，计算为了在 x 轮内清空需要提前削减的总量。",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "ideal-rotation-deque-simulation",
+      "summary": "洛谷题解版本。先用栈合并 b_i-a_i 区间，找到满足所有后缀容量非负的理想旋转；再二分轮数，用双端队列保存当前窗口内可抵消容量并贪心扣减。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "最小轮数 x 满足单调性，主解法通过二分 x 并检查所需预削减量是否 <= k。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "data-structure/monotonic-queue",
+      "importance": "primary",
+      "description": "Maintain the minimum or maximum element in a sliding window using a deque whose values are monotone.",
+      "parent": "data-structure/queue",
+      "created_reason": "Existing data-structure/queue and data-structure/monotonic-stack do not precisely capture sliding-window extrema maintained by a deque.",
+      "status": "candidate",
+      "evidence": "固定轮数后，需要在每个位置的后续 x 个前缀和中取最小值，官方判定用单调队列在线维护滑动窗口最小值。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "trick/circular-interval",
+      "importance": "primary",
+      "evidence": "原过程发生在环上，主解法必须选择前缀和最小点作为断点，把会回绕的抵消过程变成线性窗口问题。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "可行性检查等价于让每个 a 的剩余流量尽量被允许窗口内的 b 容量吸收，无法吸收的部分才计入必须提前削减的 k。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "更多轮数只会扩大可抵消窗口，因此所需削减量单调不增。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "判定过程维护随 i 移动的固定长度窗口，窗口端点单调移动。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "抵消容量和剩余需求通过 a_i-b_i 的前缀和比较表达。",
+      "solution_variant": "rotated-prefix-binary-search"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "secondary",
+      "evidence": "洛谷变体用栈合并 b_i-a_i 区间以构造满足后缀容量非负的理想旋转。",
+      "solution_variant": "ideal-rotation-deque-simulation"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "可把 a 的单位量沿环流向 b 容量理解为流量匹配，但主实现没有建图跑流。",
+      "solution_variant": "rotated-prefix-binary-search"
+    }
+  ]
+}
