@@ -226,6 +226,48 @@ class CfDbTests(unittest.TestCase):
                 results = search_problems(conn, rating_min=1800, rating_max=1800, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], [problem_uid])
 
+    def test_reviewed_payload_replaces_bootstrap_official_tags(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            payload = self.reviewed_payload()
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, eligibility_status, extraction_status)
+                    VALUES (2, 'cf_contest:2', 'Synthetic Contest', 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES (
+                        'cf_problem:2:B', 2, 'B', 'Bootstrap Tags', 1800, 'official',
+                        'https://codeforces.com/contest/2/problem/B',
+                        'https://codeforces.com/problemset/problem/2/B'
+                    )
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source)
+                    VALUES
+                        ('cf_problem:2:B', 'graph/tree', 'secondary', 'Codeforces official tag: trees.', 'cf_official'),
+                        ('cf_problem:2:B', 'algorithm/search/binary-search', 'secondary', 'Codeforces official tag: binary search.', 'cf_official')
+                    """
+                )
+
+                problem_uid = apply_reviewed_payload(conn, payload)
+                rows = conn.execute(
+                    "SELECT tag, source FROM problem_tags WHERE problem_uid = ? ORDER BY tag",
+                    (problem_uid,),
+                ).fetchall()
+                self.assertEqual([(row["tag"], row["source"]) for row in rows], [("dp", "ai_reviewed")])
+                self.assertEqual(search_problems(conn, tags=["graph/tree"]), [])
+
     def test_excluded_payload_does_not_require_tags_or_appear_in_search(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db = Path(tmp) / "test.sqlite"

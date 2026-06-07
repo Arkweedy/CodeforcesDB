@@ -383,11 +383,10 @@ def _upsert_tags(
     tags: list[Any],
     variant_ids: dict[str, int],
 ) -> None:
-    placeholders = ",".join("?" for _ in REVIEWED_TAG_SOURCES)
-    conn.execute(
-        f"DELETE FROM problem_tags WHERE problem_uid = ? AND source IN ({placeholders})",
-        (problem_uid, *sorted(REVIEWED_TAG_SOURCES)),
-    )
+    # A reviewed payload is the authoritative tag set for the problem. Bootstrap
+    # cf_official tags are useful candidates before review, but should not
+    # remain searchable after the AI-reviewed analysis is applied.
+    conn.execute("DELETE FROM problem_tags WHERE problem_uid = ?", (problem_uid,))
     for item in tags:
         canonical = _ensure_reviewed_tag(conn, item, problem_uid)
         variant_id = variant_ids.get(item.get("solution_variant")) if item.get("solution_variant") else None
