@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "D",
+    "title": "Conditional Operators",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/D",
+      "notes": "题面与约束：给定长度 2n+1 的 01 串，插入 n 个 C++ 三目运算符 ?: 和括号，保持字符顺序，判断能否构造值为 1 的表达式；若可以，需要输出长度受限的表达式。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认两个判定条件：末尾为 1 且非 101；或存在一对相邻的 1，中间 0 的数量为偶数且前一个 1 前字符数为偶数。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/8eu64cnv",
+      "notes": "洛谷题解从删除连续 0 段和保留 11 数量的角度分析，并给出按表达式树构造输出的实现细节。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/imcaigou/p/18792433.html",
+      "notes": "补充参考：把操作视作取三个连续值折叠成一个值，说明 0 段按模 2 压缩、11 的数量与末尾 00 结构如何决定有无解。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个奇数长度的二进制串，要求在字符之间插入三目运算符和括号，保持原字符顺序，使整个表达式求值为 1，并在可行时构造表达式。",
+    "constraints": "t <= 10000，单测 n <= 1.5e5，所有测试 n 之和 <= 1.5e5；输出表达式长度不得超过 10n+1000。",
+    "core_idea": "一次三目运算等价于把三个相邻值 x,y,z 折叠成 x?y:z。先识别直接可构造的形态：若串以 11 开头，则最后可让 11? 保证结果为 1；若串以 1 结尾且不是 101，也能把前缀折叠成合适值，使最后一步形如 0?(anything):1 或等价构造。对末尾为 0 的情形，关键是相邻两个 1 之间 0 的数量奇偶：若存在一对相邻 1，中间 0 数为偶数，且前一个 1 前面的字符数为偶数，就能消去中间偶数个 0 得到不会落入 01100 的可构造局面；否则基于操作无法改变相关奇偶结构和末尾 00 的不变量，可以证明无解。实现上扫描 1 的位置即可判定，再用 fold(l,r) 把若干连续片段构造成右结合的三目表达式，按判定分支拼接出合法答案。",
+    "complexity": "O(total n) time and O(total n) output size; auxiliary memory O(n).",
+    "tricks": [
+      "把插入括号的问题改看成反复折叠三个相邻字符的构造过程。",
+      "用相邻 1 的位置奇偶刻画中间 0 段能否被消去成相邻 11。",
+      "单独处理末尾为 1、特殊串 101、以及末尾 00 的无解不变量。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "parity-case-construction",
+      "summary": "官方主解法。线性扫描相邻 1 的位置，若满足位置奇偶条件则按固定模板把左右片段 fold 成表达式；否则若末尾为 1 且不是 101，也按末尾 1 模板构造；其余情况证明无解。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "zero-run-reduction-view",
+      "summary": "中文题解中的等价理解。利用 000 -> 0 和 001 -> 1，把连续 0 段按是否后接 1 做模 2 规约，再按新串中 11 的数量、开头和结尾分类。该视角更适合理解无解证明，但构造仍需映射回原串表达式。",
+      "complexity": "O(n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目不仅要判定可行性，还必须输出具体三目表达式；主解法核心是为每个可行结构给出固定构造模板。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "正确性依赖对末尾为 1、特殊 101、存在合格相邻 1、末尾 00 等结构情况的完整划分。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "可行判定的关键条件是相邻两个 1 中间 0 的数量为偶数，等价于两个 1 的位置奇偶满足特定关系。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "无解证明依赖操作不会随意改变相邻 1 间 0 段奇偶和末尾 00 结构；要把末尾 0 变成 1 必须消耗特定的 11 结构。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "输入对象是二进制字符串，主判定通过扫描字符位置和局部子串模式完成。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "secondary",
+      "evidence": "零段按长度奇偶规约是理解分类和无解情形的一种自然视角，虽然官方实现可直接扫 1 的位置。",
+      "solution_variant": "zero-run-reduction-view"
+    },
+    {
+      "tag": "implementation/parsing/expression",
+      "importance": "secondary",
+      "evidence": "输出构造需要生成括号化三目表达式或表达式树，保证字符顺序和长度限制。",
+      "solution_variant": "parity-case-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "incidental",
+      "evidence": "长度为 3 的 101 是末尾为 1 判定中的唯一特殊无解边界。",
+      "solution_variant": "parity-case-construction"
+    }
+  ]
+}
