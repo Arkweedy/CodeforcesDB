@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2093,
+    "title": "Codeforces Round 1016 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2093,
+    "index": "F",
+    "title": "Hackers and Neural Networks",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2093/problem/F",
+      "notes": "Statement and constraints: choose a fixed operation sequence before seeing random neural-network choices; n,m <= 500 and total n*m <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141434",
+      "notes": "Official editorial code computes the maximum number of correct positions in one network and checks whether every target position is covered by some network."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1016",
+      "notes": "Maspy writeup gives the cost formula n+2k, where k is the minimum number of initially wrong positions after choosing the best network."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/oglyncsz",
+      "notes": "Luogu solution explains why repeatedly choosing a new best network is unnecessary: after the first full fill, repair wrong positions one by one."
+    }
+  ],
+  "annotation": {
+    "summary": "Given target strings a and m candidate arrays b_i, find the minimum length of a predetermined operation sequence that guarantees reaching a despite random fills of blank positions.",
+    "constraints": "t <= 1000, n,m <= 500, total n*m <= 2e5, and total input string length <= 2e5.",
+    "core_idea": "For feasibility, every position j must be correct in at least one candidate array; otherwise no operation can ever write a_j at that position. For an optimal construction, choose the neural network with the most positions already equal to a, and apply it n times. Regardless of randomness, after n calls there are no blanks, and at most n-x positions are wrong, where x is the maximum match count over all networks. Each wrong position can then be repaired independently by blanking that position once and calling some network that has the correct word there once. Because only one blank exists during each repair, randomness is removed. This gives n+2(n-x) operations. The same value is a lower bound: at least n fill operations are needed to remove all blanks, and every initially wrong final position needs one blanking operation plus one additional fill.",
+    "complexity": "O(nm) time and O(n) auxiliary memory",
+    "tricks": [
+      "Model each candidate network as the set of target positions it can write correctly.",
+      "Use a worst-case argument because the operation sequence is fixed before random choices are observed.",
+      "After the initial full fill, repair positions one at a time so there is only one blank and the random choice is forced."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "best-row-then-single-blank-repairs",
+      "summary": "Count matches between every b_i and a. If every column is covered by at least one matching b_i, start with the row with maximum matches, then repair each wrong position using delete-plus-forced-fill.",
+      "complexity": "O(nm)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The optimal first phase greedily chooses the network with the maximum number of target matches, minimizing the number of later repairs.",
+      "solution_variant": "best-row-then-single-blank-repairs"
+    },
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "primary",
+      "evidence": "The operation sequence must work for every possible random blank chosen by the networks, so both the construction and lower bound are worst-case guarantees.",
+      "solution_variant": "best-row-then-single-blank-repairs",
+      "description": "Design and prove a sequence or strategy that succeeds under every nondeterministic or adversarial outcome, usually by matching a worst-case lower bound.",
+      "parent": "trick",
+      "created_reason": "The existing greedy/brute-force tags do not capture the main proof obligation caused by random outcomes hidden until the end.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/coverage-condition",
+      "importance": "primary",
+      "evidence": "Feasibility is exactly that every target position is covered by at least one candidate network with b_i,j = a_j.",
+      "solution_variant": "best-row-then-single-blank-repairs",
+      "description": "Reduce feasibility to checking whether every required element, position, or class is covered by at least one available candidate.",
+      "parent": "trick",
+      "created_reason": "This coverage-style feasibility check is reusable and distinct from interval-specific feasibility tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The implementation directly scans all n*m pairs of target position and candidate network to compute coverage and maximum matches.",
+      "solution_variant": "best-row-then-single-blank-repairs"
+    }
+  ]
+}
