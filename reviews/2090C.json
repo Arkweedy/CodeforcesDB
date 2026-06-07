@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2090,
+    "title": "Codeforces Round 1012 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2090,
+    "index": "C",
+    "title": "Dining Hall",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2090/problem/C",
+      "notes": "Statement and constraints: guests choose nearest valid table cell in an infinite patterned dining hall, with different behavior for empty-table and any-free-cell guests."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://znzryb.com/2025/04/20/20250420-ead57bb7/",
+      "notes": "Blog solution precomputes enough table cells and uses priority queues; it also warns that the finite generation bound must cover the triangular ordering by distance."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2090C",
+      "notes": "Luogu mirror was used to cross-check the infinite-table pattern and tie-breaking order."
+    }
+  ],
+  "annotation": {
+    "summary": "Serve guests in order in an infinite periodic grid of tables, outputting the nearest chosen seat for each guest depending on whether they require a fully empty table or any free table cell.",
+    "constraints": "Total n <= 5e4, while the dining hall is infinite. Only the first O(n) closest tables and seats can ever matter.",
+    "core_idea": "Each table at block coordinates (a,b) has four cells. Their shortest distances from the entrance are deterministic: the top-left cell is closest for opening a new table, and the other cells have fixed distance/tie keys based on 3a and 3b. Precompute enough candidate tables around the origin in increasing distance order, more like a triangle by a+b rather than a square by sqrt(n). Maintain one priority queue or sorted list of unopened tables keyed by the first seat, and another priority queue of all free seats keyed by distance, x, then y. For a t=0 guest, pop the nearest still-empty table and occupy its first seat. For a t=1 guest, pop the nearest still-free seat. Lazy deletion or occupancy arrays remove seats/tables already taken by previous guests. Because every guest chooses exactly the current minimum under the same key order, this greedy simulation matches the statement.",
+    "complexity": "O(N log N) after O(N log N) candidate precomputation, where N is the total number of guests",
+    "tricks": [
+      "Replace the infinite grid by a finite set of nearest candidate tables large enough for all guests.",
+      "Use separate ordered structures for empty tables and for all free seats.",
+      "Sort by the exact path distance and then by x,y tie-breakers."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-priority-queues-over-precomputed-seats",
+      "summary": "Precompute candidate table cells with their distance keys. Use one queue for unopened tables and one queue for all seats, lazily skipping occupied entries.",
+      "complexity": "O(N log N)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "primary",
+      "evidence": "The simulation maintains nearest available candidates in priority queues keyed by distance and coordinates.",
+      "solution_variant": "two-priority-queues-over-precomputed-seats"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Each guest independently chooses the current nearest valid table cell under the required rule.",
+      "solution_variant": "two-priority-queues-over-precomputed-seats"
+    },
+    {
+      "tag": "trick/candidate-precomputation",
+      "importance": "primary",
+      "evidence": "The infinite dining hall is reduced to a finite precomputed list of closest table cells that can serve all guests.",
+      "solution_variant": "two-priority-queues-over-precomputed-seats",
+      "description": "Precompute a sufficiently large ordered set of candidates from an infinite or very large search space, then answer online choices by scanning or popping candidates.",
+      "parent": "trick",
+      "created_reason": "Existing sorting and priority-queue tags do not capture the finite candidate-generation step needed for infinite grids.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Candidate seats are ordered by distance, then x, then y, either by sorting arrays or priority queue keys.",
+      "solution_variant": "two-priority-queues-over-precomputed-seats"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The main pitfalls are exact distance formulas, generation bounds, occupancy bookkeeping, and lazy deletion.",
+      "solution_variant": "two-priority-queues-over-precomputed-seats"
+    }
+  ]
+}

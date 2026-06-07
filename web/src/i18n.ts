@@ -394,6 +394,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/binary-carry": "二进制进位",
   "trick/canonical-form": "规范形",
   "trick/case-analysis": "分类讨论",
+  "trick/candidate-precomputation": "候选预生成",
   "trick/circular-interval": "环形区间",
   "trick/classify-overlap": "重叠分类",
   "trick/component-decomposition": "分量分解",
