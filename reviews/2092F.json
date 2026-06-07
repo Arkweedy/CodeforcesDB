@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2092,
+    "title": "Codeforces Round 1014 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2092,
+    "index": "F",
+    "title": "Andryusha and CCB",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "number theory",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2092/problem/F",
+      "notes": "Statement and constraints: for every prefix of a binary string, count the k values allowing a partition into k substrings with equal beauty."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/18870115",
+      "notes": "Detailed Chinese writeup derives the run-length-compressed recurrence for the contribution interval of each (k, cnt) pair."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.csdn.net/weixin_73725403/article/details/146874700",
+      "notes": "Independent writeup starts from compressing the binary string into maximal runs and separating runs of length 1 from longer runs."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/08/19/0930",
+      "notes": "Additional solution source for Codeforces 2092F; used as a cross-check for the run-based counting approach."
+    }
+  ],
+  "annotation": {
+    "summary": "For each prefix of a binary string, count how many k allow splitting that prefix into exactly k substrings whose numbers of adjacent bit changes are all equal.",
+    "constraints": "t up to 1e5, total n <= 1e6. The solution must be close to O(n log n) over one test file.",
+    "core_idea": "Compress the string into maximal equal-character runs. Beauty is the number of run boundaries contained inside a substring, so a split with per-piece beauty c is controlled almost entirely by run indices; lengths matter only when a cut can be placed inside a run of length greater than one. The c=0 case is handled separately: every part must stay inside a run, contributing prefix_length - run_count + 1 possible k values. For c>0, enumerate the possible per-piece beauty c. Starting from the interval of run indices where one piece with beauty c can end, repeatedly append another piece. If the current boundary run has length greater than one, the next left boundary can be shifted by c runs; otherwise it must move by c+1 runs. Thus each fixed c contributes a sequence of intervals of prefix run indices, and adding these intervals with a difference array counts all k for every prefix. The total number of interval steps is harmonic, because for each c there are O(m/c) steps.",
+    "complexity": "O(n log n) time and O(n) memory",
+    "tricks": [
+      "Represent beauty by run-boundary count after run-length encoding.",
+      "Handle per-piece beauty 0 separately because pieces cannot cross any run boundary.",
+      "For c>0, each additional piece advances the feasible prefix-run interval by c or c+1 depending on whether an internal cut inside a run is possible.",
+      "Use a difference array over run indices to add all contribution intervals."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "run-interval-contribution",
+      "summary": "Compress the string into runs. Count c=0 directly, then enumerate positive per-piece beauty c and add feasible prefix-run intervals with a difference array.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "The solution first compresses the binary string into maximal runs, and all later feasibility logic is expressed in run indices.",
+      "solution_variant": "run-interval-contribution"
+    },
+    {
+      "tag": "math/combinatorics/run-counting",
+      "importance": "primary",
+      "evidence": "The answer for each prefix is counted by how many run-index intervals are feasible for different equal-beauty values.",
+      "solution_variant": "run-interval-contribution"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Each enumerated beauty value contributes to a whole interval of prefix run indices, and these contributions are accumulated by difference updates.",
+      "solution_variant": "run-interval-contribution"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "primary",
+      "evidence": "For per-piece beauty c, only O(m/c) intervals are processed, so the total work over all c is O(m log m).",
+      "solution_variant": "run-interval-contribution"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "The implementation adds +1/-1 on run-index intervals and later prefix-sums them to get the number of positive-beauty k values.",
+      "solution_variant": "run-interval-contribution"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The algorithm still explicitly enumerates all positive per-piece beauty values and their interval steps, relying on the harmonic bound.",
+      "solution_variant": "run-interval-contribution"
+    }
+  ]
+}
