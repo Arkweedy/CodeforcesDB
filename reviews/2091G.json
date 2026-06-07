@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2091,
+    "title": "Codeforces Round 1013 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2091,
+    "index": "G",
+    "title": "Gleb and Boating",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "data structures",
+      "dp",
+      "graphs",
+      "greedy",
+      "math",
+      "number theory",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2091/problem/G",
+      "notes": "Statement and constraints: move on [0,s] with current step length, turning decreases power, and maximize final power."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141047",
+      "notes": "Official editorial solution uses an O(1) large-s shortcut for s > k^2 and BFS over positions for the remaining small cases."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/3ozbq0d2",
+      "notes": "Luogu solution derives the k-2 large-case construction using residues modulo k-2 after moving with step k and then k-1."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/dengstar/p/18796172/solution-CF2091G",
+      "notes": "Cnblogs writeup explains the state graph view (position, power, direction), the k^2 cutoff, and why the bounded BFS is fast enough."
+    }
+  ],
+  "annotation": {
+    "summary": "Starting from 0 with step length k, move within [0,s], optionally turning and losing one power each turn, and maximize the power when reaching s.",
+    "constraints": "s <= 1e9, k <= 1000, and sum of k over test cases <= 2000. The solution cannot BFS over all positions unless s is reduced by a threshold argument.",
+    "core_idea": "If s is divisible by k, go straight and keep power k. Otherwise, for sufficiently large s, one can always keep at least k-2 power: move right by k until near the end, turn left using k-1 steps enough times to adjust the residue modulo k-2, then turn right and finish using step k-2. Because each backward k-1 step changes the remaining distance modulo k-2 by 1, at most k-2 such steps are needed, and s > k^2 leaves enough room. Thus large cases answer max(1,k-2). For the remaining s <= k^2, build the reachable-state process explicitly. At a fixed power and direction, repeatedly moving without turning closes all positions along that arithmetic progression; after one turn, power decreases and direction flips. Processing these layers is a BFS over the number of turns, and the first layer that reaches s determines the maximum remaining power.",
+    "complexity": "O(1) for s > k^2; O(s*k) worst-case for bounded BFS when s <= k^2, with k <= 1000",
+    "tricks": [
+      "Use a large-case residue construction to avoid exploring positions up to 1e9.",
+      "Model turns as BFS layers because every turn decreases power by exactly one.",
+      "For a fixed direction and power, close all positions reachable by repeated strokes before considering the next turn."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "large-case-residue-plus-bfs",
+      "summary": "Return k if s is divisible by k; return max(1,k-2) if s > k^2; otherwise BFS reachable positions by decreasing power and alternating direction.",
+      "complexity": "O(1) large case, O(s*k) small case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "For small s, the solution processes reachable positions layer by layer by number of turns, which is a BFS on the implicit state graph.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    },
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "Maximizing final power is equivalent to minimizing the number of turns needed to reach s in the movement state graph.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "The large-case construction adjusts the remaining distance modulo k-2 using backward moves of length k-1.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "The solution splits cases at s > k^2: large s is solved by a formula/construction, while only small s is explored by BFS.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The proof for large s explicitly constructs a route with final power k-2.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The bounded small case explicitly explores reachable positions in the implicit graph.",
+      "solution_variant": "large-case-residue-plus-bfs"
+    }
+  ]
+}
