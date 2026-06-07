@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2093,
+    "title": "Codeforces Round 1016 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2093,
+    "index": "E",
+    "title": "Min Max MEX",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2093/problem/E",
+      "notes": "Statement and constraints: split the array into k non-empty consecutive subarrays and maximize the minimum MEX among the parts."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141434",
+      "notes": "Official editorial uses binary search on the answer and a linear check that starts a new segment whenever current MEX reaches the candidate value."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zjijfyde",
+      "notes": "Luogu solution explains the same binary-search template and the greedy check that collects all numbers 0..x-1 before cutting a segment."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blogs.ink/2025/04/09/codeforces-round-1016-div-32093e-min-max-mex/",
+      "notes": "Independent writeup emphasizes the monotonic decision problem: if every segment can have MEX at least x, then all smaller values are feasible."
+    }
+  ],
+  "annotation": {
+    "summary": "Split an array into k consecutive subarrays to maximize the minimum MEX of all subarrays.",
+    "constraints": "1 <= k <= n <= 2e5, a_i up to 1e9, and total n over test cases is <= 2e5.",
+    "core_idea": "Binary search the target value x. A segment has MEX at least x exactly when it contains every value from 0 to x-1 at least once; values outside this range do not matter. To check x, scan from left to right and greedily end a segment as soon as all x required values have appeared. This earliest-cut greedy is optimal because ending sooner leaves a suffix that is no harder to partition. If at least k such segments can be formed, the remaining elements can be appended to the last segment without decreasing its MEX, so x is feasible. Feasibility is monotone in x, enabling binary search.",
+    "complexity": "O(n log n) time with an O(x) or O(n) marker array per check; O(n) auxiliary memory",
+    "tricks": [
+      "For MEX >= x, only the presence of values 0..x-1 matters.",
+      "Greedily cut a segment immediately after all required small values are collected.",
+      "Use monotonicity of the target MEX to binary search the answer."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-greedy-mex-segments",
+      "summary": "Binary search x. During the check, mark seen values below x and cut a new segment whenever all x values are present.",
+      "complexity": "O(n log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The answer x is found by binary search over a monotone feasibility predicate.",
+      "solution_variant": "binary-search-greedy-mex-segments"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The feasibility check greedily cuts each segment as soon as it contains all values 0..x-1, which maximizes the remaining suffix.",
+      "solution_variant": "binary-search-greedy-mex-segments"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "The entire decision condition is based on characterizing MEX >= x as containing all values below x.",
+      "solution_variant": "binary-search-greedy-mex-segments"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "If a candidate x is feasible, then every smaller candidate is feasible, so the search predicate is monotone.",
+      "solution_variant": "binary-search-greedy-mex-segments"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "Each decision check is a direct left-to-right scan with simple occurrence marking.",
+      "solution_variant": "binary-search-greedy-mex-segments"
+    }
+  ]
+}
