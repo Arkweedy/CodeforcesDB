@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2089,
+    "title": "Codeforces Round 1012 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2089,
+    "index": "B1",
+    "title": "Canteen (Easy Version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "flows",
+      "greedy",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2089/problem/B1",
+      "notes": "题面与约束：easy version 固定 k=0，不能预先削减 a；每轮同位抵消后 a 循环右移，求清空 a 的最少轮数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141124",
+      "notes": "Codeforces Round 1012 editorial。用于确认括号匹配/前缀和解释：每个 a_i 被清空的时间由其左括号匹配到的 b_j 位置决定，可用单调栈求下一个前缀和不大于当前位置的位置。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1ihqb25m",
+      "notes": "洛谷题解提供另一种 easy-only 维护有效操作的做法，用 set/priority_queue 动态配对最近的 a 和 b；本条入库采用官方 O(n) 前缀和解法。"
+    }
+  ],
+  "annotation": {
+    "summary": "给两个环形数组 a,b，不能预先修改 a。每轮先让同位置 a_i 与 b_i 抵消，再让 a 循环右移。求所有 a 变为 0 的最少轮数。",
+    "constraints": "t <= 2e4，n <= 2e5，k = 0，a_i,b_i <= 1e9，所有测试 n 之和 <= 2e5，sum(a) <= sum(b)。",
+    "core_idea": "把环复制成长度 2n 的链，并把 a_i 视为左括号数量、b_i 视为右括号数量。抵消和右移等价于未匹配的 a 单位继续向右寻找 b 容量。令前缀和 c_i=sum(a_j-b_j)，对于位置 i 的 a，第一次被完全清空的位置是最小的 p_i>i 且 c_{p_i}<=c_i；清空轮数为 p_i-i。对 2n 链从右向左维护前缀和单调不降的栈，就能为前 n 个位置找到该 p_i，答案是所有 p_i-i 的最大值。",
+    "complexity": "O(n) per test case; memory O(n).",
+    "tricks": [
+      "将循环过程复制成链，避免直接模拟环上右移。",
+      "把 a/b 抵消转化为括号匹配或前缀和首次回落问题。",
+      "从右向左用单调栈求每个位置右侧第一个前缀和不大于当前值的位置。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-matching-monotonic-stack",
+      "summary": "官方主解法。复制环为链，计算 a_i-b_i 的前缀和；每个 a_i 的清空时间对应右侧第一个前缀和 <= 当前前缀和的位置，用单调栈一次求出。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dynamic-effective-operation-simulation",
+      "summary": "洛谷 easy-only 变体。维护非零 a/b 位置以及当前最近可抵消的有效操作，用优先队列取最小移动距离并更新相邻配对。该做法更重，不适合 hard version。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "清空时间由前缀和 c_i=sum(a-b) 何时首次降到当前值以下或相等决定。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "从右向左维护前缀和单调栈，求每个位置右侧第一个 c_p <= c_i 的匹配位置。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    },
+    {
+      "tag": "trick/circular-interval",
+      "importance": "primary",
+      "evidence": "原过程在环上循环右移，解法通过复制两倍数组把每个 a_i 的后续可抵消区间线性化。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "同位抵消与右移过程被转化成前缀和首次回落/括号匹配条件。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "括号匹配理解中，每个 a 单位向右匹配最早可用的 b 容量。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "incidental",
+      "evidence": "只在 easy-only 变体中用于动态模拟最短有效操作，不是官方 O(n) 主解法。",
+      "solution_variant": "dynamic-effective-operation-simulation"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "可以把 a 的单位量向右匹配 b 容量看作一维流量，但主解法没有建图跑流。",
+      "solution_variant": "prefix-matching-monotonic-stack"
+    }
+  ]
+}
