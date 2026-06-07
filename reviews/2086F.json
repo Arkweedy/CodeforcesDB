@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2086,
+    "title": "Educational Codeforces Round 177 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2086,
+    "index": "F",
+    "title": "Online Palindrome",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2086/problem/F",
+      "notes": "题面与约束：原题为交互题，在线接收长度不超过 99 的奇数二进制字符串字符；每步追加后最多交换一次，最终必须保证 t 为回文。Hack 格式给出完整 s。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141425",
+      "notes": "Educational Round 177 editorial。该题 tutorial 文本未展开，但官方列出两份 accepted solution；用于确认这是小状态构造/暴力搜索型交互题。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/blog/entry/141425",
+      "notes": "官方 Solution (awoo)：预处理每种 a/b 计数对应的规范回文 form，以及奇数长度状态在读入下一字符后应交换的 nxt[x][y][c]。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/blog/entry/141425",
+      "notes": "官方 Solution (FelixArg)：维护一个 check_pattern，并对候选交换做有限暴力搜索，说明 n<=99 允许用强力枚举处理繁琐构造分支。"
+    }
+  ],
+  "annotation": {
+    "summary": "在线接收一个只含 a,b、长度为奇数且不超过 99 的字符串。每次追加新字符后最多交换当前串中的两个位置，要求在字符串结束时当前串为回文。",
+    "constraints": "原交互中 |s| <= 99 且为奇数，字符集为 {a,b}。Hack 输入给出完整字符串。每步只能做一次交换或不交换。",
+    "core_idea": "由于字符集只有两种且长度很小，可以不尝试推导庞杂的人手分支，而是预先为每个计数状态 (x,y) 选择一个规范回文 form[x][y]。官方 awoo 解让 form 在计数相同的所有字符串中固定，并保证当前维护的串与该 form 至多相差两个位置；如果读入后长度为偶数，直接把当前串和目标 form 的差异位置交换回去；如果读入后长度为奇数，则预处理 nxt[x][y][c]，枚举一次交换，使得无论下一步读入 a 还是 b，都能在下一步通过至多一次交换回到对应规范 form。这样每次只输出当前预处理好的交换，满足在线限制。FelixArg 解法则用 check_pattern 描述一种可延展的回文形态，对每一步暴力枚举交换并做一层或两层 lookahead 验证。",
+    "complexity": "Precomputation over N=100 states with bounded swap enumeration; online each step O(N) bitset comparison or O(1) after lookup. Constant bound is small because |s|<=99.",
+    "tricks": [
+      "用规范回文 form[x][y] 把大量排列状态压缩成只与 a/b 计数相关的目标形态。",
+      "维护当前串与规范形态至多两个位置不同，因此一次交换即可回到目标形态。",
+      "对奇数长度的中间状态预处理一个交换，使其对下一步读入 a 或 b 都可继续修复。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-form-online-construction",
+      "summary": "官方 awoo 解。为每个 a/b 计数构造规范回文 bitset，并预处理奇数长度状态读入下一字符前的安全交换；在线阶段维护当前 bitset，和规范 form 的差异为 0 或 2 时直接交换差异位置。",
+      "complexity": "O(1) online per step after O(N^4) bounded precomputation for N=100",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "finite-bruteforce-pattern-search",
+      "summary": "官方 FelixArg 解。设计 check_pattern 描述可延展回文结构；奇数/偶数长度分别暴力枚举当前交换，并在偶数长度时对下一步两种字符做有限 lookahead，找到一个保持可延展性的操作。",
+      "complexity": "bounded brute force for N<=99",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "原题要求每读入一个字符后立即输出一次交换，不能等待完整字符串；这是在线交互约束的核心。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "必须构造每一步的交换操作序列，主解法通过规范 form 和预处理 nxt 给出显式在线策略。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "string/palindrome",
+      "importance": "primary",
+      "description": "Problems where palindrome structure, palindromic construction, or maintaining equality under reversal is central to the solution.",
+      "parent": "string",
+      "created_reason": "The existing broad string tag does not distinguish problems whose decisive constraint is palindromic symmetry.",
+      "status": "candidate",
+      "evidence": "目标始终是维护/最终得到回文串，规范 form 也按回文对称位置构造。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "把同一 a/b 计数下的所有可维护状态投影到一个规范回文 form，当前串只需维持与该 form 的小差异。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "n<=99 且字符集只有两种，官方解法之一直接枚举交换和有限 lookahead；主解的预处理同样枚举有限状态和交换。",
+      "solution_variant": "finite-bruteforce-pattern-search"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "awoo 解预处理 dp[x][y] 与 nxt[x][y][c]，判断某个计数状态是否可作为可延展在线状态。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "状态从完整字符串排列压缩为字符计数、当前 bitset 与规范 form 的差异。",
+      "solution_variant": "canonical-form-online-construction"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "问题对象是二进制字符串，并围绕字符串反转对称性操作。",
+      "solution_variant": "canonical-form-online-construction"
+    }
+  ]
+}
