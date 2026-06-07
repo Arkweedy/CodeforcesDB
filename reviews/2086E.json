@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2086,
+    "title": "Educational Codeforces Round 177 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2086,
+    "index": "E",
+    "title": "Zebra-like Numbers",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "constructive algorithms",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2086/problem/E",
+      "notes": "题面与约束：斑马数是二进制 1,101,10101,...；zebra value 为用最少斑马数表示一个正整数所需的数量，询问 [l,r] 中 zebra value 恰为 k 的数个数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/141425",
+      "notes": "Educational Round 177 editorial。用于确认把数写成斑马数基底的表示，并用 dp[pos][sum][tight] 统计 <=X 且 zebra value 为 k 的个数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://linlexiao.com/posts/fee6d8fa7936/",
+      "notes": "中文题解详细证明规范形式：最优分解中每位系数可规约到 0*4?[0-3]*，然后枚举唯一 4 的位置并做五进制风格数位 DP。"
+    }
+  ],
+  "annotation": {
+    "summary": "斑马数形如二进制 1,101,10101,...。定义一个数的 zebra value 为它表示成若干斑马数之和的最少项数。给定 l,r,k，统计区间内 zebra value 恰好为 k 的数。",
+    "constraints": "t <= 100，1 <= l <= r <= 1e18，1 <= k <= 1e18。斑马数个数约 30 个。",
+    "core_idea": "设斑马数序列 z_1=1,z_{i+1}=4z_i+1。一个数可看成在这些基底上的系数表示。若某位系数 >=5，则可用 5z_i = z_{i+1}+4z_{i-1} 一类关系向高位进位且不增加项数；进一步若某位为 4 且低位还有非零，也可继续规约。因此存在最优规范表示，其系数形态为若干高位 0、至多一个 4、然后低位均为 0..3。对没有 4 的情况，问题变成统计特殊基底表示 <=n、每位 0..3、数位和为 k 的数；利用贪心把 n 转成该基底下各位上界，再做 tight 数位 DP。对有一个 4 的情况，枚举 4 所在位置 i，先从 n 中减去 4z_i，并要求更低位被清零，再对剩余高位做同样的数位和 DP，最后用 calc(r,k)-calc(l-1,k)。",
+    "complexity": "O(L^2 * K') per query with L≈31 and K' capped by O(L); k too large时直接返回 0。",
+    "tricks": [
+      "用 z_{i+1}=4z_i+1 的进位关系把最优分解规约成 0*4?[0-3]* 规范形式。",
+      "把大小比较转化为特殊斑马基底下的字典序/数位限制。",
+      "枚举唯一的系数 4 位置，把其余位转化为普通 tight 数位 DP。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-zebra-base-digit-dp",
+      "summary": "主解法。预处理 z_i，贪心将 n 表示到斑马基底下；统计没有 4 的表示时用 digits in [0,3] 且 digit sum=k 的 tight DP；再枚举唯一 4 的位置并扣除 4z_i，强制低位为 0，累加答案。",
+      "complexity": "O(L^2 * K')",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/digit-dp",
+      "importance": "primary",
+      "evidence": "核心计数是 tight 数位 DP：按斑马基底的位从高到低枚举，每位取 0..3，并维护剩余 digit sum。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "DP 值表示满足上界和数位和条件的整数数量。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "primary",
+      "evidence": "必须把整数表示到由 1,5,21,... 组成的特殊基底中，大小比较和 zebra value 都由该表示决定。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "最优分解先被规约成系数形态 0*4?[0-3]*，之后才能通过枚举唯一 4 和 digit-DP 计数。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "trick/tight-loose-state",
+      "importance": "secondary",
+      "evidence": "数位 DP 使用 tight 状态区分当前前缀是否仍贴住 n 的表示。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "将 n 转成斑马基底表示时从高位贪心取尽当前 z_i，依赖低位总和不足以越过高位。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "本质是在受限数位和下计数可行表示。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "斑马数的定义来自交替二进制位，但主计数不依赖位运算枚举。",
+      "solution_variant": "canonical-zebra-base-digit-dp"
+    }
+  ]
+}
