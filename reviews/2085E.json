@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2085,
+    "title": "Codeforces Round 1011 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2085,
+    "index": "E",
+    "title": "Serval and Modulo",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2085/problem/E",
+      "notes": "题面与约束：给定 a 和被打乱的 b，判断是否存在 k 使得 b 是所有 a_i mod k 的重排；输出任意 k <= 1e9 或 -1。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140933",
+      "notes": "Codeforces Round 1011 editorial。用于确认 sum(a)-sum(b) 必为 k 的倍数；若差为 0，可尝试大于所有 a_i 的 k；否则枚举差值所有因子并验证余数多重集。"
+    }
+  ],
+  "annotation": {
+    "summary": "给两个长度相同的数组 a,b，问是否存在整数 k，使得把每个 a_i 取模 k 后得到的多重集等于 b 的多重集。",
+    "constraints": "t <= 1e4，n <= 1e4，a_i,b_i <= 1e6，所有测试 n 之和 <= 1e4；若存在答案，保证存在 k <= 1e9。",
+    "core_idea": "若 b 是 a_i mod k 的重排，则每个 a_i 与对应余数的差都是 k 的倍数，因此 Δ=sum(a)-sum(b) 也必须是 k 的倍数。若 Δ<0，直接无解。若 Δ=0，则所有差只能为 0；只需检查 a 与 b 的多重集是否相等，此时取任意大于 max(a_i) 的 k 即可。若 Δ>0，候选 k 只能是 Δ 的因子，因子数量在约束下很小；枚举所有因子 k，并用频次表检查多重集 {a_i mod k} 是否恰好等于 b。第一个通过验证的因子即可输出。",
+    "complexity": "O(sqrt(Δ) + n * d(Δ)) per test case, where d(Δ) is the number of divisors; memory O(max value) or O(n) with a hash map.",
+    "tricks": [
+      "用总和差 Δ 作为不变量，把无限多 k 压缩成 Δ 的因子集合。",
+      "单独处理 Δ=0：若 a,b 多重集相同，选择一个大于所有 a_i 的 k。",
+      "对每个候选 k，只需比较余数多重集与 b 的多重集。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sum-difference-divisor-enumeration",
+      "summary": "主解法。计算 Δ=sum(a)-sum(b)。Δ=0 时检查 a,b 多重集相等并输出大 k；Δ>0 时枚举 Δ 的所有因子作为候选 k，用频次数组或 hash map 验证 a_i mod k 的多重集是否等于 b。",
+      "complexity": "O(sqrt(Δ) + n * d(Δ))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "sum(a)-sum(b) 必须由每个 a_i-b_perm_i 的 k 倍数相加得到，是筛掉候选 k 的核心不变量。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "合法 k 必须整除 Δ=sum(a)-sum(b)，问题由整除关系确定候选集合。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisor-enumeration",
+      "importance": "primary",
+      "description": "Enumerate all divisors of one integer, usually in O(sqrt n), and test each divisor as a candidate parameter.",
+      "parent": "math/number-theory",
+      "created_reason": "Existing divisor-sieve is for aggregation over many divisors/multiples; this problem specifically needs direct enumeration of one value's divisors as candidates.",
+      "status": "candidate",
+      "evidence": "当 Δ>0 时，所有可能的 k 都在 Δ 的因子中，主解法枚举这些因子逐个验证。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "最终验证候选 k 时，需要比较所有 a_i mod k 形成的余数多重集。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "验证候选 k 可用 hash map 或频次数组统计余数和 b 的多重集差异。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "候选 k 被压缩到 Δ 的因子后，逐一暴力验证每个候选。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "incidental",
+      "evidence": "题目要求输出一个可行 k，但算法核心是判定和枚举候选，不是构造复杂对象。",
+      "solution_variant": "sum-difference-divisor-enumeration"
+    }
+  ]
+}
