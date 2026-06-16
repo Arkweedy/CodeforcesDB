@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2085,
+    "title": "Codeforces Round 1011 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2085,
+    "index": "C",
+    "title": "Serval and The Formula",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2085/problem/C",
+      "notes": "题面与约束：给定正整数 x,y，要求找 k<=1e18，使 (x+k)+(y+k)=(x+k) xor (y+k)，或判断无解。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140933",
+      "notes": "Codeforces Round 1011 editorial。用于确认等价条件为 (x+k)&(y+k)=0；若 x=y 无解，否则把较大数补到 2 的幂。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/v32blvlw",
+      "notes": "洛谷题解给出同样构造：取不小于 max(x,y) 的 2 的幂 M，令 k=M-max(x,y)，使一个数为 M，另一个数小于 M。"
+    }
+  ],
+  "annotation": {
+    "summary": "给两个正整数 x,y，构造非负 k，使 x+k 与 y+k 的普通加法等于异或，或判断不存在。",
+    "constraints": "t <= 10000，1 <= x,y <= 1e9，要求 0 <= k <= 1e18。",
+    "core_idea": "两个非负整数 a,b 满足 a+b=a xor b，当且仅当加法没有进位，也就是 a&b=0。若 x=y，则 x+k=y+k 是正数，二者按位与不可能为 0，因此无解。否则令 M 为严格大于或等于 max(x,y) 的某个 2 的幂，并取 k=M-max(x,y)。较大者加 k 后恰好为 M，较小者加同一个 k 后严格小于 M；一个数只有 M 的最高位为 1，另一个数没有这一位，因此按位与为 0。",
+    "complexity": "O(log max(x,y)) per test case, or O(1) with bit operations.",
+    "tricks": [
+      "用 a+b=a xor b 等价于 a&b=0 消去进位条件。",
+      "把较大数补到 2 的幂，使它与任何更小正数没有公共最高位。",
+      "x=y 是唯一无解情形。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "next-power-of-two-construction",
+      "summary": "若 x!=y，取 M 为不小于 max(x,y) 的 2 的幂，输出 k=M-max(x,y)；否则输出 -1。",
+      "complexity": "O(log max(x,y))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "核心等价条件是无进位加法，即 (x+k)&(y+k)=0。",
+      "solution_variant": "next-power-of-two-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "解法直接构造 k，使较大数变成 2 的幂并保证按位与为 0。",
+      "solution_variant": "next-power-of-two-construction"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "使用恒等关系 a+b=(a xor b)+2(a&b)，从而把题目公式转成 a&b=0。",
+      "solution_variant": "next-power-of-two-construction"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "secondary",
+      "evidence": "x=y 时无论 k 如何，两数相等且为正，必须单独输出 -1。",
+      "solution_variant": "next-power-of-two-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "可以看作选择最近的 2 的幂，但没有逐步贪心决策过程。",
+      "solution_variant": "next-power-of-two-construction"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "official tag 包含 dp，但 reviewed 解法无需数位 DP 或状态转移。",
+      "solution_variant": "next-power-of-two-construction"
+    }
+  ]
+}
