@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2085,
+    "title": "Codeforces Round 1011 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2085,
+    "index": "F2",
+    "title": "Serval and Colorful Array (Hard Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2085/problem/F2",
+      "notes": "题面与约束：给定长度 n、值域 1..k 的数组，每个值至少出现一次；相邻交换若干次后，使某个长度 k 的子数组成为 1..k 的排列。hard version 中 n <= 4e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140933",
+      "notes": "Codeforces Round 1011 editorial。用于确认 F1 的中位数聚集观察、F2 删除左右选数约束的证明，以及对每个值的最近距离贡献用二阶差分线性维护。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个包含 1..k 每种值至少一次的数组。允许相邻交换，求最少交换次数，使某个连续长度 k 子数组恰好包含 1..k 各一次。",
+    "constraints": "t <= 1000，2 <= k <= n <= 4e5，所有测试 n 之和 <= 4e5。",
+    "core_idea": "先考虑最终 colorful 子数组中被选中的 k 个元素。将若干标记元素通过相邻交换聚成连续块时，最优方式是围绕这些标记元素的中位位置聚集，代价等于它们到聚集中心的距离和减去固定的连续块内部距离。F1 会枚举中心 p，并强制左右分别选约 k/2 个颜色；F2 的关键命题是可以删去这个左右数量约束：对每种颜色 i，只需在 p 左右最近出现中选择距离更小者，得到的松弛候选不会低于真实答案，而当 p 取最优解标记元素的中位位置时又能达到真实答案。于是答案变成最小化 sum_i dist(p, nearest occurrence of color i) 减固定常数。对单个颜色，p 从左到右移动时最近距离贡献的斜率只会在该颜色出现位置以及相邻出现位置中点处改变；把所有颜色的斜率变化用差分数组累加，再做两次前缀和即可得到每个 p 的贡献和，取最小值。",
+    "complexity": "O(n) per test case; memory O(n+k).",
+    "tricks": [
+      "用相邻交换聚集标记元素的中位数最优性，把连续化代价化为距离和减固定常数。",
+      "证明可以放宽左右各选一半的约束，直接对每个颜色选择离中心最近的出现位置。",
+      "把每个颜色的最近距离函数看成分段线性函数，用出现位置和相邻中点记录斜率变化，二阶差分求全局贡献。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-nearest-distance-contribution",
+      "summary": "F2 主解法。删除 F1 中左右选数数量约束后，对每个中心 p 只需取每种颜色到 p 的最近出现距离；每个颜色的距离函数斜率只在出现位置和相邻出现的中点变化，用差分维护斜率变化并线性求所有 p 的总距离。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "middle-position-greedy-baseline",
+      "summary": "F1 基础解法。枚举 colorful 子数组的中间位置 p，计算每种颜色左侧最近距离 l_i 与右侧最近距离 r_i，先全选左侧再按 r_i-l_i 贪心改选一半颜色到右侧。",
+      "complexity": "O(n^2 log n)",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-alignment",
+      "importance": "primary",
+      "description": "Use the median position to minimize the total adjacent-move or absolute-distance cost when gathering selected elements into a contiguous block or common center.",
+      "parent": "trick",
+      "created_reason": "Existing median-threshold tags describe converting median conditions to +/-1 balances, not the classic median-minimizes-gathering-distance argument used here.",
+      "status": "candidate",
+      "evidence": "第一步观察是选中的 k 个元素要通过相邻交换聚成连续块，最佳聚集中心是这些元素的中位位置。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "trick/constraint-relaxation",
+      "importance": "primary",
+      "description": "Temporarily drop or weaken a hard constraint, prove the relaxed optimum is still attainable by an original feasible solution, and solve the easier relaxed optimization.",
+      "parent": "trick",
+      "created_reason": "The F2 jump from quadratic to linear hinges on proving a left/right cardinality constraint can be removed; existing greedy tags do not capture this proof pattern.",
+      "status": "candidate",
+      "evidence": "F2 的关键命题是删去左右各选约 k/2 个元素的约束后，直接选每种颜色最近出现位置仍不会改变最终答案。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "算法逐位置维护每种颜色到当前中心 p 的最近距离贡献总和，而不是重新计算所有颜色。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "primary",
+      "evidence": "每个颜色贡献的斜率变化用 dd[] 记录，之后通过两次前缀和恢复所有中心位置的贡献值。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "差分斜率数组需要前缀求斜率，再前缀求贡献和。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "在放宽约束后，对每种颜色独立选择离中心 p 最近的出现位置；F1 基础解法也按 r_i-l_i 的增量贪心改选。",
+      "solution_variant": "linear-nearest-distance-contribution"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "排序只出现在 F1 基础解法中，用于选择最小的若干 r_i-l_i；F2 主解法不排序。",
+      "solution_variant": "middle-position-greedy-baseline"
+    }
+  ]
+}
