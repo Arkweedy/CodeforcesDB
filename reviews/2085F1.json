@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2085,
+    "title": "Codeforces Round 1011 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2085,
+    "index": "F1",
+    "title": "Serval and Colorful Array (Easy Version)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2085/problem/F1",
+      "notes": "题面与约束：相邻交换后使某个长度 k 的子数组成为 1..k 的排列；easy version 中 n <= 3000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140933",
+      "notes": "Codeforces Round 1011 editorial。用于确认中位数聚集观察、枚举中心 p、计算每种颜色左右最近距离并按 r_i-l_i 贪心选侧的 O(n^2 log n) 解法。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个包含 1..k 每种值至少一次的数组。允许相邻交换，求最少交换次数，使某个连续长度 k 子数组恰好包含 1..k 各一次。",
+    "constraints": "t <= 1000，2 <= k <= n <= 3000，所有测试 n 之和 <= 3000。",
+    "core_idea": "选出最终 colorful 子数组中的 k 个元素后，相邻交换只是在保持这些元素相对顺序的前提下把它们聚成连续块；让它们围绕中位位置聚集最优，答案是选中元素到聚集中心距离和减去长度 k 连续块内部到中心的固定距离。因此枚举数组位置 p 作为聚集中心。对每个颜色 i，计算 p 左侧最近的 i 到 p 的距离 l_i，以及右侧最近的 i 到 p 的距离 r_i。若先假设所有颜色都从左侧选，代价为 sum l_i；将某个颜色改成从右侧选的增量是 r_i-l_i。为了让 p 成为选中元素的中位位置，需要从右侧选约一半颜色，于是取最小的若干个 r_i-l_i 即可。",
+    "complexity": "O(n^2 log k) per test case; memory O(k).",
+    "tricks": [
+      "将相邻交换聚成连续块的最优中心归约为选中元素的中位数。",
+      "枚举中心 p 后，每种颜色只需考虑 p 左右最近出现位置。",
+      "把左右选择数量约束变成选择最小若干个 r_i-l_i 的贪心问题。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-middle-greedy-side-selection",
+      "summary": "枚举最终连续块的中位位置 p，扫描得到每个颜色到 p 左右最近距离 l_i/r_i，先全选左侧再按 r_i-l_i 排序，贪心改选需要数量的右侧颜色。",
+      "complexity": "O(n^2 log k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-alignment",
+      "importance": "primary",
+      "evidence": "核心观察是若干标记元素通过相邻交换聚成连续块时，中位位置最小化总移动距离。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定中心 p 后，右侧选择的数量固定，只需贪心选择最小的 r_i-l_i 增量。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "每个中心 p 都要排序所有颜色的 r_i-l_i，取最小的若干个增量。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    },
+    {
+      "tag": "trick/nearest-occurrence",
+      "importance": "primary",
+      "description": "For each value/type and each query position, use the nearest occurrence on one or both sides as the decisive candidate.",
+      "parent": "trick",
+      "created_reason": "Existing two-pointers/greedy tags do not distinguish problems where the core reduction is to nearest same-value occurrences around a center.",
+      "status": "candidate",
+      "evidence": "固定 p 后，每个颜色 i 的候选只需要 p 左右最近出现位置，其他同色元素一定不优。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "easy version 依赖 n<=3000 枚举每个中心 p 并重新计算所有颜色左右最近距离。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "incidental",
+      "evidence": "只需要数组保存每个颜色的 l_i/r_i/d_i；没有核心复杂数据结构。",
+      "solution_variant": "enumerate-middle-greedy-side-selection"
+    }
+  ]
+}
