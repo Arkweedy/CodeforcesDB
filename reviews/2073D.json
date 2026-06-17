@@ -1,0 +1,81 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "D",
+    "title": "Tower of Hanoi",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/D",
+      "notes": "Codeforces problemset statement: point updates on disk rods and range queries asking the minimum Tower of Hanoi cost modulo 998244353."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/D",
+      "notes": "Derived the three-target recurrence and represented each disk as a 4x4 affine transition matrix; checked the sample with this matrix product."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073D",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "维护每个半径 i 的初始杆 p_i。支持单点修改 p_x，以及询问半径区间 [l,r] 中所有盘移动到杆 1 的最少步数 modulo 998244353。",
+    "constraints": "n,q <= 1e5，需要 O(log n) 更新和查询；答案取模 998244353。",
+    "core_idea": "设 F_T(S) 表示把一段从小到大排列的盘 S 全部移到目标杆 T 的最小代价。处理当前最大盘，其初始杆为 p。若 p=T，则最大盘不用动，F_T 不变；否则必须先把所有较小盘移到第三根杆 U=6-p-T，移动最大盘，再把较小盘从 U 移到 T，后两步合计 2^{len(Small)}，所以 F_T'=F_U+P，其中 P=2^{已处理盘数}。同时 P 每加入一个盘翻倍。于是单个位置是对向量 [F_1,F_2,F_3,P] 的 4x4 线性变换。用线段树维护这些矩阵按半径顺序的乘积，查询 [l,r] 时把区间矩阵作用到 [0,0,0,1]，取 F_1。",
+    "complexity": "O(4^3 log n) per update/query with generic matrices, effectively O(log n)",
+    "tricks": [
+      "同时维护三个目标杆的最优代价",
+      "把 2^len 作为第四个状态并随矩阵一起维护",
+      "区间查询转化为按顺序复合单点转移矩阵"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "segment-tree-of-affine-hanoi-matrices",
+      "summary": "每个 p_i 构造一个 4x4 矩阵；线段树节点存左子矩阵和右子矩阵的有序乘积。修改重建叶子并向上合并，查询返回区间矩阵并计算第一维。",
+      "complexity": "O(log n) per operation",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "需要支持单点修改和区间有序转移复合，线段树维护矩阵乘积是主数据结构。",
+      "solution_variant": "segment-tree-of-affine-hanoi-matrices"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "primary",
+      "evidence": "每个盘对应一个 4x4 状态转移矩阵，区间答案来自矩阵乘积。",
+      "solution_variant": "segment-tree-of-affine-hanoi-matrices"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "Tower of Hanoi 递推只需维护目标杆为 1、2、3 的三个有限状态。",
+      "solution_variant": "segment-tree-of-affine-hanoi-matrices"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "为了把仿射项 2^len 纳入线性矩阵，需要把 P=2^已处理盘数作为第四个状态。",
+      "solution_variant": "segment-tree-of-affine-hanoi-matrices"
+    }
+  ]
+}
