@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2071,
+    "title": "Codeforces Round 1007 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2071,
+    "index": "F",
+    "title": "Towering Arrays",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2071/problem/F",
+      "notes": "Statement and constraints: remove at most k elements so the remaining sequence is p-towering; total n is 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140115",
+      "notes": "Official editorial confirms binary search on p, prefix/suffix maximum p-towering subsequences, the monotone selected-set property, and the segment-tree implementation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2071F",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an array, delete at most k elements and maximize p such that the remaining sequence has a center whose values are at least p minus their distance from the center.",
+    "constraints": "Sum of n is 2e5, values are up to 1e9, so p needs logarithmic search and each feasibility check must be near O(n log n).",
+    "core_idea": "Binary-search p. For a fixed p, compute the maximum p-towering subsequence by combining the best increasing prefix side and decreasing suffix side around a center with a_i >= p. The prefix side has a crucial monotone property: as the scan moves right, one maximum selected set can be maintained by only adding positions. After setting deficit d_i = p - a_i, a position becomes selectable when its current deficit is non-positive; selecting it decreases all earlier deficits by one and removes the position by setting it to infinity. A lazy segment tree maintains range add, point set, and rightmost non-positive search. Run the same routine on the reversed array for suffixes, then check whether n minus the best combined length is at most k.",
+    "complexity": "O(n log n log max(a)) per test file total, with O(n) memory.",
+    "tricks": [
+      "binary search p",
+      "prefix and suffix p-towering subsequences",
+      "monotone selected set: only add positions while scanning",
+      "deficit transform d_i = p - a_i",
+      "rightmost non-positive search with lazy segment tree"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-monotone-frontier-segment-tree",
+      "summary": "Binary-search the answer. For each p, use a lazy segment tree to greedily maintain the maximum increasing p-towering subsequence for every prefix, repeat on the reversed array for suffixes, and combine both sides at each feasible center.",
+      "complexity": "O(n log n log max(a))",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The maximum p is found by binary-searching p and checking whether a p-towering subsequence of length at least n-k exists.",
+      "solution_variant": "binary-search-monotone-frontier-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree/range-add-min",
+      "importance": "primary",
+      "evidence": "The feasibility check needs prefix range-add updates, point removal by setting infinity, and searching the rightmost position whose minimum deficit is non-positive.",
+      "solution_variant": "binary-search-monotone-frontier-segment-tree"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For fixed p, the maintained maximum prefix subsequence only grows by repeatedly taking newly available positions; no selected position is deleted.",
+      "solution_variant": "binary-search-monotone-frontier-segment-tree"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The proof relies on the monotone inclusion S_i subset S_{i+1} for maximum increasing p-towering subsequences over prefixes.",
+      "solution_variant": "binary-search-monotone-frontier-segment-tree"
+    }
+  ]
+}
