@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2072,
+    "title": "Codeforces Round 1006 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2072,
+    "index": "F",
+    "title": "Goodbye, Banker Life",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "2-sat",
+      "bitmasks",
+      "combinatorics",
+      "constructive algorithms",
+      "fft",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2072/problem/F",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2072F",
+      "notes": "洛谷题面镜像：给定异或版杨辉三角首项 k，输出第 n 行；t <= 1e4，sum n <= 1e6。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2072F",
+      "notes": "将按位异或看作 GF(2) 加法后，第 n 行第 j 项是否为 k 由 C(n-1,j-1) 的奇偶性决定；Lucas 定理在模 2 下给出子掩码判定。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2072F",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一个首行为 [k] 的异或递推三角形，输出第 n 行的 n 个数。",
+    "constraints": "t <= 1e4，1 <= n <= 1e6，1 <= k < 2^31，所有测试的 n 之和 <= 1e6，因此需要总 O(sum n) 或接近线性的输出算法。",
+    "core_idea": "异或对每一位都是 GF(2) 加法，递推结构与 Pascal 三角完全相同，只是系数按模 2 作用在初始值 k 上。因此 T[n][j] = k 当且仅当 C(n-1,j-1) 为奇数，否则为 0。由 Lucas 定理的模 2 特例，C(a,b) 为奇数当且仅当 b 是 a 的子掩码，即 (b & ~a) == 0。枚举 j=1..n，令 b=j-1，判断 b 是否为 n-1 的子掩码即可输出 k 或 0。",
+    "complexity": "O(n) per test case, O(sum n) total",
+    "tricks": [
+      "把异或递推视为每一位上的 Pascal 三角模 2",
+      "二项式系数奇偶性由 Lucas 定理模 2 决定",
+      "C(a,b) 为奇数当且仅当 b 是 a 的子掩码"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binomial-parity-submask",
+      "summary": "枚举第 n 行位置 j，把 j-1 看作候选子掩码；若 (j-1)&~(n-1) 为 0，则输出 k，否则输出 0。",
+      "complexity": "O(n) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/binomial-parity",
+      "importance": "primary",
+      "evidence": "主结论是 T[n][j] 由 C(n-1,j-1) 的奇偶性决定，并用 Lucas 定理模 2 判定。",
+      "solution_variant": "binomial-parity-submask",
+      "description": "Use parity of binomial coefficients, especially Pascal triangle modulo 2 or Lucas theorem modulo 2, to decide whether terms survive.",
+      "parent": "math/combinatorics",
+      "created_reason": "Existing binomial-identity and generic parity tags do not distinguish the reusable Pascal-mod-2 / odd-binomial-coefficient criterion.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "secondary",
+      "evidence": "Lucas 定理模 2 最终实现为判断 j-1 是否是 n-1 的子掩码。",
+      "solution_variant": "binomial-parity-submask"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "异或递推的每一位只关心出现次数的奇偶性。",
+      "solution_variant": "binomial-parity-submask"
+    }
+  ]
+}

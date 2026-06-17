@@ -148,6 +148,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     needs_manual_review: "需要人工复核",
     reviewed: "已复核",
     secondary: "次解法",
+    self_derivation: "自行推导",
     statement: "题面"
   },
   en: {
@@ -171,6 +172,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     needs_manual_review: "Needs manual review",
     reviewed: "Reviewed",
     secondary: "Secondary",
+    self_derivation: "Self derivation",
     statement: "Statement"
   }
 };
@@ -328,6 +330,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/combinatorics": "组合数学",
   "math/combinatorics/binomial-basis": "二项式基",
   "math/combinatorics/binomial-identity": "二项式恒等式",
+  "math/combinatorics/binomial-parity": "二项式奇偶性",
   "math/combinatorics/catalan": "Catalan 数",
   "math/combinatorics/coding-theory": "编码理论",
   "math/combinatorics/eulerian-number": "欧拉数",
@@ -498,6 +501,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "binary-search": "二分",
   "binary-carry": "二进制进位",
   "binomial-identity": "二项式恒等式",
+  "binomial-parity": "二项式奇偶性",
   "bipartite-graph": "二分图",
   "bitmask": "位掩码",
   "bitmask-dp": "状压 DP",
