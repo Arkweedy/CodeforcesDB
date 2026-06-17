@@ -343,6 +343,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/combinatorics/binomial-parity": "二项式奇偶性",
   "math/combinatorics/catalan": "Catalan 数",
   "math/combinatorics/coding-theory": "编码理论",
+  "math/combinatorics/coding-theory/prefix-code": "前缀码",
   "math/combinatorics/eulerian-number": "欧拉数",
   "math/combinatorics/multinomial": "多项式系数",
   "math/combinatorics/permutation-counting": "排列计数",

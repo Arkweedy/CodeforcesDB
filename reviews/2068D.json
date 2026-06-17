@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "D",
+    "title": "Morse Code",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/D",
+      "notes": "Statement and constraints: assign prefix-free dot/dash codewords, where dot costs 1 and dash costs 2, minimizing weighted expected transmission time."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official EUC editorial page identifies the problem, but the tutorial body is not exposed in the fetched page."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/D",
+      "notes": "Derived the unequal-letter-cost prefix-code DP model over the implicit binary prefix tree; no complete external editorial text was available in this session."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068D",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Design a prefix-free Morse-like code for n characters with known frequencies, minimizing the weighted sum of codeword transmission times when dot costs 1 and dash costs 2.",
+    "constraints": "n <= 200, so a polynomial DP over the implicit prefix tree is intended; direct enumeration of prefix codes is impossible.",
+    "core_idea": "A prefix-free code is a set of leaves in a binary tree whose left/right edges have costs 1 and 2. Sort frequencies in descending order; by rearrangement, cheaper leaves should be assigned to larger frequencies. Process possible total codeword costs in increasing order. At cost c, some frontier nodes are available because earlier internal nodes created children at costs c-1 and c-2. The DP decides how many available nodes of cost c become leaves and how many are expanded; choosing x leaves at this cost consumes the next x largest remaining frequencies and adds c times their sum. Expanded nodes contribute children to future layers. Reconstructing the chosen leaves gives actual dot/dash strings.",
+    "complexity": "Polynomial in n, typically O(n^3) to O(n^4) depending on frontier-state compression; O(n^2) memory is enough for the DP table and reconstruction data.",
+    "tricks": [
+      "sort frequencies so shorter codewords get larger weights",
+      "view codewords as leaves of an unequal-edge-cost prefix tree",
+      "layer DP by codeword transmission cost",
+      "frontier nodes created at costs c+1 and c+2"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "unequal-cost-prefix-tree-dp",
+      "summary": "Sort frequencies, then run DP over layers of the implicit dot/dash prefix tree, choosing how many frontier nodes become leaves versus internal nodes and reconstructing the selected leaves as codewords.",
+      "complexity": "O(n^3) to O(n^4)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/coding-theory/prefix-code",
+      "importance": "primary",
+      "evidence": "The object being optimized is exactly a prefix-free variable-length code with unequal symbol costs.",
+      "solution_variant": "unequal-cost-prefix-tree-dp",
+      "description": "Problems where prefix-free codes, codeword trees, Kraft-like constraints, or variable-length code assignment are central to the solution.",
+      "parent": "math/combinatorics/coding-theory",
+      "created_reason": "The existing coding-theory tag is broad; prefix-code optimization is a classic reusable subtopic distinct from error-correcting codes or generic combinatorics.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The optimal code is found by dynamic programming over how many leaves have been assigned and how many frontier nodes remain at each cost layer.",
+      "solution_variant": "unequal-cost-prefix-tree-dp"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The DP state represents choices in an implicit rooted prefix tree: a node is either a leaf codeword or expanded into dot/dash children.",
+      "solution_variant": "unequal-cost-prefix-tree-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Frequencies are sorted so that cheaper selected leaves can be assigned to larger frequencies.",
+      "solution_variant": "unequal-cost-prefix-tree-dp"
+    }
+  ]
+}
