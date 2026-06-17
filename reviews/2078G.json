@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2078,
+    "title": "Codeforces Round 1008 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2078,
+    "index": "G",
+    "title": "Another Folding Strip",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "divide and conquer",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2078/problem/G",
+      "notes": "题面与约束：定义折纸后滴墨的最少操作数 f(b)，要求所有连续子段 f(a[l..r]) 的和，sum n <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140505",
+      "notes": "官方题解 2077E/2078G：折叠选择的下标奇偶交替；令 b_i=(-1)^i a_i 后，f 等于最大绝对子段和，再用前缀最大值减最小值和单调栈贡献求总和。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2078G",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定非负数组 a。对任意连续子段，f 表示通过反复折纸并滴一滴墨，使每个位置达到目标 darkness 的最少操作数；要求所有连续子段的 f 之和。",
+    "constraints": "t <= 1e4，单个 a_i <= 1e9，所有测试的 n 之和 <= 2e5，答案对 998244353 取模。",
+    "core_idea": "一次折纸滴墨会让被染位置在原数组下标上呈奇偶交替。把全局数组变成带符号序列 b_i=(-1)^i a_i 后，每次操作对任意 b 的连续段和的绝对值最多减少 1，官方构造的贪心染色可以达到这个下界，因此 f(a[l..r]) 等于该子段符号序列的最大绝对子段和。设 c 为 b 的前缀和，则对原数组子段 [l,r]，这个值是 prefix 区间 c[l-1..r] 的 max-min。于是总答案变成对前缀数组 c 的所有区间求最大值贡献减最小值贡献；分别用单调栈找到每个 c_i 作为区间最大/最小的左右边界并累加贡献。",
+    "complexity": "O(n) per test case",
+    "tricks": [
+      "折叠操作强制染色下标奇偶交替",
+      "乘以 (-1)^i 把交替约束转为普通子段和",
+      "最大绝对子段和等于前缀最大值减最小值",
+      "用单调栈统计每个前缀值作为区间极值的贡献"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "alternating-prefix-extrema-stack",
+      "summary": "构造 signed prefix c。对于所有 prefix 区间，分别统计区间最大值和最小值的贡献；对最大值用单调递减边界，对最小值用单调递增边界，处理相等值时固定一侧严格一侧非严格以避免重复计数。两部分相减即为所有原数组子段的答案。",
+      "complexity": "O(n) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "最终求和需要用单调栈统计每个前缀值作为所有区间最大值/最小值的贡献范围，这是 O(n) 解法的核心数据结构。",
+      "solution_variant": "alternating-prefix-extrema-stack"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "f(a[l..r]) 被转化为 signed prefix 区间 c[l-1..r] 的 max-min；前缀和数组是连接折纸模型和区间极值统计的核心表示。",
+      "solution_variant": "alternating-prefix-extrema-stack"
+    },
+    {
+      "tag": "trick/alternating-sign-transform",
+      "importance": "primary",
+      "evidence": "把 a_i 按位置奇偶乘以 (-1)^i 后，折叠导致的交替下标限制变成普通连续段和限制，是求出 f 的关键转化。",
+      "solution_variant": "alternating-prefix-extrema-stack",
+      "description": "Multiply values by an alternating sign such as (-1)^i, or an equivalent parity-dependent sign, to convert alternating parity constraints into ordinary prefix sums or subarray sums.",
+      "parent": "trick",
+      "created_reason": "Existing trick/parity is too broad and trick/sign-assignment is about choosing signs freely; this problem uses the reusable fixed alternating-sign transform that appears in folding, chessboard-parity, and alternating-sum reductions.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "secondary",
+      "evidence": "官方证明 f 等于 signed sequence 的最大绝对子段和；虽然最终总和用前缀极值贡献计算，但 max-subarray 转化是主要中间模型。",
+      "solution_variant": "alternating-prefix-extrema-stack"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "折纸后同一次染色经过的位置必须奇偶交替，整个下界与构造都依赖这个奇偶结构。",
+      "solution_variant": "alternating-prefix-extrema-stack"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "答案通过累加每个前缀值作为区间最大/最小的出现次数和贡献得到，而不是枚举子段。",
+      "solution_variant": "alternating-prefix-extrema-stack"
+    }
+  ]
+}
