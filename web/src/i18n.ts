@@ -293,6 +293,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "math/transform/fft": "FFT",
   "math/transform/fwt": "FWT",
   "math/transform/fwt/and-fwt": "AND FWT",
+  "math/transform/fwt/or-fwt": "OR FWT",
   "math/transform/fwt/xor-fwt": "XOR FWT",
   "algorithm/two-pointers": "双指针",
   "paradigm/communication": "通信",

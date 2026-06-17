@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2070,
+    "title": "Educational Codeforces Round 175 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2070,
+    "index": "F",
+    "title": "Friends and Pizza",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "divide and conquer",
+      "dp",
+      "fft"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2070/problem/F",
+      "notes": "Statement and constraints: count pairs of friends by the total slices Monocarp eats, with no shared odd-sized liked pizza."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140146",
+      "notes": "Official editorial code groups friend masks by the number of odd pizzas, applies SOS/zeta transforms, combines rows, then inverse-transforms to recover counts by union mask."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2070F",
+      "notes": "Luogu candidate source; not used in this review because the official editorial code was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "For every possible number of slices eaten by Monocarp, count unordered pairs of friends whose common liked pizzas contain no odd-sized pizza.",
+    "constraints": "n <= 20 and m <= 5e5; masks over pizzas have size up to 2^20, so direct pair enumeration is impossible but subset transforms are feasible.",
+    "core_idea": "Represent each friend by a pizza mask. Monocarp eats the complement of the union of two masks, while quarrelling happens exactly when the intersection contains an odd-sized pizza. For each mask, store counts split by how many odd pizzas it contains. After zeta-transforming over subsets, multiply rows by odd-count totals, then inverse-transform: for a union mask U, entries where cnt_odd(mask1)+cnt_odd(mask2)=cnt_odd(U) are exactly the ordered pairs with no odd pizza in the intersection and union U. Subtract self-pairs that have no odd pizzas and divide by two to get unordered distinct pairs.",
+    "complexity": "O(o^2 * 2^n + o * n * 2^n + n * 2^n), where o is the number of odd-sized pizzas.",
+    "tricks": [
+      "Encode liked pizza sets as bitmasks and count pairs by their union mask.",
+      "Split counts by the number of odd pizzas to enforce the no-odd-intersection condition.",
+      "Use OR convolution via zeta/SOS transform and inverse transform instead of enumerating friend pairs."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "or-convolution-by-odd-count",
+      "summary": "Build a table A[odd_count][mask] of friend counts, zeta-transform every row over subsets, convolve rows by odd-count sum, inverse-transform, and aggregate valid union masks into answer buckets by complement slice sum.",
+      "complexity": "O(o^2 * 2^n + o * n * 2^n) time, O(o * 2^n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/transform/fwt/or-fwt",
+      "importance": "primary",
+      "evidence": "The main aggregation is an OR convolution over friend masks, implemented by subset zeta transform and inverse transform.",
+      "solution_variant": "or-convolution-by-odd-count",
+      "description": "Use the OR variant of subset/FWT-style convolution, typically implemented with zeta transforms over submasks or supermasks.",
+      "parent": "math/transform/fwt",
+      "created_reason": "The taxonomy already distinguishes AND and XOR FWT; OR convolution is a distinct common transform needed for precise retrieval.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/sos-dp",
+      "importance": "primary",
+      "evidence": "The official implementation performs SOS/zeta propagation for every odd-count row before and after combining masks.",
+      "solution_variant": "or-convolution-by-odd-count"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Friend preferences, union masks, odd-pizza masks, and complement slice sums are all represented by bitmasks.",
+      "solution_variant": "or-convolution-by-odd-count"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "The answer counts unordered friend pairs classified by subset union and odd-intersection constraints.",
+      "solution_variant": "or-convolution-by-odd-count"
+    }
+  ]
+}
