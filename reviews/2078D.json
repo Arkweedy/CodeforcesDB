@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2078,
+    "title": "Codeforces Round 1008 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2078,
+    "index": "D",
+    "title": "Scammy Game Ad",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2078/problem/D",
+      "notes": "题面与约束：每层左右两个 gate 产生新增人数，新增人数可分配到任意 lane，但已有 lane 人数不能移动；最大化最终总人数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140505",
+      "notes": "官方题解给出 greedy 和 backward DP 两种视角：把 +a 视为 x1，新增人数应分配到未来乘法收益更高的一侧。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2078D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "有左右两条 lane，初始各 1 人。每一层左右 gate 会按 +a 或 x a 产生新增人数，新增人数可任意分配到左右 lane，但已有 lane 人数不能移动；求最终总人数最大值。",
+    "constraints": "t <= 1e4，n <= 30，数值保证答案在 64-bit 范围内；可以 O(n) 从后向前计算未来收益。",
+    "core_idea": "一个新增的人放到某条 lane 后，会被之后该 lane 遇到的乘法 gate 放大。因此对每个位置 i，维护一个人进入左/右 lane 后直到结尾能贡献的最大倍率 dp_l[i], dp_r[i]。若当前 gate 是 +a，它只产生 a 个新增人，全部应放到 dp 较大的一侧；若是 x a，它产生 (a-1)*当前人数 个新增人，这部分也会选择未来倍率更大的一侧，于是 dp_l[i]=dp_l[i+1]+(a-1)*max(dp_l[i+1],dp_r[i+1])，右侧同理。最后用初始左右各 1 人的贡献得到答案。",
+    "complexity": "O(n) per test case.",
+    "tricks": [
+      "把 +a 看成产生固定新增人数，把 x a 看成产生 (a-1) 倍当前人数的新增人数",
+      "从后往前维护每条 lane 的未来贡献倍率",
+      "每批新增人数的分配是线性目标，全部放到未来倍率更大的 lane"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "backward-future-multiplier-dp",
+      "summary": "从最后一层向前维护 left/right 两个未来倍率。+ gate 不改变本 lane 旧人的倍率，只把固定新增人数计入最终答案时放到更优 lane；x gate 会让本 lane 旧人额外产生 (a-1) 批新增人，这批新增人同样乘以后续更大的未来倍率。",
+      "complexity": "O(n) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "range-greedy-by-next-multiply",
+      "summary": "等价贪心视角：在两个不同乘法 gate 之间，+ gate 产生的总新增人数与分配无关；在下一个不同乘法处，应把这些新增人数全部分到乘法更强、未来收益更高的一侧。",
+      "complexity": "O(n) per test case.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "主解法只维护 left/right 两个未来倍率状态，并从后向前转移。",
+      "solution_variant": "backward-future-multiplier-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "每个新增人的价值由未来会被乘上的倍率决定，算法直接维护单位人的未来贡献。",
+      "solution_variant": "backward-future-multiplier-dp"
+    },
+    {
+      "tag": "trick/linear-objective-extreme-choice",
+      "importance": "primary",
+      "evidence": "新增人数分配的目标是线性的，因此整批都放到未来倍率更大的一侧。",
+      "solution_variant": "backward-future-multiplier-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "官方 greedy 视角按未来乘法收益选择每批新增人数的去向。",
+      "solution_variant": "range-greedy-by-next-multiply"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "未来倍率需要从终点倒推，正向难以直接知道新增人数的最佳归属。",
+      "solution_variant": "backward-future-multiplier-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "官方第二解法明确为 DP。",
+      "solution_variant": "backward-future-multiplier-dp"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现需要解析 +/x gate 并用 64-bit 整数，但不是主要检索点。",
+      "solution_variant": "backward-future-multiplier-dp"
+    }
+  ]
+}
