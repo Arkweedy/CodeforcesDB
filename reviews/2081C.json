@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "C",
+    "title": "Quaternary Matrix",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "greedy",
+      "implementation",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/C",
+      "notes": "题面与约束：修改最少矩阵元素，使每行和每列的 quaternary 值 XOR 均为 0，并输出任意最优矩阵。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认把矩阵转化为行/列 XOR deficit 后，先做 P2、再做 P3、再做 P4 零异或分组的贪心结构。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "local:bruteforce-small-deficit-counts",
+      "notes": "对 R1,R2,R3,C1,C2,C3 每类计数 <=5 的状态穷举所有合法零异或分组，验证 P2/P3/P4 贪心得到最大分组数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081C",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定元素为 0..3 的矩阵，要求修改最少元素，使每一行和每一列的 XOR 都为 0，并输出一种修改后的矩阵。",
+    "constraints": "多测，sum(n*m) <= 1e6，值域只有 0..3，可把每个值视为 GF(2)^2 上的二位 xor mask；需要线性扫描和常数类计数。",
+    "core_idea": "先计算每行 XOR deficit r_i 和每列 XOR deficit c_j。修改单元 (i,j) 相当于同时把某个 x XOR 到 r_i 和 c_j，因此问题变成把非零行/列 deficit 分成若干组，每组 XOR 和为 0 且同时含有行元素和列元素；大小为 k 的组可用 k-1 次修改清零，比逐个清零节省 1 次，所以要最大化组数。官方证明最优分组可规约为 P2/P3/P4 三类：先尽量配同值的 (R_x,C_x)，再配三个值 XOR 为 0 的三元组，最后配两个同值行和两个同值列的四元组。剩余 deficit 单独修改即可，同时按分组在矩阵中写入对应 xor 值完成构造。",
+    "complexity": "O(nm) per test case, O(sum n*m) total.",
+    "tricks": [
+      "把行列约束转成行/列 XOR deficit",
+      "最小修改数等于非零 deficit 数减去可形成的零异或混合组数",
+      "在值域 {1,2,3} 中分类 P2/P3/P4 并贪心最大化分组数",
+      "构造时每个分组用 k-1 个单元修改同时消除对应行列 deficit"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "xor-deficit-grouping",
+      "summary": "维护 row[1..3] 和 col[1..3] 中仍未清零的行/列索引。先匹配同值行列形成 P2；再按 1,2,3 的异或关系形成一个行配两个列或一个列配两个行的 P3；最后形成两个同值行和两个另一值列的 P4。每形成一个大小 k 的组就在相应单元写入 xor 修正值，贡献 k-1 次修改；剩余单个 deficit 用第一列或第一行单独修正。",
+      "complexity": "O(nm) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/linear-algebra/xor-vector-space",
+      "importance": "primary",
+      "evidence": "核心转化是把 0..3 视为 GF(2)^2 中的 xor mask，并在行/列 deficit 上做线性 xor 平衡。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "trick/count-balancing",
+      "importance": "primary",
+      "evidence": "主过程只维护 R1,R2,R3,C1,C2,C3 六类计数/索引，并通过配组清除 deficit。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "最优解按 P2、P3、P4 的固定优先级贪心形成最多零异或混合组。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出最优矩阵，算法在分组的同时构造具体单元修改。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "secondary",
+      "evidence": "问题的原始对象和约束是矩阵行列 XOR，但矩阵结构在转化后只留下行/列 deficit。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "值域 0..3 被当作二位 bitmask 参与 xor 修正与分组。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "正确性依赖把所有最优分组规约到 P2、P3、P4 三类并分别处理。",
+      "solution_variant": "xor-deficit-grouping"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现需要维护索引列表并输出矩阵，但不是检索这题的主要算法点。",
+      "solution_variant": "xor-deficit-grouping"
+    }
+  ]
+}
