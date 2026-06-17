@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "D",
+    "title": "Arcology On Permafrost",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2084/D/",
+      "notes": "Codeforces 题面镜像。题意：构造长度 n 序列，敌手最多删除 m 个长度 k 的连续段后，使剩余序列 mex 的最小可能值尽量大。约束总 n <= 2e5。解法基于题面自行推导。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给 n,m,k 且 m*k<n，构造非负整数序列 a。敌手可最多删除 m 次长度为 k 的连续段，f(a) 是删除后 mex 的最小可能值。要求构造使 f(a) 最大的序列。",
+    "constraints": "t <= 10000，2 <= n <= 2e5，1 <= m,k < n，1 <= m*k < n，所有测试 n 之和 <= 2e5。",
+    "core_idea": "设答案为 x。若要保证 mex 至少 x，值 0..x-1 中每个值在所有删除后都必须还剩至少一次。若某个值出现不超过 m 次，敌手可用每次删除覆盖一个出现位置把它删光，所以必须 x*(m+1) <= n，即 x <= floor(n/(m+1))。另一方面，敌手删掉 m*k 个元素后最多剩 n-m*k 个元素，mex 不可能超过剩余长度，所以 x <= n-m*k。令 x=min(floor(n/(m+1)), n-m*k)。构造时让每个 0..x-1 出现至少 m+1 次，且同一个值的相邻出现距离至少 k，这样一次长度 k 删除最多删掉该值一个副本，m 次后仍有一个副本。若 x>=k，直接周期输出 i mod x；若 x<k，则按长度 k 的周期，只在每个周期的前 x 个位置输出 0..x-1，其余填 x。两个分支都满足距离和副本数量条件。",
+    "complexity": "O(n) per test case; memory O(1) besides output.",
+    "tricks": [
+      "用每个目标 mex 值至少需要 m+1 个副本得到 floor(n/(m+1)) 上界。",
+      "用删除后剩余长度得到 n-m*k 上界。",
+      "把同一值的副本间距放到至少 k，使每次长度 k 删除最多覆盖一个副本。",
+      "根据 x 与 k 的大小选择周期 x 或周期 k。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "protected-mex-periodic-construction",
+      "summary": "主解法。取 x=min(floor(n/(m+1)), n-m*k)。若 x>=k，输出周期 x 的 0..x-1；否则按周期 k 输出前 x 个余数为 0..x-1，其余位置填 x。这样每个 0..x-1 有至少 m+1 个相距至少 k 的副本。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "需要输出达到最优 f(a) 的具体序列，构造分为 x>=k 和 x<k 两种周期方案。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "目标函数正是删除后的最小 mex，解法围绕保证 0..x-1 全部存活并最大化 x。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "primary",
+      "evidence": "构造要对任意至多 m 次长度 k 删除都保证每个 0..x-1 至少留下一个副本。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "trick/coverage-condition",
+      "importance": "primary",
+      "evidence": "核心判定是敌手的长度 k 删除区间能覆盖某个值多少个副本；同值副本间距至少 k 后，每段最多覆盖一个。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "secondary",
+      "evidence": "若要保证 mex>=x，x 个值各需至少 m+1 个副本，推出 x*(m+1)<=n 的容量上界。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "最终序列通过周期 x 或周期 k 的重复模式生成，以控制同值副本距离。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "可以从上界取最小值理解为贪心取最大 x，但没有逐步局部选择过程。",
+      "solution_variant": "protected-mex-periodic-construction"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "incidental",
+      "evidence": "official tag 包含 data structures，但 reviewed 解法只需直接输出，不使用数据结构。",
+      "solution_variant": "protected-mex-periodic-construction"
+    }
+  ]
+}
