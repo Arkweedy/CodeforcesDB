@@ -58,6 +58,127 @@ def canonical_problem_uid(conn: sqlite3.Connection, problem_uid: str) -> str:
     return problem_uid
 
 
+def _has_reviewed_annotation(conn: sqlite3.Connection, problem_uid: str) -> bool:
+    row = conn.execute(
+        """
+        SELECT review_status
+        FROM problem_annotations
+        WHERE problem_uid = ?
+        """,
+        (problem_uid,),
+    ).fetchone()
+    return bool(row and row["review_status"] in {"reviewed", "verified"})
+
+
+def _copy_reviewed_alias_to_canonical(conn: sqlite3.Connection, item: DuplicateProblem) -> bool:
+    if _has_reviewed_annotation(conn, item.canonical_problem_uid):
+        return False
+
+    annotation = conn.execute(
+        """
+        SELECT summary, constraints_text, core_idea, complexity, tricks_json,
+               confidence, review_status, last_reviewed_at
+        FROM problem_annotations
+        WHERE problem_uid = ?
+          AND review_status IN ('reviewed', 'verified')
+        """,
+        (item.alias_problem_uid,),
+    ).fetchone()
+    if annotation is None:
+        return False
+
+    conn.execute("DELETE FROM problem_tags WHERE problem_uid = ?", (item.canonical_problem_uid,))
+    conn.execute("DELETE FROM solution_variants WHERE problem_uid = ?", (item.canonical_problem_uid,))
+
+    conn.execute(
+        """
+        INSERT INTO problem_annotations(
+            problem_uid, summary, constraints_text, core_idea, complexity,
+            tricks_json, confidence, review_status, last_reviewed_at, updated_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(problem_uid) DO UPDATE SET
+            summary = excluded.summary,
+            constraints_text = excluded.constraints_text,
+            core_idea = excluded.core_idea,
+            complexity = excluded.complexity,
+            tricks_json = excluded.tricks_json,
+            confidence = excluded.confidence,
+            review_status = excluded.review_status,
+            last_reviewed_at = excluded.last_reviewed_at,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (
+            item.canonical_problem_uid,
+            annotation["summary"],
+            annotation["constraints_text"],
+            annotation["core_idea"],
+            annotation["complexity"],
+            annotation["tricks_json"],
+            annotation["confidence"],
+            annotation["review_status"],
+            annotation["last_reviewed_at"],
+        ),
+    )
+
+    variant_id_map: dict[int, int] = {}
+    variants = conn.execute(
+        """
+        SELECT id, variant_name, summary, complexity, confidence, is_primary
+        FROM solution_variants
+        WHERE problem_uid = ?
+        ORDER BY id
+        """,
+        (item.alias_problem_uid,),
+    ).fetchall()
+    for variant in variants:
+        conn.execute(
+            """
+            INSERT INTO solution_variants(
+                problem_uid, variant_name, summary, complexity, confidence, is_primary
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                item.canonical_problem_uid,
+                variant["variant_name"],
+                variant["summary"],
+                variant["complexity"],
+                variant["confidence"],
+                variant["is_primary"],
+            ),
+        )
+        variant_id_map[int(variant["id"])] = int(conn.execute("SELECT last_insert_rowid()").fetchone()[0])
+
+    tags = conn.execute(
+        """
+        SELECT tag, importance, evidence, source, solution_variant_id
+        FROM problem_tags
+        WHERE problem_uid = ?
+        """,
+        (item.alias_problem_uid,),
+    ).fetchall()
+    for tag in tags:
+        old_variant_id = tag["solution_variant_id"]
+        new_variant_id = variant_id_map.get(int(old_variant_id)) if old_variant_id is not None else None
+        conn.execute(
+            """
+            INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source, solution_variant_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                item.canonical_problem_uid,
+                tag["tag"],
+                tag["importance"],
+                tag["evidence"],
+                tag["source"],
+                new_variant_id,
+            ),
+        )
+
+    return True
+
+
 def find_division_duplicates(conn: sqlite3.Connection) -> list[DuplicateProblem]:
     contests = conn.execute(
         """
@@ -173,27 +294,29 @@ def mark_division_duplicates(conn: sqlite3.Connection) -> list[DuplicateProblem]
                 (item.canonical_problem_uid, source_type, source["url"], source["notes"]),
             )
 
-        alias_tags = conn.execute(
-            """
-            SELECT tag, importance, evidence
-            FROM problem_tags
-            WHERE problem_uid = ? AND source = 'cf_official'
-            """,
-            (item.alias_problem_uid,),
-        ).fetchall()
-        for tag in alias_tags:
-            conn.execute(
+        transferred_review = _copy_reviewed_alias_to_canonical(conn, item)
+        if not transferred_review:
+            alias_tags = conn.execute(
                 """
-                INSERT OR IGNORE INTO problem_tags(problem_uid, tag, importance, evidence, source)
-                VALUES (?, ?, ?, ?, 'cf_official_alias')
+                SELECT tag, importance, evidence
+                FROM problem_tags
+                WHERE problem_uid = ? AND source = 'cf_official'
                 """,
-                (
-                    item.canonical_problem_uid,
-                    tag["tag"],
-                    tag["importance"],
-                    f"Alias {item.alias_contest_id}{item.alias_problem_index}: {tag['evidence']}",
-                ),
-            )
+                (item.alias_problem_uid,),
+            ).fetchall()
+            for tag in alias_tags:
+                conn.execute(
+                    """
+                    INSERT OR IGNORE INTO problem_tags(problem_uid, tag, importance, evidence, source)
+                    VALUES (?, ?, ?, ?, 'cf_official_alias')
+                    """,
+                    (
+                        item.canonical_problem_uid,
+                        tag["tag"],
+                        tag["importance"],
+                        f"Alias {item.alias_contest_id}{item.alias_problem_index}: {tag['evidence']}",
+                    ),
+                )
 
         conn.execute("DELETE FROM problem_tags WHERE problem_uid = ?", (item.alias_problem_uid,))
         conn.execute("DELETE FROM solution_variants WHERE problem_uid = ?", (item.alias_problem_uid,))

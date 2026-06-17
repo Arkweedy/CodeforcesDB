@@ -448,6 +448,101 @@ class CfDbTests(unittest.TestCase):
                 results = search_problems(conn, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:100:A"])
 
+    def test_div1_div2_overlap_moves_reviewed_alias_to_div1(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO contests(contest_id, contest_uid, title, start_time_seconds, eligibility_status, extraction_status)
+                    VALUES
+                        (100, 'cf_contest:100', 'Codeforces Round 50 (Div. 1)', 12345, 'eligible', 'problems_loaded'),
+                        (101, 'cf_contest:101', 'Codeforces Round 50 (Div. 2)', 12345, 'eligible', 'problems_loaded')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problems(
+                        problem_uid, contest_id, problem_index, title, rating, rating_status,
+                        canonical_url, problemset_url
+                    )
+                    VALUES
+                        ('cf_problem:100:A', 100, 'A', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/100/problem/A',
+                         'https://codeforces.com/problemset/problem/100/A'),
+                        ('cf_problem:101:C', 101, 'C', 'Shared Problem', 1900, 'official',
+                         'https://codeforces.com/contest/101/problem/C',
+                         'https://codeforces.com/problemset/problem/101/C')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO problem_annotations(problem_uid, summary, constraints_text, core_idea, complexity, confidence, review_status)
+                    VALUES
+                        ('cf_problem:100:A', 'raw', 'raw', 'raw', 'raw', 'low', 'auto_seeded'),
+                        ('cf_problem:101:C', 'reviewed summary', 'constraints', 'core idea', 'O(n)', 'high', 'reviewed')
+                    """
+                )
+                conn.execute(
+                    """
+                    INSERT INTO solution_variants(problem_uid, variant_name, summary, complexity, confidence, is_primary)
+                    VALUES ('cf_problem:101:C', 'main', 'variant summary', 'O(n)', 'high', 1)
+                    """
+                )
+                variant_id = conn.execute(
+                    """
+                    SELECT id FROM solution_variants
+                    WHERE problem_uid = 'cf_problem:101:C' AND variant_name = 'main'
+                    """
+                ).fetchone()["id"]
+                conn.execute(
+                    """
+                    INSERT INTO problem_tags(problem_uid, tag, importance, evidence, source, solution_variant_id)
+                    VALUES
+                        ('cf_problem:100:A', 'math', 'primary', 'official clue', 'cf_official', NULL),
+                        ('cf_problem:101:C', 'dp', 'primary', 'reviewed evidence', 'ai_reviewed', ?)
+                    """,
+                    (variant_id,),
+                )
+
+                duplicates = mark_division_duplicates(conn)
+                self.assertEqual(len(duplicates), 1)
+                self.assertEqual(canonical_problem_uid(conn, "cf_problem:101:C"), "cf_problem:100:A")
+
+                annotation = conn.execute(
+                    """
+                    SELECT summary, review_status
+                    FROM problem_annotations
+                    WHERE problem_uid = 'cf_problem:100:A'
+                    """
+                ).fetchone()
+                self.assertEqual(annotation["summary"], "reviewed summary")
+                self.assertEqual(annotation["review_status"], "reviewed")
+
+                canonical_tag = conn.execute(
+                    """
+                    SELECT pt.tag, pt.evidence, pt.source, sv.variant_name
+                    FROM problem_tags pt
+                    LEFT JOIN solution_variants sv ON sv.id = pt.solution_variant_id
+                    WHERE pt.problem_uid = 'cf_problem:100:A'
+                    """
+                ).fetchone()
+                self.assertEqual(canonical_tag["tag"], "dp")
+                self.assertEqual(canonical_tag["evidence"], "reviewed evidence")
+                self.assertEqual(canonical_tag["source"], "ai_reviewed")
+                self.assertEqual(canonical_tag["variant_name"], "main")
+
+                alias_counts = conn.execute(
+                    """
+                    SELECT
+                        (SELECT COUNT(*) FROM problem_annotations WHERE problem_uid = 'cf_problem:101:C') AS annotations,
+                        (SELECT COUNT(*) FROM solution_variants WHERE problem_uid = 'cf_problem:101:C') AS variants,
+                        (SELECT COUNT(*) FROM problem_tags WHERE problem_uid = 'cf_problem:101:C') AS tags
+                    """
+                ).fetchone()
+                self.assertEqual(dict(alias_counts), {"annotations": 0, "variants": 0, "tags": 0})
+
     def test_list_missing_contests_reports_coverage_states(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db = Path(tmp) / "test.sqlite"
