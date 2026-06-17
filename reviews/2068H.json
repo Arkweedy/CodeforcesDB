@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "H",
+    "title": "Statues",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/H",
+      "notes": "Statement and constraints: construct a lattice path from (0,0) to (a,b) with prescribed Manhattan step lengths."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official EUC editorial page identifies the problem, but the tutorial body is not exposed in the fetched page."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/H",
+      "notes": "Derived the standard reachability conditions and constructive view through the x+y, x-y transform; no complete external editorial text was available in this session."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068H",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given step lengths d_i, construct integer points starting at (0,0) and ending at (a,b) so that consecutive Manhattan distances are exactly d_i.",
+    "constraints": "n is only 50 but coordinates and distances are up to 1e9, so the solution is a direct mathematical construction rather than graph search.",
+    "core_idea": "Let S be the sum of all step lengths, D=a+b be the Manhattan distance from start to target, and M be the largest step. Necessary feasibility conditions are S >= D, S-D even, and M <= (S-M)+D: the total length must cover the endpoint, the wasted length must be cancellable in pairs, and no single step can be longer than the target plus all other steps combined. These are also sufficient. A constructive way to see and implement this is to use the Manhattan transform (u,v)=(x+y,x-y), where one Manhattan step of length d becomes a Chebyshev step of radius d with the proper parity. Process the steps greedily, each time choosing a point on the current Chebyshev square so that the remaining target still satisfies the same interval and parity feasibility conditions; transforming back gives integer lattice coordinates.",
+    "complexity": "O(n^2) or O(n log n) depending on how remaining maxima are maintained; O(n) memory.",
+    "tricks": [
+      "Manhattan transform to Chebyshev coordinates",
+      "total length and parity feasibility",
+      "longest-step polygon inequality",
+      "greedy construction while preserving remaining feasibility"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "manhattan-transform-greedy-construction",
+      "summary": "Check the total-length, parity, and longest-step inequalities, then greedily choose each transformed step so the suffix remains reachable and convert the resulting (u,v) points back to (x,y).",
+      "complexity": "O(n^2)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/manhattan-transform",
+      "importance": "primary",
+      "evidence": "The construction becomes natural after converting Manhattan steps into Chebyshev-radius moves in x+y and x-y coordinates.",
+      "solution_variant": "manhattan-transform-greedy-construction"
+    },
+    {
+      "tag": "math/geometry/polygon-inequality",
+      "importance": "primary",
+      "evidence": "Feasibility is governed by the longest step not exceeding the target distance plus all other step lengths.",
+      "solution_variant": "manhattan-transform-greedy-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The problem requires outputting actual coordinates, and the solution explicitly builds the path after checking feasibility.",
+      "solution_variant": "manhattan-transform-greedy-construction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "The wasted length S-(a+b) must be even so that detours can cancel on the integer lattice.",
+      "solution_variant": "manhattan-transform-greedy-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "One implementation chooses each next transformed step while preserving the remaining feasibility interval.",
+      "solution_variant": "manhattan-transform-greedy-construction"
+    }
+  ]
+}
