@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2078,
+    "title": "Codeforces Round 1008 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2078,
+    "index": "E",
+    "title": "Finding OR Sum",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "implementation",
+      "interactive",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2078/problem/E",
+      "notes": "题面与约束：最多两次询问 (n|x)+(n|y)，随后给出 m，要求回答 (m|x)+(m|y)。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140505",
+      "notes": "官方题解确认使用交替位掩码 ...0101 和 ...1010 两次查询，逐相邻 bit 对恢复每一位上 x,y 中 1 的个数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2078E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "隐藏两个 30-bit 非负整数 x,y。最多查询两次 (n|x)+(n|y)，随后给出 m，要求计算 (m|x)+(m|y)。",
+    "constraints": "x,y,m,n < 2^30，最多 2 次查询；hacks 版本直接给 x,y,m，但原题是非自适应交互。",
+    "core_idea": "真正需要知道的不是 x,y 本身，而是每个 bit 上 x,y 中有几个 1，记为 cnt[k] in {0,1,2}。查询交替掩码 q0=...0101 和 q1=...1010：在某个相邻二进制位对中，一个查询把高位强制为 1、低位保留未知，因此返回值的局部形态能区分低位 cnt 是 0/1/2；另一个查询对高位做同样区分。由于返回的是普通整数和，需要按从低到高处理并扣掉低位产生的 carry。恢复所有 cnt[k] 后，对于任意 m，若 m_k=1，该位贡献 2*2^k；若 m_k=0，该位贡献 cnt[k]*2^k，直接求和即可。",
+    "complexity": "O(30) per test case.",
+    "tricks": [
+      "只恢复每个 bit 上两个隐藏数的 1 的数量，而非恢复 x,y 本身",
+      "用互补交替掩码把相邻 bit 对的信息编码进两次查询",
+      "从低位到高位处理普通加法产生的 carry"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-alternating-mask-or-queries",
+      "summary": "询问 even-mask 和 odd-mask 两个交替掩码。对每个 bit，根据该 bit 被保留未知的那一次查询的返回值，扣除低位 carry 后判断 cnt[k] 是 0、1 还是 2。最终按 m 的 bit 汇总贡献。",
+      "complexity": "O(30) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/communication",
+      "importance": "primary",
+      "evidence": "原题是两次查询的信息获取问题，核心是设计查询从交互返回值中恢复足够信息。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "算法从两个 oracle answers 中重构每个 bit 的 cnt 状态，再回答任意 m 的目标函数。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "trick/query-encoding",
+      "importance": "primary",
+      "evidence": "两次查询选择互补交替 bitmask，使返回的整数和编码相邻位上 x,y 的 0/1 数量。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "整个恢复过程逐 bit 操作，查询值也是特制 bitmask。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "trick/binary-carry",
+      "importance": "secondary",
+      "evidence": "从返回的普通整数和中解析每一位时，必须处理低位贡献产生的 carry。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "trick/information-encoding",
+      "importance": "secondary",
+      "evidence": "两次数值回答被设计成同时携带多位分类信息。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "secondary",
+      "evidence": "官方原题是 interactive；hacks 版本只改变输入形式，不改变通信式解法。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "需要利用 OR 后按位贡献与整数加法之间的关系。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现有固定 30 位循环和交互 flush，但不是主要检索点。",
+      "solution_variant": "two-alternating-mask-or-queries"
+    }
+  ]
+}
