@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "G2",
+    "title": "Hard Formula (Hard Version)",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": [
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/G2",
+      "notes": "Codeforces canonical statement URL；当前环境直接访问题面不稳定。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2081G2",
+      "notes": "题面与约束：计算 sum_{k=1}^n (k mod phi(k)) modulo 2^32，困难版 n <= 1e12。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方 G2 题解确认在 Min_25 DFS 树上只枚举 g'(d) 变化的 important nodes，并用 Du Sieve / minp-filtered phi prefix sums 计算 G(d,p)。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081G2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 N，计算 sum_{k=1}^N (k mod phi(k)) modulo 2^32；困难版 N 上限更高。",
+    "constraints": "G2 约束 N <= 1e12，需要比 G1 的 Min_25 风格 DFS 更强的 summatory-function 优化；答案在 32-bit unsigned 模数下计算。",
+    "core_idea": "仍先用 k mod phi(k)=k-floor(k/phi(k))*phi(k) 转化。把 Min_25 sieve 的 DFS 结构看成一棵以 1 为根的树，节点 d 的父亲为 d/maxp(d)。只有 g'(d)!=g'(parent(d)) 的节点会改变贡献；将这些 important nodes 分成非叶节点和叶节点，非叶节点通过 DFS 找到，叶子儿子的质数 p 落在可由阈值确定的区间中，可批量贡献。剩余关键是计算 G(d,p)=phi(d)*sum_{i<=N/d, minp(i)=p} phi(i)。官方用 f_p(x)=sum_{i<=x,minp(i)>=p} phi(i)，所以 G(d,p)=f_p(N/d)-f_{p+1}(N/d)。f_0 的大值用 Du Sieve 求出，再按质数逐步删除/转移得到 f_p；大 maxp 情况用 Fenwick 维护二维偏序下的 minp-filtered 前缀值。",
+    "complexity": "Official target complexity is about O(N^(2/3)/log N + sqrt(NK)/log N + N/K) with an optimized K choice, sufficient for N<=1e12.",
+    "tricks": [
+      "把 Min_25 DFS 树中 g' 变化的节点作为 important nodes",
+      "把 G(d,p) 写成 f_p - f_{p+1} 的最小质因子过滤前缀和",
+      "用 Du Sieve 计算 Euler phi 前缀和的大值",
+      "按 maxp 阈值分两类，低阈值逐质数删除，高阈值转为二维偏序/BIT 查询"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "important-node-min25-du-sieve",
+      "summary": "先沿 Min_25 DFS 树枚举所有非叶 important nodes，并用质数区间累加叶子 important nodes 的贡献。对每个 needed G(d,p)，维护 f_p(x)=sum_{i<=x,minp(i)>=p}phi(i)：f_0 通过杜教筛得到；小 p 部分按质数递推 f_{p+1}，大 p 部分只需 x<=B，用 Fenwick 树处理 minp 约束下的二维偏序贡献。",
+      "complexity": "About O(N^(2/3)/log N + sqrt(NK)/log N + N/K).",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/euler-phi",
+      "importance": "primary",
+      "evidence": "题目公式、主转化和 G(d,p) 求和都围绕 Euler phi。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "math/number-theory/min25-sieve",
+      "importance": "primary",
+      "evidence": "困难版直接分析 Min_25 sieve 的 DFS 树，并枚举其中 g' 变化的 important nodes。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "math/number-theory/du-sieve",
+      "importance": "primary",
+      "evidence": "计算 f_0(x)=sum_{i<=x}phi(i) 的大值依赖 Du Sieve，并进一步优化杜教筛计算量。",
+      "solution_variant": "important-node-min25-du-sieve",
+      "description": "Use Du Jiao sieve / Du sieve to compute prefix sums of multiplicative functions by Dirichlet convolution and floor-division decomposition.",
+      "parent": "math/number-theory",
+      "created_reason": "The hard version's decisive improvement is not just Min_25 sieve; it explicitly uses Du Sieve for Euler-phi summatory values, a classic high-level number-theory technique worth direct retrieval.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "算法按是否改变 g'、是否为 leaf、maxp 是否超过阈值 k/B/sqrt(B) 多次分层拆分贡献。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "大量前缀值只在 floor(N/d) 的商值上维护，Min_25 和 Du Sieve 都依赖该压缩。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "官方 hard 版对大 maxp 情况用 BIT 处理二维偏序下的 minp-filtered 前缀查询。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "DFS 树、maxp/minp 分类和 phi 的递推都建立在质因数分解结构上。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "最终计算 sum k mod phi(k)，并在 modulo 2^32 下输出。",
+      "solution_variant": "important-node-min25-du-sieve"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现有大量工程优化、unsigned overflow 和数组化 DP，但核心检索价值在数论筛法与贡献分解。",
+      "solution_variant": "important-node-min25-du-sieve"
+    }
+  ]
+}
