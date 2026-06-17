@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "F",
+    "title": "Hot Matrix",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/F",
+      "notes": "Codeforces canonical statement URL；当前环境直接访问题面不稳定，实际题面核对使用 Luogu 镜像。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2081F",
+      "notes": "题面：构造 n*n hot matrix，要求每行每列为 0..n-1 的排列、关于水平/垂直中轴互补，且所有横向/纵向相邻有序对分别互不相同。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认奇数 n 仅 n=1 可行；偶数 n=2m 时沿四条对角折线路径交替填入 2i-1 和 2i-2。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "local:hot-matrix-small-construction-check",
+      "notes": "按官方代码公式重写构造，验证 n=2,4,6,8,10,12 的行列排列、双轴互补、横纵有序相邻对唯一性。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "判断并构造 n*n 矩阵：每行每列都是 0..n-1 的排列；关于左右、上下对称位置的元素和为 n-1；所有横向相邻有序对互不相同，所有纵向相邻有序对也互不相同。",
+    "constraints": "多测，输出规模 O(n^2)；官方构造和验证复杂度为 O(sum n^2)。",
+    "core_idea": "奇数 n>1 不可行，因为中心行/列的对称互补会强迫中心元素等于 (n-1)/2，并和排列/相邻对约束冲突；n=1 平凡可行。偶数 n=2m 时，把值按相邻数对 (2i-2,2i-1) 分组。对每组 i，在矩阵边界附近的四条对角折线路径上交替填入这两个数；对应的互补值组 (n-2i,n-2i+1) 自动占据关于水平/垂直中轴对称的位置。该路径铺排使每行每列对每个值对恰出现一次，同时通过棋盘格奇偶和四类路径邻接关系保证不同值对之间产生的有序相邻对不重复。",
+    "complexity": "O(n^2) per test case, dominated by filling and printing the matrix.",
+    "tricks": [
+      "奇偶性判定：奇数 n 只有 n=1 可行",
+      "把值按互补的相邻二元组分组",
+      "沿四条对角折线路径交替填色",
+      "利用双轴对称和棋盘格奇偶控制相邻有序对唯一性"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "diagonal-ring-pair-construction",
+      "summary": "若 n 为奇数且 n>1 输出 NO；n=1 输出 0。对偶数 n，从 i=0,2,4,... 枚举数值对 (i,i+1)，按四段对角路径公式填充：左上到右上、右上到右下、右下到左下、左下到左上方向的折线环，并在路径上按坐标奇偶交替使用 i 与 i+1。最后输出矩阵。",
+      "complexity": "O(n^2) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "核心任务是判断可行性并显式构造满足强约束的矩阵。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "trick/tiling",
+      "importance": "primary",
+      "evidence": "偶数 n 的构造通过重复的对角折线环把每个值对铺排到整个网格。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "trick/grid-coloring",
+      "importance": "primary",
+      "evidence": "每条路径上交替填入相邻值，并用棋盘格奇偶关系证明行列出现次数和相邻对唯一性。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "水平和垂直中轴的互补对称是构造设计与正确性证明的核心约束。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "可行性首先按 n 的奇偶分类，邻接唯一性证明也使用坐标奇偶。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "构造显式使用网格坐标、对角线折线路径和关于中轴的反射关系。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "需要分别处理 n=1、奇数 n>1、偶数 n 三种结构情况。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现主要是按公式填矩阵并输出，检索重点仍是构造模式。",
+      "solution_variant": "diagonal-ring-pair-construction"
+    }
+  ]
+}
