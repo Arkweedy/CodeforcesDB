@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2075,
+    "title": "Educational Codeforces Round 176 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2075,
+    "index": "E",
+    "title": "XOR Matrix",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2075/problem/E",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2075E",
+      "notes": "洛谷题面镜像：统计数组 a,b，使矩阵 a_i xor b_j 的不同值数量不超过两个。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2075E",
+      "notes": "从 XOR 平移的单射性推导：a,b 的值集合大小均不超过 2；若都为 2，则两对值的 xor difference 必须相同，再转为按二进制上界计数同 xor 差数对。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2075E",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 n,m,A,B，统计数组 a_i in [0,A]、b_j in [0,B] 的有序数组对数量，使所有 a_i xor b_j 中不同值不超过两个。",
+    "constraints": "t <= 1e4，2 <= n,m,A,B <= 2^29-1，答案模 998244353。",
+    "core_idea": "令 S,T 为 a,b 中出现过的值集合。对任意固定 t，S xor {t} 与 S 等势，因此若 S xor T 的大小不超过 2，则 |S|,|T| 都不超过 2。若一侧只有一个值，另一侧可有一个或两个值，可以直接用组合数和 (2^len-2) 计数。若两侧都恰好有两个值，设 S={u,u^d}、T={v,v^e}，矩阵值集合为 {u^v,u^v^e,u^d^v,u^d^v^e}，要不超过两个必须且只需 d=e。因此剩余部分是：对 [0,A] 和 [0,B] 分别统计 unordered pairs 的 xor difference d，并求 sum_d pairs_A[d]*pairs_B[d]，再乘上两边数组实际使用两个值的方案数 (2^n-2)(2^m-2)。这个 sum_d 可用二进制 digit DP 直接统计满足 x1<x2<=A、y1<y2<=B 且 x1 xor x2 = y1 xor y2 的四元组，状态记录前缀是否贴上界、是否已经出现非零 xor 差，以及有序/无序对的对称处理。",
+    "complexity": "O(log A) states per test case after constant-size binary digit DP",
+    "tricks": [
+      "XOR 平移保持集合大小，迫使两侧 distinct value 数都不超过 2",
+      "两侧都为二元集合时，合法条件是两对值的 xor difference 相同",
+      "用二进制 digit DP 统计同 xor difference 的有界数对"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "set-size-characterization-digit-dp",
+      "summary": "先分情况统计一侧常值的数组。对于两侧都使用两个 distinct values 的情况，计算两个区间内 unordered pairs 按 xor difference 的内积；用按位 DP 统计 equal-xor-difference 的四元组，最后乘以两边二元数组的非单色填法数。",
+      "complexity": "O(log A) with constant-size bit DP per test case",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/xor-pair-counting",
+      "importance": "primary",
+      "evidence": "两侧都恰好两个值时，核心计数是按相同 xor difference 配对两个区间内的 unordered pairs。",
+      "solution_variant": "set-size-characterization-digit-dp",
+      "description": "Count ordered or unordered pairs grouped by their XOR difference, often under upper bounds or with a second pair constrained to have the same XOR.",
+      "parent": "algorithm/bitmask",
+      "created_reason": "Existing XOR tags cover subsets, bases, FWT, and identities, but not the common pair-counting pattern where x xor y is the bucket key.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/digit-dp",
+      "importance": "primary",
+      "evidence": "A,B 高达 2^29-1，统计同 xor difference 的有界数对需要按二进制位处理上界约束。",
+      "solution_variant": "set-size-characterization-digit-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "整体解法是对 distinct value set 大小分情况，并用数组使用某个二元值集合的方案数 2^len-2 组合计数。",
+      "solution_variant": "set-size-characterization-digit-dp"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "关键结构证明依赖 XOR 平移的单射性与二元集合 xor 差相等的代数性质。",
+      "solution_variant": "set-size-characterization-digit-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "所有结构条件和 DP 都围绕 xor 与二进制位展开。",
+      "solution_variant": "set-size-characterization-digit-dp"
+    }
+  ]
+}

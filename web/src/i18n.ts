@@ -182,6 +182,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "algorithm/bitmask/bitwise-greedy": "按位贪心",
   "algorithm/bitmask/lowbit": "Lowbit",
   "algorithm/bitmask/submask-supermask": "子掩码/超掩码",
+  "algorithm/bitmask/xor-pair-counting": "异或差数对计数",
   "algorithm/bitmask/xor-subset": "异或子集",
   "algorithm/divide-and-conquer": "分治",
   "algorithm/divide-and-conquer/cartesian-tree": "笛卡尔树",
@@ -718,6 +719,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "xor-hashing": "异或哈希",
   "wavelet-matrix": "小波矩阵",
   "xor-basis": "异或线性基",
+  "xor-pair-counting": "异或差数对计数",
   "xor-vector-space": "异或向量空间",
   "xor-subset": "异或子集"
 };
