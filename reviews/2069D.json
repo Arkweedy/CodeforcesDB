@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2069,
+    "title": "Educational Codeforces Round 174 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2069,
+    "index": "D",
+    "title": "Palindrome Shuffle",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "hashing",
+      "strings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2069/problem/D",
+      "notes": "Statement and constraints: choose one substring to shuffle so the whole even-length string becomes a palindrome; total length is at most 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139774",
+      "notes": "Official editorial solution trims already matching mirror pairs, then binary-searches a prefix length of the remaining core in both orientations and checks character counts."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2069D",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum length of one contiguous substring whose characters can be arbitrarily reordered to turn an even-length string into a palindrome.",
+    "constraints": "The string length sum is at most 2e5, so each feasibility check must be linear or near-linear and the number of checks logarithmic.",
+    "core_idea": "First remove matching mirror pairs at both ends; they never need to be touched. In the remaining core, it is enough to try a shuffled prefix or, after reversing, a shuffled suffix. For a candidate length, consume from the shuffled multiset the characters required by fixed mirror positions; positions outside the shuffled zone must already match their mirrors, and the remaining multiset must have even counts.",
+    "complexity": "O(n log n) per total input batch with O(26) auxiliary count space per check.",
+    "tricks": [
+      "Trim already matched mirror pairs before solving the core.",
+      "Check both orientations so a suffix shuffle is handled as a prefix shuffle after reversing.",
+      "Use multiset feasibility and leftover parity to test whether a shuffled zone can fill mirror demands."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "trim-and-binary-search-window",
+      "summary": "Trim equal mirrored characters, then binary search how long a prefix of the remaining core must be shuffled. The feasibility check matches fixed positions against the available character counts and requires even leftovers; reverse the core to cover suffix windows.",
+      "complexity": "O(n log n) time, O(26) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/palindrome",
+      "importance": "primary",
+      "evidence": "The feasibility condition is entirely determined by mirror pairs in the target palindrome.",
+      "solution_variant": "trim-and-binary-search-window"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The minimum shuffled length is found by binary-searching a monotone feasibility predicate.",
+      "solution_variant": "trim-and-binary-search-window"
+    },
+    {
+      "tag": "trick/frequency-feasibility",
+      "importance": "secondary",
+      "evidence": "The check uses character counts of the flexible substring to satisfy mirror demands and validates leftover parity.",
+      "solution_variant": "trim-and-binary-search-window",
+      "description": "Use frequency counts of a flexible multiset to test whether required matches, pairings, or parity constraints can be satisfied.",
+      "parent": "trick",
+      "created_reason": "Existing frequency-pattern tags describe recognizing frequency shapes, while this problem needs the reusable multiset-feasibility check for reorderable characters.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The solution trims equal mirrored pairs by advancing both ends before solving the remaining core.",
+      "solution_variant": "trim-and-binary-search-window"
+    }
+  ]
+}

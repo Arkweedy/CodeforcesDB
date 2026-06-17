@@ -447,6 +447,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/highest-differing-bit": "最高不同位",
   "trick/interval-feasibility": "区间可行性",
   "trick/frequency-pattern": "频次模式",
+  "trick/frequency-feasibility": "频次可行性",
   "trick/invariant": "不变量",
   "trick/inversion-count": "逆序对计数",
   "trick/linear-objective-extreme-choice": "线性目标取端点",

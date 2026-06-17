@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2071,
+    "title": "Codeforces Round 1007 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2071,
+    "index": "C",
+    "title": "Trapmigiano Reggiano",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2071/problem/C",
+      "notes": "Statement and constraints: output a permutation of tree vertices that forces the mouse to finish at the trap vertex en."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140115",
+      "notes": "Official editorial roots the tree at en and outputs vertices in decreasing depth, proving the mouse cannot remain deeper than the processed layer."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2071C",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a start and target vertex on a tree, construct an order in which cheese appears at all vertices so the mouse ends at the target after n moves.",
+    "constraints": "Total n over tests is at most 1e5; a linear DFS/BFS and output order construction is enough.",
+    "core_idea": "Root the tree at the target vertex. If vertices are offered from deepest to shallowest, after all vertices at depth d or greater have been processed, the mouse cannot be deeper than d. Repeating this layer by layer forces the final position to depth 0, the target.",
+    "complexity": "O(n) per test case, O(n) memory.",
+    "tricks": [
+      "Root the tree at the desired final vertex.",
+      "Process vertices in decreasing distance from the target to monotonically shrink the possible final depth."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "decreasing-depth-construction",
+      "summary": "DFS/BFS from en to compute depths, bucket vertices by depth, and output buckets from largest depth down to zero.",
+      "complexity": "O(n) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The main task is to construct a permutation that enforces the desired final behavior.",
+      "solution_variant": "decreasing-depth-construction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The construction depends on rooting the tree at en and using tree distances/depths.",
+      "solution_variant": "decreasing-depth-construction"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "importance": "secondary",
+      "evidence": "Vertices are grouped and output by depth layers from deepest to shallowest.",
+      "solution_variant": "decreasing-depth-construction"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "A DFS from the target computes the depth buckets used by the construction.",
+      "solution_variant": "decreasing-depth-construction"
+    }
+  ]
+}
