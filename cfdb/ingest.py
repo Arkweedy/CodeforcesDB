@@ -239,6 +239,22 @@ def upsert_problem(
     return key.problem_uid
 
 
+def _contest_problems(client: CodeforcesClient, contest_id: int) -> list[dict[str, Any]]:
+    try:
+        standings = client.contest_standings(contest_id)
+        return list(standings.get("problems", []))
+    except Exception as standings_error:
+        problemset = client.problemset_problems()
+        problems = [
+            problem
+            for problem in problemset.get("problems", [])
+            if int(problem.get("contestId", -1)) == contest_id
+        ]
+        if not problems:
+            raise standings_error
+        return problems
+
+
 def ingest_contest(
     conn: sqlite3.Connection,
     client: CodeforcesClient,
@@ -267,10 +283,10 @@ def ingest_contest(
         )
         return {"contest_id": contest_id, "status": "skipped", "problems": 0}
 
-    standings = client.contest_standings(contest_id)
+    problems = _contest_problems(client, contest_id)
     contest_row = conn.execute("SELECT * FROM contests WHERE contest_id = ?", (contest_id,)).fetchone()
     problem_count = 0
-    for problem in standings.get("problems", []):
+    for problem in problems:
         if int(problem.get("contestId", contest_id)) != contest_id:
             continue
         problem_uid = upsert_problem(conn, problem, contest_row, pending_days, min_rating=min_rating)

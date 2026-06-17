@@ -49,3 +49,6 @@ class CodeforcesClient:
 
     def contest_standings(self, contest_id: int) -> dict[str, Any]:
         return self.call("contest.standings", contestId=contest_id)
+
+    def problemset_problems(self) -> dict[str, Any]:
+        return self.call("problemset.problems")

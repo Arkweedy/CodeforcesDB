@@ -6,6 +6,7 @@ from pathlib import Path
 
 from cfdb.db import connect, init_db
 from cfdb.dedup import canonical_problem_uid, mark_division_duplicates
+from cfdb.ingest import ingest_contest, upsert_ingestion_range
 from cfdb.normalize import parse_problem_ref
 from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
 from cfdb.search import search_problems
@@ -157,6 +158,55 @@ class CfDbTests(unittest.TestCase):
 
                 results = search_problems(conn, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:1:A"])
+
+    def test_ingest_falls_back_to_problemset_when_standings_fails(self) -> None:
+        class FakeClient:
+            def contest_standings(self, contest_id: int) -> dict[str, object]:
+                raise RuntimeError("standings response failed")
+
+            def problemset_problems(self) -> dict[str, object]:
+                return {
+                    "problems": [
+                        {
+                            "contestId": 77,
+                            "index": "B",
+                            "name": "Keep Me",
+                            "rating": 1800,
+                            "tags": ["dp"],
+                        },
+                        {
+                            "contestId": 78,
+                            "index": "A",
+                            "name": "Other Contest",
+                            "rating": 1800,
+                            "tags": ["math"],
+                        },
+                    ]
+                }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Path(tmp) / "test.sqlite"
+            init_db(db)
+            with connect(db) as conn:
+                upsert_ingestion_range(conn, 77, 77)
+                result = ingest_contest(
+                    conn,
+                    FakeClient(),  # type: ignore[arg-type]
+                    77,
+                    {
+                        "id": 77,
+                        "name": "Codeforces Round 77 (Div. 3)",
+                        "phase": "FINISHED",
+                        "type": "ICPC",
+                        "startTimeSeconds": 1700000000,
+                        "durationSeconds": 7200,
+                    },
+                )
+                self.assertEqual(result, {"contest_id": 77, "status": "done", "problems": 1})
+                problem = conn.execute(
+                    "SELECT title, rating, rating_status FROM problems WHERE problem_uid = 'cf_problem:77:B'"
+                ).fetchone()
+                self.assertEqual(dict(problem), {"title": "Keep Me", "rating": 1800, "rating_status": "official"})
 
     def reviewed_payload(self) -> dict[str, object]:
         return {
