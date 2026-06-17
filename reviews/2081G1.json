@@ -1,0 +1,122 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "G1",
+    "title": "Hard Formula",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/G1",
+      "notes": "Codeforces canonical statement URL；当前环境直接访问题面不稳定。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2081G2",
+      "notes": "G2 题面用于确认共同公式：计算 sum_{k=1}^n (k mod phi(k)) modulo 2^32；G1 与 G2 仅 n 上限不同。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方 G1 题解确认把答案转为 N(N+1)/2 - sum floor(i/phi(i))*phi(i)，并用 Min_25 sieve 风格 DFS 在 N<=1e11 下计算。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081G1",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 N，计算 sum_{k=1}^N (k mod phi(k)) modulo 2^32，其中 phi 是 Euler totient。",
+    "constraints": "G1 约束 N <= 1e11，需要亚线性数论筛；答案按 2^32 自然溢出/取模。",
+    "core_idea": "利用 k mod phi(k)=k-floor(k/phi(k))*phi(k)，问题转为计算 sum floor(k/phi(k))*phi(k)。记 g(n)=n/phi(n), g'(n)=floor(g(n))。关键观察：若加入质因子 p 使 g'(np) != g'(n)，则除 n=1,2 的小特例外有 p<=n，因此大于 sqrt(N) 的质因子不会改变 g'。按 Min_25 sieve 的 DFS 结构枚举由小质因子构成的核心 n，并用 prime phi 前缀和一次性统计后续质数 p 的贡献；对阈值 R=(g'+1)phi/((g'+1)phi-n) 以内的质数贡献为 g'+1，否则为 g'。",
+    "complexity": "Official G1 complexity O(N^0.75 / log N) approximately.",
+    "tricks": [
+      "把 k mod phi(k) 转成总和减去 floor(k/phi(k))*phi(k)",
+      "证明能改变 floor(n/phi(n)) 的新质因子受阈值限制",
+      "用 Min_25 sieve 风格的质数前缀和与递归枚举聚合贡献",
+      "按阈值 R 把质数贡献分成 g' 与 g'+1 两段"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "min25-style-phi-summatory-dfs",
+      "summary": "预处理 sqrt(N) 内质数及质数 phi(p)=p-1 的前缀和。递归状态 S(n,k,phi(n)) 枚举最小允许质数下标 k 之后的质因子，先用前缀和批量计算只乘一个质数 p 的贡献，再递归处理 p^e 扩展；阈值 R 决定 g'(np) 是 g'(n) 还是 g'(n)+1。最后用 N(N+1)/2 减去该总和。",
+      "complexity": "O(N^0.75 / log N) approximately.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/min25-sieve",
+      "importance": "primary",
+      "evidence": "官方 G1 主算法明确使用 Min_25 sieve 的 DFS/质数前缀和结构来计算大范围数论函数求和。",
+      "solution_variant": "min25-style-phi-summatory-dfs",
+      "description": "Use Min_25 sieve or a Min_25-style prime DFS with prime prefix sums to compute summatory multiplicative or prime-dependent functions over large N.",
+      "parent": "math/number-theory",
+      "created_reason": "Existing number-theory and divisor-sieve tags do not identify this classic high-end prime summatory technique; it is important for retrieving problems around N up to 1e11 or higher.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/euler-phi",
+      "importance": "primary",
+      "evidence": "题目目标和转化都围绕 Euler totient phi(k) 以及 k/phi(k) 的取整变化。",
+      "solution_variant": "min25-style-phi-summatory-dfs",
+      "description": "Problems where Euler's totient function phi(n) is central to the formula, constraints, transformation, or algorithm.",
+      "parent": "math/number-theory",
+      "created_reason": "Euler phi appears as a recurring core number-theory object; generic number-theory is too broad for retrieval.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "primary",
+      "evidence": "整个问题是围绕 phi、质因子和大范围数论函数求和的数论题。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "对每个状态 n，质数 p 按阈值 R 分成会让 g' 增加和不会增加两类，并用前缀和分别统计。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "Min_25 风格预处理利用 floor(N/i) 等价值和 prime-prefix summaries 压缩大范围求和状态。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "递归按质因子及其幂构造 n，并利用 phi 在质因子分解上的性质。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "最终答案要求 modulo 2^32，且主公式来自 k mod phi(k)。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现涉及 unsigned overflow、浮点近似除法和数组前缀，但核心检索价值在数论筛法。",
+      "solution_variant": "min25-style-phi-summatory-dfs"
+    }
+  ]
+}
