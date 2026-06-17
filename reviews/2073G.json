@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "G",
+    "title": "Corrupted File",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/G",
+      "notes": "Codeforces problemset statement: reducing adjacent bits by AND is equivalent to partitioning the original string into nonempty segments whose ANDs form the target string."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/G",
+      "notes": "Derived the segment interpretation and greedy run placement: target 1 needs an all-one segment, target 0 needs a segment containing at least one zero."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073G",
+      "notes": "洛谷题解候选来源；搜索未找到可用页面，本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定初始二进制串 B 和结束串 C。一次操作把相邻两位替换为它们的 AND。判断 B 是否可能经过若干操作变为 C。",
+    "constraints": "t <= 10000，1 <= m <= n <= 100000，所有测试的 n 总和 <= 100000，需要线性或近线性算法。",
+    "core_idea": "无论操作顺序如何，最终每一位 C_i 都对应 B 的一个非空连续段，值等于该段所有位的 AND。因此 C_i=1 等价于这一段全是 1，C_i=0 等价于这一段至少包含一个 0。把 C 压成交替的 0-run 和 1-run：每个 0-run 长度 z 只要求在当前位置之后至少找到 z 个 0，因为这些 0 可以分别放进 z 个零段，额外的 0/1 都可被某个零段吸收；每个 1-run 长度 t 则必须匹配 B 中从当前可行位置开始的 t 个连续 1。若 1-run 前没有零段，则不能跳过任何字符；若前面有零段，则可以把跳过的字符并入最后一个零段。贪心地总是最早满足当前 run，能给后续留下最长后缀。",
+    "complexity": "O(n+m) per test case, O(total n) overall",
+    "tricks": [
+      "AND 缩并等价于把原串分段后取每段 AND",
+      "1 段必须全为 1，0 段只需至少一个 0",
+      "按目标串 run 贪心匹配，零段吸收中间多余字符",
+      "末尾若没有目标零段，剩余原串不能含 0"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-run-segmentation",
+      "summary": "扫描 C 的 runs。先为当前 0-run 找到足够多的零；随后为 1-run 找到足够长的连续 1。没有前置 0-run 的开头 1-run 不能跳过字符。所有 runs 匹配完后检查尾部约束。",
+      "complexity": "O(n+m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/segmentation",
+      "importance": "primary",
+      "evidence": "核心模型是把 B 切成连续非空段，使每段满足由 C_i 给出的 all-one 或 contains-zero 谓词。",
+      "solution_variant": "greedy-run-segmentation",
+      "description": "Split a string into contiguous nonempty segments satisfying target predicates or a target pattern, often solved by greedy matching, DP, or automata.",
+      "parent": "string",
+      "created_reason": "Existing string tags cover automata and run-length encoding, but not the reusable partition-into-valid-segments model used here.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "每个 0-run 和 1-run 都取最早可行匹配；更早结束不会减少后续可行性。",
+      "solution_variant": "greedy-run-segmentation"
+    },
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "secondary",
+      "evidence": "解法按 C 的 0-run 与 1-run 处理，并在 B 中寻找足够长的连续 1 段。",
+      "solution_variant": "greedy-run-segmentation"
+    }
+  ]
+}
