@@ -1,0 +1,75 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "J",
+    "title": "Gathering Sharks",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/J",
+      "notes": "Codeforces problemset statement: each operation chooses an existing group b and merges it with the current predecessor number c<b; n <= 500."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/J",
+      "notes": "Derived the interval DP from the invariant that a merged label interval [l,r] always ends at the original position of label l."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073J",
+      "notes": "洛谷题解候选来源；搜索未找到可用页面，本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定编号为一个排列的 n 条鲨鱼。每次选择一个现存编号 b，把它的整组移动到当前比 b 小的最大现存编号 c 的位置并合并，合并后编号仍为 b。求所有鲨鱼聚到一起的最小总移动时间。",
+    "constraints": "2 <= n <= 500，a 是 1..n 的排列；O(n^3) 区间 DP 可接受。",
+    "core_idea": "按编号顺序看，现存组始终对应若干连续编号区间；一次操作只能把相邻的左区间 [l,k] 与右区间 [k+1,r] 合并，且右区间的组移动到左区间的位置。由于合并后的组位置继承左区间位置，归纳可得任意区间 [l,r] 最终位置一定是编号 l 的初始位置 pos[l]。于是设 dp[l][r] 为把编号区间 [l,r] 合成一个组的最小代价，最后一次合并若在 k 处分裂，则代价为 dp[l][k]+dp[k+1][r]+abs(pos[l]-pos[k+1])。按区间长度递增枚举即可。",
+    "complexity": "O(n^3) time, O(n^2) memory",
+    "tricks": [
+      "现存组在编号序上始终是连续区间",
+      "区间合并后的位置由左端点编号决定",
+      "枚举最后一次合并的分裂点"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "left-endpoint-interval-dp",
+      "summary": "先把输入排列转为 pos[label]。初始化 dp[i][i]=0，按长度计算 dp[l][r]=min_k dp[l][k]+dp[k+1][r]+|pos[l]-pos[k+1]|，答案为 dp[1][n]。",
+      "complexity": "O(n^3) time, O(n^2) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/interval-dp",
+      "importance": "primary",
+      "evidence": "状态是编号连续区间 [l,r]，转移枚举最后一次合并的分裂点 k。",
+      "solution_variant": "left-endpoint-interval-dp"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "关键不变式是整个区间 [l,r] 合并后的物理位置只取决于左端点 l 的初始位置。",
+      "solution_variant": "left-endpoint-interval-dp"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "输入排列只通过每个编号的初始位置 pos[label] 进入 DP，操作结构发生在编号顺序上。",
+      "solution_variant": "left-endpoint-interval-dp"
+    }
+  ]
+}
