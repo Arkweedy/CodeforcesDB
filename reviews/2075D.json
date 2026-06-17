@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2075,
+    "title": "Educational Codeforces Round 176 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2075,
+    "index": "D",
+    "title": "Equalization",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "dp",
+      "graphs",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2075/problem/D",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2075D",
+      "notes": "洛谷题面镜像：每个正整数 k 最多使用一次，可把 x 或 y 除以 2^k，代价 2^k，要求最小代价使两数相等。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2075D",
+      "notes": "从操作可交换性推导：同一数上的多次操作等价于累计右移 sum(k) 位；每个 k 分配给 x、y 或不用，形成二维背包预处理。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2075D",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定两个非负整数 x,y。每次选择一个此前未使用过的正整数 k，把 x 或 y 除以 2^k 向下取整，代价 2^k。求使 x,y 相等的最小总代价。",
+    "constraints": "t <= 1e5，0 <= x,y <= 1e17。需要一次预处理后快速回答大量询问。",
+    "core_idea": "对同一个数连续执行 k1,k2 操作，等价于右移 k1+k2 位。因此一个方案只由两个累计 shift A,B 决定：最终值是 x>>A 与 y>>B；限制是每个 k 只能被分配给 x、分配给 y 或不用。预处理 dp[A][B] 表示用互不相同的 k 组成 x-shift=A、y-shift=B 的最小代价，转移枚举当前 k 放到 x、放到 y 或跳过，代价加 2^k。由于 x,y <= 1e17，只需考虑 0..60 左右的 shift。每个询问枚举 A,B，若 (x>>A)==(y>>B)，用 dp[A][B] 更新答案。",
+    "complexity": "Precompute O(K^3) scale with K≈60; each query O(K^2)",
+    "tricks": [
+      "多次除以 2^k 合并为一次累计右移",
+      "每个 k 只能使用一次转为三选一二维背包",
+      "枚举最终相同祖先值 x>>A == y>>B"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-dimensional-shift-knapsack",
+      "summary": "预处理 dp[a][b]，初始 dp[0][0]=0。对 k=1..K，使用 0/1 背包方式更新：不选 k、把 k 加入 x 的 shift、把 k 加入 y 的 shift。查询时枚举两个累计 shift，匹配相等右移结果。",
+      "complexity": "Precompute O(K^3) scale, query O(K^2), K≈60",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "预处理把每个 k 作为只能使用一次的物品，三选一分配到 x-shift、y-shift 或不用，正是二维 0/1 背包。",
+      "solution_variant": "two-dimensional-shift-knapsack"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "操作本质是按二进制右移若干位，最终比较 x>>A 与 y>>B。",
+      "solution_variant": "two-dimensional-shift-knapsack"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "每个询问枚举 O(60^2) 个累计 shift 对寻找相同最终值。",
+      "solution_variant": "two-dimensional-shift-knapsack"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "需要利用 floor(x/2^a)/2^b 等价于 x 右移 a+b 的算术性质。",
+      "solution_variant": "two-dimensional-shift-knapsack"
+    }
+  ]
+}
