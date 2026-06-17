@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2071,
+    "title": "Codeforces Round 1007 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2071,
+    "index": "D2",
+    "title": "Infinite Sequence (Hard Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "constructive algorithms",
+      "data structures",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2071/problem/D2",
+      "notes": "Statement and constraints: compute the number of ones in an arbitrary range [l, r] of the infinite prefix-XOR-defined binary sequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140115",
+      "notes": "Official editorial generalizes D1's halving recurrence to a recursive prefix-sum function returning even-position and odd-position sums."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2071D2",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the first n bits of an infinite sequence where later terms are prefix XORs, answer the sum of bits on a huge index range [l, r].",
+    "constraints": "n totals 2e5, while r can be 1e18, so the solution needs O(n) preprocessing and logarithmic recursive range queries.",
+    "core_idea": "Use the D1 identity for individual terms, but compute prefix sums rather than single values. After normalizing n to odd and precomputing up to 2n, define a recursive sum(m) returning counts on even and odd indices up to m. For m beyond the base region, adjust m to a convenient residue, express the tail in pairs whose two positions contribute equally, and recurse on floor(m/2) to get the needed lower-level even contribution. The answer is sum(r) - sum(l-1).",
+    "complexity": "O(n + log r) per test case, O(n) memory.",
+    "tricks": [
+      "Reuse the single-value halving identity from the easy version.",
+      "Turn a range query into two recursive prefix-sum queries.",
+      "Separate even and odd positions so paired tail contributions can be counted uniformly."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "recursive-even-odd-prefix-sum",
+      "summary": "Precompute sequence values and even/odd prefix sums up to 2n. Implement sum(m) = {even ones, odd ones} recursively for huge m by reducing to floor(m/2), then subtract prefix sums to answer [l, r].",
+      "complexity": "O(n + log r) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/recursive-halving",
+      "importance": "primary",
+      "evidence": "The prefix-sum function for huge m recurses on floor(m/2), just as D1 reduces huge indices by halving.",
+      "solution_variant": "recursive-even-odd-prefix-sum"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "The range answer is computed as prefix_sum(r) minus prefix_sum(l-1).",
+      "solution_variant": "recursive-even-odd-prefix-sum"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The hard version depends on the derived identities for equal pairs and for expressing tail sums through the halved prefix.",
+      "solution_variant": "recursive-even-odd-prefix-sum"
+    },
+    {
+      "tag": "trick/residue-class-decomposition",
+      "importance": "secondary",
+      "evidence": "The recursive prefix sum separates even and odd positions and adjusts m by residue before applying the pair formula.",
+      "solution_variant": "recursive-even-odd-prefix-sum"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The sequence recurrence and all identities use XOR over binary values.",
+      "solution_variant": "recursive-even-odd-prefix-sum"
+    }
+  ]
+}
