@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "H",
+    "title": "Turtle and Nediam 2",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2084/problem/H",
+      "notes": "题面与约束：给定长度 n 的 01 串；一次操作选择连续三位并删除其中第一个中位数，问经过任意次操作能得到多少种不同序列。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/18824475",
+      "notes": "详细中文题解。用于确认 run-length encoding 后的两类操作、计数型分段 DP、p_j=max(p_{j-2}+1,b_j) 转移，以及单调栈线性优化。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084H",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个 01 串，每次可在任意长度为 3 的连续子串中删掉第一个中位数，求所有可能得到的不同 01 串数量。",
+    "constraints": "多测试；n <= 2e6，要求总复杂度线性或接近线性，答案对 1e9+7 取模。",
+    "core_idea": "把原串压缩成极长相同段长度 b_1..b_m。删除三元中位数在 run 长度上只有两类效果：某个长度至少 2 的 run 减 1，或当相邻两个内部 run 都为 1 时删除前一个并把后一个并入再前一个。最后一个 run 只能被减短，所以先忽略并在末尾乘 b_m。接着按最终串的连续段做前缀分段 DP：f_i 表示已经确定最终状态前缀，且能生成该前缀的最小初始前缀端点为 i 的方案数；枚举下一段由 [i+1,j] 生成时，奇偶性确定颜色，能生成的长度上界满足 p_j=max(p_{j-2}+1,b_j)。朴素枚举所有 i,j 是 O(m^2)。观察 b_j 对后续 p 的支配区间由 b_j-j/2 的下一个更大值结束，用单调栈预处理 nxt，再配合差分/懒累加做区间转移，总复杂度降为 O(n)。首段颜色与 b_1 不同的情况需要单独把 b_1 删除并令 b_2=1 后再跑一次同样 DP。",
+    "complexity": "O(n) per test case; memory O(n).",
+    "tricks": [
+      "先把 01 串压缩成 run lengths，使删除三元中位数变成 run 长度上的局部操作。",
+      "把最终串看成由初始 run 序列的连续区间分段生成，并按最小右端点计数。",
+      "用 p_j=max(p_{j-2}+1,b_j) 描述某个分段能生成的最大 run 长度。",
+      "用 b_j-j/2 的单调栈找每个 run 的支配区间，避免 O(m^2) 转移。",
+      "首段颜色翻转的情况需要删除第一个 run 后单独计数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rle-partition-dp-monotonic-stack",
+      "summary": "主解法。先做 run-length encoding；在 run 长度数组上做计数型前缀分段 DP，朴素转移用 p_j=max(p_{j-2}+1,b_j) 描述下一段可生成长度；再按 b_j-j/2 的支配关系用单调栈预处理 nxt，并用差分累加批量转移。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "题目首先必须把 01 串压缩为极长相同段长度 b_i；所有后续操作和 DP 都在 run 长度数组上进行。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "目标是统计不同最终序列数量；f_i 记录可生成某个最终前缀且最小初始右端点为 i 的方案数。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "description": "Dynamic programming over prefixes where each transition chooses the next consecutive block or segment in a partition of the sequence.",
+      "parent": "dp",
+      "created_reason": "Existing dp/interval-dp describes states over arbitrary intervals [l,r]. This problem instead partitions a prefix of the run-length sequence into consecutive generated final segments, which is a common reusable DP shape.",
+      "status": "candidate",
+      "evidence": "每个最终连续段由初始 run 数组的一段连续区间 [i+1,j] 生成，DP 转移正是在选择下一个分段。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "线性优化的关键是维护 b_j-j/2 的下一个更大支配点 nxt_j；这一步用单调栈预处理。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "实现线性转移时，对同一奇偶类的一段 f 值做懒累加/差分更新，避免逐点加贡献。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "b_j 对 p 序列的影响只持续到 b_k-k/2 更大的第一个位置，形成可被单调结构维护的支配区间。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "run 操作模型和 p_j 递推依赖于对能生成长度前缀的贪心刻画，但最终计数仍由 DP 完成。",
+      "solution_variant": "rle-partition-dp-monotonic-stack"
+    }
+  ]
+}
