@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2074,
+    "title": "Codeforces Round 1009 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2074,
+    "index": "E",
+    "title": "Empty Triangle",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "geometry",
+      "interactive",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2074/problem/E",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2074E",
+      "notes": "洛谷题面镜像：交互题，询问三点构成的三角形；若内部有点，交互器返回其中一点，否则返回 0，需要在 75 次询问内找到空三角形。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2074E",
+      "notes": "根据题面推导随机缩小策略：若返回内部点 p，则用 p 替换当前三角形的随机一个顶点，三角形内部点数期望下降。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2074E",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "交互器隐藏 n 个平面点。询问三个点，若三角形内部存在其他点则返回其中一点，否则返回 0。目标是在有限询问内输出一个内部无点的三角形。",
+    "constraints": "3 <= n <= 1500，每个测试最多 75 次询问；点互异且无三点共线。交互器可返回任意内部点。",
+    "core_idea": "维护一个当前三角形 (a,b,c)。若询问返回 0，已经找到空三角形。若返回内部点 p，则 p 把原三角形分成三个更小三角形 (p,b,c)、(a,p,c)、(a,b,p)，所有原内部点会落入这三个子三角形之一。随机选择一个顶点用 p 替换，等价于随机保留三个子三角形之一；无论交互器返回哪个内部点，保留下来的内部点数量期望至多约为原来的 2/3。重复约 75 次后失败概率很低，符合交互题的随机化通过要求。",
+    "complexity": "O(75) queries per test case",
+    "tricks": [
+      "内部点把三角形划分为三个子三角形",
+      "随机替换一个顶点以获得期望缩小",
+      "用有限查询次数控制失败概率"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "random-shrinking-triangle",
+      "summary": "从任意三个点开始。每次询问当前三角形；若为空则输出；否则得到内部点 p，随机选择 a,b,c 中一个替换为 p，继续。查询上限内未命中空三角形的概率足够小。",
+      "complexity": "O(75) queries",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "算法通过询问三点三角形并根据交互器返回的内部点更新状态。",
+      "solution_variant": "random-shrinking-triangle"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "核心对象是平面点、三角形包含关系，以及内部点对三角形的划分。",
+      "solution_variant": "random-shrinking-triangle"
+    },
+    {
+      "tag": "math/probability/expected-progress",
+      "importance": "primary",
+      "evidence": "随机选择保留的子三角形，使当前三角形内部点数在期望意义下持续减少。",
+      "solution_variant": "random-shrinking-triangle"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "正确性依赖随机化成功概率分析，而非确定性保证。",
+      "solution_variant": "random-shrinking-triangle"
+    }
+  ]
+}
