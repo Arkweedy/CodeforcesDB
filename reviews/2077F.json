@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2077,
+    "title": "Codeforces Round 1008 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2077,
+    "index": "F",
+    "title": "AND x OR",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2077/problem/F",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2077F",
+      "notes": "洛谷题面镜像：定义 good pair 的 AND/OR 操作，并给出 n,m、a,b 与总和约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/140505",
+      "notes": "官方题解 2077F：good pair 当且仅当 a=b，或目标 b 中存在两个不同位置使一个值是另一个值的 submask；最小代价转为值域图最短路，并用三阶段 bitmask DP 传播两个最近 colored value。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2077F",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定数组 a,b，可以花费 1 把任意 a_i 或 b_i 增加 1。good pair 指 a 能通过若干次选择 i,j,x 并执行 c_i&=x、c_j|=x 变成 b。要求把 (a,b) 变成 good pair 的最小增量次数。",
+    "constraints": "t <= 1e4，1 <= n,m <= 2e6，0 <= a_i,b_i <= m，所有测试的 sum n 与 sum m 均 <= 2e6。",
+    "core_idea": "先刻画 good pair。若最终 a=b，则最小代价是逐位补到相等的 sum |a_i-b_i|。否则，最后一次改变 a 的操作会产生一个 submask -> supermask 关系；反过来如果最终 b 中存在两个不同位置 i,j 且 b_i 是 b_j 的 submask，则可以构造操作把任意 a 变成 b。因此第二类只需把 b 的两个不同元素通过增加变成 submask/supermask 对。把每个出现的 b_i 视作 colored value，在值域 0..2m 左右建隐式图：增量对应相邻值移动，submask 关系对应 bitmask 子集格边。目标是两枚不同 colored value 之间的最短代价。实现上维护每个值最近和次近的 colored source，按“向上加一传播、向 submask 传播、向下减一传播”三阶段做 SOS 风格 DP，避免显式建出所有边。",
+    "complexity": "O(n log n + m log m) per test case",
+    "tricks": [
+      "从最后一次 AND/OR 操作刻画 good pair",
+      "把目标转为在 b 中制造 submask-supermask 对",
+      "在 bitmask 子集格上同时维护最近与次近 colored source",
+      "三阶段传播：increment up, submask propagation, decrement down"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-nearest-sources-sos-dp",
+      "summary": "先计算 equal-case 的 sum |a_i-b_i|。对 b 的值域标记 colored sources，并为每个值维护最近、次近的 source 及距离，避免同一个位置配对自己。依次做向上相邻传播、向所有 submask 的 SOS 传播、向下相邻传播，得到制造任意 submask-supermask 对的最小增量代价。答案是 equal-case 与该代价的较小值。",
+      "complexity": "O(n log n + m log m) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "primary",
+      "evidence": "good pair 的非平凡情形被精确刻画为目标 b 中存在两个不同位置构成 submask-supermask 对。",
+      "solution_variant": "two-nearest-sources-sos-dp",
+      "description": "Use the bitmask subset relation between two values, usually x is a submask of y iff (x & y) = x, as the central condition for construction, reachability, or optimization.",
+      "parent": "algorithm/bitmask",
+      "created_reason": "Existing algorithm/bitmask is too broad for problems whose decisive condition is specifically a submask/supermask pair or subset-lattice comparability.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/sos-dp",
+      "importance": "primary",
+      "evidence": "最短代价通过在 bitmask 子集格上向 submask 传播最近/次近 colored source 完成，这是 SOS DP 风格的核心步骤。",
+      "solution_variant": "two-nearest-sources-sos-dp",
+      "description": "Sum-over-subsets style dynamic programming over the subset/superset lattice of bitmasks, including propagation of values to submasks or supermasks.",
+      "parent": "dp/bitmask-dp",
+      "created_reason": "The repository has generic bitmask DP but lacks the classic SOS DP subcategory, which is a common high-rating retrieval target.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "状态是值域 bitmask，每轮按位传播最近来源信息，属于 bitmask-valued DP。",
+      "solution_variant": "two-nearest-sources-sos-dp"
+    },
+    {
+      "tag": "graph/shortest-path",
+      "importance": "secondary",
+      "evidence": "官方把第二类代价解释为隐式值域图中不同 colored vertices 之间的最短路。",
+      "solution_variant": "two-nearest-sources-sos-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "submask 判断、子集格传播和按 bit 扫描都是主算法的基础。",
+      "solution_variant": "two-nearest-sources-sos-dp"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "充分性证明显式构造操作序列：一旦 b 中有 submask-supermask 对，就能把任意 a 变成 b。",
+      "solution_variant": "two-nearest-sources-sos-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "实现中用排序或等价去重检查 b 中重复 colored value，处理同一 source 的配对限制。",
+      "solution_variant": "two-nearest-sources-sos-dp"
+    }
+  ]
+}
