@@ -479,6 +479,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/query-differencing": "查询差分",
   "trick/query-encoding": "查询编码",
   "trick/recursive-construction": "递归构造",
+  "trick/recursive-halving": "递归折半",
   "trick/threshold-decomposition": "阈值分解",
   "trick/worst-case-guarantee": "最坏情况保证",
   "trick/residue-class-decomposition": "剩余类分解",

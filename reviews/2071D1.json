@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2071,
+    "title": "Codeforces Round 1007 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2071,
+    "index": "D1",
+    "title": "Infinite Sequence (Easy Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2071/problem/D1",
+      "notes": "Statement and constraints: compute a single term a_l of an infinite binary sequence defined by prefix XOR, with l up to 1e18."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140115",
+      "notes": "Official editorial precomputes up to 2n terms, makes n odd, then uses a halving recurrence for indices beyond the precomputed region."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2071D1",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the first n bits of an infinite sequence where later terms are prefix XORs, answer the value of one huge-index term.",
+    "constraints": "n totals 2e5, but l may be 1e18, so only O(n) preprocessing plus logarithmic recursion in the queried index is viable.",
+    "core_idea": "Precompute enough initial terms and, if needed, append one term so n is odd. For large indices, terms come in equal pairs and the prefix-XOR definition reduces a_x to either the total prefix XOR p or p xor a_{floor(x/2)}. Thus the query index can be repeatedly halved until it falls into the precomputed range.",
+    "complexity": "O(n + log l) per test case, O(n) memory.",
+    "tricks": [
+      "Normalize n to odd so pairs beyond n cancel cleanly in prefix XOR.",
+      "Derive a self-similar halving recurrence for huge indices.",
+      "Precompute the first 2n terms to provide a recursion base."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-xor-recursive-halving",
+      "summary": "Build prefix sums/XORs and terms up to 2n. For x beyond that range, apply the parity-dependent formula that either returns p or recurses to floor(x/2), accumulating XOR contributions.",
+      "complexity": "O(n + log l) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/recursive-halving",
+      "importance": "primary",
+      "evidence": "The query is solved by repeatedly reducing a huge index to floor(x/2) until reaching the precomputed prefix.",
+      "solution_variant": "prefix-xor-recursive-halving",
+      "description": "Reduce a huge index or state by repeatedly halving it, using a derived self-similar recurrence until it reaches a small precomputed base case.",
+      "parent": "trick",
+      "created_reason": "Existing recursive-construction tags cover building objects, while this problem needs retrieval for huge-index evaluation by recursive halving.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The main step is deriving the prefix-XOR identity that collapses a_x to p or p xor a_{floor(x/2)}.",
+      "solution_variant": "prefix-xor-recursive-halving"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The sequence is binary and all transitions are based on XOR parity.",
+      "solution_variant": "prefix-xor-recursive-halving"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "incidental",
+      "evidence": "The solution uses pair cancellation/equal neighboring terms, but not a full periodic-cycle argument.",
+      "solution_variant": "prefix-xor-recursive-halving"
+    }
+  ]
+}
