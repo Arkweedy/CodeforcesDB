@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "A",
+    "title": "Math Division",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "math",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2081/A/",
+      "notes": "Codeforces 题面镜像。题意：给二进制整数 x，每次等概率取 floor(x/2) 或 ceil(x/2)，直到 x=1，求期望步数 mod 1e9+7。约束 sum n <= 1e5。解法基于题面自行推导，并用小规模精确分数 DP 对拍。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081A",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个长度 n 的二进制整数 x。每一步独立等概率执行 floor(x/2) 或 ceil(x/2)，直到 x=1，要求期望操作次数。",
+    "constraints": "t <= 1e5，二进制长度 n <= 1e5，所有测试 n 之和 <= 1e5；答案以模 1e9+7 的有理数形式输出。",
+    "core_idea": "无论怎样选择，前 n-1 次操作后数一定变成 1 或 2；若变成 2，还需要额外一次。因此答案是 n-1 加上“低 n-1 位随机舍入后向最高位产生进位”的概率。自低位向高位处理二进制位，维护 carry 概率 p。若当前位为 0，则只有已有 carry 且本次选择 ceil 时才继续进位，p'=p/2；若当前位为 1，则无 carry 时有 1/2 概率进位，有 carry 时必然进位，p'=1/2+p/2。最终答案为 n-1+p。",
+    "complexity": "O(n) per test case; memory O(1).",
+    "tricks": [
+      "把期望步数拆成固定的 n-1 步和是否额外一步。",
+      "floor/ceil 除以 2 等价于从低位向高位随机产生进位。",
+      "只需维护一个 carry 概率状态。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-state-random-carry-dp",
+      "summary": "主解法。逆序扫描除最高位外的二进制位，用一个状态 p 表示当前低位随机舍入向更高位进位的概率；按位更新后输出 n-1+p。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "核心状态是随机 floor/ceil 舍入向高位产生 carry 的概率，并按二进制位递推。",
+      "solution_variant": "two-state-random-carry-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "题目要求随机过程的期望步数，答案由额外一步发生概率决定。",
+      "solution_variant": "two-state-random-carry-dp"
+    },
+    {
+      "tag": "trick/binary-carry",
+      "importance": "primary",
+      "evidence": "ceil(x/2) 在低位为 1 时等价于向高位进位；整个随机过程可转化为 carry 概率传播。",
+      "solution_variant": "two-state-random-carry-dp"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "DP 只有是否 carry 这一维状态，压缩成一个概率变量。",
+      "solution_variant": "two-state-random-carry-dp"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "期望中的 1/2 需要在模 1e9+7 下用 inv2 表示并递推。",
+      "solution_variant": "two-state-random-carry-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "输入是二进制串并逐位处理，但不需要位运算搜索或 bitmask 状态。",
+      "solution_variant": "two-state-random-carry-dp"
+    }
+  ]
+}
