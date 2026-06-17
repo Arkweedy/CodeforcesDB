@@ -1,0 +1,130 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "D",
+    "title": "MST in Modulo Graph",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dsu",
+      "graphs",
+      "greedy",
+      "math",
+      "number theory",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/D",
+      "notes": "题面与约束：完整图边权为 max(p_x,p_y) mod min(p_x,p_y)，要求最小生成树权值；sum n 和 sum max(p_i) 均为 5e5 级别。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认每个权值 x 只需向每个倍数区间中的最小可用 y 连边，得到 O(n log V) 候选边后跑 Kruskal。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "local:random-bruteforce-modulo-mst",
+      "notes": "对 n<=7、p_i<=30 的随机小数据比较完整图 MST 与候选边 Kruskal，验证候选边缩减保留最优 MST 权值。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081D",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 n 个点的点权，完整图中两点边权为较大点权对较小点权取模，求 MST 总权值。",
+    "constraints": "sum n <= 5e5，sum max(p_i) <= 5e5，完整图不可建边；需要把候选边压到 O(V log V) 或 O(n log V)。",
+    "core_idea": "对较小权值 x 考虑所有 y>x 的边，y mod x 只取决于 y 落在哪个倍数区间 [k*x,(k+1)*x)。在同一区间内，最小的可用 y 给出的模值最小，其他更大的 y 不会比先连这个最小 y 再通过图结构连接更优，因此 MST 只需保留 x 到每个倍数区间里最小存在权值 y 的边；相同权值之间加 0 边。用 suffix-next 数组找每个区间的最小存在 y，枚举所有 x 的倍数区间，总候选边数由调和级数界为 O(V log V)，最后对候选边跑 Kruskal/DSU。",
+    "complexity": "O(V log V + E log E) with ordinary sorting, where E=O(V log V); radix/counting sort can make it O(V log V).",
+    "tricks": [
+      "从隐式完整图证明稀疏候选边集保留 MST",
+      "按 x 的倍数区间寻找 y mod x 的最小候选",
+      "suffix-next 数组查询下一个存在权值",
+      "调和级数枚举倍数区间"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sparse-candidate-edge-kruskal",
+      "summary": "先对重复权值连 0 边。对每个不同权值 x，枚举 k*x，使用 suffix-next 找到区间 (k*x,(k+1)*x] 或精确倍数上的最小存在权值 y，加入边权 y mod x 的候选边。对所有候选边排序后用 DSU 跑 Kruskal。",
+      "complexity": "O(V log V + E log E), E=O(V log V).",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/mst",
+      "importance": "primary",
+      "evidence": "目标就是在完整加权图上求最小生成树，最终算法是 Kruskal。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "graph/sparse-candidate-edges",
+      "importance": "primary",
+      "evidence": "关键在于证明完整图中只需保留每个 x 在各倍数区间的最小 y 作为候选边，候选图仍保留 MST 最优值。",
+      "solution_variant": "sparse-candidate-edge-kruskal",
+      "description": "For dense or implicit graphs, prove that a sparse set of candidate edges preserves the target graph optimum such as MST, shortest path, or connectivity cost, then run a standard graph algorithm on that reduced edge set.",
+      "parent": "graph",
+      "created_reason": "Existing graph/mst identifies the final algorithm but not the decisive reduction from an implicit complete graph to a sparse edge set; trick/candidate-precomputation is too broad and not graph-specific.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "候选边正确性依赖 y mod x 在倍数区间内随 y 增大的结构。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "primary",
+      "evidence": "枚举每个 x 的倍数区间，总枚举量通过 sum floor(V/x) 得到 O(V log V)。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "边候选按 x 的倍数和倍数区间组织。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "trick/mark-multiples",
+      "importance": "secondary",
+      "evidence": "实现上围绕存在权值枚举倍数区间并查询下一个存在值。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "Kruskal 使用 DSU 维护连通分量。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "候选边按权值排序后执行 Kruskal；官方还提到可用 radix/counting sort 优化。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Kruskal 是按边权从小到大贪心选择连接不同分量的边。",
+      "solution_variant": "sparse-candidate-edge-kruskal"
+    }
+  ]
+}
