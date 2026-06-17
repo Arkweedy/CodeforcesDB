@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2074,
+    "title": "Codeforces Round 1009 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2074,
+    "index": "F",
+    "title": "Counting Necessary Nodes",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "divide and conquer",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2074/problem/F",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2074F",
+      "notes": "洛谷题面镜像：四叉树节点对应 dyadic square，给定轴对齐矩形，求恰好覆盖它所需最少节点数。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2074F",
+      "notes": "自推：一维区间唯一分解为 dyadic intervals；二维矩形由两个一维分解的笛卡尔积组成，边长不等时拆大边。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2074F",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "四叉树每个节点对应一个边长为 2^k、坐标对齐到 2^k 网格的正方形。给定矩形 [l1,r1] × [l2,r2]，求用四叉树节点正好覆盖该矩形的最少数量。",
+    "constraints": "t <= 1e4，0 <= l_i < r_i <= 1e6。",
+    "core_idea": "一维区间 [l,r] 可以贪心分解成若干 dyadic intervals：每次取从当前 l 出发、既对齐又不超过剩余长度的最大 2^k 段。这个分解是线段树 canonical decomposition 的最少段表示。对 x 轴得到 cntX[k] 个长度 2^k 的段，对 y 轴得到 cntY[k] 个长度 2^k 的段。任意一对一维段的笛卡尔积是一个 2^i × 2^j 的 dyadic rectangle；若 i=j，它本身就是一个四叉树节点；若 i>j，需要把较长的 x 方向拆成 2^{i-j} 个边长 2^j 的正方形；反之同理。因此答案是 sum_{i,j} cntX[i]*cntY[j]*2^{|i-j|}。",
+    "complexity": "O(log C)^2 per test case, C=max coordinate",
+    "tricks": [
+      "一维区间做 dyadic canonical decomposition",
+      "二维覆盖转成两个一维分解的笛卡尔积",
+      "长边按短边尺度继续拆分，贡献 2^{|i-j|}"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dyadic-interval-product-count",
+      "summary": "分别把两个坐标轴区间分解为 dyadic intervals，统计每个长度指数 k 的段数。双重枚举两个指数 i,j，累加 cntX[i]*cntY[j]*2^{abs(i-j)}。",
+      "complexity": "O(log C)^2 per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/quadtree",
+      "importance": "primary",
+      "evidence": "题目直接围绕 quadtree 节点的 dyadic square 覆盖展开，答案是最少 quadtree nodes。",
+      "solution_variant": "dyadic-interval-product-count",
+      "description": "Use or analyze a quadtree decomposition of the plane into recursively split axis-aligned squares.",
+      "parent": "data-structure",
+      "created_reason": "Quadtree is a named spatial data structure distinct from segment trees; this problem is explicitly about its worst-case node decomposition.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/dyadic-interval-decomposition",
+      "importance": "primary",
+      "evidence": "每个坐标轴区间先分解成对齐的 2^k 长度段，这是整个计数公式的基础。",
+      "solution_variant": "dyadic-interval-product-count",
+      "description": "Decompose an integer interval into aligned power-of-two dyadic intervals, as in segment-tree canonical decomposition or binary lifting over ranges.",
+      "parent": "trick",
+      "created_reason": "Existing bitmask/lowbit tags do not identify the reusable interval decomposition pattern used by segment trees, quadtrees, sparse tables, and range covers.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/bitmask/lowbit",
+      "importance": "secondary",
+      "evidence": "一维分解可用 lowbit 和剩余长度选择从 l 出发的最大对齐 2^k 段。",
+      "solution_variant": "dyadic-interval-product-count"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "最终答案来自按两个轴上的 dyadic 段大小分类后做乘法计数。",
+      "solution_variant": "dyadic-interval-product-count"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "incidental",
+      "evidence": "四叉树本身来自递归四分，但求解主要是 dyadic 分解计数。",
+      "solution_variant": "dyadic-interval-product-count"
+    }
+  ]
+}
