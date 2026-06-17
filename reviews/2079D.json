@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2079,
+    "title": "XIX Open Olympiad in Informatics - Final Stage, Day 1 (Unrated, Online Mirror, IOI rules)"
+  },
+  "problem": {
+    "contest_id": 2079,
+    "index": "D",
+    "title": "Cute Subsequences",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "*special",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2079/D",
+      "notes": "Codeforces problemset statement: partition the array into k nonempty subsequences and maximize the sum of each subsequence's max(a_jm + m)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2079/D",
+      "notes": "Derived the witness-position formulation: for a chosen rightmost witness p, the optimal value is p+a_p plus the largest k-1 values before p."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2079D",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "把数组划分成 k 个非空 subsequences。每个 subsequence 的价值是 max(a_jm+m)，其中 m 是该元素在 subsequence 内的位置。求最大总价值。",
+    "constraints": "1 <= k <= n <= 5e5，a_i <= 1e9；需要 O(n log k) 或 O(n log n) 算法。",
+    "core_idea": "每个 subsequence 的最终价值可由一个见证元素 p 取得，贡献为 a_p 加上它在该 subsequence 中的 rank。若选定 k 个见证位置，rank 所消耗的是这些见证之前的元素数量；所有 rank 的总和最多等于最靠右见证位置 p，并且只要每个见证至少分到自己一个元素，这个上界可以通过把前 p 个元素分配给这些 subsequences 实现。因此当 p 是最靠右见证时，最优值为 p+a_p 加上 p 之前选出的 k-1 个见证的 a 值之和。扫描 p，从左侧维护最大的 k-1 个 a_i 的和即可。",
+    "complexity": "O(n log k) with a min-heap for the largest k-1 prefix values",
+    "tricks": [
+      "把每个 subsequence 的最大项视为一个 witness",
+      "所有 witness rank 的总和由最靠右 witness 的位置 p 给出",
+      "枚举最靠右 witness，维护左侧最大的 k-1 个 a_i"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rightmost-witness-top-k-prefix",
+      "summary": "从左到右枚举 p。若左侧已有至少 k-1 个元素，用当前维护的 top-(k-1) sum 更新答案 p+a_p+sum。再把 a_p 插入最小堆，超过 k-1 个时弹出最小值。",
+      "complexity": "O(n log k)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/top-k-maintenance",
+      "importance": "primary",
+      "evidence": "主实现需要在扫描前缀时维护最大的 k-1 个 a_i 及其和。",
+      "solution_variant": "rightmost-witness-top-k-prefix",
+      "description": "Maintain the largest or smallest k elements and their aggregate under incremental insertions or dynamic updates.",
+      "parent": "data-structure",
+      "created_reason": "Plain priority-queue tagging does not distinguish problems whose central operation is maintaining a top-k sum or set.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定最靠右 witness p 后，左侧应贪心选择 a 值最大的 k-1 个 witness。",
+      "solution_variant": "rightmost-witness-top-k-prefix"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "O(n log k) 实现用大小为 k-1 的最小堆维护当前 top-k 集合。",
+      "solution_variant": "rightmost-witness-top-k-prefix"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "secondary",
+      "evidence": "rank 分配可理解为带 deadline 的 witness 调度，最靠右 witness 的 deadline 决定总 rank 预算。",
+      "solution_variant": "rightmost-witness-top-k-prefix"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "也可以用排序/有序结构维护前缀最大 k-1 个值，但核心是 top-k 维护而非静态排序。",
+      "solution_variant": "rightmost-witness-top-k-prefix"
+    }
+  ]
+}
