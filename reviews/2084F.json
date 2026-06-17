@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "F",
+    "title": "Skyscape",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2084/F/",
+      "notes": "Codeforces 题面镜像。题意：给原排列 a；允许把某段末尾且为该段最小值的元素循环移到段首；要求补全部分排列 c 为一个可从 a 经过至多 n 次操作得到的 good permutation。约束来自 hard round 题面。解法基于题面自行推导，并用小规模 BFS/暴力对拍验证可达性刻画和贪心。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个排列 a 和一个部分排列 c。一次操作可选择 l<r，且当前 a_r 是 a_l..a_r 的最小值，然后把 a_r 循环移到 l。需要补全 c 为排列 b，使 b 可由 a 经过不超过 n 次操作得到；无解输出 -1。",
+    "constraints": "n 为 contest-sized 大输入；需要 O(n log n) 级别构造。c 中非零元素互异，未填位置为 0。",
+    "core_idea": "一次操作只会把较小值向左跨过一段较大值，因此原排列 a 中所有“x<y 且 pos_a[x]<pos_a[y]”的有序对永远不能被反转；反过来，任意满足这些约束的线性扩展都可通过按目标顺序把需要前移的较小值逐个移动来实现，操作数不超过 n。于是 good permutation 等价于二维偏序的线性扩展：x 必须在 y 前，当且仅当 x<y 且 pos_a[x]<pos_a[y]。问题变成在这个 DAG 上构造一个满足固定位置 c_i 的拓扑序。对每个未放置值 v，若存在未来固定值 x 使 v 是 x 的前驱，则 v 必须在 x 的固定位置之前被放置，取最早这样的固定位置作为 deadline。按输出位置从左到右构造：固定位置必须检查该值当前是否为偏序最小元；空位从当前偏序最小元中选择未固定且 deadline 最早的值。若某个固定值到来时仍有未放置前驱，或空位无法选择满足 deadline 的最小元，则无解。实现上用动态维护二维偏序最小元的结构，以及按 deadline 取最小元的优先队列/平衡树。",
+    "complexity": "O(n log n) with balanced sets / segment tree / priority queue; memory O(n).",
+    "tricks": [
+      "把允许操作刻画为只能删除原排列中的逆序，不能反转原本按值和位置都递增的 pair。",
+      "将 good permutation 等价为二维偏序的线性扩展。",
+      "固定位置转化为前驱必须提前完成的 deadline。",
+      "在空位总是选择当前可用最小元中 deadline 最早的未固定值。"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "deadline-topological-construction",
+      "summary": "主解法。把可达排列转成二维偏序线性扩展；预处理每个值相对于未来固定值的最早 deadline；从左到右做带 deadline 的拓扑构造，固定位置检查可用性，空位取 deadline 最早的当前最小元。",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "good permutation 被刻画为偏序 x<y 且 pos_a[x]<pos_a[y] 的线性扩展，本质是在 DAG 上构造拓扑序。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "关键是理解操作对排列相对顺序的影响：只能消除原排列中的逆序，不能破坏值和位置同向递增的 pair。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "从左到右构造时，空位选择当前最小元中最早 deadline 的元素，保证未来固定点的前驱优先完成。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "primary",
+      "evidence": "未来固定位置为其所有前驱施加最晚放置时间，算法按 deadline 调度当前可放置元素。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "需要在当前偏序最小元中反复取 deadline 最早的未固定值。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "一种实现用线段树/有序集合维护未放置值按 value 排序后的前缀最小 pos，从而动态发现偏序最小元。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "题目要求输出任意合法补全排列，算法直接构造拓扑序。",
+      "solution_variant": "deadline-topological-construction"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "官方 tag 的 data structures 对应动态维护可用最小元和按 deadline 取候选。",
+      "solution_variant": "deadline-topological-construction"
+    }
+  ]
+}
