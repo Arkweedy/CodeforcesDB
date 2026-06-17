@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "G1",
+    "title": "Wish Upon a Satellite (Easy Version)",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "games"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2084/G1/",
+      "notes": "Codeforces 题面镜像。题意：对排列 p 的所有子段求 minimax 合并游戏 f(c) 的总和；easy version 中 n<=5000，sum n<=5000。解法基于题面自行推导。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084G1",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个排列 p。对任意非空序列 c，Turtle 和 Piggy 轮流选择相邻二元组并合并：Turtle 回合取 min，Piggy 回合取 max；Turtle 最大化最终值，Piggy 最小化最终值。要求所有子段 f(p_l..p_r) 的总和。",
+    "constraints": "easy version: t <= 1000，n <= 5000，所有测试 n 之和 <= 5000。",
+    "core_idea": "对任意阈值 X，把元素变成二值：>=X 为 1，否则为 0。Turtle 的 min 合并就是 AND，Piggy 的 max 合并就是 OR，问题变成 Turtle 是否能让最终值为 1。可归纳证明：若子段长度为奇数，最终是否 >=X 只取决于两个端点是否至少一个 >=X；若长度为偶数，则只取决于两个端点是否都 >=X。因此原值满足：奇数长度 f(c)=max(c_1,c_k)，偶数长度 f(c)=min(c_1,c_k)。easy version 直接枚举所有 O(n^2) 端点，按端点下标同奇偶/异奇偶分别累加 max/min。",
+    "complexity": "O(n^2) per test case; memory O(1) besides the input.",
+    "tricks": [
+      "把数值 minimax 转成阈值二值游戏，min/max 分别变成 AND/OR。",
+      "用子段长度奇偶性证明 f 只由两个端点决定。",
+      "下标同奇偶的子段长度为奇数，贡献 max(endpoint)；异奇偶贡献 min(endpoint)。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "endpoint-minimax-bruteforce",
+      "summary": "主解法。先证明子段值只由端点和长度奇偶决定：奇长取端点最大值，偶长取端点最小值；然后枚举所有 l,r 累加贡献。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "f(c) 是双方轮流选择合并位置、目标相反的 minimax 值。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "description": "Prove that a segment or interval value depends only on its two endpoints, usually after eliminating or absorbing all interior choices.",
+      "parent": "trick",
+      "created_reason": "Existing trick/extreme-position covers choosing extreme positions, while this problem's key is an interval-game reduction showing every subsegment value is exactly max/min of its endpoints depending on parity.",
+      "status": "candidate",
+      "evidence": "整个子段的 minimax 值被化简为奇长 max(c_l,c_r)、偶长 min(c_l,c_r)，内部元素完全不影响最终值。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "子段长度奇偶决定最后等价于端点 max 还是端点 min；实现上也按下标同奇偶/异奇偶区分。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "easy version 的 n<=5000 允许直接枚举所有 O(n^2) 子段端点。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "official tag 包含 dp，但 reviewed easy 解法不需要区间 DP，只需端点性质。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "secondary",
+      "evidence": "题面是二人零和最优策略游戏，minimax 推导属于博弈论。",
+      "solution_variant": "endpoint-minimax-bruteforce"
+    }
+  ]
+}
