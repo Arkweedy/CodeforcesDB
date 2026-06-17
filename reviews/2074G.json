@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2074,
+    "title": "Codeforces Round 1009 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2074,
+    "index": "G",
+    "title": "Game With Triangles: Season 2",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "geometry"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2074/problem/G",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2074G",
+      "notes": "洛谷题面镜像：在凸正 n 边形中选择若干顶点不重复、正面积不相交的三角形，最大化顶点权乘积和。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2074G",
+      "notes": "由凸多边形中不相交弦/三角形的嵌套或分离结构推导区间 DP；三角形一旦选定会把剩余可选区域拆成独立子区间。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2074G",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定凸正 n 边形顶点权 a_i。可以选择若干个互不共用顶点且正面积不相交的三角形，每个三角形贡献三个顶点权乘积，求最大得分。",
+    "constraints": "3 <= n <= 400，a_i <= 1000，所有测试的 sum n^3 <= 400^3。",
+    "core_idea": "在凸多边形中，两个合法三角形的边界不会交叉；它们对应的顶点区间要么互不相交，要么呈嵌套/被某个选中三角形分隔。因此可以用区间 DP。设 dp[l][r] 表示只使用环上连续区间 l..r 内顶点的最大得分。转移时可以跳过端点，或枚举一个选中的三角形作为当前区间的分割结构：三角形三个顶点把区间切成若干互不影响的子区间，贡献为三角形权值加上子区间 dp 之和。按区间长度递增计算即可，n=400 且给出 sum n^3 约束，对应 O(n^3) 级别实现。",
+    "complexity": "O(n^3) per test case",
+    "tricks": [
+      "凸多边形中不相交三角形形成 laminar/disjoint 区间结构",
+      "选中一个三角形后剩余可选部分分裂成独立子区间",
+      "按区间长度做 interval DP"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "noncrossing-triangle-interval-dp",
+      "summary": "把环断开成线性区间。对每个区间，枚举跳过边界顶点或选择一个三角形作为分割，合并其内部/外侧子区间最优值。由于合法三角形不交叉，子问题互相独立。",
+      "complexity": "O(n^3) per test case",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/interval-dp",
+      "importance": "primary",
+      "evidence": "状态是凸多边形上的连续顶点区间，转移由选中三角形拆分子区间。",
+      "solution_variant": "noncrossing-triangle-interval-dp"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "合法性来自凸多边形内三角形正面积不相交与弦不交叉的几何结构。",
+      "solution_variant": "noncrossing-triangle-interval-dp"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "不相交三角形诱导的区间关系是嵌套或分离的 laminar 结构，使区间 DP 成立。",
+      "solution_variant": "noncrossing-triangle-interval-dp"
+    },
+    {
+      "tag": "trick/non-overlap",
+      "importance": "secondary",
+      "evidence": "三角形不能有正面积交叠，核心约束是非交叉/非重叠选择。",
+      "solution_variant": "noncrossing-triangle-interval-dp"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "整体为最大权不交叉三角形选择的动态规划。",
+      "solution_variant": "noncrossing-triangle-interval-dp"
+    }
+  ]
+}
