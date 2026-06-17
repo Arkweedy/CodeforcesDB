@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2070,
+    "title": "Educational Codeforces Round 175 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2070,
+    "index": "E",
+    "title": "Game with Binary String",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "divide and conquer",
+      "games",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2070/problem/E",
+      "notes": "Statement and constraints: count substrings of a binary string where the first player wins a circular adjacent-pair removal game."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140146",
+      "notes": "Official editorial code maps 0 to +1 and 1 to -3, then counts prefix pairs by index modulo 4 with four inequality thresholds."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2070E",
+      "notes": "Luogu candidate source; not used in this review because the official editorial code was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Count substrings for which the first player wins a game where the first player may remove only 00 and the second player may remove any adjacent pair containing at least one 1.",
+    "constraints": "n is up to 3e5, so after deriving a constant-time substring criterion the counting must be O(n log n) or better.",
+    "core_idea": "Game analysis reduces a substring to a count criterion depending only on its length modulo 4 and on score = zeros - 3 * ones. For prefix score p[i], a substring (j, i] is winning iff p[i] - p[j] is greater than one of four thresholds determined by (i - j) mod 4. Maintain previous prefix scores in four residue classes of j mod 4 and query how many are below the current bound.",
+    "complexity": "O(n log n) time with four segment trees or Fenwick/order-statistic structures, O(n) memory.",
+    "tricks": [
+      "Convert the game outcome into an inequality on zeros - 3*ones.",
+      "Group prefix indices by residue modulo 4 because the winning threshold depends on substring length modulo 4.",
+      "Count prefix pairs satisfying a strict inequality with range-count data structures."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-score-residue-counting",
+      "summary": "Build prefix score p using +1 for zero and -3 for one. For each right endpoint, query four data structures for previous prefixes in each residue class whose score is less than p[i] minus the residue-specific threshold, then insert p[i] into its residue class.",
+      "complexity": "O(n log n) time, O(n) memory.",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The first step is characterizing optimal play in the adjacent-pair removal game as a numeric winning criterion.",
+      "solution_variant": "prefix-score-residue-counting"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "The substring criterion is counted by transforming zeros and ones into a prefix score p[i].",
+      "solution_variant": "prefix-score-residue-counting"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The official solution uses four segment trees to dynamically count previous prefix scores below a bound.",
+      "solution_variant": "prefix-score-residue-counting"
+    },
+    {
+      "tag": "trick/residue-class-counting",
+      "importance": "secondary",
+      "evidence": "Previous prefixes are partitioned by index modulo 4 because each residue gives a different threshold.",
+      "solution_variant": "prefix-score-residue-counting",
+      "description": "Count pairs, transitions, or prefix states after grouping indices or states by residue modulo a small fixed modulus.",
+      "parent": "trick/residue-class-decomposition",
+      "created_reason": "Existing residue-class-decomposition covers splitting independent chains; this problem needs the more specific prefix-pair counting pattern by residue class.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "A substring is counted exactly when its transformed prefix-score difference exceeds a residue-specific threshold.",
+      "solution_variant": "prefix-score-residue-counting"
+    }
+  ]
+}

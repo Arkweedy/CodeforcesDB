@@ -483,6 +483,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "trick/threshold-decomposition": "阈值分解",
   "trick/worst-case-guarantee": "最坏情况保证",
   "trick/residue-class-decomposition": "剩余类分解",
+  "trick/residue-class-counting": "剩余类计数",
   "trick/reverse-process": "逆向处理",
   "trick/sign-assignment": "符号分配",
   "trick/state-augmentation": "状态增强",
