@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2075,
+    "title": "Educational Codeforces Round 176 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2075,
+    "index": "C",
+    "title": "Two Colors",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "combinatorics",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2075/problem/C",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2075C",
+      "notes": "洛谷题面镜像：恰好两种颜色，每种颜色形成一个连续段，颜色 i 最多涂 a_i 块。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2075C",
+      "notes": "根据题面直接推导：枚举两段分割点 k，计数容量至少 k 与至少 n-k 的颜色数，并减去左右同色。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2075C",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "有 n 块连续木板和 m 种颜色，第 i 种颜色最多涂 a_i 块。要求恰好使用两种颜色，并且每种颜色各自形成一个连续段，求不同涂色方案数。",
+    "constraints": "t <= 1e4，2 <= n,m <= 2e5，1 <= a_i <= n，所有测试的 sum n 与 sum m 均 <= 2e5。",
+    "core_idea": "一次合法涂色必然由一个分割点 k 决定：左边 k 块是一种颜色，右边 n-k 块是另一种颜色，且左右颜色不同。设 cnt[x] 为容量至少 x 的颜色数，那么固定 k 的有序颜色选择数是 cnt[k] * cnt[n-k]。其中左右使用同一种颜色的非法方案被计算了 cnt[max(k,n-k)] 次，因为同一颜色必须同时能覆盖两段，所以减去它。预处理容量频率的后缀和即可 O(1) 得到每个 cnt[x]，枚举 k=1..n-1 求和。",
+    "complexity": "O(n + m) per test case",
+    "tricks": [
+      "恰好两种连续颜色等价于枚举唯一分割点",
+      "用容量至少 x 的颜色数统计左右色块选择",
+      "减去左右同色的非法计数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "split-point-suffix-counting",
+      "summary": "统计每个容量出现次数并做后缀和 cnt[x]。枚举左段长度 k，答案累加 cnt[k]*cnt[n-k]-cnt[max(k,n-k)]。",
+      "complexity": "O(n + m) per test case",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "sorted-capacity-binary-search",
+      "summary": "将 a 排序。枚举分割点 k，用 lower_bound 分别求容量至少 k、n-k、max(k,n-k) 的颜色数量，使用同样公式累加。",
+      "complexity": "O(n log m + m log m) per test case",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/run-counting",
+      "importance": "primary",
+      "evidence": "每种颜色必须形成连续段且恰好两种颜色，因此方案由两个 color runs 和它们的分割点计数。",
+      "solution_variant": "split-point-suffix-counting"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "核心是按分割点计数有序颜色对并减去左右同色的非法组合。",
+      "solution_variant": "split-point-suffix-counting"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "用容量频率后缀和得到 cnt[x]=容量至少 x 的颜色数，支撑 O(1) 计算每个分割点。",
+      "solution_variant": "split-point-suffix-counting"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "等价实现可以对排序后的容量数组用 lower_bound 查询容量至少某个阈值的颜色数。",
+      "solution_variant": "sorted-capacity-binary-search"
+    }
+  ]
+}
