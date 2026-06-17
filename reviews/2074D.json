@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2074,
+    "title": "Codeforces Round 1009 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2074,
+    "index": "D",
+    "title": "Counting Points",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "geometry",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2074/problem/D",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2074D",
+      "notes": "洛谷题面镜像：圆心在 x 轴上，半径和为 m，统计至少落在一个圆内的整数点。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2074D",
+      "notes": "由 sum r=m 推导：枚举每个圆覆盖的整数横坐标，维护该横坐标下最大的 |y| 上界。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2074D",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定若干圆心在 x 轴上的圆，所有半径之和为 m。统计所有至少位于一个圆内或边界上的整数格点数量。",
+    "constraints": "1 <= n <= m <= 2e5，sum r_i=m，所有测试的 sum m <= 2e5，圆心横坐标可达 1e9。",
+    "core_idea": "对于固定整数横坐标 X，一个圆能覆盖的整数 y 范围是 |y| <= floor(sqrt(r^2-(X-x_i)^2))。同一 X 下多个圆的覆盖都是关于 x 轴对称的连续竖线段，因此 union 只需要保留最大高度 h[X]。由于所有半径和为 m，直接对每个圆枚举 dx=-r..r，总枚举量 O(sum r)。用哈希表记录 h[x_i+dx] 的最大值，最后答案为 sum_X (2*h[X]+1)。",
+    "complexity": "O(m log r) or O(m) with integer sqrt adjustment per test case",
+    "tricks": [
+      "按整数横坐标切片，圆内格点变成竖向连续区间",
+      "同一横坐标只需要最大覆盖高度",
+      "利用半径和限制枚举所有 dx"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "x-column-max-height",
+      "summary": "对每个圆枚举 dx，计算该列可覆盖的最大 y 绝对值 h，并更新 map[x_i+dx]=max(map[x_i+dx],h)。最后对每个出现过的横坐标贡献 2h+1。",
+      "complexity": "O(m log r) or O(m) with careful integer sqrt",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/lattice-points",
+      "importance": "primary",
+      "evidence": "目标是统计圆并集中的整数格点，核心计算是每个整数横坐标对应多少整数 y。",
+      "solution_variant": "x-column-max-height",
+      "description": "Count integer grid points satisfying geometric constraints, such as points inside circles, polygons, or distance-bounded regions.",
+      "parent": "math/geometry",
+      "created_reason": "Generic geometry does not distinguish lattice-point counting problems, which often use integer square roots, Pick-style reasoning, or coordinate slicing.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "圆方程与平面整数点覆盖是主问题结构。",
+      "solution_variant": "x-column-max-height"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "primary",
+      "evidence": "圆心横坐标可达 1e9，需要用 map/hash map 按实际出现的整数 x 维护最大高度。",
+      "solution_variant": "x-column-max-height"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "利用 sum r=m 的限制，直接枚举每个圆的所有整数横向偏移 dx。",
+      "solution_variant": "x-column-max-height"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "需要谨慎处理 floor(sqrt(r^2-dx^2)) 的整数精度。",
+      "solution_variant": "x-column-max-height"
+    }
+  ]
+}
