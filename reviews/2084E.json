@@ -1,0 +1,114 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "E",
+    "title": "Blossom",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "combinatorics",
+      "dp",
+      "implementation",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2084/E/",
+      "notes": "Codeforces 题面镜像。题意：部分排列中若干位置为 -1，统计所有补全排列的所有非空子段 mex 之和。约束 n<=5000，sum n<=5000。解法基于题面自行推导。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个长度 n 的部分排列，缺失位置为 -1，缺失值来自 0..n-1 中未出现的数。对每种合法补全，定义 value 为所有非空子段 mex 之和，要求所有补全的 value 总和。",
+    "constraints": "t <= 1000，n <= 5000，所有测试 n 之和 <= 5000；模 1e9+7。",
+    "core_idea": "使用恒等式 mex(segment)=sum_{k=1}^n [0..k-1 全在 segment 内]，把问题改成对每个区间统计所有补全中它包含前 k 个值的次数。对固定区间 [l,r]，令 u 为区间内 -1 位置数，M 为区间外已经固定的最小值；若 k>M，则这个固定值在区间外，不可能包含 0..k-1。若 k<=M，只需要让前 k 个值中缺失的 c(k) 个值被填到区间内。总缺失位置数为 q，则方案数是 C(u,c)*c!*(q-c)!。预处理 H[M][u]=sum_{k=1}^M C(u,c(k))*c(k)!*(q-c(k))!，其中 c(k) 只取决于缺失值集合。再枚举所有 O(n^2) 区间，用前缀和得到 u，用 prefix/suffix 最小固定值得到 M，累加 H[M][u]。",
+    "complexity": "O(n^2) per test case; memory O(n^2) or O(n) per row for precomputed contribution table.",
+    "tricks": [
+      "把 mex 拆成前缀值集合是否都出现的指示函数之和。",
+      "区间外最小已固定值 M 给出所有可能 k 的上界。",
+      "缺失的前缀值只需要选择区间内空位承载，贡献为 C(u,c)c!(q-c)!。",
+      "预处理 H[M][u] 后，每个区间 O(1) 累加贡献。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "interval-mex-contribution-counting",
+      "summary": "主解法。预处理缺失值前缀数量 c(k)、组合数/阶乘，以及 H[M][u] 表示一个拥有 u 个空位且区间外最小固定值为 M 的区间对答案的总贡献；随后枚举区间并 O(1) 加 H[M][u]。",
+      "complexity": "O(n^2)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "目标是所有子段 mex 之和，核心恒等式把 mex 拆成包含 0..k-1 的指示函数之和。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "对固定区间和 k，需要统计缺失值填入区间内空位的补全排列数量 C(u,c)c!(q-c)!。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "预处理 H[M][u] 计数表，把每个区间的所有 k 贡献压缩成按 M,u 查询的计数状态。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "不是枚举补全排列，而是枚举区间并直接累计该区间在所有补全中的 mex 贡献。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "组合数、阶乘和排列数用于计算缺失值落在区间内的方案数。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "用前缀和 O(1) 求区间内空位数量，并用前缀/后缀最小值求区间外最小已固定值。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "incidental",
+      "evidence": "official tag 包含 two pointers，但该 reviewed 解法直接枚举区间并查询预处理表，不依赖双指针。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "incidental",
+      "evidence": "official tag 包含 binary search，但该 reviewed 解法无需二分。",
+      "solution_variant": "interval-mex-contribution-counting"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现需要处理组合数和区间枚举，但核心不是纯模拟或实现细节。",
+      "solution_variant": "interval-mex-contribution-counting"
+    }
+  ]
+}
