@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2070,
+    "title": "Educational Codeforces Round 175 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2070,
+    "index": "C",
+    "title": "Limited Repainting",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2070/problem/C",
+      "notes": "Statement and constraints: at most k blue-paint segments, minimize the maximum penalty of wrong cells."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140146",
+      "notes": "Official editorial solution binary-searches the allowed penalty and greedily counts required blue segments among cells with penalty above the threshold."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2070C",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose at most k intervals to repaint blue on an initially red strip, minimizing the maximum penalty among cells whose final color is wrong.",
+    "constraints": "Total n over tests is at most 3e5 and penalties go up to 1e9, so the answer can be binary searched with a linear feasibility check.",
+    "core_idea": "For a candidate penalty x, cells with a_i <= x may be ignored. Among important cells with a_i > x, red cells are hard barriers and blue cells must be covered. The number of required operations is exactly the number of contiguous important-blue groups separated by important-red cells; x is feasible iff this count is at most k.",
+    "complexity": "O(n log A) per test batch, where A is the penalty range.",
+    "tricks": [
+      "Turn minimization of maximum wrong penalty into a threshold feasibility problem.",
+      "Ignore low-penalty cells and count required high-penalty blue groups."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-threshold",
+      "summary": "Binary search the maximum tolerated penalty. During the check, scan only cells with penalty above the threshold and count how many blue runs must be painted, resetting at high-penalty red cells.",
+      "complexity": "O(n log A) time, O(1) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The objective is minimized by binary-searching the penalty threshold and checking feasibility.",
+      "solution_variant": "binary-search-threshold",
+      "description": "Binary search where each midpoint is an answer threshold and a separate monotone feasibility check decides whether the threshold is attainable.",
+      "parent": "algorithm/search/binary-search",
+      "created_reason": "The existing binary-search tag is broader; answer-threshold feasibility queries are a frequent and useful retrieval target.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For a fixed threshold, greedily counting mandatory blue groups gives the minimum number of operations.",
+      "solution_variant": "binary-search-threshold"
+    },
+    {
+      "tag": "trick/barrier-segmentation",
+      "importance": "secondary",
+      "evidence": "High-penalty red cells act as barriers that split the scan into independent segments.",
+      "solution_variant": "binary-search-threshold",
+      "description": "Split a one-dimensional scan into independent zones using forbidden or blocking positions, then solve or count each zone separately.",
+      "parent": "trick",
+      "created_reason": "Existing tags cover greedy and binary search but not the reusable observation that hard blockers partition the decision space.",
+      "status": "candidate"
+    }
+  ]
+}

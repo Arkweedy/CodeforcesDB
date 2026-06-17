@@ -1,0 +1,78 @@
+{
+  "contest": {
+    "contest_id": 2070,
+    "title": "Educational Codeforces Round 175 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2070,
+    "index": "D",
+    "title": "Tree Jumps",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2070/problem/D",
+      "notes": "Statement and constraints: count valid vertex sequences under depth-increasing jumps on a rooted tree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140146",
+      "notes": "Official editorial solution computes dp[v] from the previous depth total, subtracting the parent contribution except for depth one."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2070D",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Count all vertex sequences that can be visited by a chip moving from depth d to depth d+1, with non-root moves forbidden from going to an adjacent child.",
+    "constraints": "The tree has total n up to 3e5 over tests, so vertices must be processed in depth order with O(n) total transitions.",
+    "core_idea": "Let dp[v] be the number of valid sequences ending at v. For depth 1, every child of the root is reachable from the root. For deeper vertices, every sequence ending at the previous depth can jump to v except the one ending at parent[v], so dp[v] = level_sum[depth[v]-1] - dp[parent[v]].",
+    "complexity": "O(n) per test case, O(n) memory.",
+    "tricks": [
+      "Group vertices by depth and maintain the sum of dp values on each depth.",
+      "Use complement counting: all previous-layer endpoints except the forbidden parent."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "depth-layer-tree-dp",
+      "summary": "Process vertices by increasing depth. Maintain total dp for each depth; each vertex receives the previous depth total minus its parent's dp, with a special case for depth one.",
+      "complexity": "O(n) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The main recurrence assigns dp values to tree vertices based on parent and depth-layer information.",
+      "solution_variant": "depth-layer-tree-dp"
+    },
+    {
+      "tag": "trick/layer-counting",
+      "importance": "primary",
+      "evidence": "The recurrence relies on maintaining sums over the previous depth layer.",
+      "solution_variant": "depth-layer-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The rooted tree structure and parent relation determine the only forbidden previous endpoint.",
+      "solution_variant": "depth-layer-tree-dp"
+    }
+  ]
+}
