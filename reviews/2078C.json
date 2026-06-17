@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2078,
+    "title": "Codeforces Round 1008 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2078,
+    "index": "C",
+    "title": "Breach of Faith",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "probabilities",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2078/problem/C",
+      "notes": "题面与约束：从长度 2n+1、满足交错和等式的序列 a 中删除一个数并打乱，给出剩余 2n 个数，要求恢复任意合法 a。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140505",
+      "notes": "官方题解在 Div.1 映射为 2077A：重排等式并选择较大数放在正号位，使构造出的缺失数大于所有已知 b。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2078C",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 2n 个互不相同的数，它们来自某个满足 a1 = a2-a3+a4-a5+...+a2n-a2n+1 的长度 2n+1 序列删去一个数后的结果；构造任意合法原序列。",
+    "constraints": "sum n <= 2e5，b_i <= 1e9；输出的缺失数允许到 1e18，因此可以构造一个比所有 b_i 都大的新数。",
+    "core_idea": "把等式改写为 a_{2n}=a_1+(a_3-a_2)+(a_5-a_4)+...+(a_{2n-1}-a_{2n-2})+a_{2n+1}。排序 b 后，取最大数作为 a1，接下来的 n 个大数放到正号位置 a3,a5,...,a2n+1，剩下 n-1 个小数放到负号位置 a2,a4,...,a2n-2。这样计算出的缺失数 a_{2n} 会大于 a1，从而不和任何 b_i 重复且在范围内。",
+    "complexity": "O(n log n) per test case.",
+    "tricks": [
+      "重排交错和等式，把缺失数作为一侧目标",
+      "按符号分配排序后的大数和小数",
+      "构造一个大于所有已知数的缺失值避免冲突"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-positive-negative-construction",
+      "summary": "排序 b。令 a1 为最大值；把接下来的 n 个大值放进交错式的正号位，把剩余 n-1 个小值放进负号位；按重排后的公式计算新的 a2n 并输出完整序列。",
+      "complexity": "O(n log n) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求恢复任意合法序列，主解法直接构造一个新的缺失值和排列。",
+      "solution_variant": "sorted-positive-negative-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "为了让缺失值最大且不冲突，贪心地把较大数放在正号位、较小数放在负号位。",
+      "solution_variant": "sorted-positive-negative-construction"
+    },
+    {
+      "tag": "trick/sign-assignment",
+      "importance": "primary",
+      "evidence": "核心是把交错和视为给数字分配正负号，并用排序决定每个符号组放哪些数。",
+      "solution_variant": "sorted-positive-negative-construction"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "排序后才能稳定选出最大数、正号组和负号组。",
+      "solution_variant": "sorted-positive-negative-construction"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "正确性依赖证明构造出的缺失值大于所有给定数，因此互不相同。",
+      "solution_variant": "sorted-positive-negative-construction"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "需要对交错和等式做代数重排。",
+      "solution_variant": "sorted-positive-negative-construction"
+    }
+  ]
+}
