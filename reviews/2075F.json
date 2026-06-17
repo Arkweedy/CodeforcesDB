@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2075,
+    "title": "Educational Codeforces Round 176 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2075,
+    "index": "F",
+    "title": "Beautiful Sequence Returns",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2075/problem/F",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2075F",
+      "notes": "洛谷题面镜像：最长 beautiful subsequence；除首元素外每个元素左侧要有更小元素，除末元素外每个元素右侧要有更大元素。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2075F",
+      "notes": "自推：beautiful sequence 等价于首元素严格小于所有后续元素、末元素严格大于所有前面元素；扫描右端点并用线段树维护各左端点值的最佳长度。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2075F",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定数组 a，求最长 beautiful subsequence。beautiful 要求每个非首元素左侧有更小元素，每个非末元素右侧有更大元素。",
+    "constraints": "t <= 1e4，n <= 5e5，a_i <= 1e6，所有测试的 sum n <= 5e5。",
+    "core_idea": "一个长度至少 2 的序列 beautiful，当且仅当第一个元素严格小于所有后续元素，且最后一个元素严格大于所有前面元素；因为第一个元素可以作为所有非首元素左侧的更小值，最后一个元素可以作为所有非末元素右侧的更大值。因此若选择端点 l<r 且 a_l<a_r，中间所有满足 a_l<a_i<a_r 的元素都能加入，目标是最大化 2+count(l<i<r, a_l<a_i<a_r)。从左到右扫描当前值 z 作为右端点：线段树下标表示左端点值 x，维护以某个已出现 x 为首、并预留未来右端点后的最佳长度，初始激活 x 时为 2。先查询区间 [1,z-1] 得到以 z 作为右端点的完整答案；再把当前元素作为未来方案的中间元素贡献给所有 x<z 的状态，对 [1,z-1] 区间 +1；最后在位置 z 以 base=2 激活一个新的左端点。区间加与区间最大用 lazy segment tree 完成。",
+    "complexity": "O(n log V) per test case, V=max(a_i)",
+    "tricks": [
+      "beautiful 条件压缩为首尾极值条件",
+      "固定首尾后，中间所有值在开区间内的元素都可以加入",
+      "扫描右端点，把每个新元素作为未来中间元素对所有更小左端点状态做前缀区间加",
+      "线段树维护左端点值维度上的最大可行长度"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "scan-right-endpoint-range-add-max",
+      "summary": "按位置扫描。线段树维护 key=x 的最佳状态：以值 x 作为首元素并预留未来末元素后，已经能得到的最大长度，激活新首元素时 base=2。遇到 z，先查询 x<z 更新以 z 为末元素的答案；再对 x<z 全部 +1，因为 z 可以成为这些状态的中间元素；最后在 x=z 位置激活新的首元素状态。",
+      "complexity": "O(n log V) per test case",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "主扫描需要对值域前缀执行区间加，并查询前缀最大值，线段树是核心数据结构。",
+      "solution_variant": "scan-right-endpoint-range-add-max"
+    },
+    {
+      "tag": "data-structure/lazy-propagation",
+      "importance": "primary",
+      "evidence": "每个元素 z 作为中间元素时，会让所有左端点值 x<z 的状态整体 +1，需要懒标记区间加。",
+      "solution_variant": "scan-right-endpoint-range-add-max"
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "线段树维护的是以某个首元素值为状态的最优子序列长度，扫描时进行状态转移。",
+      "solution_variant": "scan-right-endpoint-range-add-max"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "beautiful 条件被化为只需选择严格最小的首元素和严格最大的末元素，中间元素只受端点值范围限制。",
+      "solution_variant": "scan-right-endpoint-range-add-max"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "可从枚举首尾端点的 O(n^2) 形式推导出按值域状态压缩后的优化。",
+      "solution_variant": "scan-right-endpoint-range-add-max"
+    }
+  ]
+}
