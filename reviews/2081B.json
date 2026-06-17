@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "B",
+    "title": "Balancing",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/B",
+      "notes": "题面与约束：每次选择一个区间，区间内部相邻比较符号必须保持不变，目标是最少操作变成严格递增。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认相邻下降边计数下界，以及偶数下降边时由首个下降左端点和最后下降右端点决定是否需要额外一次操作。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081B",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定相邻元素均不相等的数组。一次操作可以重写一个连续区间的值，但必须保持该区间内部所有相邻比较方向不变；求把整个数组变成严格递增的最少操作数。",
+    "constraints": "多测，sum n <= 2e5，数值范围到 1e9，因此需要 O(n) 或 O(n log n) 的局部统计；操作只影响区间两侧边界比较。",
+    "core_idea": "把相邻下降边 a_i > a_{i+1} 视为必须消除的 inversion-like statistic。一次区间重写不会改变区间内部比较方向，只可能改变左右两个边界，所以每次最多消除两个下降边，得到 ceil(s/2) 下界。若 s 为奇数或 s=0，该下界可达到；若 s 为正偶数，所有操作都必须正好消除两个下降边，因此首个下降边左端点之前、最后下降边右端点之后不能被额外扰动，只需判断从首个下降左端 p1 到最后下降右端 p2 之间能否容纳严格递增序列，即 a[p2]-a[p1] >= p2-p1，否则答案多 1。",
+    "complexity": "O(n) per test case, O(sum n) total.",
+    "tricks": [
+      "把相邻下降边数量作为最小操作数下界",
+      "一次区间操作最多改变两个边界比较",
+      "偶数下降边的 tight case 归约到首尾端点能否容纳严格递增段"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "descent-count-endpoint-greedy",
+      "summary": "线性扫描统计下降边数 s，记录第一个下降边左端点 p1 和最后一个下降边右端点 p2。基础答案为 ceil(s/2)；当 s 为正偶数且 a[p2]-a[p1] < p2-p1 时，由于无法在固定端点间塞入严格递增段，需要额外一次操作。",
+      "complexity": "O(n) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/inversion-count",
+      "importance": "primary",
+      "evidence": "主解法的核心统计量是相邻下降边数量 s，它直接给出 ceil(s/2) 下界并决定答案主体。",
+      "solution_variant": "descent-count-endpoint-greedy"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "偶数下降边能否达到下界只取决于首个下降左端点和最后下降右端点之间是否能容纳严格递增序列。",
+      "solution_variant": "descent-count-endpoint-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "答案通过每次最多消除两个下降边的贪心式紧下界和唯一例外判断得到，无需搜索操作序列。",
+      "solution_variant": "descent-count-endpoint-greedy"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "需要按 s=0、s 为奇数、s 为正偶数且端点可行/不可行分情况。",
+      "solution_variant": "descent-count-endpoint-greedy"
+    }
+  ]
+}
