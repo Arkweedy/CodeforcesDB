@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "A",
+    "title": "Control Towers",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/A",
+      "notes": "Codeforces problemset statement: place four ordered towers on distinct empty cells, with each consecutive pair sharing a row or column; r,c <= 2000."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/A",
+      "notes": "Derived the count as the number of ordered simple length-3 paths in the rook graph of empty cells, then grouped the three edge directions into R/C patterns."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073A",
+      "notes": "洛谷题解候选来源；当前 Luogu problem page 返回 404，本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "在有障碍的 r*c 网格中，选择四个编号为 1..4 的不同空格，使 1-2、2-3、3-4 每对相邻编号都在同一行或同一列，求有序方案数。",
+    "constraints": "1 <= r,c <= 2000，最多 4e6 个格子；答案可能远超 64-bit，需要精确大整数或 C++ __int128 输出。",
+    "core_idea": "把每个空格看作点，同一行或同一列的两点之间有边，问题就是数有序的简单 3-edge walk。直接枚举边会在整行为空时退化成 O(rc^2)。改为按三条边的方向 R/C 分类。RRR 和 CCC 分别贡献每行/列的 P(cnt,4)。RRC/CRR 形如三个点在同一行、最后沿列走，枚举转折格 (i,j) 贡献 (row_i-1)(row_i-2)(col_j-1)，对称模式乘 2；RCC/CCR 同理。RCR 以中间竖边为核心，对每一列统计所有有空格行的 a_i=row_i-1，贡献 (sum a)^2-sum a^2；CRC 对称地在每一行用 b_j=col_j-1 统计。八类模式相加即为答案，distinct 条件已由每类的减一/减二和不同行列保证。",
+    "complexity": "O(rc)",
+    "tricks": [
+      "把同行/同列可达性建模为 rook graph",
+      "按三条边的行/列方向分成 8 种模式",
+      "对 RCR/CRC 用 (sum)^2-sum(square) 统计有序不同中间端点",
+      "使用 128-bit 保存答案"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "direction-pattern-aggregation",
+      "summary": "预处理每行空格数 row_i 和每列空格数 col_j。分别累加 RRR/CCC、两类连续同方向后转弯、以及 RCR/CRC 交替方向模式的贡献。",
+      "complexity": "O(rc)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/rook-graph",
+      "importance": "primary",
+      "evidence": "空格之间的邻接关系正是同一行或同一列相连的 rook graph，所有计数公式都利用行 clique 和列 clique 的结构。",
+      "solution_variant": "direction-pattern-aggregation",
+      "description": "Model grid cells as vertices where two cells are adjacent if they share a row or column, producing row and column cliques like legal rook moves.",
+      "parent": "graph",
+      "created_reason": "Existing grid or graph tags do not identify the reusable row/column clique structure needed for same-row/same-column reachability and counting.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "解法的主体是闭式计数八种 R/C 方向模式，而不是搜索或动态规划。",
+      "solution_variant": "direction-pattern-aggregation"
+    },
+    {
+      "tag": "graph/path-counting",
+      "importance": "secondary",
+      "evidence": "题目等价于在 rook graph 上数有序简单长度为 3 的路径。",
+      "solution_variant": "direction-pattern-aggregation"
+    },
+    {
+      "tag": "trick/dimension-separation",
+      "importance": "secondary",
+      "evidence": "三条边按行方向和列方向分离成 R/C 模式，行贡献与列贡献分别聚合。",
+      "solution_variant": "direction-pattern-aggregation"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "完整计数依赖枚举 RRR、RRC、RCR、RCC、CRR、CRC、CCR、CCC 八种方向模式。",
+      "solution_variant": "direction-pattern-aggregation"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "最大答案可超过 64-bit，C++ 实现需要 __int128 或等价大整数输出。",
+      "solution_variant": "direction-pattern-aggregation"
+    }
+  ]
+}
