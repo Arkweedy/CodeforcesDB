@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2077,
+    "title": "Codeforces Round 1008 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2077,
+    "index": "D",
+    "title": "Maximum Polygon",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2077/problem/D",
+      "notes": "题面入口；普通请求被 Cloudflare 拦截，本次题意由题面元数据与官方 editorial 交叉确认：从数组中选择能作为非退化多边形边长的字典序最大子序列。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/140505",
+      "notes": "官方题解 2077D：固定最大边 x 时可贪心构造字典序最大合法子序列；非多边形集合必须满足 v_i > prefix_sum，因而候选最大边只需考虑全局最大的 O(log max(a)) 个值。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2077D",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定数组 a，要求选择一个字典序最大的子序列，使它的元素可以作为一个非退化多边形的边长。",
+    "constraints": "a_i <= 1e9；官方题解复杂度 O(n log max(a))，关键常数来自 log2(1e9)+2 级别的候选最大边数量。",
+    "core_idea": "多边形边长合法当且仅当总和大于两倍最大边。先固定最大边 x，所有被选元素都不能超过 x，并维护一个当前答案栈 s；从左到右扫描，若遇到更大的可用元素，就判断删除栈顶后，再把右侧所有 <=x 的元素都补上时，是否仍能让 sum(s)>2x，若可行就弹出以提升字典序，最后加入当前元素。这样得到固定 x 时的字典序最大合法子序列。剩下的问题是不能枚举所有 x：若一个有序集合中不存在任何合法多边形子序列，则必须有 v_i > sum_{j<i} v_j，最慢增长也近似 1,1,2,4,...，所以在 a_i<=1e9 下最多只有 O(log max(a)) 个元素能一直避免形成多边形。因此全局最优的最大边一定来自数组最大的 p+1 个值，枚举这些候选 x 即可。",
+    "complexity": "O(n log max(a)) per test case",
+    "tricks": [
+      "多边形边长条件化为 sum > 2*max",
+      "固定最大边后用可行性检查支持字典序贪心弹栈",
+      "非合法集合必须指数增长，从而只需检查最大的 O(log A) 个候选最大边"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "top-candidates-fixed-maximum-greedy",
+      "summary": "取全局最大的 p+1 个不同/位置候选值作为最大边 x。对每个 x，从左到右维护子序列栈与后缀可用和；当当前 a_i<=x 且能通过弹出栈顶保持最终 sum>2x 时弹出较小栈顶以提升字典序，再加入 a_i。所有候选结果中取字典序最大者。",
+      "complexity": "O(n log max(a)) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/polygon-inequality",
+      "importance": "primary",
+      "evidence": "合法性的核心判定是边长集合可组成非退化多边形，当且仅当总和大于两倍最大边。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy",
+      "description": "Use the polygon side-length inequality, typically sum of all sides greater than twice the maximum side, to test or optimize whether selected lengths can form a non-degenerate polygon.",
+      "parent": "math/geometry",
+      "created_reason": "Existing math/geometry tags describe planar objects and convexity, but this problem uses the reusable side-length feasibility inequality rather than coordinate geometry.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/maximum-count-bound",
+      "importance": "primary",
+      "evidence": "题解证明若最大的 p+1 个数都无法包含合法多边形，则它们必须指数增长；因此只需枚举 O(log max(a)) 个最大边候选。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定最大边 x 后，通过判断弹出栈顶后是否仍可凑出 sum>2x，贪心维护字典序最大子序列。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "secondary",
+      "evidence": "目标是字典序最大子序列，固定 x 后每次尽量用更大的当前元素替换较小栈顶。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    },
+    {
+      "tag": "trick/candidate-precomputation",
+      "importance": "secondary",
+      "evidence": "先从数组全局最大的 p+1 个值/位置中生成候选最大边集合，再逐个执行固定最大值贪心。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "需要按值找出全局最大的 O(log max(a)) 个候选最大边。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "incidental",
+      "evidence": "固定 x 的贪心实现用栈式维护当前子序列并弹出末尾较小元素。",
+      "solution_variant": "top-candidates-fixed-maximum-greedy"
+    }
+  ]
+}
