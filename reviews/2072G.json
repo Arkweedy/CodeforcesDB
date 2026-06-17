@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2072,
+    "title": "Codeforces Round 1006 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2072,
+    "index": "G",
+    "title": "I've Been Flipping Numbers for 300 Years and Calculated the Sum",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "combinatorics",
+      "divide and conquer",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2072/problem/G",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2072G",
+      "notes": "洛谷题面镜像：定义 rev(n,p) 为把 n 的 p 进制表示反转后再转回十进制，要求 sum_{p=2}^k rev(n,p)。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2072G",
+      "notes": "由 p>sqrt(n) 时 n 在 p 进制下至多两位推导闭式，并按 floor(n/p) 相同的区间分组求和。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2072G",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 n 和极大的 k，计算所有进制 p=2..k 下，把 n 的 p 进制表示反转后得到的十进制值之和。",
+    "constraints": "t <= 5000，n <= 3e5，k <= 1e18，所有测试的 n 之和没有限制；必须避免枚举到 k，最好每个测试约 O(sqrt n log n)。",
+    "core_idea": "若 p>n，则 n 在 p 进制下只有一位，rev(n,p)=n，这一段直接贡献 (k-n)*n。剩下只需处理 p<=min(k,n)。当 p<=sqrt(n) 时进制位数可能较多，可以直接模拟反转。对于 p>sqrt(n)，有 p^2>n，所以 n=ap+b 只有两位，其中 a=floor(n/p), b=n mod p，反转后 rev(n,p)=bp+a=(n-ap)p+a=np-a p^2+a。于是把所有 p 按相同的 a=floor(n/p) 分成区间，在每个区间用 sum p 和 sum p^2 的公式批量累加。",
+    "complexity": "O(sqrt n log n) per test case for direct small-base reversal plus O(sqrt n) quotient ranges",
+    "tricks": [
+      "p>n 时 rev(n,p)=n",
+      "p>sqrt(n) 时 p 进制表示至多两位",
+      "按 floor(n/p) 相同的区间分组",
+      "用一次、二次幂和公式批量计算区间贡献"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "large-base-quotient-buckets",
+      "summary": "小进制直接模拟 base-p 反转；大进制使用两位表示公式 rev=np-a p^2+a，并用 floor(n/p) 分段加速。若 k>n，额外加上 (k-n)n。",
+      "complexity": "O(sqrt n log n) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "primary",
+      "evidence": "题目和主推导都围绕 n 的 p 进制表示、位数变化和反转后的数值公式展开。",
+      "solution_variant": "large-base-quotient-buckets"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "大进制段把状态压缩为 a=floor(n/p)，在相同商的区间内统一求贡献。",
+      "solution_variant": "large-base-quotient-buckets"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "secondary",
+      "evidence": "按 p<=sqrt(n) 与 p>sqrt(n) 分治处理，前者直接模拟，后者使用两位闭式。",
+      "solution_variant": "large-base-quotient-buckets"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "secondary",
+      "evidence": "floor(n/p) 的取值区间数为 O(sqrt n)，使用类似整除分块/调和枚举的跳跃方式遍历。",
+      "solution_variant": "large-base-quotient-buckets"
+    }
+  ]
+}
