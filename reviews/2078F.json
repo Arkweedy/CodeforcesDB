@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2078,
+    "title": "Codeforces Round 1008 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2078,
+    "index": "F",
+    "title": "Binary Subsequence Value Sum",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dp",
+      "fft",
+      "math",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2078/problem/F",
+      "notes": "题面与约束：每次 flip 后，求当前二进制串所有非空 subsequence 的 score 总和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140505",
+      "notes": "官方题解确认 score 只依赖 subsequence 中 0/1 数量，并给出 convolution 预处理解与代数闭式解。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2078F",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定动态翻转的二进制串。每次翻转后，求所有非空 subsequence 的 score 之和；score 定义为把 1 视为 +1、0 视为 -1 后，某个切分的左右段和乘积最大值。",
+    "constraints": "sum n, sum q <= 2e5，mod 998244353；每次 flip 只改变全局 0 的数量，因此需要 O(1) 或 O(log n) 更新。",
+    "core_idea": "先证明一个 subsequence 的 score 只取决于 cnt0 和 cnt1：令 d=cnt0-cnt1，则最优切分贡献为 floor(d/2)*ceil(d/2)=d^2/4 - (d mod 2)/4。于是对所有 subsequence 求和时，只需按选出的 0 的数量或等价的 subsequence 代数和 i 分组。官方给出两种做法：预处理每个 cnt0 的二项式卷积；进一步化简二项式求和，得到闭式 2^{n-4}(n(n+1)-4*cnt0*n+4*cnt0^2-2)。翻转只更新 cnt0，代入公式即可。",
+    "complexity": "O(n+q) per test case with the closed form.",
+    "tricks": [
+      "把 0/1 subsequence 转成 +/-1 和",
+      "单个 subsequence 的 score 化成只依赖 cnt0-cnt1 的闭式",
+      "用二项式恒等式把所有 subsequence 的二次项求和折叠成 cnt0 的二次多项式",
+      "flip 后只维护 cnt0"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "closed-form-by-zero-count",
+      "summary": "维护当前 cnt0。利用 score(d)=floor(d/2)ceil(d/2) 和二项式矩求和，直接输出 2^{n-4}(n(n+1)-4*cnt0*n+4*cnt0^2-2) mod 998244353。",
+      "complexity": "O(n+q) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "convolution-precompute-by-zero-count",
+      "summary": "把答案看成按 subsequence 和 i 分组的二项式加权和，对 cnt0=0..n 的答案做卷积预处理，然后每次 flip 查表。官方提到该方法可行但闭式更简单。",
+      "complexity": "O(n log n + q) per test case.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "主解法通过二项式求和恒等式把所有 subsequence 的 score 总和化成 cnt0 的闭式。",
+      "solution_variant": "closed-form-by-zero-count"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "关键第一步是把单个 subsequence 的 score 化简为 floor(d/2)*ceil(d/2)，只依赖 d=cnt0-cnt1。",
+      "solution_variant": "closed-form-by-zero-count"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "答案是对所有 subsequence 按选择的元素数量/0 的数量进行计数求和。",
+      "solution_variant": "closed-form-by-zero-count"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "整体是二进制串 subsequence 的组合计数问题。",
+      "solution_variant": "closed-form-by-zero-count"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "secondary",
+      "evidence": "官方给出可用 convolution 预处理 cnt0=0..n 答案的备选解。",
+      "solution_variant": "convolution-precompute-by-zero-count"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "闭式含 2 的负幂/逆元并在 998244353 下计算。",
+      "solution_variant": "closed-form-by-zero-count"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "incidental",
+      "evidence": "可以从计数 DP/卷积角度理解，但最终主解不需要显式 DP。",
+      "solution_variant": "convolution-precompute-by-zero-count"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "incidental",
+      "evidence": "官方标签含 matrices，但高质量解法的检索核心是组合闭式而非矩阵。",
+      "solution_variant": "closed-form-by-zero-count"
+    }
+  ]
+}
