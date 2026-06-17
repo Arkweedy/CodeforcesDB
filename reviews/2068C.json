@@ -1,0 +1,85 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "C",
+    "title": "Ads",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/C",
+      "notes": "Statement and constraints: reorder videos to minimize forced ads; an ad is forced after three videos since the last ad or once elapsed duration reaches k."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official EUC editorial page identifies the problem, but the tutorial body is not exposed in the fetched page."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/C",
+      "notes": "Derived the segment structure and the monotone feasibility check; a direct accepted-source cross-check was attempted but the submission page was blocked by browser verification."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068C",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose an order for all videos so the number of forced ads is minimum. Ads reset the counters, and the final triggered ad after all videos may be ignored.",
+    "constraints": "The total n is up to 1e6 and k is up to 30000, so the check must be sorting plus linear/two-pointer work, with logarithmic answer search acceptable.",
+    "core_idea": "View the order as groups of videos between consecutive ads plus one final group. Every group has size at most three. A three-video group is valid only if its first two videos have total duration below k, because otherwise an ad would occur before the third video. A two-video group can trigger an ad when the first video is shorter than k and the pair reaches at least k; the final group only needs to avoid triggering before its last video. The answer is monotone: if x ads are enough, then any larger x is also enough. For a fixed x, there are x+1 groups, and a greedy sorted two-pointer check tries to pack videos into these groups: reserve short compatible pairs for length-three groups, attach the largest remaining videos to them, and pair remaining videos using the shortest feasible prefix video with a longest/large video whenever a two-video ad group is needed. This feasibility predicate is then binary-searched.",
+    "complexity": "O(n log n + n log n) per test case from sorting and binary-search checks; O(n) memory.",
+    "tricks": [
+      "model the process as groups between ads",
+      "three-video groups need first-two sum below k",
+      "binary search the number of ads",
+      "sorted two-pointer greedy feasibility"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-greedy-grouping",
+      "summary": "Binary-search the number of ads and use a sorted two-pointer greedy to decide whether all videos can be partitioned into that many triggered groups plus one final group.",
+      "complexity": "O(n log n)",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The minimum number of ads is found by binary-searching a monotone feasibility predicate.",
+      "solution_variant": "binary-search-greedy-grouping"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For a fixed ad budget, the check greedily forms valid groups from sorted durations, using short compatible prefixes and largest remaining videos.",
+      "solution_variant": "binary-search-greedy-grouping"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "The feasibility check uses sorted durations and pointer movement to match short videos with large videos or with other short videos under the k threshold.",
+      "solution_variant": "binary-search-greedy-grouping"
+    }
+  ]
+}
