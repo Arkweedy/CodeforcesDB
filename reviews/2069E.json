@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2069,
+    "title": "Educational Codeforces Round 174 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2069,
+    "index": "E",
+    "title": "A, B, AB and BA",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "sortings",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2069/problem/E",
+      "notes": "Statement and constraints: split an A/B string into single-letter and alternating length-2 blocks under four quotas."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139774",
+      "notes": "Official editorial solution decomposes maximal alternating segments by endpoint orientation and greedily consumes the shortest useful segments for AB and BA quotas."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2069E",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether a binary A/B string can be partitioned into A, B, AB, and BA blocks without exceeding the corresponding quotas.",
+    "constraints": "Total string length is at most 5e5, so the solution must scan and sort segment lengths, not use DP over quotas.",
+    "core_idea": "Only maximal alternating segments can contribute length-2 blocks. Odd alternating segments have equal endpoints and can be used flexibly as pairs after leaving one single. Even segments starting with A naturally provide AB pairs, and even segments starting with B naturally provide BA pairs. Use the shortest same-orientation segments first for their matching quota; any leftover even segment can still provide opposite-orientation pairs, but loses one pair at the ends. Finally, count whether enough total pairs were placed so the remaining A and B singles fit their limits.",
+    "complexity": "O(|s| log |s|) per test case because alternating segment lengths are sorted.",
+    "tricks": [
+      "Decompose by maximal alternating runs rather than individual characters.",
+      "Classify runs by endpoint orientation to know which pair type they naturally produce.",
+      "Greedily spend scarce AB/BA quotas on shortest exact-orientation runs before using remnants for the opposite orientation."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "alternating-segment-greedy",
+      "summary": "Scan maximal alternating segments, collect even AB-oriented and BA-oriented lengths separately, and count flexible odd segments. Sort each directed list and greedily allocate quotas, then verify the remaining single A/B counts.",
+      "complexity": "O(|s| log |s|) time, O(|s|) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/segmentation",
+      "importance": "primary",
+      "evidence": "The main reduction is to split the string into maximal alternating segments and classify each segment.",
+      "solution_variant": "alternating-segment-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The allocation of AB/BA quotas is solved by greedily consuming shortest matching-orientation segments before using leftovers.",
+      "solution_variant": "alternating-segment-greedy"
+    },
+    {
+      "tag": "trick/count-balancing",
+      "importance": "secondary",
+      "evidence": "Each chosen length-2 block reduces both A and B single requirements, so the algorithm balances pair counts against the single-letter quotas.",
+      "solution_variant": "alternating-segment-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Directed alternating segments are sorted by length so the greedy allocation wastes the fewest characters.",
+      "solution_variant": "alternating-segment-greedy"
+    }
+  ]
+}
