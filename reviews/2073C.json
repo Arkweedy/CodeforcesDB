@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "C",
+    "title": "Cactus Connectivity",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/C",
+      "notes": "Codeforces problemset statement: given a cactus, compute the smallest k such that every k-edge-connected supergraph remains connected after removing all original cactus edges."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/C",
+      "notes": "Derived the connectivity value as maxcut(G)+1, then used the cactus block structure to reduce maxcut to m minus the number of odd cycles."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073C",
+      "notes": "洛谷题解候选来源；搜索未找到可用页面，本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一个 cactus 图 G，求最小 k，使得任意 k-edge-connected 的 G 的 supergraph H 在删除 G 的全部边后仍连通。",
+    "constraints": "n <= 1e5，m <= 2e5，输入保证是 cactus；需要线性或近线性计算。",
+    "core_idea": "对任意顶点割 S，若 G 在该割上有 c 条边，则任何 k-edge-connected supergraph H 在该割上至少有 k 条边。若 c<k，则 H 一定至少有一条非 G 边跨过该割；删除 G 后这个割仍被连通。为了所有割都满足这一点，需要 k 大于 G 的最大割边数。反过来，若存在割的 G 边数 c>=k，就可以在割两侧分别补强到 k-edge-connected 且不额外跨割，从而构造删除 G 后断开的反例。因此 connectivity value = maxcut(G)+1。Cactus 的每条边属于至多一个 simple cycle；桥和偶环的所有边都能进最大割，奇环必然且只需损失一条边，所以 maxcut(G)=m-odd_cycles。DFS 中每条返祖边对应一个 simple cycle，其长度由深度差得到，数奇环即可。",
+    "complexity": "O(n+m)",
+    "tricks": [
+      "把 supergraph 连通性定义转化为原图最大割加一",
+      "cactus 的最大割等于总边数减奇环数",
+      "DFS 返祖边在 cactus 中唯一对应一个 simple cycle",
+      "用深度差判断 cycle length parity"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "maxcut-via-odd-cycles",
+      "summary": "DFS 遍历每个连通分量。遇到指向祖先的非树边 (u,v) 时，cycle length = depth[u]-depth[v]+1；若为奇数则 odd_cycles++。最终输出 m-odd_cycles+1。",
+      "complexity": "O(n+m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/max-cut",
+      "importance": "primary",
+      "evidence": "题目定义的 connectivity value 被精确转化为 maxcut(G)+1，之后只需求 cactus 的最大割。",
+      "solution_variant": "maxcut-via-odd-cycles",
+      "description": "Use maximum cut, or a special-graph maximum-cut formula, as the central graph optimization or counting object.",
+      "parent": "graph",
+      "created_reason": "Existing min-cut, connectivity, and cactus tags do not capture maximum-cut reductions on special graph classes.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/cactus",
+      "importance": "primary",
+      "evidence": "m-odd_cycles 的最大割公式依赖 cactus 中 simple cycles edge-disjoint and sharing at most one vertex 的结构。",
+      "solution_variant": "maxcut-via-odd-cycles"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "唯一需要从每个 cycle 中提取的信息是长度奇偶；奇环比偶环少贡献一条割边。",
+      "solution_variant": "maxcut-via-odd-cycles"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "DFS tree depth and back edges are used to enumerate cactus cycles and compute their lengths.",
+      "solution_variant": "maxcut-via-odd-cycles"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "incidental",
+      "evidence": "题目表述使用 edge-connectivity, but the algorithmic core is the max-cut transformation rather than dynamic or static connectivity maintenance.",
+      "solution_variant": "maxcut-via-odd-cycles"
+    }
+  ]
+}
