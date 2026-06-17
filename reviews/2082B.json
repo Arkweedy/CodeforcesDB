@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2082,
+    "title": "Codeforces Round 1010 (Div. 2, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2082,
+    "index": "B",
+    "title": "Floor or Ceil",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2082/problem/B",
+      "notes": "Codeforces canonical statement URL。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2082B",
+      "notes": "题面与约束：给定 x，恰好做 n 次 floor(x/2) 和 m 次 ceil(x/2)，求最终最小值和最大值。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认最大值可先做 floor 再做 ceil，最小值可先做 ceil 再做 floor；二进制低位是否产生 carry 决定结果。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2082B",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 x、n、m，可以任意排列 n 次 floor(x/2) 和 m 次 ceil(x/2)，求最终 x 的最小可能值与最大可能值。",
+    "constraints": "t <= 1e4，0 <= x,n,m <= 1e9；重复相同操作超过 O(log x) 后值会稳定到 0 或 1，因此可直接模拟关键顺序。",
+    "core_idea": "从二进制看，连续做 n+m 次除二相当于丢掉低 n+m 位；ceil 操作只可能在被丢掉部分触发进位。为了最大化，先做所有 floor 把低位截掉，再做 ceil，使后续进位机会保留下来；为了最小化，先做所有 ceil，再做 floor，让可能的进位尽早被之后的 floor 消掉。由于 x 到 0/1 后继续操作不再产生复杂变化，按这两个顺序各模拟 O(log x) 步即可。",
+    "complexity": "O(t log x), with early stopping when x becomes 0 or 1.",
+    "tricks": [
+      "把 floor/ceil 除二理解成二进制截断和进位",
+      "极值由两种操作的单调交换顺序决定",
+      "超过 O(log x) 次相同操作后可早停"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ordered-floor-ceil-simulation",
+      "summary": "定义 F(x,k) 为连续 k 次 floor，C(x,k) 为连续 k 次 ceil。最小值为 F(C(x,m),n)，最大值为 C(F(x,n),m)；每个函数只模拟到 x 稳定或次数用完。",
+      "complexity": "O(log x) per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "通过交换论证确定两种极值的最优操作顺序，而不需要搜索所有排列。",
+      "solution_variant": "ordered-floor-ceil-simulation"
+    },
+    {
+      "tag": "trick/binary-carry",
+      "importance": "primary",
+      "evidence": "ceil 除二对最终高位的影响正是低位截断时是否产生 carry。",
+      "solution_variant": "ordered-floor-ceil-simulation"
+    },
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "secondary",
+      "evidence": "题解从二进制表示解释最后 n+m 位 r 是否会在末次操作进位。",
+      "solution_variant": "ordered-floor-ceil-simulation"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "incidental",
+      "evidence": "floor/ceil 除二可写成按 2 的整除与余数处理，但不是检索主线。",
+      "solution_variant": "ordered-floor-ceil-simulation"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "实现可以直接模拟 O(log x) 次；brute force 只是小步数模拟，不是算法核心。",
+      "solution_variant": "ordered-floor-ceil-simulation"
+    }
+  ]
+}
