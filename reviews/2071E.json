@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2071,
+    "title": "Codeforces Round 1007 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2071,
+    "index": "E",
+    "title": "LeaFall",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "probabilities",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2071/problem/E",
+      "notes": "Statement and constraints: compute the expected number of unordered pairs of vertices that become leaves after independently falling vertices are removed from a tree."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140115",
+      "notes": "Official editorial partitions vertex pairs into adjacent, distance two via a shared neighbor, and all other pairs, then computes/corrects their probability contributions."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2071E",
+      "notes": "Luogu candidate source; not used in this review because the official editorial was sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Given independent falling probabilities on tree vertices, compute the expected number of unordered pairs of distinct vertices that are leaves in the remaining forest.",
+    "constraints": "Total n over tests is at most 1e5; probabilities are modular fractions, so all pair contributions must be summarized in linear or near-linear time.",
+    "core_idea": "Use linearity of expectation over unordered vertex pairs. First compute for each vertex the probability p2[i] that it becomes a leaf. Summing p2[u] * p2[v] over all pairs is correct only when the local neighborhoods of u and v are independent, which fails for adjacent pairs and pairs sharing a neighbor. Recompute those two local categories explicitly and replace their naive contributions.",
+    "complexity": "O(n log M) per test batch, dominated by modular inverses; the tree traversal and pair corrections are linear in total degree.",
+    "tricks": [
+      "Classify unordered pairs by tree distance: adjacent, distance two, or independent farther pairs.",
+      "Start with the all-pairs product of individual leaf probabilities, then subtract and replace local dependent cases.",
+      "Use products over neighbors and divide by one neighbor's probability to derive per-edge or shared-neighbor contributions."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "local-dependency-expectation",
+      "summary": "Compute each vertex's base leaf probability, sum all pair products, and correct pairs at distance one or two using formulas that condition on their shared local neighborhood.",
+      "complexity": "O(n log M) time for modular inverses and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "primary",
+      "evidence": "The answer is the sum over unordered pairs of the probability that both endpoints become leaves.",
+      "solution_variant": "local-dependency-expectation"
+    },
+    {
+      "tag": "graph/distance-2-pairs",
+      "importance": "primary",
+      "evidence": "The solution's decisive split is adjacent pairs, pairs sharing a neighbor, and all remaining pairs.",
+      "solution_variant": "local-dependency-expectation",
+      "description": "Count, enumerate, or correct vertex pairs whose graph distance is at most two, often separating adjacent pairs and common-neighbor pairs from all far pairs.",
+      "parent": "graph",
+      "created_reason": "Existing graph/tree tags do not capture the recurring local-pair classification by distance one and two.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The distance-two pair category has a unique shared neighbor because the input graph is a tree.",
+      "solution_variant": "local-dependency-expectation"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The implementation starts from all pair contributions and locally replaces the contributions of dependent pairs.",
+      "solution_variant": "local-dependency-expectation"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "All formulas manipulate independent falling probabilities and modular inverse probabilities.",
+      "solution_variant": "local-dependency-expectation"
+    }
+  ]
+}

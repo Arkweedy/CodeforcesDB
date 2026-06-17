@@ -230,6 +230,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/cycle-space": "环空间",
   "graph/dag": "DAG",
   "graph/degree-sequence": "度数序列",
+  "graph/distance-2-pairs": "距离二内点对",
   "graph/planar-graph": "平面图",
   "graph/pseudoforest": "伪森林",
   "graph/rook-graph": "车图",
