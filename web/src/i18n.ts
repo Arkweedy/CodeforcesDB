@@ -285,6 +285,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "string/palindrome": "回文",
   "string/run-length-encoding": "游程编码",
   "string/segmentation": "字符串分段",
+  "string/subsequence": "子序列",
   "string/suffix-array": "后缀数组",
   "string/suffix-structures": "后缀结构",
   "math/transform": "变换",

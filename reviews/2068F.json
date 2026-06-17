@@ -1,0 +1,84 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "F",
+    "title": "Mascot Naming",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "greedy",
+      "implementation",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/F",
+      "notes": "Statement and constraints: construct a common supersequence of all required words while avoiding t as a subsequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Contest editorial page exists, but the expanded tutorial text for F was not available in the text snapshot; the recorded solution is based on statement-derived reasoning and brute-force sanity checks on small cases."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068F",
+      "notes": "Luogu candidate source; not used in this review because no solution text was available through the accessible page snapshot."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct a string that contains every required word as a subsequence but does not contain the forbidden word t as a subsequence.",
+    "constraints": "The total length of required words and |t| are up to 2e5; the constructed answer may have length up to 1e6, so a linear greedy construction is suitable.",
+    "core_idea": "Track the current unmatched character of every required word and the greedy matched prefix length p of t in the output. If some current character is not t[p], output such a character and advance every word currently waiting for it; this does not advance the forbidden automaton. Only when all unfinished words currently require t[p] is any common supersequence forced to output t[p], so advance p and remove that character from all waiting words. If this would finish t, no valid name exists; otherwise the produced string is valid.",
+    "complexity": "O(total input length + alphabet * output length) with simple buckets, O(total input length) memory.",
+    "tricks": [
+      "Maintain the frontier characters of all required subsequences.",
+      "Avoid advancing the forbidden subsequence automaton unless every unfinished word forces the next forbidden character.",
+      "Batch-advance all words whose current required character equals the emitted character."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "frontier-greedy",
+      "summary": "Keep queues of words by their next required character. Repeatedly emit a currently needed character different from the next forbidden character if possible; otherwise emit the forced forbidden character and move the forbidden pointer. Failure occurs exactly when the forbidden pointer reaches |t|.",
+      "complexity": "O(total required length + 26 * answer length) time, O(total required length) memory.",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/subsequence",
+      "importance": "primary",
+      "evidence": "The whole problem is about satisfying required subsequences while avoiding a forbidden subsequence.",
+      "solution_variant": "frontier-greedy",
+      "description": "Problems where subsequence containment, common supersequences, forbidden subsequences, or greedy subsequence matching are central to the solution.",
+      "parent": "string",
+      "created_reason": "Existing string tags cover automata, borders, palindromes, and segmentation, but not subsequence/supersequence constraints as a reusable retrieval concept.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The construction greedily emits any safe frontier character and only emits the next forbidden character when it is forced by all unfinished words.",
+      "solution_variant": "frontier-greedy"
+    },
+    {
+      "tag": "string/finite-automaton",
+      "importance": "secondary",
+      "evidence": "Avoiding t is tracked by the matched-prefix state of the subsequence automaton for t.",
+      "solution_variant": "frontier-greedy"
+    }
+  ]
+}
