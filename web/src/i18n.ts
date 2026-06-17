@@ -261,6 +261,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/tree-diameter": "树直径",
   "graph/tree-dfs": "树上 DFS",
   "graph/tree-hashing": "树哈希",
+  "graph/tournament": "竞赛图",
   "graph/transitive-reduction": "传递约简",
   "graph/virtual-tree": "虚树",
   "algorithm/hashing": "哈希",

@@ -1,0 +1,89 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "A",
+    "title": "Condorcet Elections",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "graphs",
+      "greedy",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/A",
+      "notes": "Statement and constraints: construct at most 50000 ranked ballots realizing the required pairwise majority facts."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official EUC editorial page identifies the problem and comments discuss O(n) vote constructions, but the tutorial body is not exposed in the fetched page."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/A",
+      "notes": "Derived the standard two-ballot McGarvey construction: for each required ordered pair a > b, add two rankings that give a two-vote advantage only on that pair and cancel all comparisons involving other candidates."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068A",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Given directed pairwise majority requirements among candidates, output a multiset of ranked ballots whose majority relation contains every required edge.",
+    "constraints": "n <= 50 and m <= n(n-1)/2, so a construction using O(m) ballots easily fits the 50000-ballot limit.",
+    "core_idea": "The requirements form directed edges of a tournament-like majority graph. For each required edge a defeats b, add two ballots: one orders a, b, then all other candidates in some fixed order; the other orders the other candidates in reverse order, then a, b. Candidate a is before b in both ballots, so this edge gains +2. For any other pair, either one of a/b is compared with an outside candidate once in each direction, or two outside candidates appear in opposite orders across the two ballots, so their net contribution is zero. Summing this independent gadget over all required edges realizes all facts; since each unordered pair is listed at most once, no contradictions arise.",
+    "complexity": "O(mn) time and O(mn) output size.",
+    "tricks": [
+      "two-ballot majority gadget",
+      "reverse-order cancellation",
+      "independent pairwise contribution construction"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mcgarvey-two-ballot-gadgets",
+      "summary": "For each required majority edge, output two rankings whose pairwise comparison contributions cancel everywhere except the target ordered pair.",
+      "complexity": "O(mn)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for explicit ballots, and the main solution is a direct gadget construction for each required majority edge.",
+      "solution_variant": "mcgarvey-two-ballot-gadgets"
+    },
+    {
+      "tag": "graph/tournament",
+      "importance": "primary",
+      "evidence": "Pairwise majority facts are modeled as directed edges between candidates in a tournament-style majority graph.",
+      "solution_variant": "mcgarvey-two-ballot-gadgets",
+      "description": "Directed complete or tournament-like graphs where every unordered vertex pair has at most one directed winner edge, often used for pairwise dominance relations.",
+      "parent": "graph",
+      "created_reason": "The problem's central object is a Condorcet majority/tournament relation, which is more specific than generic graph or constructive tags.",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/symmetric-pairing",
+      "importance": "primary",
+      "evidence": "Each required edge is isolated by pairing a ranking with the reverse ordering of all other candidates, canceling every unrelated comparison.",
+      "solution_variant": "mcgarvey-two-ballot-gadgets"
+    }
+  ]
+}
