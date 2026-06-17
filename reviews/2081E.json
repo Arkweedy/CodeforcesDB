@@ -1,0 +1,127 @@
+{
+  "contest": {
+    "contest_id": 2081,
+    "title": "Codeforces Round 1010 (Div. 1, Unrated)"
+  },
+  "problem": {
+    "contest_id": 2081,
+    "index": "E",
+    "title": "Quantifier",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2081/problem/E",
+      "notes": "Codeforces canonical statement URL；当前环境直接访问 Codeforces 题面不稳定，实际题面核对使用 Luogu 镜像。"
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2081E",
+      "notes": "题面与约束：带颜色的树上 chip，可向父亲移动相同颜色的 chip，或交换同点 chip；问可能得到多少种颜色排列。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140702",
+      "notes": "官方题解确认先按颜色降序把 chip 尽量下推得到 canonical 初态，再做以根为界的树形 DP；状态包含序列长度、顶部颜色、顶部同色段长度。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2081E",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "树上每个点有一个 chip，颜色在 1..m。允许把一个 chip 移到父亲，前提是父亲处存在同色 chip；也允许交换同一顶点上的两个 chip。问经过任意操作后，按点编号读出的颜色序列有多少种可能。",
+    "constraints": "n <= 5000，m <= n，多测总 n 约 5000 级别；需要 O(n^2 m) 或相近复杂度的树形计数 DP，并预处理组合数。",
+    "core_idea": "先证明可以把颜色从大到小依次尽量向下移动：由于同点 chip 可交换，且较大颜色先下推不会妨碍较小颜色，所有可达最终排列都能从这个 canonical 初态继续得到。之后考虑子树 u 内的 chip 最终停在 u 子树内，根到 u 的路径附近只需知道被提升到顶部的一段颜色结构。定义 f[u][len][top_color][top_run]：u 子树内选出 len 个 chip 构成某个合法序列，序列最上方颜色为 top_color，且顶部连续 top_color 的数量为 top_run。合并儿子时就是把两个子树序列交错插入，组合数 C(...) 负责计数；如果两边顶部颜色相同，还要把顶部同色段长度相加。最终在根处累加所有长度 n 的状态。",
+    "complexity": "O(n^2 * m) in the official DP shape, with combinatorial merge factors precomputed.",
+    "tricks": [
+      "按颜色降序下推得到 canonical 初态",
+      "树形 DP 合并子树序列",
+      "用顶部颜色和顶部同色段长度补足 Markov 状态",
+      "组合数统计两个子树序列的交错方式"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-pushdown-tree-sequence-dp",
+      "summary": "先构造颜色降序的 canonical chip 分布。随后自底向上做树形 DP：每个子树维护序列长度、顶部颜色和顶部同色段长度，合并子树时枚举两侧长度与顶部段，使用二项式系数计算 interleaving 数；同色顶部段可以拼接，异色则保留较上方的顶部段状态。",
+      "complexity": "O(n^2 * m) states/transitions after pruning impossible lengths.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "主解法在树上自底向上合并每个子树的可达颜色序列计数。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "合并儿子时按已选序列长度和儿子序列长度做类似树上背包的卷积合并。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "DP 值统计可达颜色排列数量，合并时乘以组合数和子状态方案数。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "仅记录序列长度不够，必须额外记录顶部颜色和顶部同色段长度才能正确合并同色顶部段。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "先把 chip 按颜色降序尽量下推，得到等价的 canonical 初始分布，这是后续 DP 能成立的关键归一化。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "secondary",
+      "evidence": "合并两个子树序列时需要用二项式/多项式系数统计交错插入方式。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "math/combinatorics/run-counting",
+      "importance": "secondary",
+      "evidence": "状态显式维护顶部连续同色段长度，并在合并时处理同色段拼接。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "所有可达性和 DP 子问题都建立在 rooted tree 的父子结构上。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "答案本质是计数可达排列，转移依赖组合数。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现需要多维状态和剪枝，但检索价值主要在 DP 与组合合并结构。",
+      "solution_variant": "canonical-pushdown-tree-sequence-dp"
+    }
+  ]
+}
