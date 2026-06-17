@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2084,
+    "title": "Teza Round 1 (Codeforces Round 1015, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2084,
+    "index": "G2",
+    "title": "Wish Upon a Satellite (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://cf-problemset.herokuapp.com/contest/2084/G2/",
+      "notes": "Codeforces 题面镜像。题意同 easy version：对排列 p 的所有子段求 minimax 合并游戏 f(c) 的总和；hard version 中 n<=5e5，sum n<=5e5。解法基于题面和 easy version 性质自行推导。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2084G2",
+      "notes": "洛谷题解候选来源；只有实际参考后才移动到 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给一个排列 p。对任意非空子段，Turtle/Piggy 交替选择相邻二元组并用 min/max 合并，双方最优后得到 f(c)。要求所有子段 f(p_l..p_r) 的总和；hard version 需要在线性或近线性时间完成。",
+    "constraints": "hard version: t <= 10000，n <= 5e5，所有测试 n 之和 <= 5e5。",
+    "core_idea": "先用阈值二值化证明与 easy version 相同的性质：若子段长度为奇数，f=max(p_l,p_r)；若长度为偶数，f=min(p_l,p_r)。因此问题变成统计所有端点对的 max/min：下标同奇偶的端点对贡献较大值，下标异奇偶的端点对贡献较小值，单点子段也贡献自身。因为 p 是排列，按值 v 从小到大处理其位置 pos。v 作为同奇偶端点对的较大值时，另一端必须是已经处理过的同奇偶较小值，共 seen[parity] 个，再加单点子段 1 个；v 作为异奇偶端点对的较小值时，另一端必须是尚未处理的异奇偶较大值，共 total[1-parity]-seen[1-parity] 个。于是贡献为 v*(1+seen[p]+total[1-p]-seen[1-p])，处理后 seen[p]++。",
+    "complexity": "O(n) per test case after building value->position; memory O(n).",
+    "tricks": [
+      "阈值二值化把 min/max 合并游戏转成 AND/OR 博弈。",
+      "子段值只由端点和长度奇偶决定：奇长取端点 max，偶长取端点 min。",
+      "按值从小到大统计每个元素作为端点 max/min 的贡献次数。",
+      "只需要维护两个奇偶类中已经处理过的较小值数量。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "endpoint-contribution-by-value",
+      "summary": "主解法。证明端点公式后，按值递增扫描排列位置：同奇偶已处理数量给出它作为 max 的次数，异奇偶未处理数量给出它作为 min 的次数，累加贡献。",
+      "complexity": "O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "f(c) 是双方最优选择相邻合并位置的 minimax 值，端点公式来自该博弈分析。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "核心性质把任意子段的 minimax 值化简为奇长 max(endpoint)、偶长 min(endpoint)。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "端点下标同奇偶/异奇偶分别对应奇长/偶长，从而决定统计 max 还是 min。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "hard version 的关键是按值统计每个元素作为端点最大值或最小值时覆盖多少子段贡献。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "math/game-theory",
+      "importance": "secondary",
+      "evidence": "题面是二人零和最优策略游戏，minimax 推导属于博弈论。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "线性解本质是在计数每个值参与的同奇偶/异奇偶端点对数量。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "incidental",
+      "evidence": "official tag 包含 data structures，但该推导只需 value->position 数组和两个计数器，不需要树状数组或线段树。",
+      "solution_variant": "endpoint-contribution-by-value"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "official tag 包含 dp，但 reviewed hard 解法不需要区间 DP。",
+      "solution_variant": "endpoint-contribution-by-value"
+    }
+  ]
+}
