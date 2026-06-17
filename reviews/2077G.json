@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2077,
+    "title": "Codeforces Round 1008 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2077,
+    "index": "G",
+    "title": "RGB Walking",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "chinese remainder theorem",
+      "dfs and similar",
+      "graphs",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2077/problem/G",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2077G",
+      "notes": "洛谷题面镜像：给三色带权无向连通图，允许重复点边的 1 到 n walk，最小化 max(s_r,s_g,s_b)-min(s_r,s_g,s_b)。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://mirror.codeforces.com/blog/entry/140505",
+      "notes": "官方题解 2077G：先分析双色 gcd/Bezout walk，再推广为每种颜色 gcd 模 2c_i 的二元状态；在 8 层状态图上求可达，最后对每个 reachable congruence state 用 CRT 优化三色差。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2077G",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定三色带权无向连通图，walk 可以重复经过点和边。对一条 1 到 n 的 walk，分别统计红、绿、蓝边权总和 s_r,s_g,s_b，要求最小化三者最大值与最小值之差。",
+    "constraints": "t <= 1e4，4 <= n <= 2e5，n-1 <= m <= 2e5，1 <= x <= 2e5；所有测试的 sum n、sum m、sum x 均 <= 2e5。图连通，允许重边和自环，每种颜色至少一条边。",
+    "core_idea": "对于某一颜色，若该颜色所有边权 gcd 为 c，那么通过从 1 出发绕到某边、走边、再沿原路返回，以及在已有边上来回走，可以把该颜色累计和在模 2c 意义下调整为 0 或 c 两类；这是 gcd 与 Bezout 线性组合的结果。三色独立后，一个 walk 的无限大累计向量可压缩成 8 种状态 (s_r mod 2c_r 是否为 c_r, s_g mod 2c_g 是否为 c_g, s_b mod 2c_b 是否为 c_b)。在原图上复制 8 层，沿一条颜色为 col、权 w 的边时只更新对应颜色的二元 residue 状态，做 DFS/BFS 求从 1 到 n 可达的状态。对每个可达状态，需要在同余约束 d_r≡s_r mod 2c_r、d_g≡s_g mod 2c_g、d_b≡s_b mod 2c_b 下最小化 max-min；固定某一颜色作为最小值，用 CRT 把另外两色的周期合并，枚举 gcd 周期内的 residue 得到最小差，三种最小颜色都尝试。",
+    "complexity": "O(n log x + x) per test case",
+    "tricks": [
+      "通过往返 walk 允许给某颜色累计和增加任意 2*w 的线性组合",
+      "每种颜色只保留模 2*gcd(color) 的 0/c 二元状态",
+      "把原图扩成 8 层状态图做可达性",
+      "固定最小颜色后用 CRT 合并两个周期并最小化 max difference"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "eight-state-crt-walk",
+      "summary": "计算三种颜色边权 gcd c_r,c_g,c_b。把每个顶点扩为 8 个 residue 状态，遍历边时按颜色和权重翻转/移动对应 residue，求所有可达终点状态。对每个状态，把三色目标和写成三个线性同余；枚举哪一色取最小，用 CRT 把另外两个颜色相对它的最小非负差按 gcd 周期合并，取最小的 max(diff1,diff2)。",
+      "complexity": "O(n log x + x) per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "每种颜色的可调整步长由该颜色边权 gcd 决定，最终状态模数是 2*c_color。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "math/number-theory/chinese-remainder-theorem",
+      "importance": "primary",
+      "evidence": "固定一色作为最小值后，需要用 CRT 合并另外两色相对它的 residue 周期来最小化最大差。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "graph/layered-graph",
+      "importance": "primary",
+      "evidence": "每个原图顶点被复制成 8 个 residue 层，边转移只改变对应颜色的状态，可达性在这个 layered graph 上完成。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "无限多的三色累计和向量被按模 2*gcd 的等价类压缩成 8 种状态，这是可达性与优化可做的关键。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "在 8 层状态图上用 DFS/BFS 标记从顶点 1 可达的终点状态。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "实际 walk 的累计权重无界，但算法只需保存三个二元 residue 位。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "每个颜色最终只区分 d_color/c_color 的奇偶，即 residue 为 0 还是 c_color。",
+      "solution_variant": "eight-state-crt-walk"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "8 个 residue 状态通常用 3-bit mask 编号和转移。",
+      "solution_variant": "eight-state-crt-walk"
+    }
+  ]
+}
