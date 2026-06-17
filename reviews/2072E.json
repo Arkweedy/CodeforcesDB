@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2072,
+    "title": "Codeforces Round 1006 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2072,
+    "index": "E",
+    "title": "Do You Love Your Hero and His Two-Hit Multi-Target Attacks?",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "constructive algorithms",
+      "dp",
+      "geometry",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2072/problem/E",
+      "notes": "Codeforces 题面入口。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://www.luogu.com.cn/problem/CF2072E",
+      "notes": "洛谷题面镜像：构造最多 500 个整数坐标点，使恰好 k 对点满足欧氏距离等于曼哈顿距离。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://www.luogu.com.cn/problem/CF2072E",
+      "notes": "由距离等号条件推导：两点满足 rho=d 当且仅当横坐标相同或纵坐标相同；把 k 拆成若干 C(s,2) 并构造互不干扰的同列点组。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2072E",
+      "notes": "洛谷题解候选来源；本次未实际使用。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 k，构造不超过 500 个不同整数点，使恰好有 k 对点的欧氏距离等于曼哈顿距离。",
+    "constraints": "0 <= k <= 1e5，输出点数 n <= 500，坐标范围 [-1e9,1e9]。",
+    "core_idea": "对两点坐标差 dx,dy，有 sqrt(dx^2+dy^2)=|dx|+|dy| 当且仅当 dx=0 或 dy=0，也就是两点同列或同行。若在同一列放 s 个点且它们的 y 不和其他组重复，就会贡献 C(s,2) 个合法点对。于是贪心反复取最大 s 使 C(s,2)<=k，放一组同列点并让不同组使用不同的 x 与互不相同的 y 偏移，避免组间出现同 x 或同 y。k<=1e5 时最大组约 447 个点，贪心分解总点数可控制在 500 内。",
+    "complexity": "O(number of output points)",
+    "tricks": [
+      "欧氏距离等于曼哈顿距离等价于同横坐标或同纵坐标",
+      "一组 s 个同列点贡献 C(s,2) 对",
+      "用三角数贪心分解 k",
+      "组间错开 x 和 y，避免额外合法点对"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "triangular-column-groups",
+      "summary": "当 k>0 时取最大 s 满足 s(s-1)/2<=k，在一个新 x 坐标上放 s 个点，并使用全局递增 y 避免跨组同行；扣掉 C(s,2) 后继续。k=0 可输出 0 个点。",
+      "complexity": "O(n) output",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求直接构造点集，主解是把 k 拆成若干点组并输出坐标。",
+      "solution_variant": "triangular-column-groups"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "核心观察是平面距离等式 sqrt(dx^2+dy^2)=|dx|+|dy| 的几何条件。",
+      "solution_variant": "triangular-column-groups"
+    },
+    {
+      "tag": "math/combinatorics/binomial-basis",
+      "importance": "primary",
+      "evidence": "目标 k 被表示为若干 C(s,2) 的和，每个 C(s,2) 对应一组同列点的两两配对数。",
+      "solution_variant": "triangular-column-groups"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "每步取不超过剩余 k 的最大三角数 C(s,2)，简单地完成分解并控制点数。",
+      "solution_variant": "triangular-column-groups"
+    },
+    {
+      "tag": "trick/handle-special-case",
+      "importance": "incidental",
+      "evidence": "k=0 时可以直接输出 0 个点。",
+      "solution_variant": "triangular-column-groups"
+    }
+  ]
+}
