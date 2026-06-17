@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2069,
+    "title": "Educational Codeforces Round 174 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2069,
+    "index": "F",
+    "title": "Graph Inclusion",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "divide and conquer",
+      "dsu",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2069/problem/F",
+      "notes": "Statement and constraints: maintain two fully dynamic undirected graphs A and B under edge toggles and output the minimum number of edges to add to A so that A includes B."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139774",
+      "notes": "Official tutorial page contains the accepted solution code. The code converts edge toggles into active intervals, processes them on a time segment tree, and uses rollback DSU for A and for A union B."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2069F",
+      "notes": "Luogu solution candidate; not consulted for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain two dynamic graphs A and B. After each edge toggle, compute the minimum extra edges needed in A so every connected component of B lies inside one connected component of A.",
+    "constraints": "n and q are up to 4e5, with arbitrary edge insertions and deletions, so online recomputation of connected components is impossible.",
+    "core_idea": "For a fixed time, first contract the components of A. To make A include B, every B component spanning c current A-components needs c-1 added edges. This total equals components(A) - components(A union B). The dynamic part is handled offline: turn every toggled edge into its active time intervals, insert each interval into a segment tree over query time, and DFS that tree. During recursion, maintain two rollback DSUs, one for A edges only and one for all active A/B edges. At a leaf, output A.comps - united.comps, then rollback all changes when returning.",
+    "complexity": "O(q log q log n) worst-case with rollback DSU by size and no path compression; memory O(q log q).",
+    "tricks": [
+      "answer formula components(A) - components(A union B)",
+      "convert edge toggles to active intervals",
+      "segment tree over time",
+      "rollback DSU in DFS recursion"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "offline-dynamic-connectivity-rollback-dsu",
+      "summary": "Build active intervals for every edge, add those intervals to a segment tree over time, and recursively maintain rollback DSUs for A and A union B to answer each query leaf.",
+      "complexity": "O(q log q log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/connectivity/dynamic-connectivity",
+      "importance": "primary",
+      "evidence": "The main task is maintaining connected components of graphs under edge insertions and deletions.",
+      "solution_variant": "offline-dynamic-connectivity-rollback-dsu",
+      "description": "Maintain or answer graph connectivity information under edge insertions, deletions, or time-varying edge sets.",
+      "parent": "graph/connectivity",
+      "created_reason": "This is a classic reusable retrieval target distinct from static connectivity; existing graph/connectivity is too broad and rollback DSU is an implementation detail.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/dsu/rollback",
+      "importance": "primary",
+      "evidence": "The DFS over time intervals must undo all DSU parent, size, and component-count changes after leaving a segment-tree node.",
+      "solution_variant": "offline-dynamic-connectivity-rollback-dsu"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "Queries are processed by divide-and-conquer over the time axis using a segment tree of active intervals.",
+      "solution_variant": "offline-dynamic-connectivity-rollback-dsu"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "Edge toggles are not answered by an online fully dynamic data structure; all queries are converted to active intervals before processing.",
+      "solution_variant": "offline-dynamic-connectivity-rollback-dsu"
+    }
+  ]
+}

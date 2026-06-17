@@ -226,6 +226,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/centroid-decomposition": "点分治",
   "graph/chain-graph": "链图",
   "graph/connectivity": "连通性",
+  "graph/connectivity/dynamic-connectivity": "动态图连通性",
   "graph/cut-parity": "割奇偶性",
   "graph/cycle-space": "环空间",
   "graph/dag": "DAG",
