@@ -6,6 +6,7 @@ from pathlib import Path
 
 from cfdb.db import connect, init_db
 from cfdb.dedup import canonical_problem_uid, mark_division_duplicates
+from cfdb.eligibility import classify_contest
 from cfdb.ingest import ingest_contest, upsert_ingestion_range
 from cfdb.normalize import parse_problem_ref
 from cfdb.reviewed import ReviewedPayloadError, apply_reviewed_payload
@@ -207,6 +208,13 @@ class CfDbTests(unittest.TestCase):
                     "SELECT title, rating, rating_status FROM problems WHERE problem_uid = 'cf_problem:77:B'"
                 ).fetchone()
                 self.assertEqual(dict(problem), {"title": "Keep Me", "rating": 1800, "rating_status": "official"})
+
+    def test_ioi_rules_contest_is_excluded(self) -> None:
+        eligibility = classify_contest(
+            "XIX Open Olympiad in Informatics - Final Stage, Day 1 (Unrated, Online Mirror, IOI rules)"
+        )
+        self.assertEqual(eligibility.status, "excluded")
+        self.assertIn("IOI-style", eligibility.reason or "")
 
     def reviewed_payload(self) -> dict[str, object]:
         return {

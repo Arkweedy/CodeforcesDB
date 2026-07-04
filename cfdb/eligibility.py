@@ -10,6 +10,7 @@ EXCLUDED_PATTERNS = [
     ("huawei", "heuristic or optimization challenge"),
     ("challenge", "challenge or optimization style contest"),
     ("winter challenge", "challenge or optimization style contest"),
+    ("ioi rules", "IOI-style contest with subtask scoring"),
     ("tact smart battle", "platform-specific smart contract contest"),
 ]
 

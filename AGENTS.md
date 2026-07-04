@@ -141,6 +141,7 @@ worker 职责：
 - 语言限定赛，例如 `Kotlin Heroes`。
 - 娱乐赛，例如 `April Fools Day Contest`。
 - 启发式、优化、challenge、marathon 类比赛。
+- IOI rules / 子任务评分场次，例如 `Open Olympiad in Informatics ... (IOI rules)`。
 - 明显不是标准 AC 判题目标的比赛。
 - 非标准测试场或特殊活动，除非用户明确要求纳入。
 
