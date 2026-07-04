@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2067,
+    "title": "Codeforces Round 1004 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2067,
+    "index": "C",
+    "title": "Devyatkino",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dfs and similar",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2067/problem/C",
+      "notes": "Statement and constraints: n <= 1e9, add any positive number consisting only of digit 9, minimize operations until the decimal representation contains digit 7."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official editorial page for Codeforces Round 1004; checked as the contest tutorial source, but the plain fetched page only exposed lazy-loaded tutorial placeholders."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/gr6ded4r",
+      "notes": "Luogu solution used to confirm the key transformation: an operation adds 10^x - 1, so for a fixed operation count one can subtract that count first and then reason digitwise."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2067/problem/C",
+      "notes": "Re-derived the fixed-k criterion by writing a sum of k operations as sum 10^{len_i} - k and distributing at most k unit increments among decimal positions."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2067C",
+      "notes": "Candidate Luogu solution listing; the consulted usable solution text is recorded as the Luogu article source."
+    }
+  ],
+  "annotation": {
+    "summary": "Given n, repeatedly add numbers of the form 9, 99, 999, ...; find the minimum number of operations needed so that the resulting decimal representation contains digit 7.",
+    "constraints": "t <= 1e4 and n <= 1e9. The answer is small: adding 9 repeatedly can force a digit 7 within at most 9 operations, so bounded enumeration is enough.",
+    "core_idea": "One operation of length len adds 10^len - 1. If exactly k operations are used, their total effect is -k plus k choices of adding one unit to arbitrary decimal positions. Thus fix k from 0 to 9 and inspect m=n-k. If some decimal digit of m, including a leading zero position above the current most significant digit, can be changed to 7 by adding c unit increments at that position with 0 <= c <= k, then k operations are feasible: spend c operations with that length and put all remaining unit increments at higher positions so they do not disturb the chosen digit. Checking digits only needs modular arithmetic modulo 10; for a digit d the needed c is (7-d) mod 10. The first feasible k is optimal.",
+    "complexity": "O(10 * number_of_digits(n)) per test case.",
+    "tricks": [
+      "rewrite 99...9 as 10^len - 1",
+      "fix the number of operations and subtract it before digit reasoning",
+      "include a leading zero digit so cases like 96 + 7*99 = 789 are covered",
+      "enumerate the bounded answer k <= 9"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bounded-k-digit-check",
+      "summary": "For k from 0 to 9, test whether n-k has any digit, plus one leading zero, whose value can become 7 after at most k increments modulo 10. The first feasible k is the answer.",
+      "complexity": "O(10 * digits)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "direct-small-search",
+      "summary": "Equivalently, for each k enumerate the relevant operation length/digit position choices within the small bound and test whether a digit 7 appears. This is simpler to code but less explicit about the invariant.",
+      "complexity": "O(10 * digits)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/base-representation",
+      "importance": "primary",
+      "evidence": "The solution depends on decimal positional digits and on interpreting 99...9 as 10^len - 1 so operations become unit increments at chosen decimal positions.",
+      "solution_variant": "bounded-k-digit-check"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The algorithm brute-forces the operation count k from 0 to 9 and checks each decimal digit, relying on the proven small bound.",
+      "solution_variant": "bounded-k-digit-check"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "For each digit d, the number of increments needed to make it 7 is computed as (7-d) modulo 10.",
+      "solution_variant": "bounded-k-digit-check"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "For a fixed k, every sequence of k operations has the invariant form n-k plus k decimal-place unit increments.",
+      "solution_variant": "bounded-k-digit-check"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The only coding care is scanning digits and appending one leading zero; implementation details are not the retrieval focus.",
+      "solution_variant": "bounded-k-digit-check"
+    }
+  ]
+}
