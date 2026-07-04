@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "B",
+    "title": "Urban Planning",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/B",
+      "notes": "Statement and constraints: construct a grid of parks/built-up cells with exactly k rectangular walks, for 0 <= k <= 4.194e12 and h,w <= 2025."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official Codeforces EUC editorial entry; used to identify the tutorial source for problem B."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://euc.icpc.global/wp-content/uploads/2025/03/solutions.pdf",
+      "notes": "Official ICPC Europe Championship solutions PDF; used for the full construction with an almost-full n by n+1 rectangle, corner deletions, and residual segments."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Chinese implementation notes for CF2068B; used to cross-check the diagonal top-left deletion order and the conversion of the remaining value into bottom-row/right-column segments."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/B",
+      "notes": "Re-derived the marginal-count invariant: top-left corner deletions destroy only rectangles whose top-left corner is the deleted cell, while separated added segments contribute independent triangular-number multiples."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068B",
+      "notes": "Candidate Luogu solution page; not moved into sources because the worker encountered an authorization/login barrier."
+    }
+  ],
+  "annotation": {
+    "summary": "Given k, output a grid with at most 2025 rows and columns whose park cells contain exactly k axis-aligned rectangular walks, where only the boundary of each rectangle must be all parks.",
+    "constraints": "0 <= k <= 4.194e12; h,w <= 2025. Counts are around C(2025,2)^2, so all arithmetic must be 64-bit, and the construction must fit in one bounded grid rather than relying on many disconnected large components.",
+    "core_idea": "A full H by W all-park block contributes C(H,2)*C(W,2) walks. For large k, choose n <= 2023 and start from a full n by (n+1) block with F(n)=C(n,2)*C(n+1,2) close to k. Delete cells from the top-left corner by increasing anti-diagonals until the remaining count x gives d=k-x in the target range n(n-1) <= d < 2n(n-1). The key invariant is that removing cell (r,c) from this top-left Young-diagram corner newly destroys exactly the rectangles whose top-left boundary corner is (r,c), so the loss is (n-r)*(n+1-c). Because gcd(n,n+1)=1 and d is large enough, write d as p*n + q*(n+1). Decompose p and q into triangular numbers C(len,2). A contiguous segment of len new cells in the extra bottom row under untouched columns adds C(len,2)*n walks, and a segment of len new cells in the extra right column beside untouched rows adds C(len,2)*(n+1) walks. Gaps between segments and an empty bottom-right corner prevent unintended cross-segment rectangles. Small k can be handled by isolated 2 by 2 blocks or an easier direct fill.",
+    "complexity": "O(2025^2) time and memory to materialize the grid; the arithmetic/planning part is O(number of removed cells + number of residual segments) and uses 64-bit integers.",
+    "tricks": [
+      "count a full park block as C(rows,2)*C(cols,2)",
+      "delete a top-left Young-diagram corner so each removed cell has a known marginal loss",
+      "represent the residual as p*n + q*(n+1) using consecutive coprime coefficients",
+      "decompose p and q into triangular numbers C(len,2)",
+      "separate added segments by dots to avoid unintended rectangles"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "near-full-rectangle-residual-segments",
+      "summary": "For large k, start with an n by (n+1) all-park rectangle, delete a controlled top-left corner to leave a residual d in a representable range, then realize d by bottom-row and right-column separated segments whose contributions are triangular-number multiples of n and n+1.",
+      "complexity": "O(2025^2) output",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "small-k-separated-blocks",
+      "summary": "For sufficiently small k, place isolated 2 by 2 all-park blocks separated by empty rows and columns; each block contributes exactly one rectangular walk and no cross-block rectangle is possible.",
+      "complexity": "O(2025^2) output",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The problem asks for an explicit grid, and the solution is an exact construction of a park pattern with a prescribed rectangle count.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The construction is driven by combinatorial rectangle counts C(H,2)*C(W,2) and by exact marginal counts for deleting or adding cells.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    },
+    {
+      "tag": "math/combinatorics/binomial-basis",
+      "importance": "primary",
+      "evidence": "The residual coefficients p and q are represented as sums of triangular numbers C(len,2), and each triangular term is materialized as one independent segment.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "After corner deletion, the remaining value d is expressed as p*n + q*(n+1) using gcd(n,n+1)=1 and modular residue/Frobenius-style representability.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The implementation can greedily remove cells until the residual is in range and greedily decompose p and q into the largest triangular numbers that fit.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Correctness depends on knowing the exact contribution change of each removed corner cell and each added segment, then summing those independent contributions.",
+      "solution_variant": "near-full-rectangle-residual-segments"
+    }
+  ]
+}

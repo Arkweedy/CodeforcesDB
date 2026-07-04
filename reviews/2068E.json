@@ -1,0 +1,141 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "E",
+    "title": "Porto Vs. Benfica",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/E",
+      "notes": "Statement and constraints: simple connected undirected unweighted graph, n,m <= 200000, one permanent adaptive edge block by the police."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official Codeforces tutorial page for European Championship 2025; used to identify the official editorial source."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://euc.icpc.global/wp-content/uploads/2025/03/solutions.pdf",
+      "notes": "Official EUC solutions PDF; used for the full minimax recurrence, BFS-tree detour computation, and Dijkstra-like computation of f."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/d7osh3sg",
+      "notes": "Luogu solution article cross-checks the recurrence and an offline sorted-edge/LCA/DSU-next-pointer way to compute g."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Steven1013/p/18763699",
+      "notes": "Chinese translation of the official solution; used as an additional cross-check for the f recurrence and official small-to-large g computation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068E",
+      "notes": "Original Luogu candidate solution listing; the consulted solution text was exposed through the Luogu article URL in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "给定一张无权连通图，球迷从 1 走到 n，警察可以在某次经过前永久封锁一条尚未经过的边一次。求双方最优时球迷保证到达 n 的最少走边数，若警察能使 n 不可达则输出 -1。",
+    "constraints": "n,m <= 200000；不能对每个点/每条边重新 BFS，需要近线性或多对数级图处理。",
+    "core_idea": "令 f(v) 表示人在 v 且警察仍有封边机会时的最优剩余代价；令 g(v,e) 表示从 v 出发、边 e 被删后的最短路。警察不会在球迷到达边端点前提前封边更优，因此在 v 时警察要么立刻封掉一条 incident edge，代价为 g(v)=max_e g(v,e)，要么继续等待一步，此时球迷会走向 f 最小的邻居。于是 f(v)=max(g(v),1+min_{u adj v} f(u))。高效求 g：从 n BFS 得到 dist 和一棵最短路树，选每个 v 的父边 b(v)。删掉 b(v) 后，最优 detour 必须先在 v 的 BFS 子树内走树边到 x，再用一条非树边跨出子树到 y，之后沿最短路到 n，代价为 dist[x]-dist[v]+1+dist[y]。官方做法在 BFS 树上 DFS，小并大维护每个子树的跨界候选并用 lazy offset 修正 dist[v]，删除仍在当前子树内部的候选。求完 g 后，用 Dijkstra-like 优先队列求上述 f 的最小不动点：从 g(v) 和 f(n)=0 初始化，用 max(g(u), f(v)+1) 松弛邻居 u。若 f(1) 无穷则答案 -1。",
+    "complexity": "O(m log^2 m + m log n) time for the official small-to-large variant, O(n+m) memory; an offline sorted-cross-edge variant can be O(m log m + (n+m) alpha(n) + m log n).",
+    "tricks": [
+      "用 minimax recurrence 表达自适应单次封边",
+      "封边只需考虑球迷到达边端点时发生",
+      "删除最短路树父边后的最优 detour 跨出 BFS 子树一次",
+      "用 dist[x]+dist[y]+1 候选值并在祖先处减去 dist[v]",
+      "用 Dijkstra-like fixed-point 算法求 f"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official-bfs-tree-small-to-large-plus-dijkstra",
+      "summary": "从 n BFS 并选最短路父边；在 BFS 树上 DFS，小并大合并候选 set 并用 lazy offset 求每个 g(v)；最后用优先队列按 f 递增松弛，求 f(v)=max(g(v),1+min f(u)) 的最小解。",
+      "complexity": "O(m log^2 m + m log n) time, O(n+m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "offline-sorted-cross-edge-lca-dsu",
+      "summary": "对每条非树边 (x,y)，基础值 dist[x]+dist[y]+1 会贡献给 BFS 子树恰好包含一个端点的祖先；按基础值排序，用 LCA 找到受影响祖先路径，并用 DSU next pointers 跳过已赋值的 g。之后同样运行 Dijkstra-like f 计算。",
+      "complexity": "O(m log m + (n+m) alpha(n) + m log n) time with LCA preprocessing, O(n+m) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "primary",
+      "evidence": "核心建模是 adversarial recurrence f(v)=max(g(v),1+min f(u))，在警察最坏封边和球迷最优移动之间取保证值。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "g(v,e) 和 BFS-tree detour 公式本质都是删边后的最短路计算。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "从 n 的 BFS 提供 dist[] 和一棵最短路树；g(v) 的计算围绕 BFS 父边和 BFS 子树展开。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "官方高效计算 g 时，在 BFS 树上把子节点候选集合小并大合并，并用 lazy offset 让每个 detour 候选只移动对数次。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "importance": "primary",
+      "evidence": "g 已知后，f 的单调递推通过每次固定当前最小 f 并松弛邻居来求解，是 Dijkstra-style priority-queue process。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "需要优先队列或有序结构取当前最优 detour 候选以及 f 计算中的最小未确定值。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "官方 g 计算在 BFS 树上自底向上 DFS，收集并合并子树候选状态。",
+      "solution_variant": "official-bfs-tree-small-to-large-plus-dijkstra"
+    },
+    {
+      "tag": "data-structure/dsu/next-pointer",
+      "importance": "secondary",
+      "evidence": "Luogu 变体按 detour 边值排序赋 g，并用 DSU next pointer 跳过已经更新过的祖先。",
+      "solution_variant": "offline-sorted-cross-edge-lca-dsu"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "secondary",
+      "evidence": "离线 sorted-edge 变体使用非树边两端点的 LCA 判断这条边跨出哪些祖先子树。",
+      "solution_variant": "offline-sorted-cross-edge-lca-dsu"
+    }
+  ]
+}
