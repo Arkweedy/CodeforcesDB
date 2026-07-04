@@ -1,0 +1,106 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "G",
+    "title": "A Very Long Hike",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/G",
+      "notes": "Statement and constraints: infinite periodic weighted grid, n <= 20, heights <= 1545, count positions reachable within 10^20 seconds with relative error."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official Codeforces editorial entry; problem G is listed as authored/prepared by Federico Glaudo, but the expanded tutorial text was not exposed in the fetched HTML."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://euc.icpc.global/wp-content/uploads/2025/03/solutions.pdf",
+      "notes": "Official EUC solutions PDF; used for the full stable-distance approximation, convex polygon reduction, error bound, and O(n^5) computation of T(i,j)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/G",
+      "notes": "Re-derived the periodic displacement metric, convex-hull unit ball, and area-counting interpretation from the statement and official PDF."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068G",
+      "notes": "Candidate source requested; no usable solution text was exposed through the accessible snapshot, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an infinite integer grid whose edge weights are induced by an n by n periodic height matrix, count approximately how many grid positions have shortest-path distance at most 10^20 from the origin.",
+    "constraints": "n <= 20 and edge weights are between 1 and 1546, while the radius is 10^20 and only 1e-6 relative precision is required; exact graph exploration is impossible, so the solution computes an asymptotic reachable shape from the finite periodic cell.",
+    "core_idea": "For every short macro direction (i,j) with |i|+|j| <= n, compute T(i,j): the minimum cost, divided by n, of moving from some cell (a,b) to its periodic translate (a+in,b+jn). Periodicity lets any shortest path segment with repeated residues be decomposed into such bounded segments, and the true distance to any cell differs from the resulting homogeneous cost f(x,y) by only O(D n^2), where D=1546. The function f is the gauge of a convex polygon P: take points p_ij=(i/T(i,j), j/T(i,j)) and form their convex hull. Then the number q(r) of integer cells with f(x,y) <= r is exactly the number of lattice points in rP, and for r around 10^20 this is within tiny relative error of area(P) * r^2. Therefore compute all T(i,j), build the convex hull of the normalized velocity points, and output 10^40 times its area.",
+    "complexity": "O(n^5 log n) with standard Dijkstra on bounded periodic grids, or O(n^5 + D) using bucketed shortest paths as in the official optimization; O(n^2 log n) for the convex hull and O(n^4) working memory for a bounded Dijkstra region.",
+    "tricks": [
+      "remove repeated modulo-n residues from paths to decompose long movement into short periodic displacements",
+      "approximate the infinite periodic shortest-path metric by a stable homogeneous norm with additive O(D n^2) error",
+      "convert the linear relaxation for f into the convex hull of normalized direction speeds",
+      "use area of a scaled convex polygon instead of exact lattice-point counting because R=10^20 makes boundary error negligible"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "periodic-stable-norm-convex-hull",
+      "summary": "Compute T(i,j) for all |i|+|j| <= n by bounded Dijkstra runs over the periodic weighted grid, build P=conv{(i/T(i,j),j/T(i,j))}, and output R^2 * area(P) for R=10^20; official lemmas bound both the distance approximation error and lattice-boundary error far below 1e-6 relative error.",
+      "complexity": "O(n^5 log n) time with priority queues, optimizable to O(n^5 + D) with buckets; O(n^4) memory for shortest-path preprocessing.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "The finite data defining the asymptotic metric consists of shortest weighted grid distances T(i,j) between periodic translates.",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    },
+    {
+      "tag": "math/geometry/convex-hull",
+      "importance": "primary",
+      "evidence": "The reachable asymptotic unit ball is the convex hull of the normalized displacement-speed points (i/T(i,j), j/T(i,j)).",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    },
+    {
+      "tag": "math/geometry/lattice-points",
+      "importance": "primary",
+      "evidence": "The answer is reduced to counting integer grid points in the scaled convex polygon R P, then approximated by its area with a proven boundary-error bound.",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "secondary",
+      "evidence": "The height matrix repeats modulo n, and the proof repeatedly uses congruent cells modulo n to cut paths and define periodic macro-moves.",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "The infinite weighted grid and 10^20 radius are compressed to O(n^2) relevant macro directions and bounded local shortest-path computations.",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    },
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "importance": "secondary",
+      "evidence": "The official algorithm computes the required weighted distances T(i,j) by bounded Dijkstra runs, with a bucketed variant exploiting small maximum edge weight.",
+      "solution_variant": "periodic-stable-norm-convex-hull"
+    }
+  ]
+}

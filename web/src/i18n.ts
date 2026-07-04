@@ -255,6 +255,7 @@ const FULL_TAG_TEXT_ZH: Record<string, string> = {
   "graph/path-counting": "路径计数",
   "graph/series-parallel-graph": "串并联图",
   "graph/shortest-path": "最短路",
+  "graph/shortest-path/0-1-bfs": "0-1 BFS",
   "graph/shortest-path/dijkstra": "Dijkstra",
   "graph/sparse-candidate-edges": "稀疏候选边",
   "graph/tree": "树",

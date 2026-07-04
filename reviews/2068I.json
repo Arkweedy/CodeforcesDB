@@ -1,0 +1,135 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "I",
+    "title": "Pinball",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "graphs",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/I",
+      "notes": "Statement and constraints: h,w <= 1000; choose an initial direction and schedule destruction times for oblique walls so the ball escapes with the minimum number of destroyed walls."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official Codeforces editorial page for EUC 2025; checked as the requested editorial source, though the fetched plain page exposed only the lazy-loaded tutorial placeholder."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://euc.icpc.global/wp-content/uploads/2025/03/solutions.pdf",
+      "notes": "Official EUC solutions PDF; used for the full region-graph lower bound, reverse reconstruction argument, and implicit (cell,direction) 0-1 BFS/Dijkstra implementation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/I",
+      "notes": "Re-derived the directed-state graph: normal motion/reflection costs 0, destroying an oblique wall to pass through costs 1, and predecessor replay gives destruction times."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068I",
+      "notes": "Luogu candidate page; fetch returned unauthorized in this session, so it was not consulted or promoted into sources."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a pinball grid with block walls, slash/backslash mirrors, free cells, and one start cell, choose the starting direction and destroy some mirrors at chosen times so the ball escapes the grid while minimizing the number of destroyed mirrors.",
+    "constraints": "h,w <= 1000, so there are up to 1e6 cells and 4e6 directed motion states; the solution must be near-linear or O(hw log(hw)) and also reconstruct a valid chronological list of destruction events.",
+    "core_idea": "With all walls fixed, the ball's directed motion is deterministic and decomposes the phase space into regions or trajectories. Oblique mirrors are exactly the boundaries where one may either reflect for free or destroy the mirror and cross to the neighboring region at cost 1. Therefore the minimum number of destroyed walls is a shortest-path distance from the initial directed states to an escaping state in a graph whose edges have weights 0 and 1. The official proof views this as a region graph: destroying k mirrors can only move the ball across k region boundaries, giving a lower bound; a shortest region path is attainable by simulating the path backward from the escaping region and restoring or destroying each boundary mirror when it is first reached, which yields a valid forward schedule.",
+    "complexity": "O(hw) time with 0-1 BFS on 4hw directed states, or O(hw log(hw)) with Dijkstra; O(hw) memory, plus output size.",
+    "tricks": [
+      "model physical motion as directed states (cell, direction)",
+      "normal movement and reflection are zero-cost transitions",
+      "destroying an oblique wall is a unit-cost pass-through transition",
+      "region-graph shortest path gives the optimal number of destroyed walls",
+      "reverse simulation reconstructs valid destruction times"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "implicit-directed-state-0-1-bfs",
+      "summary": "Run 0-1 BFS from the four possible starting directions over states (r,c,d). A free cell or block-wall/mirror reflection follows the physical successor with cost 0; at an oblique wall, add an alternative transition that destroys it and continues straight with cost 1. The first outside state gives the minimum k; stored predecessors reconstruct which mirrors were crossed by paid transitions and their chronological hit times.",
+      "complexity": "O(hw) time and O(hw) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "explicit-region-graph-plus-reverse-reconstruction",
+      "summary": "Trace deterministic unmodified trajectories to form regions, connect two regions by a unit edge when they share an oblique wall, BFS from the initial regions to any outside region, then simulate the chosen region path backward to decide when each boundary wall must be destroyed in the forward run.",
+      "complexity": "O(hw) time and O(hw) memory with careful tracing.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "The minimum number of destroyed mirrors is exactly the shortest distance from a start region/state to an escaping region/state in the region graph or implicit directed-state graph.",
+      "solution_variant": "implicit-directed-state-0-1-bfs"
+    },
+    {
+      "tag": "graph/shortest-path/0-1-bfs",
+      "display_name": "0-1 BFS",
+      "description": "Shortest path problems on graphs whose edge costs are only 0 and 1, solved with a deque instead of a priority queue; use when the 0/1 cost model is a central reduction.",
+      "parent": "graph/shortest-path",
+      "created_reason": "Existing graph/shortest-path is broad and graph/shortest-path/dijkstra covers general priority-queue relaxation; this problem's core model is specifically a 0/1-cost state graph where ordinary physics costs 0 and destroying a mirror costs 1.",
+      "status": "candidate",
+      "aliases": [
+        "01-bfs",
+        "0-1 bfs",
+        "zero-one-bfs"
+      ],
+      "importance": "primary",
+      "evidence": "The implementation graph has only zero-cost physical transitions and unit-cost mirror-destruction transitions, so 0-1 BFS computes the optimal k in linear time.",
+      "solution_variant": "implicit-directed-state-0-1-bfs"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "The ball position alone is insufficient; adding the direction to the state makes reflection, pass-through, and escape transitions locally decidable.",
+      "solution_variant": "implicit-directed-state-0-1-bfs"
+    },
+    {
+      "tag": "graph/functional-graph",
+      "importance": "secondary",
+      "evidence": "With no wall destruction, each directed state has a unique physical successor, and the region decomposition comes from these deterministic trajectories.",
+      "solution_variant": "explicit-region-graph-plus-reverse-reconstruction"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "The official reconstruction obtains a valid destruction schedule by simulating the chosen shortest region path backward and restoring boundary mirrors in reverse.",
+      "solution_variant": "explicit-region-graph-plus-reverse-reconstruction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "After computing the optimum, the solution must output the starting direction and exact destruction events, reconstructed from the shortest path.",
+      "solution_variant": "implicit-directed-state-0-1-bfs"
+    }
+  ],
+  "proposed_new_tags": [
+    {
+      "tag": "graph/shortest-path/0-1-bfs",
+      "display_name": "0-1 BFS",
+      "description": "Shortest path problems on graphs whose edge costs are only 0 and 1, solved with a deque instead of a priority queue; use when the 0/1 cost model is a central reduction.",
+      "parent": "graph/shortest-path",
+      "created_reason": "This is a classic, reusable shortest-path subcase and is more searchable than only graph/shortest-path.",
+      "status": "candidate"
+    }
+  ]
+}
