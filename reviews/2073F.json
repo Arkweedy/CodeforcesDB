@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "F",
+    "title": "Hold the Star",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/F",
+      "notes": "Statement and constraints: n up to 1e9, m and q up to 100000, weighted character movement, zero-cost pickup/drop, answer each initial star room."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the one-sided monotone-star argument, type classification, suffix-minimum stack, linear candidate costs, and convex hull trick."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ve8odu4m",
+      "notes": "Luogu writeup for P15497 cross-checks the same mirrored one-sided solution with monotonic stack and Li Chao segment tree for line minimum queries."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073F",
+      "notes": "Direct CF2073F Luogu candidate returned no usable page; the usable Luogu P15497 article is listed in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "给定 m 个角色在一维房间中的初始位置和单位移动代价，q 个独立关卡各给一个星星初始房间，求让角色 m 最终拿到星星的最小总代价。",
+    "constraints": "n 和代价可达 1e9，m,q <= 100000；需要按左右两侧分别 O((m+q) log(m+q)) 处理，并用 64-bit 保存答案。",
+    "core_idea": "先处理星星在角色 m 右侧的情况，左侧通过镜像坐标复用。最优策略中星星不需要远离角色 m 运动。第一个有效搬运者只有几类：角色 m 直接去拿、星星右侧角色向左拿、星星左侧角色先向右再向左拿。第一个搬运者之后，向 m 方向传递时只会使用移动代价严格递减的角色，这些角色正是按位置看的后缀最小链。将查询按星星位置递增离线扫描：用单调栈维护后缀最小链并计算 dp[x]，表示从角色 x 开始后续交接的最小代价。星星右侧第一个搬运者用 dp 的后缀最小回答；星星左侧第一个搬运者的代价关于 l_j 是线性函数，随着扫描加入 Li Chao tree 查询最小值。和直接由 m 去拿的情况取 min，再镜像处理另一侧。",
+    "complexity": "O((m+q) log(m+q)) time and O(m+q) memory.",
+    "tricks": [
+      "镜像坐标复用右侧算法",
+      "证明星星在最优策略中单调靠近角色 m",
+      "后续交接只保留移动代价递减的后缀最小链",
+      "把第一个搬运者候选转成关于星星位置的直线最小值"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mirrored-sweep-stack-li-chao",
+      "summary": "对星星在角色 m 一侧的查询排序扫描，维护递减代价交接链的单调栈和 dp；右侧 first-carrier 用 suffix min，左侧 first-carrier 用 Li Chao tree 维护线性函数最小值。取坐标相反数后对另一侧再跑一遍。",
+      "complexity": "O((m+q) log(m+q)) time, O(m+q) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "解法依赖多个贪心结构性质：星星单调向角色 m 移动、只需有限类型的 first carrier、后续交接只用移动代价递减的角色。",
+      "solution_variant": "mirrored-sweep-stack-li-chao"
+    },
+    {
+      "tag": "data-structure/li-chao-tree",
+      "importance": "primary",
+      "evidence": "type-3 first carrier 每个候选 x 都给出关于查询位置 l_j 的直线，需要动态维护 active lines 的最小值。",
+      "solution_variant": "mirrored-sweep-stack-li-chao"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "扫描扩展候选区间时弹出移动代价被支配的角色，保留后缀最小链来计算交接 dp。",
+      "solution_variant": "mirrored-sweep-stack-li-chao"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "查询按星星位置排序，使候选角色和直线可以增量加入，而不是按输入顺序在线回答。",
+      "solution_variant": "mirrored-sweep-stack-li-chao"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "星星在角色 m 左侧的情况通过坐标取反，完全复用右侧算法。",
+      "solution_variant": "mirrored-sweep-stack-li-chao"
+    }
+  ]
+}

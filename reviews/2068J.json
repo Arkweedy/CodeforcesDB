@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2068,
+    "title": "European Championship 2025 - Online Mirror (Unrated, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2068,
+    "index": "J",
+    "title": "The Ultimate Wine Tasting Event",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2068/problem/J",
+      "notes": "Statement and constraints: choose two equal-size subsets; kth elements in sorted order are swapped once; decide if all whites can end in the first half."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/140239",
+      "notes": "Official Codeforces tutorial page for European Championship 2025 Online Mirror; used to identify the official editorial source."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://euc.icpc.global/wp-content/uploads/2025/03/solutions.pdf",
+      "notes": "Official EUC solutions PDF; used for the full proof of the necessary and sufficient prefix/suffix condition for problem J."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2068/problem/J",
+      "notes": "Re-derived the rank-matching invariant and cross-checked that parity/count alone is insufficient."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2068J",
+      "notes": "Luogu candidate was searched, but no usable solution text was exposed in the accessible snapshot."
+    }
+  ],
+  "annotation": {
+    "summary": "给定由 n 个白瓶和 n 个红瓶组成的序列，选择两个大小相等的子集，按各自排序后的第 k 个元素成对交换一次，判断能否让所有白瓶都在前半段。",
+    "constraints": "t <= 500, n <= 100；O(n) 判定足够，难点是刻画 equal-rank swap 的结构条件。",
+    "core_idea": "设两个选中子集排序后为 A={a_1<...<a_n} 和 B={b_1<...<b_n}。令 h,k 分别是 A、B 在前半段中的数量，不妨 h<=k，则 h+k=n。rank 1..h 的交换对都在前半段，因此这 2h 个位置交换前必须已经是白瓶；rank h+1..k 的 B 端点在前半段、A 端点在后半段，前半段这些 B 位置必须是红瓶才会换走。于是前半段白瓶数必须正好是 2h，并且物理上的前 h 个位置必须都是白瓶。对称地，后半段红瓶数也是 2h，物理上的最后 h 个位置必须都是红瓶。反过来，若前半段白瓶数为 2h，前 h 位全白、后 h 位全红，则取 A 为前 h 个位置加上最靠前的 n-h 个红瓶，B 为补集，即可构造成功。",
+    "complexity": "O(n) time and O(1) extra memory per test case.",
+    "tricks": [
+      "按两个子集排序后的 rank matching 建模",
+      "前半段白瓶数必须为偶数但这不是充分条件",
+      "同时需要前 h 位全白和后 h 位全红的前后缀条件"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rank-count-prefix-suffix-condition",
+      "summary": "统计前半段白瓶数 w。若 w 为奇数则 NO；否则 h=w/2，当且仅当前 h 个字符全为 W 且后 h 个字符全为 R 时 YES。",
+      "complexity": "O(n) time, O(1) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "决定性不变量是两个排序子集诱导的 rank 结构：它决定哪些 rank 在前半段内部、跨越中点或在后半段内部配对。",
+      "solution_variant": "rank-count-prefix-suffix-condition"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "解法是对 equal-rank pairing 是否能实现目标排列的组合刻画，并给出充分方向的显式子集构造。",
+      "solution_variant": "rank-count-prefix-suffix-condition"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "前半段白瓶数必须为 2h，因此偶性是必要条件，但还必须配合前后缀顺序条件。",
+      "solution_variant": "rank-count-prefix-suffix-condition"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "构造充分性时，确定 h 后贪心取前 h 个位置和最靠前的 n-h 个红瓶作为一个子集即可。",
+      "solution_variant": "rank-count-prefix-suffix-condition"
+    }
+  ]
+}
