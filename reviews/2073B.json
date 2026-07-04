@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "B",
+    "title": "Three-Dimensional Embedding",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/B",
+      "notes": "Codeforces statement: construct an integer-coordinate axis-aligned 3D polyline embedding in [0,400]^3 for a simple graph with n <= 1600, m <= 4000, and maximum degree 5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the local degree-five gadget, matching-layer routing, contracted graph edge-coloring, and sqrt(n)-scale grid layout."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2073/B",
+      "notes": "Re-derived why greedy edge-coloring of the contracted graph gives at most 10d-1 matching layers and why choosing d around sqrt(n)/3 fits inside the 400 cube."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073B",
+      "notes": "Luogu candidate was checked by the worker, but no usable public solution content was found."
+    }
+  ],
+  "annotation": {
+    "summary": "给定最大度不超过 5 的简单图，构造一个三维整数坐标嵌入：每个顶点放在 z=0 的不同格点，每条边输出不超过 30 个节点的轴平行折线，并避免非法相交。",
+    "constraints": "2 <= n <= 1600, 1 <= m <= 4000, max degree <= 5；所有坐标必须在 [0,400]^3 内，要求构造在三维尺寸上接近 sqrt(n) 级别。",
+    "core_idea": "为每个图顶点设计一个常数大小、带 5 个独立端口的局部 gadget，每个 incident edge 使用一个端口。把 gadget 排成 d 行、约 n/d 列的网格。将同一列的 d 个 gadget 缩成一个超点，则跨列边形成最大度 O(5d) 的图；用贪心边染色把这些边分成至多 10d-1 个 matching。每个 matching 分配自己的 z 层/双层通道，并用不同 y-track 连接端口，保证同层折线不相交。同列内部边用另一侧预留的本地走廊处理，与跨列通道分离。整体尺寸约为 3n/d、5d+n/(2d)、20d，取 d≈sqrt(n)/3 后三维都低于 400。",
+    "complexity": "O(n sqrt n + m) with straightforward greedy coloring and constant-length output polylines; m = O(n) because degree <= 5.",
+    "tricks": [
+      "给每个顶点构造 5 端口局部 gadget",
+      "用贪心边染色把有界度边集分解成 matching",
+      "每个 matching 使用私有 z 层和 y-track 走线",
+      "用 sqrt(n) 网格布局平衡三维盒子尺寸",
+      "把同列边和跨列边放入不同侧的走廊"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "grid-gadget-edge-coloring-construction",
+      "summary": "将 5 端口 gadget 放入 d 行网格，为每条 incident edge 分配端口；对缩列后的跨列边贪心边染色，逐 matching 在专属 z 层中布线；同列边用预留本地通道处理，最终输出每条边的短轴平行折线。",
+      "complexity": "O(n sqrt n + m)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求显式输出三维坐标和每条边的折线，核心是构造方案而不是判定或优化。",
+      "solution_variant": "grid-gadget-edge-coloring-construction"
+    },
+    {
+      "tag": "math/geometry/grid-lines",
+      "importance": "primary",
+      "evidence": "构造在三维整数格线上进行，所有线段都沿坐标轴平行的格线走线。",
+      "solution_variant": "grid-gadget-edge-coloring-construction"
+    },
+    {
+      "tag": "graph/edge-coloring",
+      "importance": "primary",
+      "evidence": "缩列图的边通过贪心边染色分成多个 matching，颜色数直接决定需要多少 z 层。",
+      "solution_variant": "grid-gadget-edge-coloring-construction",
+      "description": "Color graph edges so adjacent edges receive different colors, often to decompose a bounded-degree graph into matchings or independent edge batches.",
+      "parent": "graph",
+      "created_reason": "Existing graph/matching captures one color class, but not the reusable edge-decomposition step that turns a bounded-degree graph into many matchings for scheduling or routing.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "每个边颜色类都是 matching，因此可以安全共用一组 z 层而不会在端点附近冲突。",
+      "solution_variant": "grid-gadget-edge-coloring-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "边染色本身用贪心完成：最大度 Delta 时每条边最多被 2Delta-2 个相邻颜色禁止，因此 2Delta-1 色足够。",
+      "solution_variant": "grid-gadget-edge-coloring-construction"
+    }
+  ]
+}

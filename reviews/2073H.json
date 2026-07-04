@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "H",
+    "title": "Secret Lilies and Roses",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/H",
+      "notes": "Codeforces statement: hidden lily/rose string, type and multiply queries, n <= 100 and at most 10 queries per test case."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the total-roses reduction, the rose-to-lily boundary search, the two multiply equations, and the query bound."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/u5dsd3tb",
+      "notes": "Luogu writeup cross-checks the same idea: answer the total number of roses, find a rose/lily boundary with type queries, then compute it from nearby multi queries."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073H",
+      "notes": "The direct Luogu candidate URL did not provide usable solution text; the linked Luogu article in sources was used instead."
+    }
+  ],
+  "annotation": {
+    "summary": "隐藏一排 n 朵百合/玫瑰。查询可以问某朵花类型，或问前缀百合数 l_j 与后缀玫瑰数 r_j 的乘积。需要在 10 次查询内输出任意 k 使 l_k = r_k。",
+    "constraints": "t <= 100, n <= 100；每个测试最多 10 次 type/multi 查询，因此只能用 O(log n) 查询定位关键信息，不能识别所有花。",
+    "core_idea": "设总玫瑰数为 R，则直接 answer R 一定合法：若前 R 朵中有 x 朵玫瑰，则 l_R=R-x，而剩余位置中的玫瑰数 r_R 也等于 R-x。因此问题只剩求 R。加入虚拟位置 0 为 rose、位置 n+1 为 lily；维护一个左端 rose、右端 lily 的区间，用 type 查询中点后保留仍含 rose-to-lily 边界的一侧，二分得到相邻边界 x,x+1。令 L=l_x, Q=r_x，因为 x 是 rose 且 x+1 是 lily，有 multi(x-1)=L(Q+1)、multi(x+1)=(L+1)Q，差分得到 Q-L，所以 R=x+Q-L=x-multi(x-1)+multi(x+1)。",
+    "complexity": "ceil(log2(n+1)) + 2 queries per test case, O(log n) local work.",
+    "tricks": [
+      "总玫瑰数 R 本身就是合法答案",
+      "用虚拟 rose/lily 保证存在 rose-to-lily 边界",
+      "按查询到的类型二分边界",
+      "用 multi(x-1) 与 multi(x+1) 的差消去乘积中的两个未知量"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "boundary-binary-search-and-product-difference",
+      "summary": "先用 type 查询在带虚拟端点的序列中二分找到一个 rose 后接 lily 的边界 x；随后只问 multi(x-1) 和 multi(x+1)，输出 x - multi(x-1) + multi(x+1)。",
+      "complexity": "ceil(log2(n+1)) + 2 queries",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "解法必须设计自适应 type/multi 查询，并在每个测试的 10 次交互限制内确定答案。",
+      "solution_variant": "boundary-binary-search-and-product-difference"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "通过虚拟 rose/lily 端点维持存在 rose-to-lily 边界的区间，每次 type 中点后把候选区间减半。",
+      "solution_variant": "boundary-binary-search-and-product-difference"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "type 查询用于定位特殊边界，multi 查询在边界两侧直接编码总玫瑰数所需的 Q-L。",
+      "solution_variant": "boundary-binary-search-and-product-difference"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "multi(x+1)-multi(x-1)=(L+1)Q-L(Q+1)=Q-L，差分后即可得到总玫瑰数 R=x+Q-L。",
+      "solution_variant": "boundary-binary-search-and-product-difference"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "核心不变量是任意隐藏排列中，总玫瑰数 R 总满足 l_R=r_R。",
+      "solution_variant": "boundary-binary-search-and-product-difference"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "I",
+    "title": "Squares on Grid Lines",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2073/problem/I",
+      "notes": "Codeforces statement: n <= 2000, q <= 100000; each query asks for the number of squares of a given two-decimal area whose four vertices lie on cell boundaries, with -1 for infinitely many placements."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the finite/infinite-area classification, corner-point and center-point pivot enumeration, interval generation, and sweep over queries."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2073/problem/I",
+      "notes": "Re-derived why grid-line constrained finite cases reduce to centers at grid corners or cell centers, and why continuous movement along a segment contributes an interval of possible areas."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073I",
+      "notes": "Luogu candidate was searched but no usable solution page was found, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "在 n*n 单位网格中，多次询问面积 s，统计四个顶点都落在某个格子边界上的正方形数量；若同一面积有连续无穷多种摆法则输出 -1。",
+    "constraints": "1 <= n <= 2000, q <= 100000, si 以两位小数给出；需要预处理 O(n^2) 级别的几何事件并离线回答大量查询。",
+    "core_idea": "先把点分为格点、水平边内部点、竖直边内部点和格心相关的中心情形。若一个全格点顶点的正方形不全在外边界上，它可以沿网格线平移，面积属于 infinite area，查询直接输出 -1。对非 infinite area，可以证明只剩两类：顶点按水平/竖直边内部点交替，或四个顶点都是外边界整数点；等价地，正方形中心只需考虑在格点或格心。分别选取最对称的 pivot，枚举一个象限中的水平/竖直格边线段作为唯一代表：线段上的点到中心距离连续变化，正方形面积 2d^2 因而形成一个面积区间；根据该线段到边界的余量计算可平移到多少个中心。对格点中心和格心中心各做一次，得到带权面积区间和 infinite area 集合。最后按面积排序做扫描线/差分事件，查询落在 active interval 的权重和；若面积在 infinite set 中则输出 -1。",
+    "complexity": "O((n^2 + q) log n) or O((n^2 + q) log(n^2)) depending on event sorting/set implementation.",
+    "tricks": [
+      "把有限面积正方形分类为中心在格点或格心",
+      "利用一个象限中的一条格边线段唯一代表连续顶点位置",
+      "把连续几何位置转化为面积区间贡献",
+      "单独维护会产生无穷多摆法的面积集合",
+      "离线排序查询并扫描区间事件"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "area-interval-sweep",
+      "summary": "枚举格点中心 pivot 与格心中心 pivot 的象限线段，为每个线段生成一个面积区间和可平移权重；同时记录全格点可平移产生的 infinite areas。排序区间端点和查询面积，用扫描线维护当前覆盖权重回答每个查询。",
+      "complexity": "O((n^2 + q) log n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/grid-lines",
+      "importance": "primary",
+      "evidence": "题目核心限制是顶点必须位于单位网格的格边/格线边界上，解法也围绕格点、水平边点、竖直边点、格心和外边界分类。",
+      "solution_variant": "area-interval-sweep",
+      "description": "Geometry problems where points, segments, or movements are constrained by grid lines or cell boundaries rather than only integer lattice points.",
+      "parent": "math/geometry",
+      "created_reason": "Existing math/geometry/lattice-points only covers integer points, but this problem's reusable structure is continuous positions on grid lines and cell boundaries.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "最终目标是计数每个面积对应的正方形摆放数，线段枚举和中心平移都转化为带权计数贡献。",
+      "solution_variant": "area-interval-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "所有连续线段贡献被转成面积轴上的区间事件，查询按面积排序后用扫描线维护当前总权重。",
+      "solution_variant": "area-interval-sweep"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "实现上可把每个面积区间拆成左右端点事件，对查询坐标做离散化后用差分/前缀和累计覆盖贡献。",
+      "solution_variant": "area-interval-sweep"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "每条格边线段贡献一个带权面积区间，扫描过程中维护所有已开始未结束区间的贡献和。",
+      "solution_variant": "area-interval-sweep"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "正确性依赖先区分 infinite areas、边界整数点、格点中心和格心中心等几何情况。",
+      "solution_variant": "area-interval-sweep"
+    },
+    {
+      "tag": "math/geometry/lattice-points",
+      "importance": "incidental",
+      "evidence": "格点正方形只用于识别部分 infinite areas 和外边界整数点特殊情况，主计数还包含非格点的格边连续位置。",
+      "solution_variant": "area-interval-sweep"
+    }
+  ]
+}

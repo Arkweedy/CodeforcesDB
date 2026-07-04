@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "E",
+    "title": "Minus Operator",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2073/problem/E",
+      "notes": "Statement and interaction constraints: hidden expression over n occurrences of x, boolean minus, binary-string queries, n <= 200 and at most 500 queries."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the left-to-right parenthesis reconstruction strategy and the at-most 2.5n query bound."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073E",
+      "notes": "Luogu candidate was checked by the worker, but no usable solution page was found."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2073/status/E",
+      "notes": "Accepted submissions exist; direct submission source pages may be blocked by browser verification and were not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "交互 judge 隐藏一个由 E ::= x | (E - E) 生成的全括号表达式，其中 x 会被替换成查询二进制串的对应 bit，boolean minus 等于 a AND NOT b。只给 n，需要在 500 次查询内恢复完整表达式。",
+    "constraints": "3 <= n <= 200；每次查询是长度 n 的二进制串并返回一个 bit；查询上限 500，隐藏表达式固定且可唯一恢复。",
+    "core_idea": "把表达式看成左结合减法，再只记录会改变解析结构的括号。每个变量附近只有有限几类局部形态：可能开启一个右子表达式、没有括号，或在变量后关闭若干层括号。按从左到右恢复这些局部形态。已知前缀后，构造查询串把已完成的上下文固定成中性值，并把当前未决前缀压成标准的嵌套 1-(1-(...)) 形态；在这个标准情形下，少量自适应 boolean 查询即可区分当前 x 是 (x、x、x)、x)) 等候选。把所有变量的查询数加总，可证明为 2n + sum ceil(r_j/2) <= 2.5n，n <= 200 时不超过 500。",
+    "complexity": "At most 2.5n oracle queries; O(n^2) local work to build query strings and assemble the expression; O(n) memory.",
+    "tricks": [
+      "把表达式标准化为左结合 minus 加必要括号",
+      "从左到右恢复每个变量周围的括号模式",
+      "构造查询使已知上下文坍缩为标准嵌套链",
+      "用小型自适应决策树区分有限个局部括号形态",
+      "按关闭括号数量摊还查询数"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "left-to-right-parenthesis-reconstruction",
+      "summary": "维护已恢复前缀。对下一个变量构造若干查询，使已知上下文化为官方分析中的标准嵌套情形；根据返回 bit 判定该变量是开启子表达式、无括号，还是关闭若干括号层，并追加到答案表达式。",
+      "complexity": "At most 2.5n queries, O(n^2) local construction time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "核心任务是在严格查询次数内，通过自适应 oracle 返回值恢复隐藏表达式树。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "解法专门设计二进制查询串，使已知表达式上下文坍缩，返回 bit 直接暴露当前局部括号结构。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    },
+    {
+      "tag": "trick/query-encoding",
+      "importance": "primary",
+      "evidence": "每个变量用若干精心选择的查询串，把 (x、x、x)、x)) 等有限候选编码成可区分的回答模式。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "局部分类器会根据第一次查询结果选择后续查询，以区分剩余括号形态。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    },
+    {
+      "tag": "implementation/parsing/expression",
+      "importance": "secondary",
+      "evidence": "隐藏对象是一个全括号二元表达式，最终输出等价于恢复其解析树结构。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "secondary",
+      "evidence": "题目是真交互式 query-answer 协议；更精确的主标签是 oracle reconstruction。",
+      "solution_variant": "left-to-right-parenthesis-reconstruction"
+    }
+  ]
+}

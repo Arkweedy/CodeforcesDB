@@ -1,0 +1,122 @@
+{
+  "contest": {
+    "contest_id": 2073,
+    "title": "2025 ICPC Asia Pacific Championship - Online Mirror (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2073,
+    "index": "K",
+    "title": "Book Sorting",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2073/K",
+      "notes": "Codeforces statement: sort a permutation by adjacent swaps, move-to-front, and move-to-back operations; n <= 500000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://www.scribd.com/document/985558767/Problem-Analysis",
+      "notes": "Official APAC problem analysis mirror; used to confirm the inverse permutation, contiguous kept label interval, f(l,r)=r-l-inv formulation, frontier set S_r, and O(n log n) balanced-set update."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0itq0yzl",
+      "notes": "Luogu writeup cross-checks the official S_r frontier invariant and set deletion process."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/jbx2gc7p",
+      "notes": "Luogu writeup describes an alternative decision-monotonicity plus Fenwick/inversion-query approach."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2073K",
+      "notes": "The direct Luogu candidate URL did not provide usable solution text; the linked Luogu articles in sources were used instead."
+    }
+  ],
+  "annotation": {
+    "summary": "给定 1..n 的排列，可交换相邻书、把一本书移到最左、或把一本书移到最右。求把标签升序排列的最少操作数。",
+    "constraints": "n <= 500000，需要 O(n log n) 级别算法和线性内存；相邻交换成本等于相关子序列的逆序对数。",
+    "core_idea": "设 a_label 为标签 label 在原排列中的位置。最优方案可表示为选择一个保留的连续标签区间 [l,r]：把 l-1,l-2,...,1 依次移到最左，把 r+1,r+2,...,n 依次移到最右，剩下标签 l..r 仅靠相邻交换排序。代价为 l-1+n-r+inv(a_l..a_r)，等价于最大化 f(l,r)=r-l-inv(a_l..a_r)。固定右端 r，维护所有左端中 f 的严格后缀记录集合 S_r；若按左端从大到小排为 s_1=r,s_2,...，有 f(s_j,r)=j-1，因此当前最优值只看 |S_r|。从 r 扩展到 r+1 时，先加入新左端 r+1；每个新逆序 a_l>a_{r+1} 会让所有起点 <=l 的 f 减 1，等价于删除 S 中不超过 l 的最大元素。用两个有序 set 维护 S 和仍可能产生删除的逆序候选，每个下标加入一次、删除至多一次，得到 O(n log n)。",
+    "complexity": "O(n log n) time, O(n) memory.",
+    "tricks": [
+      "最优 move-to-front/back 的标签集合一定是前缀和后缀",
+      "保留的中间标签区间只需支付逆序对数量的相邻交换",
+      "把目标转为最大化 r-l-inv(a_l..a_r)",
+      "维护 f 的后缀记录前沿 S_r",
+      "每个候选下标被加入和删除至多一次以保证摊还复杂度"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official-balanced-set-frontier",
+      "summary": "构造逆排列 a。扫描右端 r，维护严格后缀记录左端集合 S 和按 a_l 排序的待处理候选；加入 r 后，对所有 a_l>a_r 的候选删除 S 中 <=l 的最大元素，若删除无效则该候选以后也不会有效。答案为 n - max_r |S_r|。",
+      "complexity": "O(n log n) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "decision-monotonicity-fenwick-inversions",
+      "summary": "等价地最小化 g(l,r)=l-1+n-r+inv(a_l..a_r)。该区间逆序对代价满足四边形不等式，从而最优左端随右端单调；用分治决策单调性框架枚举右端，并用 Fenwick 树维护当前值域区间的逆序对。",
+      "complexity": "O(n log^2 n) time with mutable inversion queries, O(n) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "解法把原排列转换为标签的逆排列位置 a_label，并证明只需选择一个连续标签区间 [l,r] 留给相邻交换。",
+      "solution_variant": "official-balanced-set-frontier"
+    },
+    {
+      "tag": "trick/inversion-count",
+      "importance": "primary",
+      "evidence": "保留区间 [l,r] 内仅用相邻交换排序的最小次数正是 inv(a_l..a_r)，目标函数直接由逆序对数构成。",
+      "solution_variant": "official-balanced-set-frontier"
+    },
+    {
+      "tag": "trick/frontier-maintenance",
+      "importance": "primary",
+      "evidence": "核心数据对象 S_r 是 f(l,r) 的严格后缀记录前沿；答案由前沿大小给出，扩展右端时每个新逆序只会删除一个前沿点。",
+      "solution_variant": "official-balanced-set-frontier",
+      "description": "Maintain a dynamic frontier of record or nondominated candidates under monotone updates, where the optimum is read from the frontier and amortized insert/delete behavior is essential.",
+      "parent": "trick",
+      "created_reason": "Existing ordered-set and greedy tags describe implementation pieces, but not the reusable invariant of maintaining only record candidates S_r and deleting dominated frontier points under updates.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "需要有序集合支持插入、遍历 a_l>a_r 的候选，以及删除 S 中不超过 l 的最大左端点。",
+      "solution_variant": "official-balanced-set-frontier"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "处理每个新逆序时贪心删除当前 S 中最大的可删左端点；这正好维护下一轮的记录前沿。",
+      "solution_variant": "official-balanced-set-frontier"
+    },
+    {
+      "tag": "dp/decision-monotonicity",
+      "importance": "secondary",
+      "evidence": "替代解利用区间逆序对目标的四边形不等式，按右端分治时最优左端单调。",
+      "solution_variant": "decision-monotonicity-fenwick-inversions"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "替代解在移动值域区间端点时用 Fenwick 树维护区间内元素位置集合和逆序对数。",
+      "solution_variant": "decision-monotonicity-fenwick-inversions"
+    }
+  ]
+}
