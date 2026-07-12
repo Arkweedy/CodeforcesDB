@@ -203,10 +203,11 @@ python scripts/check_tag_translations.py
 
 - WebUI 是本地个人查询工具，不做登录和权限。
 - 后端入口是 `cfdb.web_app:app`，前端在 `web/`。
-- WebUI 唯一允许写库的业务数据是 `problem_user_state` 中的 favorite 和 note。
+- WebUI 必须把个人数据写入被 Git 忽略的 `data/cfdb.user.sqlite` overlay；主题库 `data/cfdb.sqlite` 对 WebUI 只读。
+- WebUI 只允许写 favorite、note、手动/同步做题状态、个人优先级和 app settings。
 - 不要通过 WebUI 编辑 rating、annotation、solution variants 或 tags；这些仍必须走 AI-reviewed JSON 流程。
 - 前端包管理使用 `npm.cmd`，避免 PowerShell 执行策略拦截 `npm.ps1`。
-- 修改 WebUI 后至少运行后端单测和 `npm.cmd run build --prefix web`。
+- 修改 WebUI 后至少运行后端单测、`npm.cmd test --prefix web` 和 `npm.cmd run build --prefix web`。
 
 ## 测试与清洁
 

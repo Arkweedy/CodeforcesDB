@@ -98,8 +98,16 @@ WebUI 结构说明见 [webui-architecture.md](webui-architecture.md)。
 后端：
 
 ```powershell
-python -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8765
+.venv\Scripts\python.exe -m uvicorn cfdb.web_app:app --reload --host 127.0.0.1 --port 8000
 ```
+
+个人数据默认写入被 Git 忽略的 `data/cfdb.user.sqlite`。需要其他位置时设置：
+
+```powershell
+$env:CFDB_USER_PATH='D:\path\to\cfdb.user.sqlite'
+```
+
+Vite 默认代理到 `http://127.0.0.1:8000`，可通过 `VITE_API_TARGET` 覆盖。
 
 前端开发模式：
 
@@ -111,6 +119,12 @@ npm.cmd run dev --prefix web
 
 ```powershell
 npm.cmd run build --prefix web
+```
+
+前端测试：
+
+```powershell
+npm.cmd test --prefix web
 ```
 
 ## 测试

@@ -52,3 +52,12 @@ class CodeforcesClient:
 
     def problemset_problems(self) -> dict[str, Any]:
         return self.call("problemset.problems")
+
+    def user_status(
+        self,
+        handle: str,
+        *,
+        offset: int = 1,
+        count: int = 1000,
+    ) -> list[dict[str, Any]]:
+        return self.call("user.status", handle=handle, **{"from": offset}, count=count)

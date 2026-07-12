@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sqlite3
 import sys
@@ -11,19 +12,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from cfdb.db import DEFAULT_DB_PATH, ROOT
 
 
-FULL_TAG_BLOCK_RE = re.compile(
-    r"const\s+FULL_TAG_TEXT_ZH\s*:\s*Record<string,\s*string>\s*=\s*\{(?P<body>.*?)\n\};",
-    re.DOTALL,
-)
-TAG_KEY_RE = re.compile(r'^\s*"([^"]+)"\s*:', re.MULTILINE)
-
-
 def extract_full_tag_translations(i18n_path: str | Path) -> set[str]:
-    text = Path(i18n_path).read_text(encoding="utf-8")
-    match = FULL_TAG_BLOCK_RE.search(text)
-    if match is None:
-        raise ValueError(f"cannot find FULL_TAG_TEXT_ZH block in {i18n_path}")
-    return set(TAG_KEY_RE.findall(match.group("body")))
+    path = Path(i18n_path)
+    source = path.read_text(encoding="utf-8")
+    if path.suffix.lower() != ".json":
+        # Compatibility for older callers and archived WebUI sources. The live
+        # translation catalogue is JSON; this branch is intentionally read-only.
+        return set(re.findall(r'^\s*"([^"]+)"\s*:', source, flags=re.MULTILINE))
+    payload = json.loads(source)
+    if not isinstance(payload, dict) or not all(
+        isinstance(key, str) and isinstance(value, str) for key, value in payload.items()
+    ):
+        raise ValueError(f"expected a string-to-string JSON object in {i18n_path}")
+    return set(payload)
 
 
 def db_tags(db_path: str | Path) -> list[str]:
@@ -43,8 +44,8 @@ def main() -> None:
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH), help="SQLite database path.")
     parser.add_argument(
         "--i18n",
-        default=str(ROOT / "web" / "src" / "i18n.ts"),
-        help="Path to WebUI i18n.ts.",
+        default=str(ROOT / "web" / "src" / "i18n" / "tags.zh.json"),
+        help="Path to the WebUI full-tag Chinese translation JSON.",
     )
     args = parser.parse_args()
 

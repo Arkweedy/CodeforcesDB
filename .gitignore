@@ -7,6 +7,8 @@ node_modules/
 web/node_modules/
 web/dist/
 .npm-cache/
+data/cfdb.user.sqlite
+data/cfdb.user.sqlite-*
 
 # Keep data/cfdb.sqlite tracked, but ignore SQLite transient files.
 *.sqlite-journal
