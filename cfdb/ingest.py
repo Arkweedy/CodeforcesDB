@@ -9,7 +9,7 @@ from .codeforces import CodeforcesClient
 from .dedup import mark_division_duplicates
 from .eligibility import classify_contest
 from .normalize import normalize_problem_key, contest_uid
-from .tags import TagInput, ensure_tag, map_official_tag
+from .tags import TagInput, ensure_tag, is_official_metadata_tag, map_official_tag
 
 
 def utc_now() -> datetime:
@@ -140,6 +140,7 @@ def upsert_problem(
         return None
 
     official_tags = list(problem.get("tags", []))
+    retrieval_tags = [tag for tag in official_tags if not is_official_metadata_tag(tag)]
     rating, status, source, next_check = rating_state(problem, contest, pending_days)
     conn.execute(
         """
@@ -204,10 +205,10 @@ def upsert_problem(
     else:
         conn.execute("DELETE FROM rating_refresh_queue WHERE problem_uid = ?", (key.problem_uid,))
 
-    if official_tags:
-        summary = "Pending detailed review. Auto-seeded from Codeforces official tags: " + ", ".join(official_tags)
+    if retrieval_tags:
+        summary = "Pending detailed review. Auto-seeded from Codeforces official tags: " + ", ".join(retrieval_tags)
     else:
-        summary = "Pending detailed review. No Codeforces official tags were available."
+        summary = "Pending detailed review. No retrieval-oriented Codeforces official tags were available."
     conn.execute(
         """
         INSERT INTO problem_annotations(problem_uid, summary, confidence, review_status)
@@ -217,7 +218,7 @@ def upsert_problem(
         (key.problem_uid, summary),
     )
 
-    for official_tag in official_tags:
+    for official_tag in retrieval_tags:
         canonical_tag = map_official_tag(official_tag)
         ensure_tag(
             conn,

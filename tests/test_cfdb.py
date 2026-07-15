@@ -173,7 +173,7 @@ class CfDbTests(unittest.TestCase):
                             "index": "B",
                             "name": "Keep Me",
                             "rating": 1800,
-                            "tags": ["dp"],
+                            "tags": ["*special", "*broken", "dp"],
                         },
                         {
                             "contestId": 78,
@@ -205,9 +205,23 @@ class CfDbTests(unittest.TestCase):
                 )
                 self.assertEqual(result, {"contest_id": 77, "status": "done", "problems": 1})
                 problem = conn.execute(
-                    "SELECT title, rating, rating_status FROM problems WHERE problem_uid = 'cf_problem:77:B'"
+                    "SELECT title, rating, rating_status, official_tags_json FROM problems WHERE problem_uid = 'cf_problem:77:B'"
                 ).fetchone()
-                self.assertEqual(dict(problem), {"title": "Keep Me", "rating": 1800, "rating_status": "official"})
+                self.assertEqual(
+                    dict(problem),
+                    {
+                        "title": "Keep Me",
+                        "rating": 1800,
+                        "rating_status": "official",
+                        "official_tags_json": '["*special", "*broken", "dp"]',
+                    },
+                )
+                mapped_tags = conn.execute(
+                    "SELECT tag FROM problem_tags WHERE problem_uid = 'cf_problem:77:B' ORDER BY tag"
+                ).fetchall()
+                self.assertEqual([row["tag"] for row in mapped_tags], ["dp"])
+                self.assertIsNone(conn.execute("SELECT 1 FROM tags WHERE tag = 'broken'").fetchone())
+                self.assertIsNone(conn.execute("SELECT 1 FROM tags WHERE tag = 'special'").fetchone())
 
     def test_ioi_rules_contest_is_excluded(self) -> None:
         eligibility = classify_contest(

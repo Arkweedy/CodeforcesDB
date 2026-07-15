@@ -127,6 +127,11 @@ def map_official_tag(value: str) -> str:
     return OFFICIAL_TAG_MAP.get(value.strip().lower(), slugify_tag(value))
 
 
+def is_official_metadata_tag(value: str) -> bool:
+    """Return whether a Codeforces tag is a non-retrieval metadata marker."""
+    return value.strip().startswith("*")
+
+
 def ensure_tag(conn: sqlite3.Connection, tag_input: TagInput | str) -> str:
     if isinstance(tag_input, str):
         item = TagInput(slugify_tag(tag_input))
