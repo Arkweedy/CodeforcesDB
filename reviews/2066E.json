@@ -1,0 +1,139 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "E",
+    "title": "Tropical Season",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["binary search", "data structures", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/E",
+      "notes": "Statement and constraints: dynamic multiset of barrel water amounts; identify one poisoned barrel using comparisons and pours only from proven-safe barrels; n,q <= 2e5 and values <= 1e6."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2067/problem/G",
+      "notes": "Div.2 duplicate alias; the local database marks cf_problem:2066:E as canonical."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official editorial page checked; its tutorial body was not visible in text, so the detailed solution was cross-checked with public writeups."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qvc83ujh",
+      "notes": "Used to confirm the duplicate safe-mass seed, consuming values <= L, consuming adjacent gaps <= L, and ordered-set or segment-tree maintenance."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://linlexiao.com/posts/d9bd22dab93b/",
+      "notes": "Independent writeup used to confirm the known-safe-mass operations and power-of-two bucket implementation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/xiaozi-qwq/p/18980626",
+      "notes": "Independent writeup used to cross-check the special-point/segment-tree closure formulation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066E",
+      "notes": "Luogu solution index checked; the concrete consulted Luogu article is recorded in sources."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717398",
+      "notes": "Official editorial-referenced accepted submission; direct source access was blocked, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain a changing multiset of barrel water amounts and decide whether there is a guaranteed safe strategy to identify the unique poisoned barrel.",
+    "constraints": "n,q <= 2e5 and all values are <= 1e6, so each update must be logarithmic or depend only on O(log value) buckets; pours may be fractional.",
+    "core_idea": "A comparison is useful only after making two compared barrels have equal water amounts using proven-safe water. If unequal, the heavier barrel is poisoned; in the worst case the comparison is equal and both become safe. Thus the problem reduces to growing a known-safe water mass L. Duplicate values seed L because equal barrels can be compared immediately. Among remaining unique values, any x <= L can be certified using safe water, and any adjacent pair x<y with y-x <= L can be equalized and certified together. Greedily close under these moves; if at least two candidates remain and the minimum adjacent gap is greater than L, no strategy can progress. A successful pair move increases L enough that only logarithmically many stalled phases occur. Dynamic structures maintain singleton values, sums, and adjacent gaps under updates.",
+    "complexity": "O((n+q)(log n + log A)) with dyadic buckets, or O((n+q)log^2 A) with a value-domain segment tree, where A <= 1e6.",
+    "tricks": [
+      "reduce adaptive identification to the worst-case equal-comparison branch",
+      "known-safe water mass L as the only feasibility state",
+      "duplicates immediately contribute safe mass",
+      "consume unique values <= L or adjacent pairs with gap <= L",
+      "power-of-two buckets make closure phases logarithmic"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "safe-mass-closure-dyadic-buckets",
+      "summary": "Counts at least two contribute initial safe mass; singleton values live in power-of-two buckets. Each bucket maintains order, sum, extrema, and minimum adjacent gap. Scan buckets from small to large and absorb a prefix whenever current safe mass can certify a value or adjacent pair.",
+      "complexity": "O(log n) update plus O(log A) answer scan.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "value-domain-segment-tree-closure",
+      "summary": "Maintain singleton values over the bounded value domain with range sums and minimum adjacent gaps. Repeatedly add all singleton values <= L, then consume a minimum-gap pair when its gap <= L; restore temporary removals after checking.",
+      "complexity": "O(log^2 A) amortized per answer and O(log A) per update.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "primary",
+      "evidence": "The reduction follows the branch where every equalized comparison returns equal and no poison is immediately exposed; the strategy must still certify all but one barrel.",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Consuming every value <= L and then any closest pair with gap <= L is sufficient; if neither move exists, no safe operation can create new information.",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "Values are partitioned into power-of-two ranges; after a successful certification in a bucket, safe mass reaches the next threshold and a prefix of buckets is absorbed.",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "Each dyadic bucket needs dynamic insertion/deletion, extrema, and adjacent-gap maintenance for singleton values.",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The alternative maintains singleton sums and minimum adjacent gaps with segment trees under updates.",
+      "solution_variant": "value-domain-segment-tree-closure"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "The certifiable set only expands as L grows, and pair-consumption increases L enough to bound phases by O(log A).",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "incidental",
+      "evidence": "Ordered-set upper_bound or segment-tree descent may locate the next value, but there is no binary-search-on-answer reduction.",
+      "solution_variant": "value-domain-segment-tree-closure"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "Updates have duplicate-count and adjacent-gap boundary cases, but implementation is not the retrieval focus.",
+      "solution_variant": "safe-mass-closure-dyadic-buckets"
+    }
+  ]
+}

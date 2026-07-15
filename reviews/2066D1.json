@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "D1",
+    "title": "Club of Young Aircraft Builders (easy version)",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/D1",
+      "notes": "Statement and constraints: all entries are gaps; n,c <= 100, c <= m <= n*c, and total m over tests <= 1e4."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official editorial page checked as the contest editorial; its tutorial body was lazy-loaded, so the recurrence was cross-checked with public writeups and self-derivation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Tomori0505/p/18712010",
+      "notes": "Used for the easy-version binomial DP recurrence over floors and total filled positions."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6no2c2eo",
+      "notes": "Used to cross-check the filtered-subsequence interpretation: among positions with value at least i, only the first c slots can receive value i."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/D1",
+      "notes": "Derived the validity condition from the launch rule: a value i may appear only before the c-th previous launch visible to floor i, and the top floor appears exactly c times."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066D1",
+      "notes": "Luogu solution index checked; the substantive consulted text is recorded as the Luogu article source."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305719583",
+      "notes": "Official editorial submission link; source-code access was blocked by Codeforces browser checking, so it was not used for algorithm details."
+    }
+  ],
+  "annotation": {
+    "summary": "Count length-m floor sequences when every recorded launch is unknown, subject to the rule that a floor i resident can launch only while fewer than c previous launches from floors i..n have occurred, and by the end every resident has seen at least c launches.",
+    "constraints": "n,c <= 100, c <= m <= n*c, all a_i = 0, and total m <= 1e4, so an O(n*m*c) counting DP with binomial coefficients fits.",
+    "core_idea": "The final condition plus the launch rule implies exactly c launches from floor n. More generally, in the subsequence of positions whose values are at least i, all positions equal to i must lie among the first c positions of that subsequence. Process floors from high to low: after higher floors have occupied j positions, inserting k positions of the next lower floor only requires choosing which k of the first c visible slots of the new filtered subsequence are assigned to this floor, giving a factor C(c,k). This yields a binomial counting DP over the number of occupied positions.",
+    "complexity": "O(n*m*c) time and O(m) or O(n*m) memory, plus binomial precomputation.",
+    "tricks": [
+      "convert the launch rule into a first-c-slots condition on each filtered subsequence",
+      "process values from high to low so lower floors are inserted into a stable higher-floor skeleton",
+      "use binomial coefficients for choosing which visible quota slots receive the current value"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "high-to-low-visible-prefix-dp",
+      "summary": "Start with c copies of floor n. For each lower floor, transition f[j] to f[j+k] by multiplying by C(c,k), because k occurrences of the current floor can occupy any k of the first c positions in the filtered subsequence of current-or-higher floors. The answer is the number of ways to reach m occupied positions.",
+      "complexity": "O(n*m*c) time, O(m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "deferred-phase-dp-all-gaps",
+      "summary": "Equivalently scan phases by the current lowest floor that can still launch; when c active launches have accumulated, close one floor layer and choose by a binomial coefficient how many of those launches belong to that layer.",
+      "complexity": "O(n*m*c) time, O(n*c) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The main algorithm counts partial assignments by how many sequence positions have been occupied after processing a prefix of floor values.",
+      "solution_variant": "high-to-low-visible-prefix-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "Every transition chooses a subset of the c visible quota slots to receive the current floor value, using C(c,k).",
+      "solution_variant": "high-to-low-visible-prefix-dp"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "For each floor i, only the first c positions among values at least i may be assigned value i.",
+      "solution_variant": "high-to-low-visible-prefix-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution is a modular counting argument over nested subsequences with binomial coefficients.",
+      "solution_variant": "high-to-low-visible-prefix-dp"
+    }
+  ]
+}

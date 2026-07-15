@@ -1,0 +1,131 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "D2",
+    "title": "Club of Young Aircraft Builders (hard version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/D2",
+      "notes": "Statement and constraints: entries may be fixed or gaps; n,c <= 100, c <= m <= n*c, and total m over tests <= 1e4."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official editorial page checked as the contest editorial; its tutorial body was lazy-loaded, so the recurrence was cross-checked with public writeups and self-derivation."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6no2c2eo",
+      "notes": "Used for the position-aware DP idea: track the boundary of the c-th still-higher value and account for fixed entries before that boundary."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8u3rvz4t",
+      "notes": "Used for the alternative phase/deferred-contribution DP and how fixed entries restrict transitions and binomial choices."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/rizynvu/p/18977557",
+      "notes": "Used to cross-check the phase DP state: processed prefix, current active floor interval, and count of launches by active floors."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/george0929/p/19428566",
+      "notes": "Used to cross-check the small-to-large prefix quota formulation with prefix counts of fixed values."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/D2",
+      "notes": "Re-derived the prefix quota DP from the launch rule and checked how fixed entries block candidate slots."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066D2",
+      "notes": "Luogu solution index checked; public Luogu article pages above supplied the substantive solution text."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717360",
+      "notes": "Official editorial submission link; source-code access was blocked by Codeforces browser checking, so it was not used for algorithm details."
+    }
+  ],
+  "annotation": {
+    "summary": "Count completions of a partially fixed length-m launch sequence under the same visibility rule: a launch from floor x is legal only before c previous launches from floors x..n, and the completed day must leave every floor seeing at least c launches.",
+    "constraints": "n,c <= 100 and total m <= 1e4; fixed values destroy the symmetry of D1, so the solution needs an O(n*m*c) DP with O(n*m) prefix counts of fixed entries.",
+    "core_idea": "A completed sequence must have exactly c copies of n, and each value x is constrained by the total number of smaller values already placed: all x positions must lie within the prefix of length c + count(values < x). Process values from small to large. Let f[x][j] count ways after assigning all values <= x into j positions. For v=x+1, the last allowed position is pos=min(j+c,m). If a fixed v occurs after pos, the state is invalid. Among the first pos positions, j slots are already occupied by smaller values and ge[pos][v] fixed slots are occupied by values >= v, leaving pos-ge[pos][v]-j free gaps. Choose extra occurrences of v among those free gaps by a binomial coefficient, while respecting fixed v entries and forcing exactly c copies when v=n.",
+    "complexity": "O(n*m*c) time and O(n*m + m*c) memory, with O(n*m) prefix counts of fixed entries and binomial precomputation.",
+    "tricks": [
+      "turn visibility into the absolute prefix quota c plus the number of smaller values",
+      "process values from small to large because each value's allowed prefix depends on smaller counts",
+      "use prefix counts of fixed values at least v to remove blocked positions from binomial choices",
+      "force exactly c top-floor launches"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "small-to-large-prefix-quota-dp",
+      "summary": "Process values v=1..n. State j is the number of positions already assigned smaller values. For each possible total count k of v, choose k minus the fixed count of v from free gaps inside min(j+c,m), reject fixed v beyond that prefix, and require k=c for v=n.",
+      "complexity": "O(n*m*c) time, O(n*m + m*c) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "phase-deferred-contribution-dp",
+      "summary": "Scan positions left to right with state (current lowest active floor, active visible count). When the active count reaches c, advance the floor layer and multiply by a binomial coefficient after subtracting already fixed positions assigned to that layer.",
+      "complexity": "O(n*m*c) time, O(n*c) or O(m*c) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The hard version counts valid completions after assigning value layers under fixed-position constraints.",
+      "solution_variant": "small-to-large-prefix-quota-dp"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "For each value v the legal positions are cut off by c+count(values<v), and transitions are built around this moving prefix boundary.",
+      "solution_variant": "small-to-large-prefix-quota-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "After removing fixed and already-assigned positions from the allowed prefix, the transition chooses a subset of remaining gaps for the current value.",
+      "solution_variant": "small-to-large-prefix-quota-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The assignment history is compressed to the current value layer and j, the number of positions occupied by smaller values.",
+      "solution_variant": "small-to-large-prefix-quota-dp"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Prefix counts of fixed entries at least v compute blocked slots and invalid fixed positions in O(1) per transition group.",
+      "solution_variant": "small-to-large-prefix-quota-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "secondary",
+      "evidence": "The phase DP variant aggregates deferred transitions with prefix sums over previous position states.",
+      "solution_variant": "phase-deferred-contribution-dp"
+    }
+  ]
+}

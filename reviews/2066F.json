@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "F",
+    "title": "Curse",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/F",
+      "notes": "Statement and constraints: each operation must replace a current maximum-sum non-empty subarray; n,m <= 500 and total n,total m <= 500."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2066F",
+      "notes": "Luogu mirror used to cross-check the statement and constraints in Chinese."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official editorial page checked; the tutorial body remained lazy-loaded, so detailed solution evidence came from other sources and self-derivation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19028897",
+      "notes": "Used for the recursive maximum-subarray partition, threshold x, prefix DP with one exceptional piece, transition optimization, and operation reconstruction."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/F",
+      "notes": "Re-derived why blocks below the operated-sum threshold remain unchanged, why at most one final piece may exceed x in maximum subarray sum, and why compress-to-x replay is valid."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066F",
+      "notes": "Luogu solution index did not expose readable solution text in this session, so it remains a candidate only."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717429",
+      "notes": "Official editorial submission link; direct source access was blocked, so it was not used."
+    }
+  ],
+  "annotation": {
+    "summary": "Given arrays a and b, decide whether a can be transformed into b by repeatedly choosing any current maximum-sum non-empty subarray and replacing it by an arbitrary non-empty array, then construct such operations within the total replacement-length bound.",
+    "constraints": "t <= 200; n,m <= 500 per test; total n and total m are each <= 500; values are bounded, so cubic preprocessing and DP are feasible.",
+    "core_idea": "Build a canonical partition of a: for each interval choose a longest maximum-subarray interval and recurse on its left and right remainders. Later legal operations cannot cross these blocks. Guess x, the minimum sum among operated original blocks. Blocks with sum < x are never operated and must match the corresponding target slice exactly. Blocks with sum >= x can first be compressed, in decreasing block-sum order, into singleton [x]. Assign consecutive non-empty target pieces to the blocks; all but possibly one assigned piece must have maximum subarray sum <= x, because two pieces above x would make later maximum-subarray choices incompatible. For each x run f[i][j][used_big] over canonical blocks and target prefixes. Low-sum blocks use exact matching; high-sum blocks take bounded-max-subarray target intervals or the single unrestricted exceptional interval. Backtrack and replay compressions, normal replacements, then the exceptional replacement last.",
+    "complexity": "O(n^3 + n^2*m + n*m^2) time and O(n^2 + m^2 + n*m) memory.",
+    "tricks": [
+      "recursive longest maximum-subarray partition",
+      "enumerate the minimum operated block sum x",
+      "blocks below x are forced unchanged",
+      "at most one final piece may have maximum subarray sum greater than x",
+      "construct by compressing operated blocks to singleton x before final replacements"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "threshold-max-subarray-partition-dp",
+      "summary": "Precompute interval sums, maximum subarray sums, and exact prefix matches. Recursively partition a by longest maximum-subarray intervals. Enumerate x over block sums and run prefix partition DP with a one-bit exceptional-piece flag; backtracking gives target pieces and a valid operation order.",
+      "complexity": "O(n^3 + n^2*m + n*m^2) time and O(n^2 + m^2 + n*m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "The decisive feasibility check partitions the target prefix into consecutive pieces assigned to canonical source blocks.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "primary",
+      "evidence": "Operation legality, the canonical source partition, and target-interval transition conditions all depend on maximum subarray sums.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "Recursive longest maximum-subarray choices form a nested-or-disjoint interval skeleton that future operations cannot cross.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "Enumerating x splits blocks into forced-unchanged sum<x blocks and replaceable sum>=x blocks with different transitions.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Stored DP predecessors plus compress-to-x ordering construct an explicit valid operation sequence.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "Canonical source blocks are produced recursively by choosing a maximum-subarray interval and solving left and right remainders.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "For fixed x, the farthest valid target endpoint moves monotonically as the left endpoint advances, optimizing transition scans.",
+      "solution_variant": "threshold-max-subarray-partition-dp"
+    }
+  ]
+}
