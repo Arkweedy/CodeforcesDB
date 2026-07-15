@@ -104,10 +104,13 @@ npm.cmd
 
 - NERC、NEERC 等 ICPC mirror 优先直接查官方 statement PDF、tutorial PDF、jury archive 和 runs archive，不要把时间耗在寻找不存在的普通 Codeforces blog editorial。
 - Codeforces editorial 静态 HTML 若只有 `Tutorial is loading...`，立即改用能执行页面脚本的浏览器读取正文；不要反复直连动态数据接口撞 Cloudflare。仍缺证明细节时，用明确 Accepted 的提交和实际读过的 Luogu/可靠博客交叉补足。
+- 同一场题目共用一篇很长的 editorial 时，只加载一次并按题号标题定位各小节；把已确认的 editorial、AC 和镜像 URL 共享给同场 worker，避免每题重新搜索。
+- Easy / Hard 版本对交给同一 worker，共用题面建模和小规模暴力 oracle；两题仍分别 review，并明确约束差异、算法复杂度断点和不可混用的语义。低约束算法不能仅因对拍一致就标为 Hard 解法。
 - 遇到赛后修题面或更正语义时，先核对当前题面、主办方公告和官方分析的发布时间；以更正后的语义为准，并把更正公告写入 source notes，禁止复用基于旧题面的分析。确认一次后应把有效公告或官方 PDF URL 共享给同场其他 worker，避免重复检索。
 - Luogu 题解 URL 只是候选。只有实际打开并读取后才能写入 `sources[]`；页面为零篇题解或访问失败时应如实记录，不得当作算法证据。
 - 来源类型在合并前统一：`accepted_code` / `accepted_submission` 归一为 `accepted-code`，`independent_blog` / `reliable_blog` / `author_blog` 归一为 `blog`；主办方更正公告也使用 `blog`，并在 notes 中说明其官方性质。
 - 无法确认 verdict 的归档代码保留为 `independent_code`，不能升级成 `accepted-code`。
+- `contest.status`、第三方提交表或 verdict 页面只能证明提交结果；若源码正文因 403/Cloudflare 未实际读取，该链接留在 `reference_candidates`，不能写成已核对的 `accepted-code` source。
 - reviewed JSON 不保留 `local:` URL。自行推导和本地对拍使用题目的 canonical Codeforces URL，验证细节写入短 notes。
 
 ### 校验与写入屏障
