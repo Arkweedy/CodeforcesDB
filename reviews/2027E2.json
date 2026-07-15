@@ -1,0 +1,168 @@
+{
+  "contest": {
+    "contest_id": 2027,
+    "title": "Codeforces Round 982 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2027,
+    "index": "E2",
+    "title": "Bit Game (Hard Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "math"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2027E1",
+    "relationship": "单堆规则、a' 投影和四段 SG 闭式与 E1 完全相同。Hard 不再给定 x_i，而是对每堆允许 1<=x_i<=b_i，并要求统计 Bob 获胜的全部数组 x；因此必须在 E1 理论之上增加二进制数位 DP 和 SG 异或计数。Hard 的方案可退化处理 Easy 的单点 x，但 Easy 的 O(n log C) 直接求值无法枚举 Hard 的区间。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2027/problem/E2",
+      "notes": "读完 Hard 题面和约束；确认每个 x_i 独立取 [1,b_i]，目标是模 1e9+7 统计 Bob 获胜的数组 x。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135558",
+      "notes": "用可执行浏览器读完 E2 动态教程和模型代码；核对六类 a' 形态、good/low 标志、每种 SG 的频数以及 32 状态异或背包。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/nmcf3zw3",
+      "notes": "实际读取 E1 具体文章，复核 Hard 所依赖的 a' 投影和四段 SG 闭式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/k64idk94",
+      "notes": "先从 CF2027E2 题解索引定位后读完具体文章；核对记录 a' 的 1 数量、最高位、good、tight 和末位的 O(log^3 V) 数位 DP 变体。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2027/submission/299251434",
+      "notes": "提交页明确显示 Accepted 108 ms；读取完整 C++20 源码，确认等价的单堆 SG 频数统计，并用 XOR-FWT 点乘各堆分布后逆变换取 0 状态。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2027/problem/E2",
+      "notes": "独立实现六形态二进制数位 DP；对全部 1<=a,b<=63 的 3969 组频数向量与逐 x 枚举比较，零失配，并复现 E2 七组样例。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "第 i 堆的石子数 x_i 可独立选择为 1..b_i。统计所有选择数组 x 中，作为独立无偏游戏之和时 SG 异或为 0、因而 Bob 获胜的方案数。",
+    "constraints": "1<=t<=1000；1<=n<=10^4；sum(n)<=10^4；1<=a_i,b_i<2^30；答案模 10^9+7；时限 2 秒，内存 256 MB。",
+    "core_idea": "复用 E1 的投影：每个 (x,a_i) 都映成 a'，其 SG 只由四段闭式决定，且值域可放进 G=32 个状态。对每堆从高位到低位枚举 x 的二进制位，做上界 b_i 的数位 DP。状态记录当前位置、a' 最高位后的压缩长度 k、a' 的六种形态之一（0、1、全 1、形如 111...10、形如 100...0、其他）、是否已出现 good 位，以及当前 x 前缀是否已经严格小于 b_i。结束时由形态和 k 把方案累加到 cnt_i[SG]；数位 DP 包含 x=0，必须从 cnt_i[0] 减去 1。随后维护 ways[s]，转移 ways_new[s xor g]+=ways[s]*cnt_i[g]，最终 ways[0] 即答案。",
+    "complexity": "令 C<2^30、G=32。官方主方案每堆数位 DP 为 O(log^2 C)，异或合并为 O(G^2)，总时间 O(n(log^2 C+G^2))，按 G 为常数可写 O(n log^2 C)；空间 O(log^2 C+G)，滚动位层后可降为 O(log C+G)。",
+    "tricks": [
+      "先把巨大 x 区间映射到至多 32 种 SG 值，再统计频数，而不是枚举 x。",
+      "不保存 a' 的完整数值，只保存最高位位置和六类足以决定 SG 的有限自动机形态。",
+      "good 标志模拟 E1 中上界投影，low/tight 标志保证所枚举的 x 不超过 b_i。",
+      "数位 DP 自然包含 x=0；在 SG=0 桶中精确减去一次，恢复题目要求的 1<=x。",
+      "各堆频数向量通过 XOR 卷积合并；G=32 时可直接背包，也可使用 XOR-FWT。",
+      "Luogu 的可读变体额外记录 a' 中 1 的数量，状态更直观但从 O(log^2 C) 增至 O(log^3 C)。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "把官方六形态状态机独立重写为稀疏字典数位 DP，并逐项输出每个 SG 的 x 计数。",
+      "对全部 1<=a,b<=63 的 3969 组参数，将数位 DP 频数向量与枚举 x=1..b 后调用 E1 闭式的结果比较，零失配。",
+      "将频数向量做 32 状态 XOR 背包，完整复现 E2 七组样例：4、4、0、6552、722019507、541、665443265。",
+      "官方模型代码使用直接 XOR 背包；独立 Accepted 提交使用 XOR-FWT，二者给出相同的零异或计数语义。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；E1 闭式、官方六形态 DP、Luogu 高一维 DP、Accepted FWT 实现和独立枚举相互一致。",
+      "Luogu 主文章给出 O(log^3 V) 状态，官方模型代码通过六类形态压到 O(log^2 V)；本 payload 以官方较优状态为主解，并保留前者为变体。",
+      "Accepted 299251434 的单堆频数计算比官方六形态 DP 更代数化；它用于独立验证频数与 XOR-FWT 管线，不作为本 payload 的主要状态推导来源。",
+      "没有提出新 tag；所用 digit-dp、counting-dp、finite-state-dp、sprague-grundy、tight-loose-state 和 xor-fwt 均已存在。"
+    ],
+    "proof_risks": [
+      "Hard 完全依赖 E1 的 a' 等价性和四段 SG 闭式；若把经验打表当成证明，后续数位 DP 只是在高效统计错误分类。",
+      "good 只在选择 x_bit=0 且 a_bit=1 时变为真；一旦为真，之后每个被 x 保留的位置在 a' 中都追加 1。",
+      "六类形态的 k 是 a' 最高位后的压缩长度下标；全 1 返回 k+1，而 100...0 返回 k xor 1，最容易出现差一。",
+      "111...10 必须单列为 2^m-2 并映到 SG=0；把含更早零位的其他形态也归入此类会错计。",
+      "必须从 cnt[0] 中减去恰好一个 x=0；忘减会多计，减错桶或在每个形态中重复减会少计。",
+      "上界是包含 b_i 的 1<=x_i<=b_i，tight/low 转移必须允许与 b_i 完全相等的路径。",
+      "全局合并是 XOR 卷积，不是普通下标和卷积；Bob 对应最终 SG 异或恰为 0。",
+      "模运算下执行 cnt[0]-=1 或 FWT 蝶形减法时必须归一化负数。",
+      "E1 对固定 x 的 O(log C) 求值不能在 Hard 中遍历 1..b_i；真正的版本差异是整段 SG 分布计数。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "six-shape-binary-digit-dp-xor-knapsack",
+      "summary": "按位枚举 x<=b，用 good、low、a' 的最高位长度及六种形态统计每个 SG 的出现次数；再用 32 状态 XOR 背包逐堆合并。",
+      "complexity": "O(n(log^2 C + G^2)) time and O(log^2 C + G) space, with G=32.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "popcount-msb-binary-digit-dp",
+      "summary": "Luogu 变体显式记录 a' 的 1 数量、最高位长度、末位、good 和 tight，再由 popcount/长度关系判断四类 SG，最后同样做 XOR 背包。",
+      "complexity": "O(n(log^3 C + G^2)) time and O(log^3 C + G) space.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "xor-fwt-aggregation",
+      "summary": "先得到每堆的 32 维 SG 频数向量，对每个向量做 XOR-FWT，在变换域逐点相乘，最后逆变换并取下标 0；Accepted 实现还配合了更直接的单堆频数计数。",
+      "complexity": "Using the primary per-pile DP: O(n log^2 C + n G log G + G log G) time and O(log^2 C + G) space, with G=32.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/digit-dp",
+      "importance": "primary",
+      "evidence": "必须对每个上界区间 0<=x<=b_i 按二进制前缀计数，并用 low/tight 标志保证不超过 b_i；这是避免枚举 b_i 的核心。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "Bob 获胜当且仅当各独立石子堆的 Grundy 数异或为 0；数位 DP 的输出桶和最终合并状态都以 SG 为索引。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "算法先统计每堆每个 SG 值对应的 x 数量，再通过 32 状态 DP 计算所有数组 x 的零异或方案数。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "secondary",
+      "evidence": "沿用 E1，把每个巨大状态 (x,a) 的移动图压成只由 a' 形态决定的等价类，才使数位 DP 只需常数种 SG 结构。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "a' 无需完整保存，只需在 0、1、全 1、111...10、100...0、其他六种有限形态之间转移。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "secondary",
+      "evidence": "单堆 SG 分类和 good-bit 投影仍建立在合法 d 是当前 x 的子掩码这一按位关系上。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "trick/tight-loose-state",
+      "importance": "secondary",
+      "evidence": "数位 DP 必须区分当前 x 前缀仍贴住 b_i，还是已经严格更小，以决定后续位能否自由选择。",
+      "solution_variant": "six-shape-binary-digit-dp-xor-knapsack"
+    },
+    {
+      "tag": "math/transform/fwt/xor-fwt",
+      "importance": "secondary",
+      "evidence": "Accepted 替代变体把各堆 32 维 SG 分布的 XOR 卷积转成变换域逐点乘法，再逆变换读取零异或系数。",
+      "solution_variant": "xor-fwt-aggregation"
+    }
+  ]
+}
+

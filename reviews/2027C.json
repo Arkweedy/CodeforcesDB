@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2027,
+    "title": "Codeforces Round 982 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2027,
+    "index": "C",
+    "title": "Add Zeros",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2027/problem/C",
+      "notes": "核对操作条件与约束：sum n <= 3e5，a_i <= 1e12。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135558",
+      "notes": "使用可执行脚本浏览器展开动态 Tutorial，确认长度状态图 u_i=a_i+i-1 -> v_i=u_i+i-1、从 n 做可达性搜索。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1m5gatwa",
+      "notes": "从 CF2027C 题解索引定位并阅读；交叉确认 0-based 建图和 DAG 记忆化搜索解释。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2027/submission/288126799",
+      "notes": "Codeforces 页面核验为 Accepted；代码用 map 建稀疏图并从 n DFS，记录最大可达长度。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2027/problem/C",
+      "notes": "独立推导新增零永不合法，并将图模型与直接操作模拟在 2000 组随机小例上核对一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "数组初长为 n；每次选择满足 a_i=|a|+1-i 的 i>1，并在末尾追加 i-1 个零，求可达到的最大长度。",
+    "constraints": "t<=1000；1<=n<=3e5，所有测试 sum n<=3e5；1<=a_i<=1e12。长度状态和边端点必须使用 64 位整数。",
+    "core_idea": "新追加位置的值为 0，而任意现存位置 i<=|a| 都有 |a|+1-i>=1，所以新增零永远不能再被选择，只需考虑原始下标。原始 i>1 仅在当前长度 u_i=a_i+i-1 时可用，并把长度变成 v_i=u_i+i-1；因此每个位置是一条 u_i->v_i 的边。所有边严格增大长度，形成稀疏 DAG；从起点 n 搜索，最大可达节点就是答案。",
+    "complexity": "使用有序 map 存稀疏邻接表时为 O(n log n) 时间、O(n) 空间；哈希表实现期望 O(n) 时间。",
+    "tricks": [
+      "先证明追加的零永远不可能满足操作条件，从无限增长数组降到原始 n 个候选位置。",
+      "把等式改写成唯一触发长度 u_i=a_i+i-1，并把一次操作视为长度状态上的有向边。",
+      "v_i>u_i 保证无环，且可达路径至多使用 n 条边。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sparse-length-dag-dfs",
+      "summary": "按触发长度 u_i 用 map 存出边 u_i->u_i+i-1，从 n 做 DFS/BFS，维护访问过的最大长度。",
+      "complexity": "O(n log n) time and O(n) memory with an ordered map; expected O(n) time with hashing.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "coordinate-compressed-topological-scan",
+      "summary": "收集 n 及所有边端点做坐标压缩，按长度递增扫描；若 u_i 已可达就标记 v_i 可达。严格增边使该顺序天然是拓扑序。",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "每个原始位置产生一条严格增大的长度转移 u_i->u_i+i-1；答案正是该 DAG 中从 n 出发的最大可达节点。",
+      "solution_variant": "sparse-length-dag-dfs"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "主实现用 DFS/BFS 枚举从初始长度 n 可达的稀疏长度状态。",
+      "solution_variant": "sparse-length-dag-dfs"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "a_i 可达 1e12，长度键极稀疏，邻接表按 64 位触发长度存于 map/hash map，不能按值域开数组。",
+      "solution_variant": "sparse-length-dag-dfs"
+    },
+    {
+      "tag": "trick/coordinate-compression",
+      "importance": "secondary",
+      "evidence": "替代实现只压缩 n 和 O(n) 个边端点，再按压缩后的拓扑顺序传播可达性。",
+      "solution_variant": "coordinate-compressed-topological-scan"
+    }
+  ]
+}
+

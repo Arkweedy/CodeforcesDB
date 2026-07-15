@@ -1,0 +1,127 @@
+{
+  "contest": {
+    "contest_id": 2027,
+    "title": "Codeforces Round 982 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2027,
+    "index": "E1",
+    "title": "Bit Game (Easy Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "games",
+      "math"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2027E2",
+    "relationship": "两版共享完全相同的单堆规则与 SG 闭式。E1 的 x_i 已固定，只需 O(n log C) 求各堆 SG 并异或；E2 的 x_i 可在 [1,b_i] 内任选，不能枚举，必须统计每种 SG 的取值个数并计算异或和为 0 的方案数。E1 是 E2 的理论基础，但 E1 的逐堆直接计算不能直接解决 Hard。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2027/problem/E1",
+      "notes": "读完题面、合法操作和约束；确认 x_i 固定，sum(n)<=10^4，a_i,x_i<2^30。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135558",
+      "notes": "静态页只显示 Tutorial is loading，改用可执行浏览器读完 E1 动态教程；核对压缩参数 a'、四段 SG 闭式及最后一段 mex 覆盖证明。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/nmcf3zw3",
+      "notes": "先从 CF2027E1 题解索引定位后读完具体文章；独立确认二元 SG(a,x) 压成一元 g(a') 的过程、四种边界和 O(n log V) 实现。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2027/submission/347365164",
+      "notes": "提交页明确显示 Accepted；读取完整 C++20 源码，核对 good-bit 投影、闭式分支和最终 SG 异或。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2027/problem/E1",
+      "notes": "独立实现递归 mex oracle；穷举全部 1<=a,x<=127 的 16129 对状态，投影闭式零失配，并复现 E1 七组样例输出。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "n 堆互不影响的石子组成一个无偏正常规则游戏。第 i 堆当前有固定的 x_i 颗石子，只能减去满足 1<=d<=a_i 且 d 是当前 x 的子掩码的 d；判断 Alice/Bob 的胜者。",
+    "constraints": "1<=t<=1000；1<=n<=10^4；sum(n)<=10^4；1<=a_i,x_i<2^30；时限 2 秒，内存 256 MB。",
+    "core_idea": "合法 d 是 x 的非空子掩码，因此 x-d=x xor d，操作只会关闭若干置位。对单堆从高位到低位扫描，只保留 x 的置位：若当前 x 位为 1，就向压缩数 a' 追加一位，其值为当前 a 位或 good；若 x 位为 0 而 a 位为 1，则置 good=1，表示之后任意较低子掩码都已严格小于 a。这样所有合法 d 与全 1 状态 2^k-1 下满足 d'<=a' 的合法子掩码一一对应；删掉 a' 的前导零后，单堆 SG 只依赖 a'。记 g(a')=SG(2^k-1,a')，其中 k 为使 2^k-1>=a' 的最小整数，则 g(2^k-2)=0（k>=1），g(2^k-1)=k，g(2^k)=k xor 1，且对 k>=2、2^k<a'<=2^(k+1)-3 有 g(a')=k+1。逐堆求值并异或，异或非零时 Alice 胜。",
+    "complexity": "每堆扫描 30 个二进制位，时间 O(n log C)，其中 C<2^30；额外空间 O(1)。",
+    "tricks": [
+      "利用 d 是 x 的子掩码，减法无借位并等价于关闭选中的 1 位。",
+      "按 x 的置位压缩二进制坐标，把二元状态 (x,a) 的完整合法移动图商成只依赖 a' 的等价游戏。",
+      "good 位记录更高处已出现 x_bit=0,a_bit=1；一旦出现，所有更低保留位在有效上界中都视为 1。",
+      "把 g(a') 分为 2^k-2、2^k-1、2^k 和中间区间四类，再使用 Sprague-Grundy 异或和判胜。",
+      "用小规模 mex 暴力只做规律与边界验证，不进入正式复杂度。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "递归枚举 x 的全部非空子掩码 d，并仅保留 d<=a 的转移，得到真实单堆 SG。",
+      "对 1<=a,x<=127 的 16129 对状态逐一比较真实 SG 与投影闭式，零失配。",
+      "按闭式计算 E1 官方七组样例，依次得到 Bob、Bob、Bob、Bob、Bob、Alice、Alice。",
+      "官方动态教程、Luogu 具体文章与 Accepted 实现使用相同的投影和四段公式。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的算法或来源冲突；主要结论由官方完整教程、具体 Luogu 文章、Accepted 源码和独立 oracle 四重支持。",
+      "第四段 g(a')=k+1 的一般 mex 覆盖证明是理论长尾；官方给出构造，Luogu 文章也明确把该处列为最难证明部分，独立穷举进一步覆盖了小边界。",
+      "没有提出新 tag；现有 sprague-grundy、quotient-state-space、submask-supermask、case-analysis 和 brute-force 已足够。"
+    ],
+    "proof_risks": [
+      "a' 不是简单的 a&x；遇到更高位 x=0,a=1 后，good 会把所有更低的保留位都置为有效 1。",
+      "只有 x 的置位参与压缩，且相对高低顺序必须保持；把 x 的零位也计入会改变 k 和闭式分支。",
+      "四类边界必须精确：2^k-2、2^k-1、2^k、以及开闭区间 2^k<a'<=2^(k+1)-3。",
+      "g(2^k)=k xor 1 与 E2 教程写的 k+(-1)^k 等价；不能误写成恒定 k+1。",
+      "第四类需要同时证明不存在 SG=k+1 的后继，并构造到达所有 SG=0..k 的后继；只观察打表不足以构成证明。",
+      "组合多堆时必须异或每堆完整 SG，而不是只统计单堆是否为 P-position。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "projected-bound-closed-form-sg",
+      "summary": "把 x 的置位压成连续位，并用 good 标志把原数值上界 a 映成等价上界 a'；按四段闭式求单堆 SG，最后异或全部堆。",
+      "complexity": "O(n log C) time and O(1) extra space.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "每堆都是独立的无偏正常规则游戏；主解必须求单堆 Grundy 数，并用所有堆 Grundy 数的异或和判定胜负。",
+      "solution_variant": "projected-bound-closed-form-sg"
+    },
+    {
+      "tag": "trick/quotient-state-space",
+      "importance": "primary",
+      "evidence": "核心降维把原始 (x,a) 的合法移动图按 x 的置位压缩为等价的 (2^k-1,a')，使 SG 从二元函数变成一元闭式。",
+      "solution_variant": "projected-bound-closed-form-sg"
+    },
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "primary",
+      "evidence": "合法操作的本质是选择 x 的非空子掩码 d；整个压缩、good 位和无借位减法都依赖这一子掩码关系。",
+      "solution_variant": "projected-bound-closed-form-sg"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "压缩后的 g(a') 必须严格区分 2^k-2、2^k-1、2^k 和其余中间区间四种结构。",
+      "solution_variant": "projected-bound-closed-form-sg"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "mex 暴力只用于发现和验证 SG 闭式的小规模规律，不能在 a_i,x_i<2^30 的正式数据上运行。",
+      "solution_variant": "projected-bound-closed-form-sg"
+    }
+  ]
+}
+

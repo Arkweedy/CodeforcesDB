@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2027,
+    "title": "Codeforces Round 982 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2027,
+    "index": "D1",
+    "title": "The Endspeaker (Easy Version)",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dp",
+      "graphs",
+      "greedy",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2027/problem/D1",
+      "notes": "核对 Easy 只输出最小费用，以及 n*m 总和、正数数组和严格递减 b 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135558",
+      "notes": "确认 dp[已删前缀][k]、免费增加 k，以及求最小值时只需转移到当前 b_k 能覆盖的最远端点；双指针可达 O(nm)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4quf89a0",
+      "notes": "从 CF2027D1 题解索引定位并阅读；确认滚动数组、dp 单调性与双指针 O(nm) 转移。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2027/submission/288116819",
+      "notes": "Codeforces 页面核验为 Accepted；代码用前缀和与 upper_bound 找最远端点，执行 O(nm log n) 二维 DP。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2027/problem/D1",
+      "notes": "独立证明同一 k 下更短删除被最远删除支配；2000 组随机小例与完整操作序列穷举的最小费用一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "从 k=1 开始，可免费递增 k，或以费用 m-k 删除和不超过 b_k 的非空当前前缀；求清空正数数组 a 的最小总费用，不可行输出 -1。",
+    "constraints": "t<=1000；1<=n,m<=3e5，所有测试 sum(n*m)<=3e5；1<=a_i,b_i<=1e9；b 严格递减。前缀和与费用上界使用 64 位整数。",
+    "core_idea": "令 f_j[i] 为允许 k 增至 j 后删除前 i 个元素的最小费用。免费操作给出 f_j[i]<=f_{j-1}[i]。固定 j 和右端点 r，合法上一切点 p 满足 prefix[r]-prefix[p]<=b_j；f_j[p] 随 p 不降，所以最佳 p 是最小合法切点，等价于一次删掉最长合法前缀，转移 f_j[r]=min(f_{j-1}[r],f_j[p]+m-j)。因 a_i>0，最小合法 p 随 r 单调右移，可用双指针；若 max(a)>b_1 则必不可行。",
+    "complexity": "O(nm) time and O(n) memory with rolling DP and two pointers.",
+    "tricks": [
+      "Easy 只比较最小费用：固定 k 时所有合法删除长度收费相同，删得更远的状态在所有未来选择上支配删得更短的状态。",
+      "正数前缀和使合法窗口左端点单调，可把每层从二分 O(n log n) 降为双指针 O(n)。",
+      "这种支配只保留最优值；Hard 统计方案时不能丢掉较短删除。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rolling-partition-dp-two-pointers",
+      "summary": "按 j 分层滚动 f；对每个右端点维护最小合法前驱 p，用 f_j[p]+m-j 更新，并与免费升 k 的 f_{j-1}[r] 取最小。",
+      "complexity": "O(nm) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "two-dimensional-dp-binary-search",
+      "summary": "显式维护 dp[i][j]；每个状态用前缀和 upper_bound 找一次能到达的最远 r，只向 r 松弛，并做 dp[i][j]->dp[i][j+1] 的零费用转移。",
+      "complexity": "O(nm log n) time and O(nm) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "状态按已删除前缀和当前 k 分层，每次 type 2 转移选择下一个连续块，整条操作序列等价于把 a 分成若干连续删除段。",
+      "solution_variant": "rolling-partition-dp-two-pointers"
+    },
+    {
+      "tag": "trick/state-dominance",
+      "importance": "primary",
+      "evidence": "固定 k 时删除任意合法非空前缀的费用相同；到达更远位置留下更短后缀，未来可行操作不少于较近位置，因此求最小费用只保留最远端点。",
+      "solution_variant": "rolling-partition-dp-two-pointers"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "a_i 全为正，固定 b_j 时最小合法前驱随右端点单调移动，使每个 j 的全部窗口边界在线性时间求出。",
+      "solution_variant": "rolling-partition-dp-two-pointers"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "用 64 位前缀和判定任意候选删除段的和是否不超过 b_j。",
+      "solution_variant": "rolling-partition-dp-two-pointers"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "替代实现从每个 dp[i][j] 用 upper_bound(prefix[i]+b_j) 找可删除的最远端点。",
+      "solution_variant": "two-dimensional-dp-binary-search"
+    }
+  ]
+}
+

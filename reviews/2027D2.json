@@ -1,0 +1,148 @@
+{
+  "contest": {
+    "contest_id": 2027,
+    "title": "Codeforces Round 982 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2027,
+    "index": "D2",
+    "title": "The Endspeaker (Hard Version)",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "greedy",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2027/problem/D2",
+      "notes": "核对 Hard 唯一新增要求：输出最小费用的操作序列数 mod 1e9+7；不同删除长度算不同序列。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135558",
+      "notes": "确认必须把每个状态松弛到全部合法终点，使用区间事件加按费用维护最小值与方案和，标准复杂度 O(nm log n)；另给出线性与线段树变体。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9gofkcbc",
+      "notes": "从 CF2027D2 题解索引定位并阅读；明确指出 D1 只取最远端点会漏方案，给出区间更新、单点查询的线段树实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/pmbmiqrz",
+      "notes": "从同一索引定位并阅读 O(nm) 变体；利用每列最小费用单调和相等最优前驱形成连续段，用双指针累计方案。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2027/submission/288124058",
+      "notes": "Codeforces 页面核验为 Accepted；代码为每个 k 预处理最远端点，并用事件、map/set 维护当前有效费用的最小值和方案数。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2027/problem/D2",
+      "notes": "独立实现全合法前缀计数 DP；2000 组随机小例与完整操作序列穷举的最小费用和方案数均一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "操作与 D1 相同，但还要统计达到最小总费用的不同操作序列数；删除前缀长度不同即为不同序列，答案对 1e9+7 取模。",
+    "constraints": "t<=1000；1<=n,m<=3e5，所有测试 sum(n*m)<=3e5；1<=a_i,b_i<=1e9；b 严格递减。费用和前缀和用 64 位，方案数模 1e9+7。",
+    "core_idea": "令 dp[i][j]=(cost,ways) 表示已删除前 i 个元素且当前 k=j 的最优二元值。对源 i 求 r(i,j)=max{x:prefix[x]-prefix[i]<=b_j}；一次 type 2 可到每个 x in [i+1,r]，并给它们同加费用 m-j。D1 只保留 r 对最小值正确，但会漏掉较短删除对应的不同序列。标准做法沿目标 x 扫描，把每个源的候选 (cost+m-j,ways) 作为在 [i+1,r] 生效的区间事件；有序 map/multiset 按候选费用聚合活跃来源的方案数，最小键即当前最佳 type 2 转移，再与免费升 k 的状态按 cost 取小、相等时加 ways。终点 i=n 应跨 j 汇总，不能把清空后的升 k 当成真实操作重复计数。",
+    "complexity": "标准活跃区间做法为 O(nm log n) 时间、O(nm) 空间；DP 分层滚动时可降到 O(n) 辅助空间。另有利用费用单调性的 O(nm) 变体。",
+    "tricks": [
+      "Hard 的关键不是重新求最小费用，而是 D1 的支配删点会丢失不同删除长度对应的最优序列。",
+      "把单个源对一整段终点的松弛改写为加入/删除事件，扫描时维护活跃候选的最小费用及该费用的方案总和。",
+      "合并二元值时只在费用相等时累加方案；区间过期时还要按来源减回方案并维护键的实际 multiplicity。",
+      "type 1 要求数组非空；实现可单独汇总各 k 的终止状态，避免把清空后的虚假升 k 计成新序列。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "active-range-min-count-sweep",
+      "summary": "每个源状态对 [i+1,r(i,j)] 产生同一 (费用,方案数) 候选；按位置扫描加入和删除事件，用按费用有序的 multiset/map 聚合同费用方案，取最小费用键更新 dp。",
+      "complexity": "O(nm log n) time and O(nm) memory; O(n) auxiliary memory is possible with rolling layers.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "reverse-segment-tree-min-count",
+      "summary": "反向定义从位置 i 清空后缀的 (最小费用,方案数)，每个 k 用线段树查询全部合法下一位置区间的最小值及最小值出现方案和，再与 k+1 层合并。",
+      "complexity": "O(nm log n) time and O(nm) memory in the direct implementation.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "monotone-equal-cost-block-two-pointers",
+      "summary": "固定 j 时最小费用 dp_j[i] 随 i 不降；对目标 i，最优合法前驱是最小合法 p，所有与 dp_j[p] 同值且仍合法的前驱构成连续段。用不回退的双指针定位该等值段，并用前缀/滑动和汇总 ways。",
+      "complexity": "O(nm) time and O(n) rolling memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "状态按已删前缀与 k 划分，每次删除选择下一个连续块；Hard 需要同时优化这种分段的费用并统计所有最优分段序列。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "每个状态保存 (minimum cost, number of ways)，费用更小时替换、相等时按模数累加；这正是 Hard 相比 Easy 的决定性新增状态语义。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "每个源状态在一段连续目标区间内有效，算法按目标位置递增处理开始/结束事件并查询当前活跃候选最优值。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "标准实现动态加入/删除带重复费用的候选，按费用键聚合方案数，并持续读取最小活跃费用。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "对每个 b_j，利用 a_i>0 在线性时间求所有起点的最远合法终点 r(i,j)。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "64 位前缀和用于判定删除段和并求 r(i,j)。",
+      "solution_variant": "active-range-min-count-sweep"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "官方与洛谷替代解用线段树维护区间松弛或查询区间最小费用及其方案数。",
+      "solution_variant": "reverse-segment-tree-min-count"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "secondary",
+      "evidence": "O(nm) 变体把所有同为最小费用的合法前驱压成连续段，并用前缀/滑动方案和一次得到该段贡献。",
+      "solution_variant": "monotone-equal-cost-block-two-pointers"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "线性变体依赖固定 j 时 dp_j[i] 不降，使最小合法前驱及其等值段右端都只向前移动。",
+      "solution_variant": "monotone-equal-cost-block-two-pointers"
+    }
+  ]
+}
+
