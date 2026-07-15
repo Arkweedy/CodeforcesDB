@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2051,
+    "title": "Codeforces Round 995 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2051,
+    "index": "G",
+    "title": "Snakes",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "dsu",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2051/G",
+      "notes": "Read the interval-growth process and bounds: n <= 20, q <= 200000, with a valid event sequence."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137623",
+      "notes": "The official solution derives directed pairwise safety distances by scanning the event timeline and then runs a Hamiltonian-path-style subset DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bqpvs7rm",
+      "notes": "Cross-checked the relative-distance model, the subset DP state, and the optimized alternative that merges per-snake event lists when computing pair distances."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2051/G",
+      "notes": "Re-derived dist(i,j)=1+max_t(grow_i(t)-shrink_j(t)). Compared the resulting Hamiltonian-path formula with exhaustive permutations and initial placements on 250 randomized valid cases with n<=4 and q<=6; all answers matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2051G",
+      "notes": "Additional Luogu solution index; the consulted Luogu article already supplied the required independent cross-check."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose distinct initial positions for moving interval-snakes so that no collision ever occurs, minimizing the largest occupied coordinate.",
+    "constraints": "n <= 20 suggests exponential subset DP, while q <= 200000 permits timeline preprocessing but rules out evaluating every ordering directly.",
+    "core_idea": "Fix snake i to the left of snake j. At time t, i's right endpoint has moved right by grow_i(t), while j's left endpoint has moved right by shrink_j(t). Strict separation therefore requires start_j-start_i >= 1+grow_i(t)-shrink_j(t) for every prefix t. Define dist(i,j) as one plus the maximum of this prefix difference. These directed distances form a complete weighted graph. For any left-to-right snake order, placing the first snake at 1 and each next snake at the minimum distance from its predecessor is optimal. Run dp[mask][last], the minimum starting coordinate of the rightmost snake last after placing exactly mask. Transition by appending nxt with cost dist(last,nxt). Finally add the total number of growth events of last to obtain its maximum right endpoint.",
+    "complexity": "O(n^2 q + n^2 2^n) time and O(n 2^n + n^2) memory for the official direct-scan preprocessing.",
+    "tricks": [
+      "Turn dynamic collision constraints into a static directed distance for each ordered snake pair.",
+      "Express each distance as the maximum of a prefix difference between growth and shrink counts.",
+      "View a left-to-right ordering as a Hamiltonian path in a complete directed weighted graph.",
+      "Add the final snake's total growth count after the subset DP.",
+      "Optionally merge per-snake event lists to reduce pair-distance preprocessing."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "graph/hamiltonian-path is a proposed candidate tag and requires main-agent taxonomy approval plus WebUI translation."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "direct-pair-scan-subset-dp",
+      "summary": "Scan all q events for every ordered pair to compute its minimum safe separation, then find the minimum-weight Hamiltonian path with dp[mask][last].",
+      "complexity": "O(n^2 q + n^2 2^n) time and O(n 2^n + n^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "merged-events-subset-dp",
+      "summary": "Store each snake's events and merge the two relevant timestamp lists for every ordered pair, computing the same maximum prefix difference without rescanning unrelated events; use the same subset DP afterward.",
+      "complexity": "O(nq + n^2 2^n) time and O(n 2^n + q + n^2) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/subset-dp",
+      "importance": "primary",
+      "evidence": "The optimization state is the subset of already placed snakes together with the rightmost snake, with transitions that append one unselected snake.",
+      "solution_variant": "direct-pair-scan-subset-dp"
+    },
+    {
+      "tag": "graph/hamiltonian-path",
+      "display_name": "Hamiltonian path",
+      "importance": "primary",
+      "evidence": "After pairwise distances are derived, every feasible left-to-right ordering is a Hamiltonian path and its edge-weight sum determines the last snake's starting coordinate.",
+      "solution_variant": "direct-pair-scan-subset-dp",
+      "description": "Find, optimize, count, or reason about a path that visits every graph vertex exactly once. Use for Hamiltonian-path and traveling-salesman-path formulations, not ordinary unrestricted shortest paths.",
+      "parent": "graph",
+      "created_reason": "The current taxonomy has subset DP and generic graph tags but no reusable tag for the classic Hamiltonian-path/TSP-path structure that is explicit in this solution.",
+      "status": "candidate",
+      "aliases": [
+        "hamiltonian path",
+        "traveling salesman path",
+        "tsp path"
+      ],
+      "main_agent_review_required": true,
+      "main_agent_review_note": "If accepted, add the WebUI Chinese translation 哈密顿路径."
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "A collision condition over the entire event sequence becomes the maximum over prefix growth_i minus prefix shrink_j.",
+      "solution_variant": "direct-pair-scan-subset-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The visited snake subset is represented as a bitmask of at most 20 bits, enabling enumeration of all subsets and append transitions.",
+      "solution_variant": "direct-pair-scan-subset-dp"
+    }
+  ]
+}

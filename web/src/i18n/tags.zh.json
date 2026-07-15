@@ -76,6 +76,7 @@
   "graph/flow/residual-cycle": "残量环调整",
   "graph/functional-graph": "函数图",
   "graph/grid-separator": "网格分隔链",
+  "graph/hamiltonian-path": "哈密顿路径",
   "graph/heavy-light-decomposition": "树链剖分",
   "graph/layered-graph": "分层图",
   "graph/lca": "最近公共祖先",

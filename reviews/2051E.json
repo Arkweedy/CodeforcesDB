@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2051,
+    "title": "Codeforces Round 995 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2051,
+    "index": "E",
+    "title": "Best Price",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2051/E",
+      "notes": "Read the customer behavior model and bounds: n <= 200000 per aggregate input, 0 <= k <= n, ai < bi <= 2e9."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137623",
+      "notes": "The official solution sorts all ai/bi events, sweeps candidate prices, and maintains the current buyer and negative-review counts."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/5j5256e0",
+      "notes": "Cross-checked the endpoint-candidate proof and the alternative using two sorted arrays and lower_bound to count buyers and positive reviewers."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2051/E",
+      "notes": "Re-derived the behavior intervals and compared endpoint enumeration with exhaustive enumeration of every integer price on 5000 randomized small cases; all answers matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2051E",
+      "notes": "Additional Luogu solution index; not needed for the current high-confidence derivation."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose one price for all customers to maximize price times the number of buyers, while at most k buyers leave a negative review.",
+    "constraints": "t <= 10000; n <= 200000 per test aggregate; ai, bi <= 2e9 and ai < bi. Enumerating the numeric price domain is impossible, but customer behavior changes only at the 2n endpoints.",
+    "core_idea": "Between two consecutive values from {ai,bi}, the buyer count and negative-review count are constant, so increasing the price to the right endpoint cannot hurt feasibility and only increases revenue. Thus an optimum occurs at some ai or bi. The official implementation sweeps grouped endpoints in ascending order. Before crossing coordinate x, cnt is the number of customers with bi >= x and bad is the number with ai < x <= bi; test x*cnt, then process all ai=x and bi=x events together. Alternatively, sort a and b separately and for every endpoint p compute buyers as count(bi>=p), positive reviewers as count(ai>=p), and negative reviews as their difference using lower_bound.",
+    "complexity": "O(n log n) time and O(n) memory per test case.",
+    "tricks": [
+      "Reduce an unbounded price search to the 2n behavior-change endpoints.",
+      "Evaluate a coordinate before applying events located at that coordinate because ai and bi are inclusive thresholds.",
+      "Group equal endpoint values so customers sharing a threshold are updated simultaneously.",
+      "Negative reviews equal buyers minus positive reviewers."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "grouped-endpoint-sweep",
+      "summary": "Sort tagged ai/bi events, sweep equal coordinates as one group, and maintain buyer and negative-review counts while evaluating each endpoint price.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "sorted-arrays-binary-search",
+      "summary": "Sort a and b independently, enumerate every distinct endpoint, and use lower_bound in both arrays to obtain buyer and negative-review counts.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "The decisive proof reduces the full integer price domain to values ai and bi, since behavior is unchanged between consecutive endpoints.",
+      "solution_variant": "grouped-endpoint-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The official solution processes sorted threshold events from left to right while maintaining the active buyer and negative-review counts.",
+      "solution_variant": "grouped-endpoint-sweep"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Both reviewed variants require sorting the threshold coordinates before counting customers at candidate prices.",
+      "solution_variant": "grouped-endpoint-sweep"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "secondary",
+      "evidence": "All events with the same threshold must be processed together after evaluating that inclusive price.",
+      "solution_variant": "grouped-endpoint-sweep"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "The independent variant uses lower_bound on sorted a and b for every candidate price.",
+      "solution_variant": "sorted-arrays-binary-search"
+    }
+  ]
+}

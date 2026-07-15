@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2051,
+    "title": "Codeforces Round 995 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2051,
+    "index": "F",
+    "title": "Joker",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2051/F",
+      "notes": "Read the move-to-front-or-back transition and bounds: n <= 1e9, sum q <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137623",
+      "notes": "The official implementation represents all reachable positions using three intervals and updates their endpoints in constant time per operation."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/jc3h6vau",
+      "notes": "Cross-checked the exact transition for a reachable position y relative to the selected position x. The article uses more elaborate set maintenance, so it was used primarily to verify the local transition."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2051/F",
+      "notes": "Derived an interval-union transition and compared it with explicit reachable-position sets on 10000 randomized tests. Every result matched, and the reachable set always contained at most three disjoint intervals."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2051F",
+      "notes": "Additional Luogu solution index; direct access was not required for this review."
+    }
+  ],
+  "annotation": {
+    "summary": "After each nondeterministic move of the card at position ai to either end of the deck, report how many different positions the joker could occupy.",
+    "constraints": "n can be as large as 1e9 and total q is at most 200000, so reachable positions cannot be represented individually.",
+    "core_idea": "For a reachable joker position y and operation x: if y<x, the next position is y or y+1; if y>x, it is y-1 or y; and if y=x, moving the joker itself sends it to 1 or n. Starting from {m}, these transitions preserve the invariant that the reachable set is the union of at most three intervals: a prefix touching 1, at most one middle interval, and a suffix touching n. Update each interval according to its relation with x, create the two boundary positions when x is reachable, merge overlaps, and sum the interval lengths.",
+    "complexity": "O(q) time and O(1) additional memory per test case.",
+    "tricks": [
+      "Write the exact transition according to whether the joker lies before, after, or at the moved card.",
+      "Compress up to n reachable positions into at most three intervals.",
+      "Allow prefix, middle, and suffix intervals to overlap and merge them when counting.",
+      "When x is reachable, replace that branch by the two boundary positions 1 and n."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-reachable-intervals",
+      "summary": "Maintain a prefix interval, an optional middle interval, and a suffix interval representing every reachable joker position; update and merge them in constant time after each operation.",
+      "complexity": "O(q) time and O(1) additional memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/state-compression/piecewise-constant",
+      "importance": "primary",
+      "evidence": "The boolean reachability function over positions 1..n is stored through its at most three true interval runs, removing all dependence on the enormous n.",
+      "solution_variant": "three-reachable-intervals"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "Correctness and constant complexity depend on proving that every transition preserves a union of at most three intervals.",
+      "solution_variant": "three-reachable-intervals"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "Each interval update follows the exhaustive cases x left of the interval, x right of it, or x contained in it.",
+      "solution_variant": "three-reachable-intervals"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The final code requires careful interval merging and empty-interval handling, but these details are not the conceptual retrieval target.",
+      "solution_variant": "three-reachable-intervals"
+    }
+  ]
+}

@@ -297,6 +297,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "hash-map": "哈希表",
   "hashing": "哈希",
   "harmonic-sum": "调和级数枚举",
+  "hamiltonian-path": "哈密顿路径",
   "heavy-light-decomposition": "树链剖分",
   "helper-buffer": "辅助缓冲",
   "highest-differing-bit": "最高不同位",
