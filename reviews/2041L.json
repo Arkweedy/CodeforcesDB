@@ -1,0 +1,112 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "L",
+    "title": "Building Castle",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/L",
+      "notes": "Read the complete statement, both samples, and all constraints: a strictly convex CCW polygon with 3 <= n <= 500, integer coordinates of absolute value at most 1e4, and 1e-4 output tolerance."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read Problem L on page 8 of the official Taichung analysis. It gives the fixed-center intersection reduction, Brunn-Minkowski shape property, nested ternary search, HPI, and the need for linear HPI queries."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2041L",
+      "notes": "Actually read both public solutions, including the full nested-search/HPI implementation and the expanded independent fixed-center area argument. They corroborate the reduction and document precision and time-limit hazards."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/L",
+      "notes": "Independently proved fixed-center optimality orbit by orbit and concavity via lambda*C_p+(1-lambda)*C_q subset C_r plus Brunn-Minkowski. Independent convex clipping reproduced the sample answers and checked 4,000 random numerical concavity inequalities without violation."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given a convex polygon A, choose any point-symmetric convex polygon B, with any center, minimizing area(A symmetric-difference B). Output only the minimum area.",
+    "constraints": "3 <= n <= 500; |x_i|,|y_i| <= 1e4; vertices are CCW, strictly convex, and have no three collinear; 10 seconds and 1024 MB; accepted error is 1e-4 relative or absolute.",
+    "core_idea": "Fix center p and let R_p(A)=2p-A. Reflection orbits contain two points, and a centrally symmetric B must select both members or neither. If A contains exactly one member, either choice costs one; if A contains both, keeping both is uniquely optimal. Thus one optimum for p is C_p=A intersect R_p(A), which is convex and centrally symmetric, and the cost is area(A)-area(C_p). Maximize F(p)=area(C_p) over p in A. For r=lambda*p+(1-lambda)*q, convexity gives lambda*C_p+(1-lambda)*C_q subset C_r. Brunn-Minkowski in R^2 implies sqrt(F(r)) >= lambda*sqrt(F(p))+(1-lambda)*sqrt(F(q)), so G=sqrt(F) is concave. Every line restriction is unimodal, and H(x)=max_y G(x,y) over a vertical slice is also concave; since square root is increasing, evaluating F yields the same comparisons and maximizers. Nested ternary search is therefore valid. Evaluate F(p) as the area of the intersection of the 2n half-planes defining A and R_p(A). Their directed edge orders are cyclic by angle; rotate/preprocess and merge the two ordered lists so deque HPI is O(n) per center instead of sorting each query.",
+    "complexity": "Let I=O(log(C/epsilon)) be the ternary iteration count for coordinate span C and internal precision epsilon. With one-time O(n log n) line-order preprocessing and O(n) HPI per center, total time is O(n log n + n*I^2)=O(n log n + n log^2(C/epsilon)); memory is O(n).",
+    "tricks": [
+      "optimize independently over reflection orbits after fixing the center",
+      "replace the target by A intersect its point reflection",
+      "prove square-root overlap concavity using a Minkowski inclusion and Brunn-Minkowski",
+      "justify nested searches through partial maximization of a concave function",
+      "compute overlap as a half-plane-intersection area",
+      "merge two preordered cyclic edge lists to remove per-query sorting"
+    ],
+    "uncertainty_points": [
+      "No unresolved mathematical uncertainty remains in the fixed-center reduction or concavity proof; both are supplied explicitly rather than relying on informal single-peaked claims.",
+      "The official analysis calls the square-root overlap function convex, but the inequality required for maximization is concavity. This review proves the concave direction.",
+      "The sources do not supply a formal end-to-end floating-point error bound or minimum safe iteration count; epsilon selection remains implementation-sensitive.",
+      "The Luogu implementations corroborate the geometry but do not justify the final asymptotic bound: one sorts 2n lines per evaluation, and another uses hill climbing without a complete convergence proof."
+    ],
+    "review_risks": [
+      "The answer is area(A)-max_p area(A intersect R_p(A)), not twice that difference.",
+      "The proven statement is that square-root overlap is concave; overlap itself need not be concave.",
+      "Nested ternary search needs the proof that H(x)=max_y sqrt(F(x,y)) is concave; coordinate-wise unimodality alone would not justify nesting.",
+      "O(n) per query requires cyclically rotating and merging the two angle-ordered edge sequences. General HPI sorting per center adds a log n factor and is warned as too slow.",
+      "Parallel same-direction half-planes must keep the more restrictive line, and near-parallel intersections must avoid unstable division.",
+      "A 180-degree reflection preserves CCW orientation but shifts edge angles by pi modulo 2pi; mishandling the cyclic wrap breaks the linear merge.",
+      "Boundary centers, flat maxima, and zero-area intersections must remain valid states.",
+      "Use fixed search iterations and stable predicates/area accumulation; one shared geometric epsilon can interact poorly with near-parallel HPI lines."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "brunn-concavity-nested-ternary-hpi",
+      "summary": "For each center p, use the centrally symmetric convex intersection A intersect (2p-A), reducing symmetric-difference minimization to overlap maximization. Brunn-Minkowski makes square-root overlap concave, enabling nested ternary search; each query is linear-time HPI after merging the preordered edge lists.",
+      "complexity": "O(n log n + n log^2(C/epsilon)) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/half-plane-intersection",
+      "importance": "primary",
+      "evidence": "Every objective evaluation constructs A intersect (2p-A) from 2n directed supporting half-planes and needs its area; deque HPI with merged angle order is the required O(n) query engine.",
+      "solution_variant": "brunn-concavity-nested-ternary-hpi",
+      "display_name": "Half-plane intersection",
+      "description": "Intersect a family of directed half-planes, usually by sorting or merging boundary-line angles and maintaining a deque, to construct or test the resulting convex polygon. Use when HPI is central, not for clipping by only a fixed constant number of lines.",
+      "parent": "math/geometry",
+      "created_reason": "CF2041L evaluates the overlap of a convex polygon and its point reflection at every search point, and meeting the time limit requires a linear-time ordered HPI routine. Existing geometry and convexity tags do not identify this classic reusable algorithm.",
+      "aliases": [
+        "hpi"
+      ],
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/search/ternary-search",
+      "importance": "primary",
+      "evidence": "The center is optimized by an outer ternary search on x and an inner ternary search on the feasible y-slice; concavity proves both one-dimensional objectives are unimodal.",
+      "solution_variant": "brunn-concavity-nested-ternary-hpi"
+    },
+    {
+      "tag": "math/geometry/convexity",
+      "importance": "primary",
+      "evidence": "Correctness rests on convex-set interpolation and Brunn-Minkowski, proving sqrt(area(A intersect (2p-A))) is concave and that partial maximization preserves concavity.",
+      "solution_variant": "brunn-concavity-nested-ternary-hpi"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "Fixing a point-reflection center pairs every plane point with its opposite; the orbitwise symmetric-difference argument reduces the unknown target to A intersect (2p-A).",
+      "solution_variant": "brunn-concavity-nested-ternary-hpi"
+    }
+  ]
+}

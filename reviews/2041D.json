@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "D",
+    "title": "Drunken Maze",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dfs and similar",
+      "graphs",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/D",
+      "notes": "Read the complete statement and constraints: four-neighbor moves, walls, at most three consecutive moves in one direction, and n*m <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read the official contest analysis linked from Codeforces. It models vertices as maze positions augmented by the last direction and current consecutive-run length, then applies BFS."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/z4dv9rv4",
+      "notes": "Read the complete Luogu solution article and implementation. It independently confirms BFS over (cell,last_direction,run_length) and O(nm) time and memory."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/D",
+      "notes": "Verified that the augmented state is Markovian, that all legal moves are represented exactly once as unit edges, and that ordinary BFS therefore returns the minimum legal number of steps."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the shortest wall-avoiding path from S to T in a grid when no direction may be used for more than three consecutive steps.",
+    "constraints": "12 <= n*m <= 200000; 3 <= n,m <= 10000; exactly one S and T; the border is all walls. A constant 12 movement-history states per open cell fits comfortably.",
+    "core_idea": "A cell alone is not a sufficient shortest-path state because future legal moves depend on how it was entered. Use states (cell,last_direction,run_length), where run_length is 1, 2, or 3. A move in a different direction resets the length to 1; a move in the same direction is allowed only when the length is below 3. Start from a sentinel no-direction state, run BFS on this unweighted augmented graph, and take the minimum distance among all states located at T.",
+    "complexity": "O(12*n*m) time and O(12*n*m) memory, both O(nm), since every state is visited once and has at most four outgoing moves.",
+    "tricks": [
+      "Do not mark only the grid cell visited; arrivals with different last directions or run lengths have different legal continuations.",
+      "Use a sentinel direction and run length 0 at S, or seed all legal first moves.",
+      "Because every transition costs one step, a FIFO queue is sufficient; Dijkstra and DFS are unnecessary.",
+      "The answer is the minimum over all direction/run states at T, not the first geometric visit under a cell-only visited array."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "augmented-state-bfs",
+      "summary": "Run BFS on up to twelve copies of every open cell, indexed by the last move direction and its current run length, rejecting only a fourth identical consecutive move.",
+      "complexity": "O(nm) time and O(nm) memory with a constant factor of 12.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "Every legal move is a unit-weight edge in the augmented state graph, so BFS levels are exactly legal path lengths and the first distance assigned to a state is optimal.",
+      "solution_variant": "augmented-state-bfs"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "The last direction and its run length must be added to the cell coordinate; without them the set of legal next moves is not determined by the state.",
+      "solution_variant": "augmented-state-bfs"
+    },
+    {
+      "tag": "graph/layered-graph",
+      "importance": "secondary",
+      "evidence": "Each grid cell is represented by twelve direction/run layers, with movement edges between the appropriate layers.",
+      "solution_variant": "augmented-state-bfs"
+    },
+    {
+      "tag": "graph/shortest-path",
+      "importance": "secondary",
+      "evidence": "The requested minimum number of legal steps is an unweighted shortest path in the augmented graph.",
+      "solution_variant": "augmented-state-bfs"
+    }
+  ]
+}

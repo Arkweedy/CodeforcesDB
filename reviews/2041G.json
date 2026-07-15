@@ -1,0 +1,126 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "G",
+    "title": "Grid Game",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/G",
+      "notes": "Read the complete statement, connectivity definition, examples, and limits: t <= 125, 2 <= n <= 1e9, q >= 1, sum q <= 1e5; black segments may overlap, while the remaining white-cell graph is guaranteed connected with at least three vertices."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read the official 2024 ICPC Asia Taichung Problem Analysis and Hints, pages 4-5, and visually inspected Figure 1. It confirms interval cleanup, boundary handling, the artificial-box/DSU local characterization, and the alternative of carefully compressing the grid and running a standard cut-vertex algorithm; it is a high-level sketch rather than a full preservation proof."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/jhmpk8vf",
+      "notes": "Actually read the full independent write-up and C++ listing. Cross-checked capping black-column gaps at 3, taking event rows from three neighboring columns, replacing vertical runs by weighted edges, and summing explicit articulation vertices plus weights of bridge edges. No submission verdict was inferred from the article."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/G",
+      "notes": "Independently proved the two-column-strip and ladder-cycle preservation lemmas and the weighted-path bridge lemma. An in-memory checker compared the compressed algorithm with brute-force vertex deletion on every 11,665 valid connected black-cell mask for n=2..4 and on 11,451 random valid masks for n=5..8; all answers matched."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "The black cells of an n by n grid are the union of q vertical segments. The remaining white cells form one connected 4-neighbor graph; count the white cells whose deletion disconnects that graph, i.e. its articulation vertices.",
+    "constraints": "1 <= t <= 125, 2 <= n <= 1e9, q >= 1, and the sum of q over tests is at most 1e5. Each segment has one column and an inclusive row interval; segments can overlap. At least three white cells remain and they are connected. The answer, coordinates, and compressed path lengths require 64-bit integers.",
+    "core_idea": "Merge overlapping or touching black intervals in every occupied column and add virtual fully black columns 0 and n+1. Between consecutive columns containing black cells, cap the coordinate gap at 3, retaining at most two all-white columns. Any discarded middle columns have no obstacle attachments, and a two-column full-height ladder remains connected after deletion of any one of its vertices, so this replacement preserves every possible articulation while retaining the obstacle-adjacent columns where a unique attachment can occur. For each retained real column x, create an explicit vertex for every white cell at row 1 or n and at every in-range row s-1 or f+1 induced by a merged black interval in columns x-1, x, or x+1. These are exactly the rows where the local three-column adjacency pattern can change. Connect equal-row explicit cells in adjacent columns. Connect consecutive explicit rows a<b in one uninterrupted white run by one vertical edge of weight b-a-1, suppressing the internal cells. For any adjacent pair of columns, a maximal row interval white in both columns is a ladder whose boundary rungs are explicit in both columns; all omitted internal rungs are merely chords of that retained cycle. Thus deleting those rungs does not change the block-cut structure, and after their deletion every suppressed cell lies only on one vertical path. Subdividing a skeleton edge by w internal degree-two vertices makes each such vertex an articulation exactly when the skeleton edge is a bridge: a non-bridge supplies an alternate endpoint path, while a bridge has none. Therefore run lowlink DFS on the O(q)-size multigraph and return the number of explicit articulation vertices plus the sum of weights of all bridge edges.",
+    "complexity": "O(q log q) time and O(q) memory per test case; for Q = sum q, total time is O(Q log Q) and total working memory is O(Q). The two lowlink passes themselves are O(q).",
+    "tricks": [
+      "Cap an empty column gap at 3, not 2: two all-white columns preserve one-vertex redundancy, whereas a single-column corridor can contain articulation cells.",
+      "Use interval endpoints from columns x-1, x, and x+1 so every change of horizontal adjacency is an explicit event row.",
+      "Suppress a long vertical white run into an edge weighted by its number of internal cells.",
+      "Count explicit cut vertices and weighted bridges separately; only bridge weights contribute suppressed cut vertices.",
+      "Use edge IDs rather than parent vertices in lowlink DFS because the compressed graph can be a multigraph."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the compressed-graph variant after the independent proof and small-instance checks.",
+      "The official artificial-box/DSU local-case route is not recorded as a second solution variant because the official PDF gives only a figure-level sketch and no complete case-counting specification.",
+      "If this payload is later applied, graph/articulation-point and trick/coordinate-compression are new candidate tags and require main-agent taxonomy approval plus WebUI translations."
+    ],
+    "proof_risks": [
+      "Capping a long empty-column gap at 2 would leave only one white column and can create false articulation points; the cap must retain two white columns, hence a distance cap of 3 between obstacle columns.",
+      "Using event rows only from the current column misses rows where a neighboring interval starts or ends, invalidating the claim that omitted horizontal edges are ladder chords.",
+      "The vertical edge weight is b-a-1, excluding its explicit endpoints; adding b-a+1 or the whole run length double-counts vertices handled by the articulation-point pass.",
+      "A suppressed path contributes all of its internal cells only when the replacement edge is a bridge; treating every long run as a corridor overcounts cells inside ladder cycles.",
+      "Lowlink must skip the parent edge ID, not every edge to the parent vertex, or parallel compressed edges can be misclassified as bridges.",
+      "Overlapping or directly adjacent black intervals must merge, but intervals separated by exactly one white cell must stay separate because that cell can be an articulation point."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "topology-preserving-grid-skeleton-lowlink",
+      "summary": "Compress horizontal coordinates while retaining two-column redundancy, keep only three-column event rows, replace each remaining vertical degree-two run by a weighted edge, then use lowlink to count explicit articulation vertices and add the internal length of every bridge edge.",
+      "complexity": "O(q log q) time and O(q) memory per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/articulation-point",
+      "display_name": "Articulation point",
+      "importance": "primary",
+      "evidence": "The requested cells are exactly articulation vertices, and the compressed solution's first lowlink criterion counts every explicit skeleton vertex whose removal increases the number of connected components.",
+      "solution_variant": "topology-preserving-grid-skeleton-lowlink",
+      "description": "Find or reason about vertices whose removal increases the number of connected components, usually with DFS discovery times and lowlink values. Use when cut-vertex structure is central, not merely for generic connectivity checks.",
+      "parent": "graph",
+      "created_reason": "CF2041G asks for articulation vertices directly and applies the cut-vertex lowlink criterion after topology-preserving grid compression. Existing graph/connectivity and graph/bridge do not identify vertex-separator problems.",
+      "status": "candidate",
+      "aliases": [
+        "articulation vertex",
+        "cut vertex",
+        "cut-vertex"
+      ]
+    },
+    {
+      "tag": "graph/bridge",
+      "importance": "primary",
+      "evidence": "Every weighted vertical skeleton edge represents its suppressed internal cells, and precisely all of those cells are articulation vertices when and only when that edge is a bridge; summing bridge weights is indispensable to the answer.",
+      "solution_variant": "topology-preserving-grid-skeleton-lowlink"
+    },
+    {
+      "tag": "trick/coordinate-compression",
+      "display_name": "Coordinate compression",
+      "importance": "primary",
+      "evidence": "The n up to 1e9 grid is reduced to O(q) columns and event rows by capping empty column gaps with topology-preserving padding and retaining vertical multiplicities as edge weights.",
+      "solution_variant": "topology-preserving-grid-skeleton-lowlink",
+      "description": "Replace a huge ordered coordinate range by sparse event coordinates, optionally retaining bounded padding or weights needed to preserve adjacency, topology, distance, or multiplicity. Use when behavior changes only at listed coordinates, not for sorting alone.",
+      "parent": "trick",
+      "created_reason": "CF2041G cannot materialize the grid: its solution caps horizontal gaps at a topology-sensitive constant and stores only O(q) vertical event rows. Existing trick/state-compression concerns abstract state spaces rather than sparse geometric coordinates.",
+      "status": "candidate",
+      "aliases": [
+        "coordinate discretization",
+        "grid coordinate compression",
+        "sparse-coordinate compression"
+      ]
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "Tarjan-style DFS discovery and lowlink values compute both explicit articulation vertices and bridge edges on the compressed multigraph.",
+      "solution_variant": "topology-preserving-grid-skeleton-lowlink"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The construction needs merged interval lists, sparse row-to-node maps, edge-ID-safe lowlink traversal, and 64-bit edge weights, but these support rather than define the topology argument.",
+      "solution_variant": "topology-preserving-grid-skeleton-lowlink"
+    }
+  ]
+}

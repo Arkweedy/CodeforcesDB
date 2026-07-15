@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "F",
+    "title": "Segmentation Folds",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dfs and similar",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/F",
+      "notes": "Read the complete folding rules, objective, samples, and constraints: t <= 10, 1 <= l < r <= 1e12, and r-l <= 1e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read and visually checked the official 2024 ICPC Asia Taichung Problem Analysis and Hints, pages 3-4. It gives the segmented sieve, O(1) nearest-prime transition preprocessing, exhaustive recursion, and the potential bound of at most 3*Phi(L,R) <= 6(R-L) recursion nodes."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/2mn4zj0i",
+      "notes": "Actually read the independent Luogu article. It independently uses doubled coordinates, a segmented sieve on [2l,2r], precomputed neighboring primes, and direct search; it also distinguishes the described linear transition lookup from the linked implementation's extra binary-search logarithm."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/F",
+      "notes": "Derived the exact doubled-endpoint transitions and terminal condition, then ran an in-memory implementation on all three samples; it returned counts 3, 1, and 63 exactly."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Starting from [l,r], repeatedly choose either deterministic left-to-right or right-to-left prime fold when available. Count the operation sequences whose terminal interval has minimum possible length.",
+    "constraints": "There are at most 10 tests; 1 <= l < r <= 1e12 and r-l <= 1e5. Folded endpoints can be half-integers, the answer is modulo 998244353, and only a short interval around values as large as 2e12 can be materialized.",
+    "core_idea": "Scale every endpoint by two. For a state [a,b]=[2l,2r], an LTR fold chooses the largest prime p in (a, floor((a+b)/2)] and replaces a by p; an RTL fold chooses the smallest prime p in [ceil((a+b)/2), b) and replaces b by p. Thus every primality query lies in the original short range [2L,2R]. Enumerate its primes with a segmented sieve and precompute nearest-prime answers for every midpoint. A DFS returns (minimum terminal gap, number of sequences attaining it): if no prime lies strictly between a and b, return (b-a,1); otherwise recurse into each available child, keep the smaller returned gap, and add counts modulo 998244353 on a tie. Let Phi(a,b) be the number of primes strictly inside (a,b). Every child has smaller potential, and when both children exist their potentials sum to at most the parent's, so the complete recursion tree has O(R-L) nodes rather than exponentially many.",
+    "complexity": "With base primes shared across tests, O(sqrt(2Rmax) log log Rmax + sum (r-l) log log Rmax) time and O(sqrt(2Rmax) + max(r-l)) memory. After the base-prime sieve, one test takes O((r-l) log log R + r-l) time; its fold recursion has O(r-l) nodes.",
+    "tricks": [
+      "Double coordinates so every folded endpoint and every compared gap is integral.",
+      "A state is terminal exactly when (a,b) contains no prime; its endpoints are consecutive within the prime-and-boundary list.",
+      "Precompute the nearest usable prime on both sides of every midpoint so each recursion edge is O(1).",
+      "Use the interior-prime count as a potential to prove exhaustive branching is linear.",
+      "Count tied terminal leaves as operation sequences; compare doubled gaps without floating point."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the stated exhaustive-recursion variant after deriving the transitions and reproducing all samples.",
+      "The official asymptotic headline suppresses the one-time sieve up to sqrt(2R); the complexity field states that preprocessing term explicitly."
+    ],
+    "source_gaps": [
+      "The official PDF is a proof sketch and does not include reference code.",
+      "The Luogu article was read, but its linked Codeforces submission page was not directly accessible, so this payload does not classify that link as an inspected accepted-code source."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "segmented-sieve-exhaustive-fold-dfs",
+      "summary": "Segment-sieve every prime in [2L,2R], precompute the predecessor/successor prime needed at each midpoint, and DFS the linearly bounded fold tree while combining each child's best terminal gap and tied sequence count.",
+      "complexity": "O(sqrt(2Rmax) log log Rmax + sum (r-l) log log Rmax) total time with shared base-prime preprocessing, O(r-l) fold states per test, and O(sqrt(2Rmax)+max(r-l)) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/segmented-sieve",
+      "display_name": "Segmented sieve",
+      "importance": "primary",
+      "evidence": "The algorithm must enumerate primality throughout [2L,2R] even though 2R can reach 2e12; pre-sieving primes only to sqrt(2R) and marking composites in the width-O(r-l) segment is what makes all fold transitions available.",
+      "solution_variant": "segmented-sieve-exhaustive-fold-dfs",
+      "description": "Use primes up to sqrt(R) to mark composites only inside a short interval [L,R], allowing prime enumeration when the coordinates are huge but the interval width is manageable.",
+      "parent": "math/number-theory",
+      "created_reason": "CF2041F centrally needs range-prime enumeration near 2e12 with width at most 2e5. Existing divisor-sieve, Du-sieve, and Min_25-sieve tags solve different aggregation tasks, while generic number theory is too broad for this classic reusable technique.",
+      "status": "candidate",
+      "aliases": [
+        "interval sieve",
+        "segment sieve"
+      ]
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The solution explicitly explores both legal folds at every state and compares all terminal leaves; the interior-prime potential proof is precisely what turns this exhaustive search from an apparent exponential tree into O(r-l) work.",
+      "solution_variant": "segmented-sieve-exhaustive-fold-dfs"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "A depth-first traversal of the implicit fold-state tree returns the best terminal gap and the number of tied optimal continuations for each state.",
+      "solution_variant": "segmented-sieve-exhaustive-fold-dfs"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The implementation needs doubled endpoints, careful open/closed midpoint bounds, segmented marking, and modular tie counting, but these details support the sieve-plus-search argument.",
+      "solution_variant": "segmented-sieve-exhaustive-fold-dfs"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "K",
+    "title": "Trophic Balance Species",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "dfs and similar",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/K",
+      "notes": "Read the complete statement, both examples, definitions, and constraints: n <= 200000, m <= 400000, no loops or duplicate ordered edges, and the unknown promised maximum reachability-antichain size satisfies k <= 16."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read the official 2024 ICPC Asia Taichung Problem Analysis and Hints and visually inspected pages 7-8. It confirms SCC condensation, Dilworth chain decomposition, greedy maximum-uncovered-path removal, per-chain reachability DP, the O(k log n) chain count, and total O((n+m)k log n)-type running time; its approximation proof is only sketched by analogy to greedy set cover."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/pecruy0z",
+      "notes": "Actually read Nangu's full independent article and C++ listing. It independently describes SCC condensation and greedy longest-chain covering, then gives a materially different randomized ancestor/descendant pruning algorithm. Its chain-count paragraph is heuristic, so the rigorous bound below was derived independently."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Read the complete CF2041K section and deterministic C++ implementation. It cross-checks the repeated maximum-uncovered-path DAG DP and the forward/reverse per-chain prefix/suffix propagation used to accumulate weighted predecessor and successor counts. No accepted-submission verdict was inferred from the post."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/K",
+      "notes": "Independently proved the SCC weighting identity, the greedy O(k log n) cover bound, the chain-prefix/suffix counting invariant, and the randomized pruning and expected-iteration bounds. An in-memory checker compared both variants with transitive-closure brute force on all 4,165 directed graphs with n <= 4 and 30,000 deterministic-random graphs with n <= 9; all objective values and minimizer sets matched, and every greedy chain count satisfied the derived bound."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given a directed graph, find every vertex minimizing the absolute difference between the number of other vertices reachable from it and the number of other vertices that can reach it. Every antichain under reachability is promised to have size at most an unknown k <= 16.",
+    "constraints": "1 <= n <= 200000, 0 <= m <= min(n(n-1),400000), k is not input and only its guarantee 1 <= k <= 16 is used, edges have distinct ordered endpoints and no self-loops, time limit 3 seconds, and memory limit 128 MB.",
+    "core_idea": "Contract strongly connected components into a DAG H. Give each component C weight w(C), its number of original vertices. If A(C) is the total weight of components that reach C including C, and D(C) is the total weight reachable from C including C, then every original vertex in C has balance |(A(C)-1)-(D(C)-1)|=|A(C)-D(C)|. The reachability order of H has width at most k. Repeatedly assign weight 1 to uncovered components and 0 to covered ones, find a maximum-weight directed path by topological DP, record its uncovered vertices as one chain, and mark them covered. For any remaining set U, Dilworth partitions U into at most k reachability chains; each such chain can be threaded by a directed path in H, so the chosen path covers at least |U|/k vertices. Thus the uncovered count shrinks by a factor at most 1-1/k and only q=O(k log N) chains are produced. For one stored chain c1<...<cr, the chain vertices reaching any x form a prefix and those reachable from x form a suffix. Seed each ci with its cumulative prefix weight and propagate maxima forward in topological order to obtain that chain's contribution to A(x); seed cumulative suffix weights and propagate maxima backward to obtain its contribution to D(x). Summing over all disjoint chains gives A-D for every SCC without materializing transitive closure.",
+    "complexity": "Let N and M be the numbers of SCCs and condensation edges and q the greedy chain count. SCC construction is O(n+m); chain construction and all forward/reverse counting passes take O(q(N+M)). For width k, q=1 when k=1 and q <= 1+ceil(log_{k/(k-1)} N) when k>1, hence total O((n+m)k log n) time and O(n+m) memory.",
+    "tricks": [
+      "Use SCC sizes as reachability weights; all vertices of one SCC have the same balance because excluding the chosen vertex subtracts one from both sides.",
+      "Apply Dilworth to every remaining induced subposet, not only once to the original DAG, to prove geometric decay of uncovered components.",
+      "Keep already covered DAG vertices with path-DP weight zero because they may connect two still-uncovered comparable vertices on the selected path.",
+      "Represent a chain's ancestors by one cumulative prefix index and its descendants by one cumulative suffix index.",
+      "Propagate maxima rather than sums inside one chain; the farthest reachable chain position already encodes the entire prefix or suffix.",
+      "The algorithm never needs the value k; k appears only in the promised running-time proof.",
+      "A randomized alternative prunes the side of a pivot whose signed balance is provably farther from zero."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the deterministic greedy-chain variant after the independent proofs and exhaustive/random small-instance checks.",
+      "The randomized alternative is exact for every pivot sequence, but its O(k log n) iteration bound is expected rather than worst-case and assumes pivots are sampled uniformly from the remaining SCCs; it is therefore recorded with medium confidence.",
+      "The official analysis states the greedy approximation result only at a high level and cites earlier literature; this review's geometric-decay proof supplies the missing contest-level argument without relying on that citation.",
+      "The verified solutions do not use binary search or brute-force enumeration, so those official tags are retained only as metadata clues and are not emitted as reviewed tags.",
+      "If this payload is later applied, graph/dag/chain-decomposition and paradigm/randomized are new candidate tags and require main-agent taxonomy approval plus WebUI translations."
+    ],
+    "proof_risks": [
+      "A chain means a totally ordered subset under transitive reachability, not a vertex-disjoint path in the original edge set. Minimum edge-path cover can be much larger than the width and is the wrong parameter.",
+      "The greedy longest-path DP must score uncovered SCCs by 1, not by SCC size: the O(k log N) cover proof concerns the number of condensation vertices, while SCC sizes are used only for reachability totals.",
+      "Covered SCCs must remain traversable with weight zero. Deleting them can destroy the directed paths that witness comparability among uncovered SCCs and invalidate the 1/k progress bound.",
+      "For a chain, ancestors of x are a prefix and descendants are a suffix. Reversing either propagation direction or summing multiple propagated states double-counts that chain.",
+      "A(C) and D(C) include the whole SCC. For one original vertex, subtract exactly one from both counts; subtracting w(C), or counting the SCC only on one side, gives a wrong balance.",
+      "The q bound needs the k=1 case separated from log base k/(k-1), and the total complexity should use N+M or n+m rather than only m because m may be zero.",
+      "For randomized pruning, h(C)=A(C)-D(C) is strictly increasing along every proper reachability relation. If h(C)>=0 prune descendants; if h(C)<=0 prune ancestors. Swapping these sides can discard the optimum.",
+      "Recursive SCC DFS can reach depth n=200000 under a 128 MB limit; an implementation should use an iterative traversal or otherwise ensure adequate stack space."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-chain-decomposition-and-chain-dp",
+      "summary": "Condense SCCs, repeatedly extract a directed path maximizing the number of uncovered SCCs to obtain O(k log N) reachability chains, then scan the DAG forward and backward once per chain to sum weighted ancestor prefixes and descendant suffixes for every component.",
+      "complexity": "O((n+m)q) time and O(n+m) memory, where q=1 for width 1 and q <= 1+ceil(log_{k/(k-1)} N) for width k>1; therefore O((n+m)k log n) time.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "randomized-monotone-sign-pruning",
+      "summary": "After SCC condensation, repeatedly choose a uniformly random remaining component C, traverse H and its reverse to compute A(C), D(C), and h(C)=A(C)-D(C), record C's balance, and prune all descendants when h(C)>=0 and all ancestors when h(C)<=0. Along a proper reachability relation h strictly increases, so every pruned component is strictly worse than the pivot. Fixing any partition into at most k chains, the surviving vertices on each chain form an interval; conditioned on choosing a pivot from that chain, a uniform pivot leaves at most three quarters of the interval in expectation, while pruning from other chains only helps. Thus the expected number of pivots is O(k log N).",
+      "complexity": "Expected O((n+m)k log n) time and O(n+m) memory; worst-case O((n+m)N) time over an adversarially unlucky pivot sequence.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dag/chain-decomposition",
+      "display_name": "DAG chain decomposition",
+      "importance": "primary",
+      "evidence": "The main algorithm must cover the condensation reachability poset by few chains; Dilworth gives width at most k, and repeated maximum-uncovered paths produce a disjoint O(k log N)-chain cover on which all reachability counts are represented as prefixes and suffixes.",
+      "solution_variant": "greedy-chain-decomposition-and-chain-dp",
+      "description": "Partition a DAG's vertices into chains under transitive reachability, where each chain is a totally ordered subset that can be threaded by one directed path. Use for Dilworth/bounded-antichain arguments or approximate chain covers; do not conflate it with minimum vertex-disjoint edge-path cover.",
+      "parent": "graph/dag",
+      "created_reason": "CF2041K's decisive reduction and complexity proof depend on a bounded-width reachability-poset chain decomposition. Existing graph/dag and graph/matching tags do not identify this reusable order-theoretic DAG technique or distinguish it from ordinary path cover.",
+      "status": "candidate",
+      "aliases": [
+        "chain cover",
+        "poset chain decomposition",
+        "dilworth decomposition"
+      ]
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Each round greedily chooses a path covering the maximum number of currently uncovered SCCs. Since the remaining width is at most k, that path covers at least a 1/k fraction, proving geometric decay and O(k log N) rounds.",
+      "solution_variant": "greedy-chain-decomposition-and-chain-dp"
+    },
+    {
+      "tag": "dp/graph-dp",
+      "importance": "primary",
+      "evidence": "Topological longest-path DP constructs every greedy chain, and two additional DAG DPs per chain propagate cumulative ancestor-prefix and descendant-suffix weights to all SCCs.",
+      "solution_variant": "greedy-chain-decomposition-and-chain-dp"
+    },
+    {
+      "tag": "paradigm/randomized",
+      "display_name": "Randomized algorithm",
+      "importance": "primary",
+      "evidence": "The alternative solution samples a uniform remaining SCC as a pivot; correctness follows from monotonic signed balance, while uniform random pivot ranks yield the O(k log N) expected number of graph traversals.",
+      "solution_variant": "randomized-monotone-sign-pruning",
+      "description": "Use random sampling, pivots, or choices as a central algorithmic step, with correctness and expected-time or probability guarantees stated explicitly. Do not use for incidental randomized hashing or test generation.",
+      "parent": "paradigm",
+      "created_reason": "CF2041K has a materially different exact solution whose efficiency comes from uniformly random pivots and an expected interval-shrink argument. The current taxonomy has no randomized-algorithm tag, and generic greedy does not describe its guarantee.",
+      "status": "candidate",
+      "aliases": [
+        "randomized algorithm",
+        "randomization"
+      ]
+    },
+    {
+      "tag": "graph/scc",
+      "importance": "secondary",
+      "evidence": "SCC condensation is required to turn arbitrary mutual reachability into a weighted DAG; component sizes preserve species counts and every vertex in one SCC has the same balance.",
+      "solution_variant": "greedy-chain-decomposition-and-chain-dp"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "Acyclicity of the SCC condensation enables the reachability partial order, topological maximum-path transitions, and forward/reverse propagation invariants.",
+      "solution_variant": "greedy-chain-decomposition-and-chain-dp"
+    }
+  ]
+}

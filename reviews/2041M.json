@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "M",
+    "title": "Selection Sort",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/M",
+      "notes": "Read the complete statement, operation-order rule, examples, and constraints: n <= 10^6, 31-bit nonnegative values, and each prefix/suffix sort may be used at most once."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read the official contest analysis linked from Codeforces. It splits disjoint and intersecting prefix/suffix ranges, suggests enumerating one boundary, and states that O(n) and O(n log n) implementations are possible."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/59qv9eez",
+      "notes": "Read the complete Luogu write-up. It stable-ranks duplicates into a permutation, scans both operation orders, and maintains the consecutive rank frontier with a heap and the last necessary operation endpoint."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2041/submission/294548198",
+      "notes": "Opened and read the linked submission, confirmed its Accepted verdict, and checked its stable-rank conversion, min/max-heap sweeps, mismatch boundaries, and 64-bit cost handling."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/M",
+      "notes": "Derived the prefix-position formula and exhaustively matched it against direct simulation for every permutation through n=8 and every ternary array through n=7, including both operation orders and omitted operations."
+    }
+  ],
+  "annotation": {
+    "summary": "Sort an array using at most one prefix sort and at most one suffix sort, in either order, minimizing the sum of the squared chosen lengths.",
+    "constraints": "1 <= n <= 10^6; 0 <= s_i < 2^31-1. Costs reach 2*n^2, so 64-bit arithmetic is required. O(n log n) time and O(n) memory are acceptable.",
+    "core_idea": "Replace equal values by stable ranks: sort pairs (value,original_index) and obtain a permutation p of 1..n; this preserves every prefix/suffix sorting feasibility because equal copies are interchangeable. For prefix-then-suffix, let k be the number of final smallest ranks left before the suffix [k+1,n]. Let mx[k] be the maximum original position of ranks 1..k, and bad[k] the last i<=k with p[i]!=i. If mx[k]>k, the operations overlap and the shortest feasible prefix has length x=mx[k], because all ranks 1..k must be brought into it. Otherwise the first k positions already contain exactly ranks 1..k, positions bad[k]+1..k are already fixed, and x=bad[k] suffices. Minimize x^2+(n-k)^2 over k=0..n. Apply the same sweep to q[i]=n+1-p[n+1-i] to cover suffix-then-prefix.",
+    "complexity": "O(n log n) time for comparison-based stable ranking plus O(n) for the two boundary sweeps, and O(n) memory. With linear-time radix sorting of the 31-bit keys, the whole method is O(n).",
+    "tricks": [
+      "Stable occurrence ranks remove duplicate-value ambiguity without changing sortedness feasibility.",
+      "The intersecting case is summarized by the furthest position of a required small rank; the disjoint case is summarized by the last mismatch inside a closed prefix.",
+      "Reverse and complement the rank permutation to reuse the same scan for the opposite operation order.",
+      "k=0 or k=n naturally represents omitting one operation.",
+      "Use 64-bit integers for squared lengths."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "stable-rank-boundary-sweeps",
+      "summary": "After stable ranking, precompute inverse positions, prefix maxima of those positions, and last mismatches. Enumerate every split k with the exact minimal prefix endpoint, then repeat on the reverse-complement permutation for the opposite order.",
+      "complexity": "O(n) after rank normalization and O(n) memory; O(n log n) total with comparison sorting, or O(n) total with radix sorting.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "stable-rank-heap-frontier-sweeps",
+      "summary": "Scan left to right while a min-heap stores processed ranks above the largest completed consecutive prefix 1..lst; track the last position that must belong to the prefix operation and test the suffix length n-lst. Mirror right to left with a max-heap for the other operation order.",
+      "complexity": "O(n log n) time and O(n) memory, including stable rank normalization.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "For every split k, the exact minimum first-operation endpoint is determined by a prefix maximum of inverse rank positions and the last prefix mismatch; the mirrored sweep handles the suffix extrema.",
+      "solution_variant": "stable-rank-boundary-sweeps"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "The split k and the shortest feasible opposite endpoint advance as monotone boundaries, allowing every prefix/suffix pair to be represented and evaluated in one scan per operation order.",
+      "solution_variant": "stable-rank-boundary-sweeps"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting (value,index) pairs converts duplicates into a stable rank permutation whose identity order exactly represents nondecreasing value order.",
+      "solution_variant": "stable-rank-boundary-sweeps"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "For a fixed split, taking the shortest prefix or suffix that contains every required rank is always optimal because any longer operation only increases its squared cost.",
+      "solution_variant": "stable-rank-boundary-sweeps"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "The independent O(n log n) variant uses min- and max-heaps to consume newly available consecutive ranks and maintain the exact frontier under each directional sweep.",
+      "solution_variant": "stable-rank-heap-frontier-sweeps"
+    }
+  ]
+}

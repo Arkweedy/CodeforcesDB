@@ -1,0 +1,124 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "N",
+    "title": "Railway Construction",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/N",
+      "notes": "Read the full statement, both samples, and all constraints: n,m <= 1e5, endpoint fees up to 1e9, and one induced-graph MST answer is required for every deleted prison vertex."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Official Taichung Problem Analysis linked as the Codeforces tutorial; read and visually checked pages 9-10. It confirms the first Boruvka round, O(sqrt(m)) component/non-leaf core, dense Prim completion, exceptional-deletion rebuilds, and the optional localized repair speedup."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2041N",
+      "notes": "Actually read PizzaYY's full independent derivation and published C++ implementation. It supplies the omitted c_ij+1 component-pair minimum-edge scan, the leaf subtraction rule, and disconnected-graph edge cases."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/N",
+      "notes": "Independently proved the Boruvka safety, pairwise-forbidden component-minimum bound, c_ij+1 candidate lemma, non-leaf bound, leaf-deletion exchange argument, and precise complexity. Compared the resulting construction and every deletion answer with brute-force Kruskal on 7,196 exhaustive/random small instances, including tied fees and disconnected graphs."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "The allowed graph is a complete graph minus m forbidden pairs, with edge cost a_u+a_v. For every vertex x, compute the MST cost of the induced graph on V\\{x}, or -1 if it is disconnected.",
+    "constraints": "2 <= n <= 1e5, 0 <= m <= 1e5, 1 <= a_i <= 1e9, distinct forbidden pairs, 4 seconds and 1024 MB. MST sums require signed 64-bit integers.",
+    "core_idea": "Sort vertices once by (a_u,u), using the ID only as a deterministic tie-break. For a static induced graph, each vertex u selects p(u), its lowest-ranked allowed neighbor. These are light edges of singleton cuts, so one Boruvka round can add an acyclic subset with DSU and contract its forest F. If F has k components, their minimum-ranked vertices are pairwise forbidden: if two minima were adjacent, the larger one would have selected an edge leaving its component. Therefore C(k,2) <= m and k=O(sqrt(m+1)). Complete the static MST on these components. For a component pair C,D with c forbidden cross edges, some minimum allowed C-D edge has its C endpoint among the first min(|C|,c+1) vertices of C; otherwise, for the D endpoint of an optimum edge, one of those c+1 cheaper/equal C vertices is not among its at most c forbidden cross neighbors. For each candidate C vertex, scan D in fee order while skipping its forbidden neighbors. Grouped cross-edge lists plus timestamp marks make the total work for this component pair O(c+1); summing over pairs costs O(m+k^2)=O(m), after which dense Prim on k components costs O(k^2)=O(m). To answer all deletions, let T be this MST of the full graph. With threshold B=Theta(sqrt(m+1)), every non-leaf of F is either among the first B possible selected centers or is selected by a vertex having Omega(B) forbidden earlier neighbors, so F has O(B+m/B)=O(sqrt(m+1)) non-leaves. The O(k) Prim edges create only O(k) additional non-leaves, hence T has O(sqrt(m+1)) non-leaves. If x is a leaf of T with incident edge e, then T-e is an MST of G-x: any cheaper tree for G-x plus e would beat T. Thus all leaf answers are W(T)-w(e), while the static routine is rerun only for the O(sqrt(m+1)) non-leaves. If the full graph is disconnected, deleting a vertex cannot merge components; for n>2 only deleting a sole singleton component can possibly succeed, and that remainder is checked by the same static routine (for n=2 both answers are 0).",
+    "complexity": "O(n log n + (n+m)*sqrt(m+1)) time and O(n+m) memory. One static MST build after the global sort is O(n+m): O(n+m) for the first Boruvka round and regrouping, plus O(k^2+m)=O(m) for component-pair minima and dense Prim, where k=O(sqrt(m+1)).",
+    "tricks": [
+      "treat equal fees with a consistent (fee, vertex ID) total order without changing edge costs",
+      "run exactly one Boruvka round to expose a square-root-size contracted core",
+      "bound contracted components by pairwise forbidden component minima",
+      "find a component-pair minimum from only c_ij+1 cheapest endpoint candidates",
+      "answer every MST-leaf deletion by subtracting its unique tree edge",
+      "recompute only the square-root-many non-leaf deletions",
+      "separate the disconnected-base-graph cases before using the leaf formula"
+    ],
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the baseline rebuild algorithm after the independent proof and small-instance brute-force comparison.",
+      "The official analysis deliberately omits the constant-time forbidden-edge arrangement and only sketches the optional localized-repair speedup; this review claims the fully specified c_ij+1 baseline, not a separately verified implementation of that optional speedup."
+    ],
+    "review_risks": [
+      "Do not derive the O(sqrt(m)) component count merely from the number of non-leaves; the required proof is that distinct component minima are pairwise forbidden.",
+      "The WLOG-distinct-fees sentence requires a consistent tie-break or infinitesimal perturbation for choices only; reported edge weights must remain the original a_u+a_v values.",
+      "The c_ij+1 lemma uses the number of forbidden edges crossing one fixed component pair. Using a global degree, failing to sort each component by fee, or rescanning/hash-querying all pairs can invalidate either correctness or the O(n+m) static bound.",
+      "The leaf subtraction argument applies only to leaves of one valid MST of the full connected graph. A non-leaf deletion must be rebuilt, and a disconnected full graph must be handled separately.",
+      "The basic O((n+m)*sqrt(m+1)) implementation is constant-sensitive under 4 seconds; timestamp arrays and contiguous/grouped forbidden-edge buckets should replace repeated clearing and heavy hash-table lookups.",
+      "All costs and the -1 sentinel must use 64-bit arithmetic because a valid MST total can be on the order of 2e14."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "one-boruvka-round-and-nonleaf-rebuild",
+      "summary": "Build a full-graph MST by taking each vertex's cheapest allowed incident edge as the first Boruvka round, contracting to O(sqrt(m+1)) components, finding each component-pair minimum in O(c_ij+1), and running dense Prim. Reuse this MST for O(1) leaf-deletion answers and rerun the static routine only for its O(sqrt(m+1)) non-leaves.",
+      "complexity": "O(n log n + (n+m)*sqrt(m+1)) time and O(n+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/mst",
+      "importance": "primary",
+      "evidence": "Every requested value is an induced-graph MST cost; correctness uses cut safety for the first-round edges, contraction, Prim on the component graph, and an MST exchange proof for deleting a leaf.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    },
+    {
+      "tag": "graph/mst/boruvka",
+      "importance": "primary",
+      "evidence": "The decisive static reduction is exactly one Boruvka round: every singleton chooses its minimum outgoing edge, the safe forest is contracted, and the resulting component/non-leaf structure yields both square-root bounds.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild",
+      "display_name": "Boruvka algorithm",
+      "description": "Use Boruvka's minimum-spanning-tree algorithm, where every current component selects a minimum outgoing edge and the selected safe edges are added and contracted. Use when Boruvka rounds or the structure exposed by their contraction are central, not when an MST is obtained only by Kruskal or Prim.",
+      "parent": "graph/mst",
+      "created_reason": "The first Boruvka round is not an incidental MST implementation here: it creates the O(sqrt(m)) contracted core and the sparse safe forest that make all vertex-deletion answers tractable. The existing generic graph/mst tag cannot retrieve this reusable algorithm-specific pattern.",
+      "status": "candidate"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "A threshold B=Theta(sqrt(m+1)) splits possible centers/selectors into the first B cheap vertices and vertices paying Omega(B) forbidden incidences, proving only O(sqrt(m+1)) components and non-leaf deletions need expensive work.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    },
+    {
+      "tag": "graph/sparse-candidate-edges",
+      "importance": "primary",
+      "evidence": "The graph has Theta(n^2) potential edges, but the proof retains the Boruvka forest plus one exact minimum edge per pair of O(sqrt(m)) components; the c_ij+1 lemma finds all such candidates in O(n+m) total per rebuild while preserving the MST.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "DSU accepts an acyclic subset of the first-round safe edges and assigns the contracted component IDs used by the pairwise minimum-edge phase.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "For every leaf x, its entire deletion effect is the contribution of its unique MST edge, so the answer is precomputed total W(T) minus that edge instead of rebuilding the graph.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "incidental",
+      "evidence": "The static routine must detect a disconnected contracted graph, and the disconnected-full-graph case determines when every deletion answer is -1 except a possible isolated-vertex removal.",
+      "solution_variant": "one-boruvka-round-and-nonleaf-rebuild"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "C",
+    "title": "Cube",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dfs and similar",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/C",
+      "notes": "Read the complete statement, input layout, and constraints: 2 <= n <= 12 and every cube value is in [0, 2 * 10^7]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read the official contest analysis linked from Codeforces. It defines dp(Y,Z), gives the equal-popcount recurrence and base case, and estimates about 1.18e8 operations and 64 MB at n=12."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/n54m8heb",
+      "notes": "Read the Luogu contest write-up's complete C section. It independently uses x-layers plus used-y and used-z masks and gives the exact transition-count sum."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/C",
+      "notes": "Verified the coordinate-permutation reduction, the one-to-one correspondence between feasible selections and DP paths, and the transition-count identity n^2 * binom(2n-2,n-1)."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose n cells of an n by n by n weighted cube with pairwise distinct x, y, and z coordinates, minimizing their total weight.",
+    "constraints": "2 <= n <= 12; 0 <= a[x][y][z] <= 2 * 10^7. The small n permits an O(4^n)-state dynamic program, while n^3 input size is negligible.",
+    "core_idea": "Pairwise distinct coordinates among n choices force every x, every y, and every z coordinate to appear exactly once. Process x-layers in order. For masks Y and Z with |Y|=|Z|=k, let dp[Y][Z] be the minimum cost of choosing one cell from each of the first k x-layers while using exactly those y and z coordinates. From this state choose any unused y and z and add a[k+1][y][z]. Equivalently, remove one y and one z in the backward recurrence. The full/full state is the answer.",
+    "complexity": "O(4^n + n^2 * binom(2n-2,n-1)) time, bounded by O(n^2 * 4^n), and O(4^n) memory; at n=12 this is about 1.18e8 state scans and transitions.",
+    "tricks": [
+      "No x-mask is needed because the common popcount k determines the next x-layer.",
+      "Only mask pairs with equal popcount are reachable.",
+      "Forward transitions enumerate two unused coordinates; their exact count is sum_k binom(n,k)^2 (n-k)^2 = n^2 binom(2n-2,n-1).",
+      "Use a sufficiently large sentinel for unreachable states."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-mask-layer-dp",
+      "summary": "Store the minimum cost for each pair of used y/z masks of equal size, infer the processed x-layer from their popcount, and add one unused y/z pair for that layer.",
+      "complexity": "O(4^n + n^2 * binom(2n-2,n-1)) time and O(4^n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The complete optimization state is the pair of n-bit used-coordinate masks (Y,Z), and every optimal solution is obtained by the layer-by-layer mask recurrence.",
+      "solution_variant": "two-mask-layer-dp"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "Used y-planes and z-planes are encoded as bits so membership, insertion, and equal-cardinality filtering are constant-time operations.",
+      "solution_variant": "two-mask-layer-dp"
+    }
+  ]
+}

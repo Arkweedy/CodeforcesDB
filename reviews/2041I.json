@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "I",
+    "title": "Auto Complete",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "hashing",
+      "implementation",
+      "sortings",
+      "strings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/I",
+      "notes": "Read all four operations, the complete priority order, both samples, printable-ASCII rule, and limits n <= 1e6 and total pattern/append characters <= 2e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read and visually checked page 6 of the official contest analysis. It proposes a trie whose nodes maintain the best active descendant, ancestor propagation on add/delete, and a cursor for append/backspace, while explicitly warning about null cursors, root backspaces, removed candidates, and child-RMQ implementation choices."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qu4q2l4l",
+      "notes": "Actually read the independent Luogu write-up. It prebuilds the trie offline, identifies prefix matching with ancestry, depth with candidate length, ordered DFS rank with lexicographic order, and parent jumps with backspace; it also notes sparse maps for the 94-character alphabet."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/I",
+      "notes": "Completed the Luogu reduction with terminal-ID sets and a segment tree over Euler positions, proved the comparator, and compared it against a naive active-pattern scan on 2,000 randomized valid operation streams with no mismatch."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Maintain a dynamic set of ID-labeled patterns and a text t under append/backspace; after every operation return the active pattern prefixed by t with maximum length, then minimum lexicographic value, then minimum ID.",
+    "constraints": "There are up to 1e6 operations and at most 2e6 total characters across added patterns and appended strings. Characters are printable non-space ASCII 33..126, IDs lie in [0,n], every added ID is unique, and every deletion is valid.",
+    "core_idea": "Read all operations first and insert every pattern that will ever be added into one static trie. Traverse children in ASCII order and record depth plus Euler interval [tin[u],tout[u]] for every node. If the current text corresponds to node v, exactly the terminal nodes in v's subtree are matching patterns. At a terminal u, maintain the set of active IDs for that exact string and expose only its minimum ID. Give that Euler position the key (-depth[u], tin[u], minID): minimum key means longest string, then lexicographically smallest string because ordered-trie DFS follows lexicographic order, then smallest ID. A segment tree over Euler positions supports a point refresh on add/delete and a range-minimum query on [tin[v],tout[v]] after every action. Maintain a stack of trie states for all prefixes of t: append follows child edges (remaining null once a prefix is absent), while backspace pops at most to the root. Because all future pattern paths were prebuilt, a null state cannot become a valid path later during replay.",
+    "complexity": "Let S <= 2e6 be total input characters and V <= S+1 the trie size. The offline Euler/segment-tree variant takes O(S log 94 + n log V) time with ordered maps, or O(S + n log V) with constant-alphabet transitions, and O(S+n) memory.",
+    "tricks": [
+      "Prebuild all future pattern paths before replay so later add operations cannot invalidate a previously stored null cursor state.",
+      "Turn the prefix predicate into one trie-subtree interval.",
+      "Use ASCII-ordered DFS rank as the lexicographic tie-break among equal-length patterns.",
+      "At each terminal keep only the minimum active ID, then combine terminals with key (-depth,tin,id).",
+      "Store the trie state after every text prefix so total append and successful backspace movement is linear in appended characters.",
+      "Treat a null cursor and overlong backspace explicitly; never physically delete trie nodes."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the offline Euler/segment-tree variant after randomized differential testing.",
+      "The official per-node propagation variant is retained with medium confidence because the PDF intentionally leaves the child-RMQ container and static-universe preprocessing to implementation."
+    ],
+    "source_gaps": [
+      "The official PDF is high level and does not fully specify how to prebuild paths or update every ancestor efficiently.",
+      "The Luogu prose supplies the offline trie/DFS reduction but does not name the final subtree range-query structure; its linked Codeforces submission was not directly accessible, so the segment-tree completion is explicitly self-derived."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "offline-trie-euler-segment-tree",
+      "summary": "Prebuild all pattern paths, flatten the trie in ASCII DFS order, store each terminal's best active ID at its Euler point, and range-query the current prefix node's subtree with a segment tree under the exact priority comparator.",
+      "complexity": "O(S log 94 + n log V) time and O(S+n) memory, with V <= S+1.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "per-node-best-propagation",
+      "summary": "Prebuild the trie, keep every node's best active terminal in its subtree, and on terminal add/delete propagate changed child-best keys through ancestors using a small-alphabet scan or per-node ordered container; append/backspace moves a cursor whose node directly stores the answer.",
+      "complexity": "O(S log 94 + n) total time with per-node ordered child-best containers and summed add/delete path lengths O(S), plus O(S+n) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/trie",
+      "importance": "primary",
+      "evidence": "The trie makes the current text a node and all matching patterns exactly that node's descendant terminals, while append and backspace become child and parent movements.",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "Dynamic add/delete operations refresh one terminal's Euler point, and after every action a segment-tree range minimum over the current node's subtree returns the best active candidate under (-depth,tin,id).",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    },
+    {
+      "tag": "trick/dfs-order-rectangle",
+      "importance": "primary",
+      "evidence": "ASCII-ordered DFS flattens every prefix node's descendant set into [tin,tout], converting the tree-subtree candidate query into one contiguous range query.",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "All operations are read once before replay so every future pattern path can be inserted and Euler-numbered in a static trie; active updates and outputs are then replayed in original order.",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "secondary",
+      "evidence": "Visiting trie children by ASCII value makes terminal Euler order equal string lexicographic order, supplying the second candidate tie-break without comparing full strings.",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The solution needs sparse 94-character transitions, terminal ID sets, null-state cursor handling, parent stacks, and fast I/O, but these implement the trie-subtree reduction.",
+      "solution_variant": "offline-trie-euler-segment-tree"
+    }
+  ]
+}

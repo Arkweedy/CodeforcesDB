@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "H",
+    "title": "Sheet Music",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/H",
+      "notes": "Read the complete equivalence definition, examples, and constraints n <= 1e6 and k <= 1e9."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read and visually checked pages 5-6 of the official contest analysis. It compresses equal-pitch runs, characterizes strict comparison strings by forbidding k equal directions in a row, gives a linear recurrence, and sums over C(n-1,m-1); its displayed D_k index is off by one relative to its own definition, so this payload normalizes the recurrence by strict-sign length."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/jow3zfyf",
+      "notes": "Actually read the full independent Luogu proof and code. It proves necessity and sufficiency of the maximum strict-direction run length, constructs peaks and valleys at k and 1, uses a prefix-sum counting DP, and inserts equality signs with binomial coefficients."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/H",
+      "notes": "Re-derived a zero-based recurrence A[d] for d strict signs, checked the k=1 and d=k boundaries, reproduced sample answers 7 and 67, and matched exhaustive enumeration for all tested small n,k instances."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count realizable length-(n-1) comparison strings over '<', '=', and '>' induced by pitch sequences in [1,k]; each such string is exactly one musical-equivalence class.",
+    "constraints": "1 <= n <= 1e6 and 1 <= k <= 1e9, with modulus 998244353. An O(n) counting recurrence and O(n) binomial preprocessing fit; enumerating pitch sequences or comparison strings does not.",
+    "core_idea": "Encode each equivalence class by its adjacent comparison string. Delete all '=' symbols and let d be the number of remaining strict signs. A run of q identical strict signs requires q+1 strictly monotone pitches, so q <= k-1 is necessary. It is also sufficient: at each direction change use k as a peak and 1 as a valley, then fill each monotone run with distinct intermediate pitches. Let A[d] count binary '<'/'>' strings of length d avoiding k equal consecutive signs. Use A[0]=1; A[d]=2^d for 1<=d<k; A[k]=2^k-2; and A[d]=2A[d-1]-A[d-k] for d>k. The recurrence appends either sign to every valid prefix and subtracts exactly the extensions that create a forbidden terminal run. Finally choose which d of the n-1 comparison positions are strict, giving answer sum_{d=0}^{n-1} C(n-1,d) A[d] modulo 998244353.",
+    "complexity": "O(n) time and O(n) memory for recurrence and factorial/inverse-factorial tables; the A recurrence itself can use a circular buffer, but O(n) combination storage is already within bounds.",
+    "tricks": [
+      "Use the comparison string as the canonical representative of an equivalence class.",
+      "Remove '=' first and restore its positions later with C(n-1,d).",
+      "Realizability depends only on maximal runs of equal strict directions.",
+      "Prove sufficiency by assigning every turning peak to k and every valley to 1.",
+      "Handle A[0]=1, k=1, and the exceptional d=k subtraction of the two all-equal sign strings explicitly."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains after exhaustive small-instance checks.",
+      "The official PDF's displayed D_k(i) base cases count i strict signs while the surrounding text calls i the compressed song length; this payload removes the ambiguity by defining A[d] on exactly d strict signs."
+    ],
+    "source_gaps": [
+      "The official PDF gives no implementation and contains the noted indexing typo/ambiguity.",
+      "The independent Luogu article provides proof and code, but no separate submission-verdict page was inspected."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "comparison-sign-run-counting-dp",
+      "summary": "Represent a class by its comparison signs, count strict-sign strings avoiding k equal consecutive directions with a linear counting recurrence, and choose the strict-sign positions by binomial coefficients.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "Two songs are equivalent exactly when their adjacent comparison strings agree, so replacing every class by this unique sign string is the reduction that turns the problem into pure counting.",
+      "solution_variant": "comparison-sign-run-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics/run-counting",
+      "importance": "primary",
+      "evidence": "A strict-sign string is realizable exactly when each maximal '<' or '>' run has length at most k-1, and the final count separates the strict runs from the binomial placement of '=' positions.",
+      "solution_variant": "comparison-sign-run-counting-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The values A[d] are a counting DP over strict-sign length; each transition doubles valid extensions and subtracts prefixes whose new suffix would be the first forbidden run.",
+      "solution_variant": "comparison-sign-run-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "For each strict-sign count d, C(n-1,d) independently chooses the non-equality comparison positions before multiplying by A[d].",
+      "solution_variant": "comparison-sign-run-counting-dp"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "contest": {
+    "contest_id": 2041,
+    "title": "2024 ICPC Asia Taichung Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2041,
+    "index": "J",
+    "title": "Bottle Arrangement",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "divide and conquer",
+      "dp",
+      "dsu",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2041/problem/J",
+      "notes": "Read the complete statement, all five samples, and the constraints n <= 5e5, heights <= 1e9, and pairwise-distinct b_i."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://drive.google.com/file/d/1F0X7s1CmjkX80tkT5_JJA50HVZB-zlAb/view",
+      "notes": "Read Problem J in the official Taichung analysis. It gives the fixed-split adjusted capacities, Hall-style rank condition, monotonic-stack sweep, suffix range-add counters, and count-of-minus-one formula."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2041J",
+      "notes": "Actually read the solution page, including the complete Cartesian-tree recurrence and code plus independent interval-expansion and fixed-split explanations."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/happybob/p/18450581",
+      "notes": "Read the CF2041J section. It independently models a mountain by inserting bottles from largest to smallest at interval endpoints and derives an O(n log n) blocked-interval sweep."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2041/problem/J",
+      "notes": "Independently proved the sorted-assignment/Hall criterion, minus-one slack count, and Cartesian-tree recurrence. Brute force, the fixed-split formula, and the Cartesian recurrence agreed on 2,100 exhaustive and 1,330 random small instances."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Each distinct front bottle may keep height b_i or become b_i-1, then all bottles must be permuted into a nondecreasing-then-nonincreasing mountain under position ceilings a_i. Find the minimum number of decrements, or report that even decrementing every bottle cannot work.",
+    "constraints": "1 <= n <= 5e5; 1 <= a_i,b_i <= 1e9; all b_i are distinct; 5 seconds and 1024 MB. The intended algorithms need O(n log n) time and O(n) memory.",
+    "core_idea": "Sort b. Subtracting at most one never reverses two distinct integer heights, so a mountain can be formed by inserting bottles from largest to smallest at the ends of a growing interval. Build the min-Cartesian tree of a. For a subarray [L,R] with minimum at p, the peak lies on one side of p. If it lies left, [p,R] is the descending tail and optimally receives the smallest R-p+1 currently available bottles. Its largest bottle has sorted rank n-(p-L), is placed at p, and the larger bottles recurse on [L,p-1]. Since a_p is the subarray minimum, the discarded tail is feasible exactly when b_t <= a_p, costing one cap exactly on equality. The right case is symmetric. The official alternative fixes the mountain split, replaces a by suffix minima on the increasing side and prefix minima on the decreasing side, and turns each adjusted capacity into a maximum acceptable bottle rank c_i. Perfect assignment is equivalent to |{i:c_i<=v}|<=v for every v. Monotonic stacks maintain capacities as the split moves, while lazy segment trees maintain Hall slacks for b and b-1. Once the all-decremented instance is feasible, every original-height slack is at least -1, and each -1 corresponds bijectively to one sorted equality b_j=d_j and hence one mandatory cap removal.",
+    "complexity": "Cartesian-tree variant: O(n log n) time for sorting plus O(n) tree construction/DP, and O(n) memory. Official split-sweep variant: O(n log n) time and O(n) memory from O(n) total monotonic-stack changes and logarithmic range updates.",
+    "tricks": [
+      "sort bottles once because decrementing by one cannot reverse their relative order",
+      "represent a mountain by inserting values from largest to smallest at interval endpoints",
+      "split at the minimum a-value and discard one side using the smallest remaining bottles",
+      "turn strict feasibility into b_t <= a_p, with equality costing exactly one cap",
+      "propagate fixed-split ceilings using suffix and prefix minima",
+      "encode nested assignment as Hall slacks over ranks",
+      "count mandatory removals as original-height slacks equal to -1"
+    ],
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the Cartesian-tree solution after the exchange proof and exhaustive/random comparison.",
+      "The official analysis specifies the stack/rollback sweep at a high level; this review validates its invariant and rank-counter formula, but not one particular implementation's event encoding.",
+      "Official Observation J.1 states thresholds for v in 1..n; a robust implementation must also represent v=0 so a position accepting no bottle is rejected."
+    ],
+    "review_risks": [
+      "The node condition is b_t <= a_p, not b_t < a_p: equality is feasible only after removing that bottle's cap.",
+      "The discarded side receives the smallest currently available bottles, leaving a suffix of sorted b for recursion; using the global smallest bottles at every node breaks the ranks.",
+      "Equal a-values require a deterministic Cartesian-tree convention; only b_i are guaranteed distinct.",
+      "A degenerate Cartesian tree can have depth n=5e5, so recursive traversal may overflow the process stack.",
+      "In the official sweep, Hall thresholds include v=0, and counting -1 slacks is valid only after all-decremented feasibility is certified.",
+      "Suffix-stack operations must be rolled back in exact reverse order.",
+      "The official dsu tag is only metadata evidence; neither validated solution uses DSU, so it is intentionally omitted."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cartesian-tree-peak-side-dp",
+      "summary": "Build the min-Cartesian tree of a. At each interval minimum p, choose whether the mountain peak remains in the left or right child; fill the opposite side with the smallest currently available bottles and test it using only its largest bottle at p. Add one exactly when that bottle equals a_p, then take the cheaper feasible child DP.",
+      "complexity": "O(n log n) time and O(n) memory, with O(n) work after sorting b",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "split-sweep-hall-segment-tree",
+      "summary": "Sweep every split between the nondecreasing and nonincreasing sides. Maintain induced suffix/prefix-minimum capacities with monotonic stacks and rank-based Hall slacks for original and decremented bottles using lazy suffix range-add/min segment trees; feasible splits expose their cap minimum as the number of original slacks equal to -1.",
+      "complexity": "O(n log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer/cartesian-tree",
+      "importance": "primary",
+      "evidence": "The primary variant decomposes every interval at its minimum a_p; the min-Cartesian tree makes exactly these recurrences explicit and evaluates all nodes in linear total work after sorting.",
+      "solution_variant": "cartesian-tree-peak-side-dp"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "Each Cartesian-tree node stores the minimum cap cost for its interval and transitions to the feasible left-child or right-child state after fixing the opposite tail.",
+      "solution_variant": "cartesian-tree-peak-side-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Once the peak side is chosen at an interval minimum, assigning the smallest available bottles to the discarded tail is a dominance step: any larger replacement cannot improve feasibility or cost.",
+      "solution_variant": "cartesian-tree-peak-side-dp"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "The official variant updates suffix minima on the growing left side and prefix minima on the shrinking right side; grouped stack merges and rollback reduce these changes from quadratic to O(n) total.",
+      "solution_variant": "split-sweep-hall-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree/range-add-min",
+      "importance": "primary",
+      "evidence": "Inserting or deleting a capacity with rank bound c changes every Hall slack C[v] for v>=c. Lazy suffix range-add plus global minimum and minimum-count queries certify feasibility and count -1 slacks.",
+      "solution_variant": "split-sweep-hall-segment-tree"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "For a fixed split, positions and bottle ranks form a nested bipartite matching instance; the prefix Hall inequalities are its exact perfect-matching criterion.",
+      "solution_variant": "split-sweep-hall-segment-tree"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "Feasibility is characterized by |{i:c_i<=v}|<=v, and the objective follows by proving each original-height slack is either -1 or nonnegative once decremented feasibility holds.",
+      "solution_variant": "split-sweep-hall-segment-tree"
+    }
+  ]
+}
