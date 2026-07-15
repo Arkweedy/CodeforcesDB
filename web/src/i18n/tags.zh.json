@@ -212,6 +212,7 @@
   "math/combinatorics/stirling-number": "Stirling 数",
   "math/combinatorics/subset-counting": "子集计数",
   "math/game-theory": "博弈论",
+  "math/game-theory/misere-nim": "反常 Nim",
   "math/game-theory/minimax": "Minimax",
   "math/game-theory/p-position-characterization": "必败态刻画",
   "math/game-theory/sprague-grundy": "Sprague-Grundy",

@@ -1,0 +1,153 @@
+{
+  "contest": {
+    "contest_id": 2032,
+    "title": "Codeforces Round 983 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2032,
+    "index": "F",
+    "title": "Peanuts",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "games",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2032/problem/F",
+      "notes": "完整读取连续分盒、只能操作最左非空盒、普通取子游戏规则、模数和 sum(n)<=1e6 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135622",
+      "notes": "通过动态页面读取完整官方 F tutorial；核对 normal Nim、misère Nim、前导 1、首个非平凡盒、前缀 xor 三分类及 O(n) 闭式计数。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2032/submission/289293663",
+      "notes": "页面明确显示 AkiLotus 的 C++23 提交为 Accepted；读完源码，确认 prefix_1、alice_at_critical、running xor 和左右分割方案数公式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/3l668zls",
+      "notes": "读完完整洛谷题解与代码；独立证明反 Nim 判定，并给出 normal/misère 两状态计数 DP、前缀 xor 桶和全 1 后缀奇偶优化。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/superl61/p/18560820",
+      "notes": "读完完整中文分析与实现；交叉确认最后一段为 normal Nim、前段目标按后缀胜负切换，以及桶优化 DP 的状态含义。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2032/problem/F",
+      "notes": "独立推导官方首个非平凡盒计数，并在内存中穷举 n<=6、a_i<=3 的全部 1092 个数组及每种分盒；闭式答案与完整博弈 minimax 全部一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "把数组切成若干连续盒子，双方依次清空最左非空盒中的 Nim 堆；统计 Alice 先手必胜的所有分盒方案。",
+    "constraints": "1 <= t <= 1e4；1 <= n <= 1e6；1 <= a_i <= 1e9；sum(n) <= 1e6；答案模 998244353。",
+    "core_idea": "每个盒子内部是普通 Nim，但它前面的盒子可能需要让当前玩家故意不拿到最后一步，因此会诱导出 misère Nim。对含有至少一个大于 1 的堆的盒子，normal Nim 与 misère Nim 的先手胜负都由 xor 是否非零决定；仅当所有堆都是 1 时，两种规则的奇偶结论相反。设 l 为数组开头连续 1 的数量，并枚举首个包含大于 1 的盒子的右端点 r。再设 q 为留在该盒子之前的前导 1 数量。前 q 个单元素总共恰产生 q 步，所以 Alice 在该盒子先手当且仅当 q 为偶数；该盒子的 xor 等于前缀 xor P_r 再 xor (q mod 2)。于是 P_r=0 时 Alice 对所有 q 都输，P_r=1 时对所有 q 都赢，P_r>1 时仅 q 为偶数时赢。一旦 Alice 控制这个非平凡盒，她既能选择自己拿到最后一步，也能选择让对方拿到最后一步，因此可选择下一后缀的先手身份，后面的分盒方式全部任意。固定 q 的左侧分盒数为 2^max(0,q-1)。因此 P_r=1 的左侧总数为 2^l；P_r>1 的左侧总数为 M=sum_{0<=q<=l,q even} 2^max(0,q-1)。固定 r 后，右侧分割数为 2^max(0,n-r-2)，其中 r 使用 0-based 下标。若所有 a_i 都是 1，整局操作步数固定为 n，n 为奇数时全部 2^(n-1) 种分盒获胜，否则答案为 0。",
+    "complexity": "预处理二次幂后，每个测试 O(n) time and O(1) extra working memory；全局二次幂表需要 O(max n) memory。独立 DP 变体用有序映射为 O(n log n)，用哈希桶期望 O(n)。",
+    "tricks": [
+      "从最后一盒向前看，后一阶段的胜负会把前一盒的目标切换为 normal Nim 或 misère Nim。",
+      "normal 与 misère Nim 只有在当前盒全部为 1 时胜负判定不同。",
+      "只枚举第一个含大于 1 的盒子；它一旦可控，所有更右边的切分都可以直接按二次幂计数。",
+      "前导 1 是否留在首个非平凡盒之前，只通过数量奇偶改变当前玩家和盒内 xor。",
+      "把连续分盒看成选择相邻位置之间的边界，固定必要边界后其余边界独立贡献二次幂。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "没有未解决的正确性问题：官方教程与 Accepted 代码、独立洛谷 DP、博客实现和完整小规模博弈枚举一致。",
+      "官方 O(n) 解法没有显式保存 DP，而是把所有 DP 状态压缩成首个非平凡盒和前缀 xor 的三种情况。",
+      "独立 DP 变体在 ordered map 实现下是 O(n log n)；只有使用可靠哈希或离散化数组桶时才能写作 O(n)。",
+      "建议新增 candidate tag math/game-theory/misere-nim；现有 sprague-grundy 不能表达全 1 局面的反常规则例外。"
+    ],
+    "retrieval_blockers": [
+      "官方 editorial 静态页面仍只有 Tutorial is loading...；必须通过执行脚本的页面读取动态正文。",
+      "Codeforces submission 的普通抓取不稳定，但登录浏览器可直接核对 Accepted verdict 和完整源码。",
+      "洛谷题解索引是动态页面；进入 problem/solution/CF2032F 后可直接取得具体文章 3l668zls，避免反复搜索摘要。",
+      "只看官方源码很难看出 P_r=0、1、>1 的证明；应先写出 q 奇偶、起手人和盒内 xor 的二乘二分类表。"
+    ],
+    "proof_risks": [
+      "misère Nim 不是题面直接规定的规则，而是由后缀胜负反向诱导出的当前盒目标；不能把整局直接视作一个反 Nim。",
+      "经典 misère Nim 在所有堆均为 1 时必须单独处理：堆数为偶数先手胜，否则先手败。",
+      "含大于 1 的盒子中，xor 非零意味着当前先手能控制 normal 和 misère 两种目标；xor 为零则控制权属于后手。",
+      "P_r 是从数组起点到 r 的整体前缀 xor；真正首个非平凡盒的 xor 还要 xor (q mod 2)。",
+      "P_r=1 必须与一般的非零情况分开，因为 q 为奇数时盒内 xor 变为 0，但 Alice 恰好成为后手并仍获得控制权。",
+      "固定 q>0 时，q 个前导 1 的最后一个位置后必须切开，因此只有 q-1 个内部边界可任意选择；q=0 单独贡献 1。",
+      "固定 r<n-1 时，r 后的边界已经被强制选中，真正自由的右侧边界只有 n-r-2 个。",
+      "全 1 数组没有首个非平凡盒，必须直接按固定总步数奇偶处理。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "first-nontrivial-box-prefix-xor-counting",
+      "summary": "枚举首个含大于 1 的盒子的右端点，以前缀 xor 的 0、1、其他三类判断 Alice 可控制的前导 1 奇偶，并用二次幂统计左右边界。",
+      "complexity": "O(n) time and O(1) extra memory after power-of-two preprocessing.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "normal-misere-prefix-xor-bucket-dp",
+      "summary": "设两类前缀 DP 表示后续要求当前最后一段按 normal Nim 或 misère Nim 判定；按最后一段 xor 是否为 0 转移，并用前缀 xor 桶及全 1 后缀的奇偶贡献把 O(n^2) 转移优化。",
+      "complexity": "O(n log n) time with ordered maps, or expected O(n) with hash tables; O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "每个盒子都是若干 Nim 堆，其 normal-play 控制权由堆大小 xor 是否为 0 决定；官方前缀分类直接维护该 xor。",
+      "solution_variant": "first-nontrivial-box-prefix-xor-counting"
+    },
+    {
+      "tag": "math/game-theory/misere-nim",
+      "importance": "primary",
+      "evidence": "为了决定谁进入后续盒子，当前盒可能要求玩家避免拿到最后一步；必须使用 misère Nim，并单独处理所有堆均为 1 的奇偶例外。",
+      "solution_variant": "first-nontrivial-box-prefix-xor-counting",
+      "status": "candidate",
+      "parent": "math/game-theory",
+      "description": "Nim under the misère rule where taking the final object loses. Use this tag when the all-heaps-equal-one parity exception or switching between normal and misère Nim is essential, not for ordinary xor-only Nim.",
+      "created_reason": "The existing sprague-grundy tag covers ordinary normal-play xor, but it cannot express the misère all-ones exception that determines the sequential-box transitions and counting in this problem."
+    },
+    {
+      "tag": "algorithm/prefix-xor",
+      "importance": "primary",
+      "evidence": "固定首个非平凡盒右端点 r 后，Alice 的胜负分类完全由 P_r 的值是 0、1 还是大于 1 决定，扫描时只需维护前缀 xor。",
+      "solution_variant": "first-nontrivial-box-prefix-xor-counting"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "分盒等价于选择 n-1 个相邻缝隙中的边界；固定首个非平凡盒后，其余自由边界以二次幂计数。",
+      "solution_variant": "first-nontrivial-box-prefix-xor-counting"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "首盒之前前导 1 的数量奇偶同时决定进入首个非平凡盒的玩家，并把该盒 xor 在 P_r 与 P_r xor 1 之间切换。",
+      "solution_variant": "first-nontrivial-box-prefix-xor-counting"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "独立变体用 normal/misère 两类状态统计每个前缀的获胜分盒数，并按最后一段的胜负性质切换状态。",
+      "solution_variant": "normal-misere-prefix-xor-bucket-dp"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "桶优化 DP 需要按前缀 xor 聚合两类历史状态贡献；xor 值较大时可用哈希表或先离散化再用数组桶。",
+      "solution_variant": "normal-misere-prefix-xor-bucket-dp"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "contest": {
+    "contest_id": 2032,
+    "title": "Codeforces Round 983 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2032,
+    "index": "D",
+    "title": "Genokraken",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "graphs",
+      "greedy",
+      "implementation",
+      "interactive",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2032/problem/D",
+      "notes": "完整阅读原交互题面、树的三项结构约束、查询语义、2n-6 次限制以及后补的非交互 hack 格式。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135622",
+      "notes": "通过可执行脚本的页面读取动态 D tutorial；确认 BFS 式触手顺序、根儿子数量识别、永久失活性质和查询次数证明。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2032/submission/289292866",
+      "notes": "页面明确显示 AkiLotus 的 C++23 提交为 Accepted；读完删除式循环双向链表、触手轮转、查询和父节点恢复代码。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/limby8kg",
+      "notes": "读取 CF2032 合集中的 D 推导；其从大到小扫描节点和父候选的写法用于交叉验证反向双指针变体。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/PHarr/p/18523565",
+      "notes": "完整阅读 D 说明和队列代码；确认官方删除式循环链表可简化为弹出失活队首、成功后把新触手尖端压回队尾。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/maburb/p/18698261",
+      "notes": "读取反向父候选扫描的完整代码；每次查询都让全局候选指针减一，提供至多 n-2 次查询的独立变体。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2032/problem/D",
+      "notes": "独立形式化正向队列与反向扫描不变量；穷举 n=4..12 的全部 1022 个合法父数组，两种算法均精确恢复，正向不超过 2n-6 次、反向不超过 n-2 次。未写文件或数据库。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "原题要求通过询问两个非根节点之间的路径是否经过根 0，在至多 2n-6 次查询内恢复一棵受特殊编号和链结构约束的隐藏树。",
+    "constraints": "原交互版本：1 <= t <= 500，4 <= n <= 1e4，sum(n) <= 1e4，每个测试最多 2n-6 次查询；p_i<i 且父数组非递减。删除根后各分量均为路径，每个根邻居是路径端点，节点 1 恰有一个非根邻居。时限 2 秒、内存 256 MB。hack 版本直接输入父数组。",
+    "core_idea": "删除根后，每个分量是一条以根邻居为起点的触手；查询返回 0 当且仅当两点属于同一触手。父数组非递减使所有根邻居形成连续前缀 1..m；又因节点 1 必有一个孩子，第一个与 1 查询返回 0 的节点必为 m+1，且其父亲是 1。此后维护每条仍可能延伸的触手当前尖端，初始按 1,2,...,m 排列。已确认 m+1 接在 1 后，将新尖端移到队尾。对下一节点 x 查询队首尖端 u：若返回 0，x 与 u 同触手，而 u 是该触手尚未扩展的尖端，所以 p_x=u；用 x 替换 u 并轮转到队尾。若返回 1，则 x 属于更靠后的触手。由于正父节点在输入序中严格递增，u 已被跳过后永远不可能再成为后续节点的父亲，可永久弹出。每次第二阶段查询要么确定一个新节点，要么永久删除一条触手。设触手数为 m：第一阶段用 m 次查询；若 m<=n-3，第二阶段最多处理 n-m-2 个节点并删除 m-1 条触手，共至多 n-3 次，总数 n+m-3<=2n-6；若 m=n-2，则只有第一阶段的 n-2 次查询。另一个更简洁的变体从 i=n-1 向下扫描，并让父候选 j 从 n-2 全局递减；查询到第一个与 i 同触手的 j 时，它就是 i 的直接父亲。父数组逆序非递增且每个正父亲至多出现一次，所以 j 无需回退，每次查询都消耗一个候选，查询数至多 n-2。",
+    "complexity": "正向方案使用队列或删除式循环链表时为 O(n) 次查询、O(n) 本地时间和 O(n) 空间；查询数不超过 2n-6。反向双指针方案为 O(n) 次查询和 O(n) 时间，查询数至多 n-2。",
+    "tricks": [
+      "把路径是否经过根解释为两个节点是否属于不同触手的同异测试。",
+      "利用父数组非递减，推出根儿子是连续前缀，正父节点按严格递增顺序出现。",
+      "用节点 1 必有孩子的条件找到第一层触手数 m，而不需要单独查询根。",
+      "维护按下一可能父节点顺序排列的活动触手尖端，而不是尝试一般树重建。",
+      "查询失败的触手会永久失活，每条触手至多删除一次，从而把查询总数摊还到线性。",
+      "反向变体把每个查询和候选指针的一次递减绑定，直接得到 n-2 查询上界。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "官方 tutorial 将触手永久失活的证明留作练习；本次已用父节点严格递增性质补全，并用全部合法小树穷举验证。",
+      "专门的 Luogu D 题解索引未稳定返回独立长文，采用了包含 D 推导的 CF2032 合集文章，并由官方 Accepted 和两份完整博客代码交叉确认。",
+      "反向双指针不是官方主教程方案，但父数组顺序证明、完整实现和 n<=12 全穷举一致，置信度仍为 high。",
+      "数据库应描述原始 interactive 问题；hack 版本直接给出父数组，不能据此把题目误标为普通输入模拟题。",
+      "没有提出新 tag；现有 communication、oracle-reconstruction、tree、amortized-delete-once、queue 和 two-pointers 已覆盖关键检索维度。"
+    ],
+    "proof_risks": [
+      "题面只保证父数组按节点编号非递减；不能无条件把任意有序编号树都称为 BFS 序，结论还依赖删除根后每个分量是一条路径。",
+      "查询 0 表示同一触手，不一定直接相邻；只有被查询节点是当前触手尖端时，才能据此确定直接父子关系。",
+      "节点 1 恰有两个邻居包括根 0，因此它必须有且仅有一个孩子；这是第一阶段一定找到返回 0 节点的原因。",
+      "成功接入一个节点后，活动顺序必须轮转；只替换队首但不移动，会破坏正父节点递增的候选顺序。",
+      "查询返回 1 时应删除当前触手而保持待分配节点不变，不能同时推进节点编号。",
+      "永久删除证明依赖每个非根节点至多有一个孩子，因此每个正父节点在父数组中至多出现一次。",
+      "m=n-2 时第二阶段为空，需要单独使用 n-2<=2n-6 的边界证明。",
+      "交互实现必须在每次查询和最终答案后 flush，并在收到 -1 时立即终止。",
+      "反向方案中必须从当前全局最大未排除候选 j 开始；若为每个 i 重置 j，查询数会退化到平方级。",
+      "hack 版本已直接提供 p 数组，提交到当前非交互评测时需要读取输入，不能保留原交互输出。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "forward-active-tentacle-queue",
+      "summary": "先用节点 1 找到全部触手根和第一个孩子，再循环维护活动触手尖端；不同触手时永久弹出队首，同触手时确定父亲并把新尖端轮转到队尾。官方实现使用等价的删除式循环双向链表。",
+      "complexity": "O(n) queries, O(n) local time and O(n) memory; at most 2n-6 queries.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "reverse-parent-two-pointer",
+      "summary": "从最大节点向下处理，父候选 j 也从 n-2 单调下降；跳过所有不同触手候选，第一个同触手候选就是直接父亲，找不到则父亲为 0。",
+      "complexity": "O(n) queries, O(n) time and O(n) output memory; at most n-2 queries.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/communication",
+      "importance": "primary",
+      "evidence": "原题核心是设计受 2n-6 严格预算约束的查询协议，并从同触手/异触手的一位响应中逐步恢复完整父数组。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "目标不是回答单个判定，而是通过自适应路径 oracle 查询重构整棵隐藏树的所有父节点。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "根删除后的路径森林、每条触手的唯一尖端以及父节点顺序共同决定所有查询解释和恢复算法。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "primary",
+      "evidence": "每次未匹配的活动触手都会被永久删除，且每次匹配确定一个新节点；每个对象只消费一次是满足查询上限的决定性证明。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "data-structure/queue",
+      "importance": "secondary",
+      "evidence": "活动触手尖端按下一可能父节点的顺序循环处理；失败时弹出队首，成功时用新尖端替换并压到队尾。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "算法始终测试当前最早仍可能成为父亲的触手，并依据一次回答立即接入节点或永久排除该候选。",
+      "solution_variant": "forward-active-tentacle-queue"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "反向变体让待恢复节点 i 和父候选 j 都只向左移动，每次查询都会使 j 减一，直接给出线性查询数。",
+      "solution_variant": "reverse-parent-two-pointer"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "contest": {
+    "contest_id": 2032,
+    "title": "Codeforces Round 983 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2032,
+    "index": "E",
+    "title": "Balanced",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2032/problem/E",
+      "notes": "完整读取环形数组操作、n 为奇数、操作次数上限和总 n 不超过 2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135622",
+      "notes": "通过可执行页面脚本的浏览器读取完整官方正文；核对带符号操作、balanced trench、中心平台、隔位区间更新和 O(n) 实现。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2032/submission/289293300",
+      "notes": "页面明确显示 AkiLotus 的 C++23 提交为 Accepted；读完源码，确认两阶段构造、按奇偶分别累积的差分数组和最终减去 min(v) 的归一化。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/xbxgl48p",
+      "notes": "读完完整题解与代码；独立推导 b_i=v_{i-1}+v_i 的步长二递推、sum(b) 偶性修正、从 b 恢复 v 及统一平移。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/r9ai9wlf",
+      "notes": "读完另一份完整线性代数题解；从循环三对角方程、模 4 偏移和显式逆系数角度独立确认奇数 n 时总有整数非负解。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2032/problem/E",
+      "notes": "独立补全环形递推和整解条件，并在内存中验证 40000 组 n<=15 的随机奇数长度数组；所有构造均使最终数组相等，未写文件或数据库。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "对奇数长度环形数组，位置 i 的一次操作分别给 i-1、i、i+1 增加 1、2、1；构造每个位置的操作次数，使最终所有元素相等。",
+    "constraints": "1 <= t <= 2e5；1 <= n < 2e5 且 n 为奇数；1 <= a_i <= 1e6；sum(n) <= 2e5；输出操作次数必须位于 [0,1e18]。",
+    "core_idea": "先允许操作次数 v_i 为负数。所有 v_i 同时增加常数 d 会让每个最终元素同时增加 4d，因此找到任意整数解后可统一减去 min(v) 得到非负解。一个简洁的代数构造使用 0-based 环形下标，令 b_i=v_{i-1}+v_i，则最终值为 a_i+b_i+b_{i+1}。相邻最终值相等等价于 b_{i+2}=b_i+a_i-a_{i+1}。由于 n 为奇数，步长 2 在模 n 意义下遍历全部位置；设 b_0=0 后沿环递推，绕回时增加量为所有 a_i-a_{i+1} 之和，即 0。接着解循环方程 v_{i-1}+v_i=b_i。奇环上该方程有唯一有理解，存在整数解当且仅当 sum(b) 为偶数；若其为奇数，就给所有 b_i 加 1，因为 n 为奇数，这会翻转 sum(b) 的奇偶性。随后线性递推恢复 v，并统一平移到非负。官方实现采用等价的几何构造：先由外向内用隔位操作序列把对称位置变成 balanced trench，再从中心向外扩张平台；所有隔位区间用按奇偶分开的差分数组批量维护。",
+    "complexity": "O(n) time and O(n) memory per test case. 中间量最坏约为 O(n^2*max(a_i))，在题目范围内远低于 1e18，必须使用 64 位有符号整数。",
+    "tricks": [
+      "暂时允许负操作次数，再利用全体操作次数平移不改变相对差值的性质归一化。",
+      "把最终值拆成 a_i+b_i+b_{i+1}，将循环线性系统化成步长为 2 的一阶递推。",
+      "n 为奇数保证 gcd(2,n)=1，因此递推只形成一个覆盖所有下标的环。",
+      "sum(b) 的偶性是恢复整数 v 的唯一整除障碍；给所有 b_i 加 1 即可修正。",
+      "官方构造的隔位区间更新必须按下标奇偶分别维护差分数组。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "没有未解决的正确性问题：官方正文与 Accepted 代码、两份独立洛谷题解和随机验证相互一致。",
+      "官方主实现使用 trench/plateau 构造，而较易审阅的 b 递推是独立等价解法；两者的中间操作次数通常不同。",
+      "题面保留了输出 -1 的接口，但对给定的奇数 n 条件，除 n=1 直接输出 0 外，所有数组都存在解。",
+      "没有提出新 tag；现有 constructive、parity、difference-array、linear-system 和 canonical-form 足以覆盖可复用内容。"
+    ],
+    "retrieval_blockers": [
+      "官方 editorial 的静态 HTML 仅显示 Tutorial is loading...；需要在执行页面脚本的浏览器中读取动态正文。",
+      "洛谷题解索引依赖前端渲染；直接进入 problem/solution/CF2032E 后再打开具体 article，比搜索摘要稳定。",
+      "部分外部题解只给公式而省略循环整解条件，必须检查 sum(b) 的偶性和 n 为奇数的作用。"
+    ],
+    "proof_risks": [
+      "全体 v_i 平移 d 会让每个最终元素变化 4d；只有全体一起平移才保证平衡不变。",
+      "定义 b_i 时必须固定下标方向。采用 b_i=v_{i-1}+v_i 时，正确递推是 b_{i+2}=b_i+a_i-a_{i+1}。",
+      "步长 2 遍历全部下标只在 n 为奇数时成立；偶数 n 会分成两个独立奇偶环，并可能无解。",
+      "sum(b) 为奇数时必须给所有 b_i 同时加 1；只改一个 b 会破坏递推方程。",
+      "从 b 恢复 v 时要同时检查最后的 v_{n-1}+v_0=b_0，不能只做线性链递推。",
+      "官方差分实现处理的是步长为 2 的循环区间，不能套普通连续区间前缀和而忽略奇偶。",
+      "所有差值、前缀增量和归一化偏移都需要 64 位整数。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "balanced-trench-parity-ranges",
+      "summary": "允许带符号操作，由外向内用隔位循环区间把对称位置配平为沟槽，再由中心向外把沟槽扩成平台；用两套奇偶差分数组累积操作次数，最后统一归一化。",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "cyclic-linear-recurrence",
+      "summary": "令 b_i=v_{i-1}+v_i，把相邻最终值相等化为步长二递推；修正 sum(b) 的奇偶性后解循环方程恢复 v，并统一平移为非负。",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求直接输出操作次数；官方方案显式构造 balanced trench 和中心平台，并证明任意奇数长度数组都能被覆盖。",
+      "solution_variant": "balanced-trench-parity-ranges"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "奇数 n 使隔位操作最终遍历整环，也使步长二递推只有一个环；这是解总存在的核心条件。",
+      "solution_variant": "balanced-trench-parity-ranges"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "官方 O(n) 实现把每次隔位区间操作记录到按奇偶拆分的差分数组，再统一恢复各位置操作次数。",
+      "solution_variant": "balanced-trench-parity-ranges"
+    },
+    {
+      "tag": "math/linear-algebra/linear-system",
+      "importance": "primary",
+      "evidence": "代数变体直接求解循环方程 a_i+v_{i-1}+2v_i+v_{i+1}=C，并通过 b_i=v_{i-1}+v_i 把它降为线性递推。",
+      "solution_variant": "cyclic-linear-recurrence"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "比较相邻最终值消去公共未知常数 C，把原平衡条件转成由 a_i-a_{i+1} 驱动的递推。",
+      "solution_variant": "cyclic-linear-recurrence"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "secondary",
+      "evidence": "所有操作次数相差同一个常数的解等价；选择减去 min(v) 的代表元即可满足非负输出约束。",
+      "solution_variant": "cyclic-linear-recurrence"
+    }
+  ]
+}

@@ -367,6 +367,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "nearest-occurrence": "最近出现位置",
   "minmax": "Min-Max",
   "minimax": "Minimax",
+  "misere-nim": "反常 Nim",
   "minkowski-sum": "闵可夫斯基和",
   "min-cost-flow": "最小费用流",
   "min-cost-perfect-matching": "最小费用完美匹配",

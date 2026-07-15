@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2032,
+    "title": "Codeforces Round 983 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2032,
+    "index": "C",
+    "title": "Trinity",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "math",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2032/problem/C",
+      "notes": "完整阅读操作、任意三元组的非退化三角形要求，以及 sum(n) <= 2e5、a_i <= 1e9 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135622",
+      "notes": "读取动态加载的官方 C tutorial；确认极值判据、n-2 基础上界、连续保留区间证明和双指针实现。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2032/submission/289292343",
+      "notes": "页面明确显示 AkiLotus 的 C++23 提交为 Accepted；核对排序、左端点单调移动及 n-2 初值。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/six89b1n",
+      "notes": "完整阅读独立题解与代码；交叉确认最长连续合法区间、双指针和不存在合法三元组时保留两个元素的边界。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/denghaoxuan/articles/18689266",
+      "notes": "读取 C 小节和代码；确认可对最大保留长度做单调性二分，作为双指针之外的完整变体。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2032/problem/C",
+      "notes": "独立补全任意最优保留集合可转成不短连续区间的证明；对 250 组 n<=6 的随机数组穷举所有由原值组成的最终数组，最优操作数均与双指针一致。未写文件或数据库。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "允许把任意位置改成数组中另一个位置的值，求最少修改次数，使最终数组中任取三个不同下标的值都能组成非退化三角形。",
+    "constraints": "1 <= t <= 1e4；3 <= n <= 2e5；1 <= a_i <= 1e9；所有测试的 n 之和不超过 2e5；时限 2 秒、内存 256 MB。",
+    "core_idea": "将数组排序。一个至少含三个元素的有序数组 b 合法，当且仅当最小两个元素满足 b_1+b_2>b_m，因为这是所有两边和中的最小值，而 b_m 是最大边。答案总不超过 n-2：保留最小值和最大值，把其余元素全部改成最大值即可。若某个方案保留了至少三个原元素，设保留元素的有序下标为 i_1<i_2<...<i_k，则 a_{i_1}+a_{i_2}>a_{i_k}。连续区间 [i_2-1,i_k] 的最小两项为 a_{i_2-1},a_{i_2}，其和不小于前式，且区间长度至少为 k，因此存在一个不劣的连续保留区间。反过来，若 [l,r] 满足 a_l+a_{l+1}>a_r，就可以保留整段并把段外元素全部改成 a_{l+1}。问题于是变为寻找满足该不等式的最长连续区间。枚举右端点 r，失败时单调右移 l，得到每个 r 的最小可行 l 和最大区间长度。",
+    "complexity": "排序 O(n log n)，双指针 O(n)，总时间 O(n log n)，空间 O(n) 或取决于排序实现的额外空间。",
+    "tricks": [
+      "把所有三元组条件压缩为排序后最小两项之和严格大于最大项。",
+      "先给出保留两个元素的 n-2 通用上界，覆盖不存在合法三元组的情况。",
+      "把任意非连续最优保留集合替换成长度不减的连续合法区间。",
+      "固定右端点后，a_l+a_{l+1} 随 l 右移单调不减，因此左指针无需回退。",
+      "段外元素统一复制为 a_{l+1}，不会引入更小的第二小值或更大的最大值。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "主算法经官方动态 tutorial、官方 Accepted、独立洛谷题解和终态穷举交叉确认，没有未解决的正确性问题。",
+      "二分最大保留长度是完整可行变体，但官方主实现使用更直接的双指针。",
+      "没有提出新 tag；现有 polygon-inequality、two-pointers、sorting 和 binary-search-on-answer 已能准确检索。"
+    ],
+    "proof_risks": [
+      "三角形要求是严格大于；使用 >= 会错误接受退化三角形。",
+      "只检查某个任意三元组不够，必须证明排序后的最小两项和最大项构成全局最坏情况。",
+      "最优保留元素未必原本连续；必须用 [i_2-1,i_k] 的替换论证证明连续窗口不会更差。",
+      "双指针循环必须保留长度为二的基础候选，否则完全不存在合法三元组时可能漏掉 n-2 答案。",
+      "窗口外的大小两端都应改成窗口内值；只删除或只修改一侧不能代表一般最优解。",
+      "若实现使用较小整数类型，应注意两项求和；本题上限 2e9 尚在有符号 32 位范围内，但使用 64 位更稳妥。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-window-two-pointers",
+      "summary": "排序后枚举右端点，持续右移左端点直到最小两项之和严格大于右端最大值，以最长合法连续区间决定最少修改数。",
+      "complexity": "O(n log n) time and O(n) memory including sorting.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "binary-search-retained-window-length",
+      "summary": "二分能够保留的最大连续区间长度 L；线性扫描所有左端点，检查是否存在 a_l+a_{l+1}>a_{l+L-1}。可行长度具有向下单调性。",
+      "complexity": "O(n log n) time after including sorting and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/polygon-inequality",
+      "importance": "primary",
+      "evidence": "任意三元组都能成三角形等价于排序后全局最小两项之和严格大于全局最大项，这是三边多边形不等式的精确特例。",
+      "solution_variant": "sorted-window-two-pointers"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "最长合法保留区间通过单调右端点和永不回退的左端点在线维护；这是主实现从平方枚举降到线性的核心。",
+      "solution_variant": "sorted-window-two-pointers"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "排序把任意三元组条件化为两个最小值和一个最大值，并使最优保留集合可表示为连续区间。",
+      "solution_variant": "sorted-window-two-pointers"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "固定右端点时，左端点右移只会增大最小两项之和；固定窗口长度的存在性也对长度具有向下单调性。",
+      "solution_variant": "sorted-window-two-pointers"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "secondary",
+      "evidence": "替代方案以保留长度为答案参数，利用较短合法窗口必然存在的单调性二分最大长度，并用线性扫描判定。",
+      "solution_variant": "binary-search-retained-window-length"
+    }
+  ]
+}
