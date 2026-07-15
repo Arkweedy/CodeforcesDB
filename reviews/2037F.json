@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2037,
+    "title": "Codeforces Round 988 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2037,
+    "index": "F",
+    "title": "Ardent Flames",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "math",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2037/problem/F",
+      "notes": "Read the complete damage model, fixed-integer-position restriction, constraints, impossibility condition, and all sample explanations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135533",
+      "notes": "Read the official 2037F analysis and Python code. It binary-searches the attack count, derives one valid-position interval per enemy using ceil(h_i/q), and checks whether at least k intervals overlap by a sorted event sweep."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/3pb2v6ky",
+      "notes": "Read the full independent explanation and implementation. It confirms the inclusive interval endpoints and event tie handling. Its stated O(n log V) complexity omits the event-sorting factor present in its own code, so the recorded complexity follows the actual implementation and official analysis."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2037/problem/F",
+      "notes": "Re-derived monotonicity, the 1e9 upper bound, and inclusive interval events. Exhaustively compared the interval algorithm with brute-force enumeration of integer positions and attack counts on small instances; all results matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2037/submission/293666882",
+      "notes": "The contest status page reports verdict Accepted, but the source page was blocked by browser verification, so its code was not consulted or used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose one fixed integer position p and minimize the number of identical attacks needed to defeat at least k enemies, where per-hit damage to enemy i is max(0,m-|p-x_i|). Return -1 if no fixed position can ever damage k enemies.",
+    "constraints": "1 <= t <= 10^4; 1 <= k <= n <= 10^5; 1 <= m,h_i,x_i <= 10^9; positions are strictly increasing; the sum of n over all test cases is at most 10^5.",
+    "core_idea": "Binary-search a candidate attack count q. Enemy i dies within q attacks exactly when its per-hit damage is at least need_i=ceil(h_i/q). If need_i>m, that enemy is impossible for this q. Otherwise |p-x_i| <= m-need_i, so every suitable integer position belongs to the closed interval [x_i-m+need_i, x_i+m-need_i]. Thus q is feasible exactly when some integer coordinate is covered by at least k such intervals. Add +1 at every left endpoint and -1 at right endpoint plus one, sort the events, and test whether the running coverage reaches k. Increasing q never increases need_i, so intervals only appear or expand and feasibility is monotone. If any solution exists, every selected enemy takes at least one damage per hit and has health at most 1e9, so q=1e9 is feasible; failure there proves the answer is -1.",
+    "complexity": "O(n log n log H) time per test case, where H=max(h_i)<=1e9, and O(n) auxiliary memory. Across the input, sum n <= 10^5.",
+    "tricks": [
+      "Binary-search the number of attacks rather than the position.",
+      "Convert the damage inequality into a closed interval of legal positions for each enemy.",
+      "Use an event at R+1 so enemies whose legal intervals meet at one endpoint are counted together.",
+      "Use q=1e9 as both a valid finite upper bound and the impossibility test."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "attack-count-binary-search-interval-sweep",
+      "summary": "Binary-search q, turn every enemy killable within q attacks into an inclusive interval of valid fixed positions, and use a sorted difference-event sweep to detect a point covered by at least k intervals.",
+      "complexity": "O(n log n log H) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The minimum attack count is found from the monotone predicate that if q attacks can kill at least k enemies from one position, every larger attack count can do so as well.",
+      "solution_variant": "attack-count-binary-search-interval-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "Each feasibility check sorts interval start and end events and sweeps the coordinate line while maintaining the number of enemies simultaneously killable from the current position.",
+      "solution_variant": "attack-count-binary-search-interval-sweep"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "For fixed q, the damage inequality for each enemy becomes one interval for the shared hidden parameter p, and feasibility asks whether some p lies in at least k of those intervals.",
+      "solution_variant": "attack-count-binary-search-interval-sweep"
+    }
+  ]
+}

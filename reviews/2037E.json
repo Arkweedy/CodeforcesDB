@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2037,
+    "title": "Codeforces Round 988 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2037,
+    "index": "E",
+    "title": "Kachina's Favorite Binary String",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "interactive",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2037/problem/E",
+      "notes": "Read the complete original interaction, query limit, impossibility definition, current hack format, and sample semantics. The original task allows at most n queries; current hacks reveal the binary string directly."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135533",
+      "notes": "Read the official 2037E analysis and code. It establishes reconstruction from prefix-query changes, the structure of the first zero-valued prefix followed by a positive value, and the all-zero-answer impossibility case."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/146637",
+      "notes": "Read the independent Codeforces article on reducing the query count. It independently confirms that a zero whole-string answer implies IMPOSSIBLE and that prefix-answer differences expose the contribution of newly appended bits. Its stronger query compression is not needed by the primary variant."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2037/problem/E",
+      "notes": "Re-derived the prefix reconstruction and exhaustively checked every binary string of length at most 8. Positive-instance reconstruction always matched the hidden string, while every substring query was zero in exactly the 1*0* impossible family."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2037E",
+      "notes": "Candidate solution index returned an internal error during this review, so no solution text from it was used."
+    }
+  ],
+  "annotation": {
+    "summary": "In the original interactive task, reconstruct a hidden binary string using at most n oracle queries, where f(l,r) counts 01 subsequences in the selected substring, or report that the string cannot be uniquely determined. The current hack format supplies s directly, but this review records the original inference problem.",
+    "constraints": "Original interaction: 1 <= t <= 1000; 2 <= n <= 10^4; the sum of n is at most 10^4; each query requires 1 <= l < r <= n; at most n queries may be asked per test case. Current hacks additionally provide a binary string s of length n.",
+    "core_idea": "Query q_r=f(1,r) for every r from 2 through n and set q_1=0. Let r be the first index with q_r>0. Since q_{r-1}=0, the prefix s_1...s_{r-1} contains no 01 subsequence and must be some ones followed by some zeros. Appending s_r creates a positive number of pairs, so s_r=1, and q_r is exactly the number z of zeros in the preceding prefix. Hence that prefix is uniquely 1^(r-1-z)0^z. For every later i, q_i-q_{i-1} cancels all old pairs: it is 0 when s_i=0 and equals the current positive zero count when s_i=1. Update z after each reconstructed zero. If no positive q_r exists, the whole string contains no 01 pair and therefore has form 1^a0^(n-a); every substring query is zero for all n+1 such strings, so unique reconstruction is impossible.",
+    "complexity": "At most n-1 oracle queries, O(n) local time, and O(n) memory for the reconstructed string.",
+    "tricks": [
+      "Use adjacent prefix-query differences to isolate the contribution of one appended bit.",
+      "At the first positive prefix answer, a zero previous answer forces the preceding prefix to be ones followed by zeros.",
+      "After the first positive answer, at least one zero is known, so a zero increment and a positive increment unambiguously distinguish the next bit.",
+      "Prove IMPOSSIBLE information-theoretically: every substring of every 1*0* string returns zero."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "all-prefix-increment-reconstruction",
+      "summary": "Query all prefixes in increasing endpoint order, recover the first determined 1*0*1 prefix from the first positive answer, and classify every remaining character from consecutive answer differences.",
+      "complexity": "n-1 queries, O(n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The required output is the entire hidden binary string, reconstructed from adaptive oracle values under a strict per-test query budget.",
+      "solution_variant": "all-prefix-increment-reconstruction"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "The difference f(1,i)-f(1,i-1) cancels every previously counted subsequence and equals either zero or the current number of earlier zeros, directly revealing s_i after the first positive prefix.",
+      "solution_variant": "all-prefix-increment-reconstruction"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "secondary",
+      "evidence": "The reconstruction relies on the exact contribution rule for 01 subsequences: appending a 1 adds one pair for every preceding zero, while appending a 0 adds none.",
+      "solution_variant": "all-prefix-increment-reconstruction"
+    }
+  ]
+}

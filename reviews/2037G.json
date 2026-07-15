@@ -1,0 +1,118 @@
+{
+  "contest": {
+    "contest_id": 2037,
+    "title": "Codeforces Round 988 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2037,
+    "index": "G",
+    "title": "Natlan Exploring",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "data structures",
+      "dp",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2037/problem/G",
+      "notes": "Read the complete current statement, constraints, path definition, modulus, and examples. The current revised statement contains one test case with n<=2e5 and a_i<=1e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135533",
+      "notes": "Read the official 2037G analysis and code. It derives graph-path DP accelerated by inclusion-exclusion over distinct prime-factor subsets and also identifies a Mobius-function alternative. The displayed code retains an old outer test-case loop that does not match the current single-case statement; only the algorithmic content was used."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qw8um2ih",
+      "notes": "Read the complete independent explanation and implementation. It confirms distinct-prime factorization, subset-product inclusion-exclusion, dp[1]=1, and updating divisor buckets after computing each state. The prose reverses one divisibility relation, while its code uses the required bucket meaning d divides a_j."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/wuyiming1263/p/21469949",
+      "notes": "Read the full independent Mobius derivation. It expresses the non-coprime predecessor sum as total prior dp minus the Mobius-weighted coprime sum and gives an O(V+n*max tau(a_i)) all-divisor implementation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2037/problem/G",
+      "notes": "Re-derived the subset coefficient for a predecessor sharing r primes as sum_{s=1..r}(-1)^(s+1)C(r,s)=1. Exhaustively compared the optimized recurrence with O(n^2) graph DP for every array of length at most 6 with values from 2 through 12; all answers matched."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count directed paths from city 1 to city n, where an edge i->j exists exactly when i<j and gcd(a_i,a_j)>1, modulo 998244353.",
+    "constraints": "The current statement has one test case; 2 <= n <= 2*10^5; 2 <= a_i <= 10^6; the answer is taken modulo 998244353.",
+    "core_idea": "Indices already topologically order the graph. Let dp[1]=1 and dp[i]=sum dp[j] over j<i with gcd(a_j,a_i)>1. Maintain bucket[d]=sum of dp[j] over processed cities whose a_j is divisible by squarefree d. Factor a_i into its distinct primes P. The valid predecessors are the union of the sets sharing each p in P, so apply inclusion-exclusion: dp[i]=sum over nonempty S subseteq P of (-1)^(|S|+1)*bucket[product(S)]. A predecessor sharing r distinct primes is counted with coefficient sum_{s=1..r}(-1)^(s+1)C(r,s)=1, while a coprime predecessor is counted zero times. After computing dp[i], add it to bucket[product(S)] for every nonempty subset S, preventing self-counting. Since a_i<=1e6, it has at most seven distinct prime factors, so each city needs at most 127 subset terms.",
+    "complexity": "With a smallest-prime-factor sieve up to A=max(a_i), O(A log log A + sum_i 2^omega(a_i)) time, bounded by O(A log log A + 128n), and O(A) memory.",
+    "tricks": [
+      "Use the natural index order as a topological order for the implicit DAG.",
+      "Aggregate previous dp values by divisibility instead of testing all predecessors.",
+      "Discard prime exponents because gcd>1 only asks whether at least one prime is shared.",
+      "Apply inclusion-exclusion over nonempty subsets of distinct prime factors.",
+      "Update divisor buckets only after computing dp[i] so a city cannot transition to itself."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "distinct-prime-subset-inclusion-exclusion",
+      "summary": "Maintain dp sums for squarefree products of distinct primes. Query the union of shared-prime predecessor sets by alternating over all nonempty prime subsets, then add the new dp value to the same buckets.",
+      "complexity": "O(A log log A + sum_i 2^omega(a_i)) time and O(A) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "mobius-over-all-divisors",
+      "summary": "Maintain total prior path count and bucket[d]=sum dp[j] for all processed values divisible by d. Using [gcd(x,y)=1]=sum_{d|gcd(x,y)}mu(d), compute dp[i]=total-sum_{d|a_i}mu(d)*bucket[d], then update every divisor of a_i.",
+      "complexity": "O(A + sum_i tau(a_i)) time with a linear Mobius sieve and O(A) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/graph-dp",
+      "importance": "primary",
+      "evidence": "Each state dp[i] is the number of paths ending at graph vertex i, and transitions aggregate path counts from earlier adjacent vertices in the implicit DAG.",
+      "solution_variant": "distinct-prime-subset-inclusion-exclusion"
+    },
+    {
+      "tag": "graph/path-counting",
+      "importance": "primary",
+      "evidence": "The requested answer is exactly the number of directed paths from city 1 to city n, with increasing indices making every visited set correspond to one ordered path.",
+      "solution_variant": "distinct-prime-subset-inclusion-exclusion"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "Predecessors sharing several prime factors occur in several divisibility buckets; alternating over prime-factor subsets makes every non-coprime predecessor contribute exactly once.",
+      "solution_variant": "distinct-prime-subset-inclusion-exclusion"
+    },
+    {
+      "tag": "math/number-theory/prime-factorization",
+      "importance": "secondary",
+      "evidence": "Every a_i is reduced to its set of distinct prime factors, whose subset products index all required aggregate buckets.",
+      "solution_variant": "distinct-prime-subset-inclusion-exclusion"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "All nonempty subsets of at most seven distinct prime factors are enumerated by masks to build products and determine inclusion-exclusion signs.",
+      "solution_variant": "distinct-prime-subset-inclusion-exclusion"
+    },
+    {
+      "tag": "math/number-theory/mobius",
+      "importance": "secondary",
+      "evidence": "The alternative computes the weighted sum of coprime predecessors using the Mobius identity over common divisors and subtracts it from the total prior path count.",
+      "solution_variant": "mobius-over-all-divisors"
+    }
+  ]
+}
