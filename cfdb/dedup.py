@@ -19,6 +19,13 @@ class DuplicateProblem:
     title: str
 
 
+def duplicate_alias_count(
+    duplicates: list[DuplicateProblem], start: int, end: int
+) -> int:
+    lo, hi = sorted((start, end))
+    return sum(lo <= item.alias_contest_id <= hi for item in duplicates)
+
+
 def contest_division(title: str) -> int | None:
     divisions = {int(match.group(1)) for match in DIVISION_RE.finditer(title)}
     if divisions == {1}:

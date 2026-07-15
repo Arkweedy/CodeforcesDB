@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from cfdb.codeforces import CodeforcesClient
 from cfdb.db import DEFAULT_DB_PATH, connect, init_db
-from cfdb.dedup import canonical_problem_count, mark_division_duplicates
+from cfdb.dedup import canonical_problem_count, duplicate_alias_count, mark_division_duplicates
 from cfdb.git_utils import commit_paths
 from cfdb.ingest import find_contest_meta, ingest_contest, upsert_ingestion_range
 
@@ -102,7 +102,7 @@ def main() -> None:
                 print(f"{contest_id}: failed: {exc}")
                 results.append({"contest_id": contest_id, "status": "failed", "problems": 0, "error": str(exc)})
         duplicates = mark_division_duplicates(conn)
-        duplicate_count = len(duplicates)
+        duplicate_count = duplicate_alias_count(duplicates, args.start, args.end)
         canonical_count = canonical_problem_count(conn, args.start, args.end)
 
     print(

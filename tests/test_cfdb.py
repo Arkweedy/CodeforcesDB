@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from cfdb.db import connect, init_db
-from cfdb.dedup import canonical_problem_uid, mark_division_duplicates
+from cfdb.dedup import canonical_problem_uid, duplicate_alias_count, mark_division_duplicates
 from cfdb.eligibility import classify_contest
 from cfdb.ingest import ingest_contest, upsert_ingestion_range
 from cfdb.normalize import parse_problem_ref
@@ -502,6 +502,9 @@ class CfDbTests(unittest.TestCase):
 
                 duplicates = mark_division_duplicates(conn)
                 self.assertEqual(len(duplicates), 1)
+                self.assertEqual(duplicate_alias_count(duplicates, 101, 101), 1)
+                self.assertEqual(duplicate_alias_count(duplicates, 102, 110), 0)
+                self.assertEqual(duplicate_alias_count(duplicates, 101, 100), 1)
                 self.assertEqual(canonical_problem_uid(conn, "cf_problem:101:C"), "cf_problem:100:A")
                 results = search_problems(conn, tags=["dp"])
                 self.assertEqual([item["problem_uid"] for item in results], ["cf_problem:100:A"])
