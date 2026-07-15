@@ -105,6 +105,11 @@ def main() -> None:
         duplicate_count = len(duplicates)
         canonical_count = canonical_problem_count(conn, args.start, args.end)
 
+    print(
+        f"range summary: {canonical_count} canonical problems; "
+        f"{duplicate_count} Div.1/Div.2 duplicates aliased"
+    )
+
     if not args.no_auto_commit:
         auto_commit_database(args.db, args.start, args.end, results, canonical_count, duplicate_count)
 
