@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "B",
+    "title": "Move Back at a Cost",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/B",
+      "notes": "Canonical statement and constraints: increment a chosen element, move it to the back, and minimize the final array lexicographically; n and total n are at most 1e5."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2047/problem/D",
+      "notes": "Div.2 alias with the same statement; the reviewed identity remains canonical 2046B."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Official tutorial checked: moved elements need only one operation, may be appended in sorted order, and the retained prefix follows suffix minima until the moved pile becomes smaller."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/rrd71x4p",
+      "notes": "Opened solution cross-check: first move elements having a smaller suffix value, then move the retained suffix above the smallest already-moved value; two waves suffice."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/B",
+      "notes": "Re-derived the strict switch condition and why moving the second-wave suffix cannot lower the minimum of the moved pile, so no further wave is needed."
+    }
+  ],
+  "annotation": {
+    "summary": "Construct the lexicographically smallest array obtainable when an operation increments one element and moves it to the end.",
+    "constraints": "1 <= n <= 1e5 per test, total n <= 1e5, and 1 <= a_i <= 1e9; an O(n log n) solution is required.",
+    "core_idea": "An element never needs to be moved more than once: for a fixed moved set, perform those operations in the desired final order, and increasing each only once is optimal. First move every a_i that is larger than a strict suffix minimum; the untouched elements form the nondecreasing suffix-minimum chain F, while moved values form a multiset M containing a_i+1. If M is nonempty and its minimum is smaller than the tail of F, lexicographic greed forces every trailing F value strictly greater than min(M) to move too. This is one contiguous suffix because F is nondecreasing. Each newly moved value is greater than the old min(M), so the threshold never decreases and no third wave appears. Keep equality in F, then output the remaining F followed by sorted M.",
+    "complexity": "O(n log n) time and O(n) memory.",
+    "tricks": [
+      "move each selected element exactly once",
+      "extract the suffix-minimum chain",
+      "switch to the moved pile at a strict threshold",
+      "the second-wave moved suffix cannot change the threshold",
+      "sort moved values by choosing the operation order"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-minima-and-moved-threshold",
+      "summary": "Scan from right to left to retain suffix minima and insert all other values plus one into an ordered multiset. While the largest retained value is greater than the smallest moved value, move that retained suffix value as well. Emit the retained chain and then the moved multiset in sorted order.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Lexicographic choice determines both the suffix-minimum elements that may stay and the exact threshold where all remaining elements must be moved.",
+      "solution_variant": "suffix-minima-and-moved-threshold"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "Comparing each value with the minimum strictly to its right identifies the mandatory first wave and leaves a nondecreasing suffix-minimum chain.",
+      "solution_variant": "suffix-minima-and-moved-threshold"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "All moved values can be operated in arbitrary order, so sorting their incremented values gives the smallest possible tail and exposes its minimum as the switch threshold.",
+      "solution_variant": "suffix-minima-and-moved-threshold"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "The official implementation maintains duplicate moved values in order while repeatedly querying the smallest moved value.",
+      "solution_variant": "suffix-minima-and-moved-threshold"
+    }
+  ]
+}

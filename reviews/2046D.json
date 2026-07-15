@@ -1,0 +1,125 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "D",
+    "title": "For the Emperor!",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "flows",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/D",
+      "notes": "Read the current complete statement, including messenger activation semantics, parallel directed roads, and the bounds t<=100, n<=200, m<=800, sum(n)<=200, and sum(m)<=800."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Official tutorial linked from the contest page. It confirms SCC contraction, the path-flow interpretation on the condensation DAG, a lower bound of one on every split component, the count-node construction for manual activation, and minimum-cost feasible-flow reduction."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ya2lyawz",
+      "notes": "Opened and inspected solution and code. It independently highlights why running the lower-bound circulation on the original cyclic graph is wrong: a source-free directed cycle can satisfy all visit lower bounds, so SCC contraction is required."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/peiwenjun/p/18593924",
+      "notes": "Opened alternative implementation using a large negative reward for the first unit covering each SCC. It cross-checks the count-node gadget and supplies a materially different ordinary min-cost-max-flow formulation without explicit lower bounds."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2047/problem/F",
+      "notes": "Div.2 alias CF2047F has the same title, statement, constraints, rating, and official tags. It is recorded only as an alias source; the reviewed identity is canonical CF2046D."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/D",
+      "notes": "Independently proved both directions of the strategy-to-integral-flow correspondence on the condensation DAG and checked that a reward magnitude B greater than the SCC count makes the alternative objective lexicographically maximize covered SCCs before minimizing manual seeds."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose the minimum number of initially informed messengers in a directed graph. Visiting a city informs all resident messengers, which may then travel independently, and every city must eventually be visited by an informed messenger.",
+    "constraints": "For each test, 2<=n<=200, 1<=m<=800, 0<=a_i<=n, and parallel roads are allowed. Across tests, sum(n)<=200 and sum(m)<=800. After SCC contraction there are k<=n components, and their total messenger supply A=sum(a_i)<=n^2.",
+    "core_idea": "Contract every SCC and sum its messenger counts: one informed messenger can walk through the whole SCC and activate every resident messenger, while the condensation graph is a DAG. Represent messenger trajectories as integral flow paths. For every component u create u_cnt, u_in, and u_out. Add S->u_cnt with capacity A_u; u_cnt->u_in with capacity 1 and cost 1 for manually informing one local messenger; u_cnt->u_out with capacity A_u and cost 0 for the remaining local messengers once u is reached; u_in->u_out with lower bound 1 to require that u is visited; u_out->v_in for every condensation edge; and u_out->T so a messenger may stop anywhere. The shared S->u_cnt capacity prevents using more than A_u resident messengers. Convert all lower bounds with a super source SS, super sink TT, and T->S: replace each [1,INF] visit edge by residual capacity INF-1, SS->u_out of capacity 1, and u_in->TT of capacity 1. A feasible solution must send k units from SS to TT. If the maximum flow is smaller than k, informing every component is impossible; otherwise its minimum cost is exactly the number of manually seeded components. Integrality decomposes the flow into messenger paths. Conversely, acyclicity lets components be processed topologically: every component is first reached by an incoming path or its unique paid local start, after which its resident messenger flows become available. SCC contraction is essential because a lower-bound circulation on the original graph could cover a directed cycle without any path originating from an informed messenger.",
+    "complexity": "Let V=3k+4 and E=O(k+m) in the flow network. SCC contraction costs O(n+m). The primary variant needs at most k demand-flow augmentations, giving O(k*E*log(V)) with potentials or O(k*V*E) with Bellman-Ford shortest augmentations, and O(V+E) memory.",
+    "tricks": [
+      "Contract SCCs both to aggregate mutually activatable messengers and to eliminate source-free fake circulation cycles.",
+      "Encode visit-at-least-once by a lower bound of one on a node-splitting edge.",
+      "Use one count node so the paid and free local-messenger branches share the same A_u supply limit.",
+      "Reduce source-sink lower-bound flow to demand balancing with SS, TT, and the edge T->S.",
+      "Use flow integrality to recover discrete messenger trajectories.",
+      "An alternative replaces explicit lower bounds by a dominant negative reward on the first traversal of every SCC."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "CF2047F must remain only an alias of canonical CF2046D.",
+      "Applying the lower-bound construction before SCC contraction can accept a zero-messenger directed cycle through a source-free circulation.",
+      "The manual and free branches must both pass through S->u_cnt of capacity A_u; otherwise the model can create an extra resident messenger.",
+      "Feasibility requires the transformed SS-to-TT flow to reach exactly k, the number of condensed components.",
+      "In the reward variant, choose B>k and explicitly verify that all k reward edges were used; SPFA-based runtime is implementation-dependent."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "scc-lower-bound-min-cost-feasible-flow",
+      "summary": "Contract SCCs, construct the three-node gadget for every component, put lower bound 1 on u_in->u_out, transform the lower bounds with SS/TT and T->S, and send k units of minimum-cost flow. Flow below k means impossible; otherwise the cost counts exactly the components that require an initially informed local messenger.",
+      "complexity": "O(n+m+k*E*log(V)) time with potentials, or O(n+m+k*V*E) with Bellman-Ford shortest augmentations; O(V+E) memory, where V=O(k) and E=O(k+m)",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "scc-big-m-coverage-reward-mcmf",
+      "summary": "After SCC contraction, omit explicit lower bounds. Replace each visit edge by parallel edges of capacity 1 and cost -B and capacity INF and cost 0, retain the capacity-1 manual branch of cost 1, and send the maximum flow A=sum(A_u) from S to T. The direct count-to-out-to-T route guarantees that all A units can be sent. For B>k, minimum cost first maximizes the number C of covered SCCs and then minimizes manual starts; return -1 if C<k, otherwise return cost+B*k.",
+      "complexity": "O(n+m+V*E+A*E*log(V)) time with initial Bellman-Ford potentials, or O(n+m+A*V*E) with SPFA/Bellman-Ford augmentations; O(V+E) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/flow/lower-bound-flow",
+      "display_name": "Lower-bound flow",
+      "importance": "primary",
+      "description": "Model and solve flows or circulations whose edges require l<=f<=r, normally by balancing the lower-bound demands with a super source and sink. Use when nonzero lower bounds are essential to feasibility or optimization, not for ordinary capacity-only flow.",
+      "parent": "graph/flow",
+      "created_reason": "The current taxonomy has generic flow and min-cost-flow tags but no tag for the reusable lower-bound feasible-flow reduction. CF2046D centrally requires a lower bound of one on every condensed component's visit edge.",
+      "status": "candidate",
+      "aliases": [
+        "flow with lower bounds",
+        "lower-bounded flow",
+        "lower-bound circulation",
+        "lower-bounded circulation"
+      ],
+      "evidence": "Every condensed component must carry at least one unit through u_in->u_out; transforming these k nonzero lower bounds into SS/TT demands is the central feasibility reduction.",
+      "solution_variant": "scc-lower-bound-min-cost-feasible-flow"
+    },
+    {
+      "tag": "graph/flow/min-cost-flow",
+      "importance": "primary",
+      "evidence": "Among all flows satisfying the k visit demands, the only positive-cost edges represent manually informing one resident messenger, so minimum-cost flow computes the exact minimum number of initial plans.",
+      "solution_variant": "scc-lower-bound-min-cost-feasible-flow"
+    },
+    {
+      "tag": "graph/scc",
+      "importance": "primary",
+      "evidence": "SCC contraction aggregates all mutually activatable resident messengers and removes directed cycles that could otherwise satisfy visit lower bounds through a source-free circulation, making the flow model sound.",
+      "solution_variant": "scc-lower-bound-min-cost-feasible-flow"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "The condensation DAG permits a topological interpretation of every integral feasible flow: a component is reached before its resident messenger paths are launched, and no cyclic flow can fake that causal activation.",
+      "solution_variant": "scc-lower-bound-min-cost-feasible-flow"
+    }
+  ]
+}

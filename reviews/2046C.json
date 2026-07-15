@@ -1,0 +1,129 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "C",
+    "title": "Adventurers",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "sortings",
+      "ternary search",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/C",
+      "notes": "Canonical statement and constraints: choose an integer dividing point maximizing the minimum of four strict-left/inclusive-right and strict-below/inclusive-above quadrant counts; total n is at most 1e5."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2047/problem/E",
+      "notes": "Div.2 alias with the same statement; the reviewed identity remains canonical 2046C."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Official tutorial checked: it describes binary search on k with a vertical sweep and feasible y-interval intersection; its reference code implements direct monotone segment-tree descent for the best y at each x."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/7xxa7r1k",
+      "notes": "Opened solution cross-check: sort and group x, compress y, maintain the two x-sides with Fenwick trees, and search the crossover of the four quadrant counts in O(n log^2 n)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/C",
+      "notes": "Re-derived the monotone lower/upper envelopes for direct descent and the exact kth-order-statistic interval used by the answer-feasibility variant."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose an integer point (x0,y0) that partitions a multiset of planar points into four prescribed quadrants and maximizes the least quadrant size.",
+    "constraints": "4 <= n <= 1e5 per test, total n <= 1e5, coordinates are in [-1e9,1e9], duplicate points are allowed, and the output point must also stay within that coordinate range.",
+    "core_idea": "Sort by x and evaluate x0 at each distinct point x before transferring that whole equal-x group, so the maintained sides exactly represent x<x0 and x>=x0. For fixed x0 define A(y)=min(L_below(y),R_below(y)) and B(y)=min(L_above(y),R_above(y)), where below means y_i<y and above means y_i>=y. A is nondecreasing, B is nonincreasing, and the score is min(A,B), so an optimum lies at their crossover. A segment tree over y stores counts for both x-sides; with accumulated counts outside the current node, descend toward larger y when A<=B and toward smaller y otherwise, checking the score at every split. As a separate feasibility variant, binary search k: for k>0, on either x-side the y0 values leaving at least k points below and above form the interval [k-th smallest y + 1, k-th largest y], and k is feasible exactly when the left and right intervals intersect for some swept x0.",
+    "complexity": "O(n log n) time and O(n) memory for the direct segment-tree descent; O(n log^2 n) time and O(n) memory for binary search on the answer.",
+    "tricks": [
+      "evaluate before moving an entire equal-x group",
+      "encode divider ties as strict lower/left and inclusive upper/right counts",
+      "split the score into a nondecreasing below envelope and a nonincreasing above envelope",
+      "search the envelope crossover instead of ternary-searching a plateaued score",
+      "represent fixed-k feasible horizontal dividers as intersecting intervals"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "x-sweep-monotone-y-descent",
+      "summary": "Sweep equal-x groups while a segment tree stores, for every y range, counts from both x-sides. At each x0, descend to the crossover between the nondecreasing minimum-below count and nonincreasing minimum-above count, updating the best score and y0 along the path.",
+      "complexity": "O(n log n) time and O(n) memory after sorting and coordinate compression; an implicit tree gives O(n log C) counting work plus O(n log n) sorting.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "answer-binary-search-with-feasible-y-intervals",
+      "summary": "Binary search the target k. For each check, sweep equal-x groups with two Fenwick trees, obtain the kth-smallest and kth-largest y on both x-sides, and accept an x0 when the two resulting feasible y0 intervals intersect.",
+      "complexity": "O(n log^2 n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The algorithm enumerates all relevant vertical dividers by x while transferring point groups between maintained left and right states.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The primary variant stores y-range counts for both x-sides and descends the tree to evaluate the four quadrant counts at their optimal crossover.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "For fixed x0, the minimum of the two below counts only increases with y0 while the minimum of the two above counts only decreases, locating the optimum at their crossover.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "The primary variant performs a binary descent in y according to which monotone envelope currently limits the score.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "The alternative variant binary-searches k because feasibility of giving every quadrant at least k points is monotone.",
+      "solution_variant": "answer-binary-search-with-feasible-y-intervals"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "The alternative variant maintains both x-sides by compressed y and extracts prefix counts or kth y order statistics during every feasibility sweep.",
+      "solution_variant": "answer-binary-search-with-feasible-y-intervals"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting points by x creates the sweep order, while sorted unique y values support the compressed range-count structures.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    },
+    {
+      "tag": "trick/group-by-coordinate",
+      "importance": "secondary",
+      "evidence": "All points sharing x0 must remain on the inclusive-right side during evaluation and be transferred together afterward.",
+      "solution_variant": "x-sweep-monotone-y-descent"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "E2",
+    "title": "Cheops and a Contest (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/E2",
+      "notes": "Read the full hard-version statement: 2<=m<=n<=3e5, sum n<=3e5, all attributes and output coordinates lie in [0,1e9], topics must be distinct, and the output limit is 5n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Read the official Div1E1+E2 explanation and tourist implementation. It confirms global forbidden strength intervals, per-specialization forbidden intervals, maximal legal difficulty placement, safe two-task barriers found by a strength sweep, final exact verification, and a construction of at most 3n tasks."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tb5xedug",
+      "notes": "Opened and checked an independent hard-version writeup and implementation. It derives the two-city obstruction first, generalizes it to all adjacent city boundaries, merges global and per-topic banned intervals, uses prefix/suffix city extrema for barrier cuts, and reports O(n log n)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/E2",
+      "notes": "Independently reconstructed the completeness argument: every feasible contest must avoid the stated intervals and supply each overlapping upper participant's topic, so the maximal legal placement plus all safe neutral barriers is canonical; if its exact score check fails, no feasible contest exists."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For arbitrarily many ordered cities, construct at most 5n distinct-topic tasks so every participant in each earlier city solves strictly more than every participant in every later city, or report impossibility.",
+    "constraints": "2<=m<=n<=3e5, sum n<=3e5, and 0<=a_i<=b_i<=1e9 with 0<=s_i<=1e9. Unlike E1, interactions among several adjacent city boundaries and repeated specializations must be handled globally.",
+    "core_idea": "Let F(x) be the number of chosen difficulties at most x; every participant's score is F(a_i) plus at most one topic bonus. For city i define L_i=min a and R_i=max a. If L_i<=R_{i+2}, a weakest city-i participant can lead a strongest city-(i+2) participant by at most one, although two strict city boundaries require a gap of at least two, so the instance is impossible. More generally every feasible task difficulty must avoid the merged global intervals [L_i+1,R_{i+1}]: inside one, the strongest lower participant gains a base point over the weakest upper participant and consumes the latter's only possible compensating bonus. For a lower participant x in city i+1 with a_x>=L_i, a task of topic s_x must additionally avoid [L_i+1,b_x]; merge these intervals separately for every topic. Conversely, every upper participant x in city i with a_x<=R_{i+1} must have a task of topic s_x, since base counts alone cannot beat the strongest next-city participant. For each required topic t set U_t to the minimum b_x over all such upper participants, then choose the largest integer d_t<=U_t outside both the global and t-specific forbidden unions, repeatedly jumping from a containing interval to one less than its left endpoint. If this maximum is not above every required participant's a_x, no legal value can provide all required bonuses and verification will reject. Add two neutral, previously unused topics at every internal safe strength threshold d for which the participants with a>=d have maximum city index no greater than the minimum city index among participants with a<d; a sorted-strength sweep or prefix/suffix city extrema finds all such cuts. Two copies make every strength-separated boundary robust against one topic bonus. Finally compute every score, compare each city's minimum with the next city's maximum, and output the construction iff all adjacent inequalities hold. Every feasible answer must obey the same bans and required-topic upper bounds, while maximal legal placement minimizes unintended solvers; therefore failure of this canonical construction proves impossibility.",
+    "complexity": "O(n log n) time and O(n) memory over each test batch. There are at most 2(n-1) neutral barrier tasks and at most n required-topic tasks, so the construction has fewer than 3n tasks.",
+    "tricks": [
+      "Use the one-topic-per-participant bonus bound to derive both local and two-city-gap impossibility conditions.",
+      "Represent illegal difficulties as a global interval union plus one interval union per specialization.",
+      "Find the greatest legal difficulty by alternating predecessor jumps through the two merged unions.",
+      "Detect globally safe barrier thresholds with a sorted-strength cut and prefix/suffix city extrema.",
+      "Construct a canonical strongest candidate and run an exact score verifier; verifier failure is an impossibility certificate."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "global-forbidden-interval-canonical-construction",
+      "summary": "Official hard algorithm. Build merged global and per-topic forbidden difficulty unions, greedily place one task for each specialization required by an adjacent overlap, add two unused-topic tasks at every globally order-respecting strength cut, then exactly verify adjacent city score ranges.",
+      "complexity": "O(n log n) time, O(n) memory, and fewer than 3n output tasks.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The algorithm explicitly emits the task difficulties and pairwise-distinct topics, with a proof that the canonical construction succeeds whenever any feasible contest exists.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Each required specialization task is placed at the greatest legal difficulty not exceeding all required upper participants' wisdom, minimizing the set of unintended solvers.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "algorithm/interval-union",
+      "importance": "primary",
+      "evidence": "The hard-version core merges all globally forbidden intervals and each topic's forbidden intervals, then answers repeated containment and previous-feasible-point queries on their complements.",
+      "solution_variant": "global-forbidden-interval-canonical-construction",
+      "description": "Sort and merge overlapping or adjacent integer intervals into a disjoint union, then use that representation for containment, complement, or next/previous feasible-point queries. Use when maintaining the interval union is algorithmically central, not for ordinary interval sorting.",
+      "parent": "algorithm",
+      "created_reason": "CF2046E2's legal difficulties form the disconnected complement of global and per-topic forbidden interval unions. The existing trick/interval-feasibility tag covers intersections of feasible intervals and does not describe this merge-and-jump operation.",
+      "status": "candidate",
+      "aliases": [
+        "interval merging",
+        "merge intervals",
+        "union of intervals"
+      ],
+      "main_agent_review": "required"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "After sorting participants by strength, prefix minima and suffix maxima of city indices characterize exactly the thresholds whose solver set respects the city order and can receive neutral barriers.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The invariant score decomposition F(a)+bonus with bonus at most one yields the forbidden intervals, required topics, two-level impossibility condition, and the sufficiency of doubled barriers.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "A required topic difficulty is pushed to the maximum point allowed by its wisdom cap and all forbidden interval unions.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting is used to merge interval unions, sweep distinct strength thresholds, and evaluate all participant scores against the final difficulty multiset.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "Sparse maps keyed by specialization aggregate the minimum required upper wisdom and collect lower-city forbidden intervals without iterating over the 1e9 topic universe.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "Correctness depends on inclusive integer interval endpoints, repeated jumps between two interval families, unique unused topic generation, and an exact final score-range check.",
+      "solution_variant": "global-forbidden-interval-canonical-construction"
+    }
+  ]
+}

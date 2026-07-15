@@ -1,0 +1,144 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "F2",
+    "title": "Yandex Cuneiform (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/F2",
+      "notes": "Statement and constraints checked: unlike F1, any number of positions may be question marks; n < 2e5, the aggregate length is at most 2e5, and the output still requires a completed template plus all n/3 insertion triples."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Official tutorial and embedded implementation checked. They derive per-question-run count caps, encode each run as a constant-size convex polygon, combine runs by Minkowski sums, and greedily reconstruct a completion."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-990-yandex-cup-2024-final",
+      "notes": "Independent write-up cross-checks the F1 deletion characterization and the sufficiency of the three per-letter caps for every question-mark run; it also reports a distinct flow-based run-allocation implementation."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/gzmopbrr",
+      "notes": "Opened write-up and code listing cross-check an alternative prefix min/max count DP, right-to-left reconstruction, and the shared linked-list/Fenwick deletion constructor. No submission verdict was inferred from this page."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/F2",
+      "notes": "Exhaustively verified the run-cap characterization for lengths 1 through 9 and all boundary letters, and verified the alternative DP's attainable-count-box invariant for all 87,380 templates of lengths 1 through 8."
+    }
+  ],
+  "annotation": {
+    "summary": "Complete a template over Y, D, X, and arbitrary question marks into an obtainable cuneiform, then output the same insertion history required by F1.",
+    "constraints": "1 <= t <= 5e4; 3 <= n < 2e5; n is divisible by 3; the sum of n over tests is at most 2e5. F2 permits an arbitrary number of question marks, so a valid completion with exactly n/3 copies of every letter and no equal neighbors must first be found.",
+    "core_idea": "Reuse F1's exact characterization and reverse-deletion constructor after completing the template. Reject immediately if a fixed letter already occurs more than n/3 times or two directly adjacent fixed letters are equal. Split the question marks into maximal runs. For a run of length len with fixed boundary letters L and R (or sentinels), a count triple is realizable without equal neighbors iff its entries sum to len and every letter c is used at most U_c=floor((len+1-[L=c]-[R=c])/2). Eliminating one count turns these inequalities into a convex polygon with at most six sides, whose edge directions are always the same. The feasible total count vectors for independent runs are their Minkowski sum, which therefore also has at most six sides after merging collinear edges. Precompute suffix sums of run polygons. Fill runs left to right: try each letter compatible with the previous character and, at a run end, the right boundary; decrement its remaining global quota and accept it exactly when that quota vector lies in the residual current-run polygon plus the suffix polygon. This feasibility-preserving greedy produces exact n/3 counts in linear time. Finally invoke F1's linked-list/Fenwick reverse deletion to output operations.",
+    "complexity": "O(n) time for template completion and O(n log n) time overall with the common Fenwick-based operation constructor; O(n) memory. Polygon operations use at most six vertices.",
+    "tricks": [
+      "Separate the hard-only completion phase from the F1 operation-construction phase.",
+      "Represent one question-mark run solely by upper bounds on the three letter counts; these bounds are also sufficient.",
+      "Eliminate one count coordinate so each run becomes a convex polygon with only horizontal, vertical, and diagonal edge directions.",
+      "Use Minkowski sums to combine independent run count choices while retaining only a constant-size polygon.",
+      "Greedily fix each question mark only when a suffix-feasibility membership test remains true.",
+      "Alternative: store coordinatewise minimum and maximum prefix counts for each ending letter and reconstruct exact quotas from right to left."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "minkowski-suffix-feasibility-greedy",
+      "summary": "Build the at-most-six-vertex feasible count polygon of every maximal question-mark run and their suffix Minkowski sums. Process each run left to right, trying at most three letters and retaining a choice only if the remaining exact quotas belong to the residual-run polygon plus all later-run polygons. Apply the F1 reverse-deletion constructor to the completed string.",
+      "complexity": "O(n) completion time, followed by O(n log n) operation construction; O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "prefix-count-extrema-dp-reconstruction",
+      "summary": "For every prefix length and possible ending letter, maintain the minimum and maximum attainable count of each of Y, D, and X among compatible adjacent-distinct fillings. Starting with quotas n/3, reconstruct from right to left by choosing an allowed ending letter different from the next one whose remaining count vector lies inside all three stored intervals. Then use the same F1 reverse-deletion constructor.",
+      "complexity": "O(n) completion time and O(n) DP memory, followed by O(n log n) operation construction.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/minkowski-sum",
+      "display_name": "Minkowski sum",
+      "importance": "primary",
+      "evidence": "Independent question-mark runs contribute count vectors additively; summing their feasible convex polygons is the exact global feasibility test, and the fixed six edge directions keep every suffix sum constant-size.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy",
+      "description": "Combine independent feasible vector sets by Minkowski addition, usually representing convex polygons or polyhedra and exploiting their edge or support-function structure. Use when sums of choices are the central feasibility or optimization operation, not for ordinary coordinate addition.",
+      "parent": "math/geometry/convexity",
+      "created_reason": "The existing convexity tag records the shape of one feasible region but not the reusable operation that combines all run regions. CF2046F2's linear completion algorithm is specifically a suffix Minkowski-sum feasibility construction.",
+      "status": "candidate",
+      "aliases": [
+        "Minkowski addition",
+        "convex polygon Minkowski sum",
+        "polygon Minkowski sum"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The algorithm explicitly completes every question mark with exact global counts and then constructs every insertion operation.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Each question mark is fixed irrevocably by trying the three letters and using suffix-polygon membership as an exact extendability oracle.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "math/geometry/convexity",
+      "importance": "secondary",
+      "evidence": "After eliminating one count, each run's realizable count triples are exactly the integer points of a convex polygon cut out by x, y, and x+y bounds.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "trick/count-balancing",
+      "importance": "secondary",
+      "evidence": "The completion phase tracks the remaining deficits to n/3 copies of each letter and accepts local choices only when all deficits remain jointly realizable.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "After completion, the required forward insertion history is still produced through F1's invariant-preserving reverse deletions.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "The common output constructor uses live-index prefix sums to translate reverse deletions into current insertion positions.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "The consulted alternative maintains prefix feasibility extrema indexed by the last letter and reconstructs an exact-count completion backward.",
+      "solution_variant": "prefix-count-extrema-dp-reconstruction"
+    },
+    {
+      "tag": "trick/lazy-deletion",
+      "importance": "incidental",
+      "evidence": "The shared reverse constructor can keep stale ordered-adjacency candidates and discard them only when popped.",
+      "solution_variant": "minkowski-suffix-feasibility-greedy"
+    }
+  ]
+}

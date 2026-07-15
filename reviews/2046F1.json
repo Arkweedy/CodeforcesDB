@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "F1",
+    "title": "Yandex Cuneiform (Easy Version)",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/F1",
+      "notes": "Statement and constraints checked: the template contains no question marks, n is a positive multiple of 3 below 2e5, and the sum of n is at most 2e5; a valid output must include all n/3 insertion triples."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Official tutorial and embedded implementation checked. They prove that equal Y/D/X counts plus unequal adjacent characters are sufficient and construct operations by repeatedly deleting one copy of each letter."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-990-yandex-cup-2024-final",
+      "notes": "Independent write-up cross-checks the equal-count characterization and the local ABC/ABCA-style deletion cases. Its linked submission was not used as a verified accepted-code source."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/F1",
+      "notes": "Re-derived the first-letter plus opposite-adjacent-pair deletion lemma and exhaustively checked the deterministic deletion rule on all 1,302 balanced adjacent-distinct strings of lengths 3, 6, 9, and 12."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a fixed string over Y, D, and X, decide whether it can be built from empty by rounds that insert exactly one of each letter while preserving unequal adjacent characters, and output one valid insertion history.",
+    "constraints": "1 <= t <= 5e4; 3 <= n < 2e5; n is divisible by 3; the sum of n over tests is at most 2e5. F1 contains no question marks, so only validity and operation-sequence construction remain.",
+    "core_idea": "Necessity is immediate: every round adds one Y, one D, and one X, and every intermediate string has unequal neighbors. These conditions are also sufficient. In a current balanced valid string, let its first letter be A and call the other letters B and C. Some adjacent BC or CB pair must exist; otherwise the 2k non-A letters would require 2k-1 separating A letters, but only k-1 A letters remain after the fixed first character. If deleting the first A and that pair does not join equal outside neighbors, delete those three. If the pair is surrounded by equal letters, both neighbors must be A, so delete the local A-B-C triple instead; its new seam is safe. Thus one copy of every letter can always be removed while preserving the invariant. Maintain the live string in a doubly linked list, keep the six ordered unequal adjacency types in lazy candidate stacks, and use a Fenwick tree over original indices to convert each deletion to its current rank. Reverse the recorded deletion rounds and reverse each round's local order to obtain legal insertion positions.",
+    "complexity": "O(n log n) time and O(n) memory per test with Fenwick-based current-rank recovery; the linked-list deletion choices and lazy adjacency maintenance are O(n) amortized.",
+    "tricks": [
+      "Characterize obtainable strings exactly by equal Y/D/X counts and no equal adjacent characters.",
+      "Reverse insertion rounds into deletion rounds so every step removes one copy of each letter.",
+      "Choose the first letter A and an adjacent pair consisting of the other two letters; a counting argument guarantees such a pair.",
+      "When the pair's deletion would expose equal neighbors, those neighbors are both A, and deleting the local A-B-C block gives a safe seam.",
+      "Keep stale adjacency candidates lazily and use a Fenwick tree only to recover current output positions."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-greedy-deletion",
+      "summary": "Check equal counts and unequal neighbors. Repeatedly remove either the first live letter together with an adjacent pair of the other two letters, or the local three-letter block forced by the equal-seam case. A linked list and six lazy adjacency buckets maintain candidates, while a Fenwick tree records current ranks; reverse all deletion records to print insertions.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires an explicit insertion history, and the solution proves sufficiency by constructing a complete reverse deletion history and then reversing it.",
+      "solution_variant": "reverse-greedy-deletion"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "primary",
+      "evidence": "Insertions are difficult to choose forward, while backward deletion exposes a local invariant-preserving move that always removes exactly one Y, D, and X.",
+      "solution_variant": "reverse-greedy-deletion"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "At each stage any maintained adjacent pair of the two non-first letters can be handled by the safe-seam or local-block rule; no backtracking is required.",
+      "solution_variant": "reverse-greedy-deletion"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "The required insertion positions are current sequence ranks, obtained by prefix sums over live original indices while characters are deleted.",
+      "solution_variant": "reverse-greedy-deletion"
+    },
+    {
+      "tag": "trick/lazy-deletion",
+      "importance": "incidental",
+      "evidence": "Adjacency-pair stacks may contain pairs invalidated by earlier deletions; stale entries are discarded only when that ordered pair is requested.",
+      "solution_variant": "reverse-greedy-deletion"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2046,
+    "title": "Codeforces Round 990 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2046,
+    "index": "E1",
+    "title": "Cheops and a Contest (Easy Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2046/problem/E1",
+      "notes": "Read the full statement and the easy-only constraint m=2; n and the total n over tests are at most 3e5, attributes lie in [0,1e9], topics must be distinct, and at most 5n tasks may be output."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136908",
+      "notes": "Read the official Div1E1+E2 explanation and implementation. It establishes the one-specialization-task bound, the adjacent strength-overlap cases, neutral two-task barriers, and notes that the multi-city collision machinery is unnecessary when m=2."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6ofgi1tp",
+      "notes": "Opened and checked the direct two-city solution: use the minimum upper-city strength and maximum lower-city strength, aggregate dangerous lower-city wisdom by specialization, test a necessary-and-sufficient condition for every overlapping upper participant, and construct four neutral barriers plus specialization tasks."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2046/problem/E1",
+      "notes": "Independently derived the score decomposition F(a)+bonus with bonus in {0,1}, proved why the four barrier tasks isolate exactly the overlapping participants, and removed redundant lower-only specialization tasks from the opened Luogu construction."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For two ordered cities, construct at most 5n distinct-topic tasks so every participant in city 1 solves strictly more tasks than every participant in city 2, or prove this impossible.",
+    "constraints": "m=2, 2<=n<=3e5, sum n<=3e5, and 0<=a_i<=b_i<=1e9 with 0<=s_i<=1e9. The construction must contain 1..5n tasks with pairwise distinct topics in [0,1e9].",
+    "core_idea": "For any task set, a participant's score is F(a_i) plus at most one extra point from the unique task whose topic equals s_i, where F(x) counts task difficulties at most x. Let A be the minimum strength in city 1 and R the maximum strength in city 2. Add two unused-topic tasks of difficulty A and two of difficulty R+1. These give every non-overlapping upper participant (a_i>R) or lower participant (a_i<A) a base gap of two, enough to dominate the opponent's possible one-point specialization bonus. Only upper participants with a_i<=R and lower participants with a_i>=A remain tied on the four barriers. For each topic t, let H_t be the maximum b_j among those overlapping lower participants with s_j=t, or -1 if none. Every overlapping upper participant i must use its sole topic bonus, and its topic task must lie above both R and H_{s_i}; therefore feasibility is exactly b_i>max(R,H_{s_i}) for all such i (R=1e9 is consequently impossible). If all checks pass, for each distinct topic required by an overlapping upper participant output one task with d=max(R,H_t)+1 and topic t, choosing the four barrier topics outside all participant topics. Critical upper participants solve their topic task, critical lower participants do not, while every noncritical pair keeps at least a one-task margin.",
+    "complexity": "Expected O(n) time and O(n) memory with hash maps, or deterministic O(n log n) with ordered maps; at most n+4 tasks are output.",
+    "tricks": [
+      "Write every score as a monotone base count plus at most one specialization bonus.",
+      "Use two neutral tasks on each side of the overlap to create a gap of two for all noncritical participants.",
+      "Reduce feasibility to per-topic maxima of dangerous lower-city wisdom.",
+      "Place each required topic task at the smallest difficulty that defeats every critical lower participant."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-city-extrema-and-topic-maxima",
+      "summary": "Direct easy-version algorithm. Compute A=min(city 1 strength), R=max(city 2 strength), and H_t=max wisdom among lower participants with a>=A. Check b_i>max(R,H_{s_i}) for every upper participant with a_i<=R, then emit four unused-topic barriers and one task at max(R,H_t)+1 for each required upper topic.",
+      "complexity": "Expected O(n) time and O(n) memory; O(n log n) deterministically; at most n+4 output tasks.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "hard-framework-specialized-to-two-cities",
+      "summary": "Apply E2's canonical construction even for m=2: merge the single global forbidden difficulty interval and per-topic forbidden intervals, greedily place required topic tasks, generate safe strength-cut barriers, and verify the resulting city score ranges.",
+      "complexity": "O(n log n) time and O(n) memory; fewer than 3n output tasks.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The required result is an explicit bounded set of distinct-topic tasks, and the proof gives concrete barrier and specialization-task coordinates whenever the feasibility inequalities hold.",
+      "solution_variant": "two-city-extrema-and-topic-maxima"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For each required topic, choosing d=max(R,H_t)+1 is the extremal safe placement: any smaller value lets a critical lower participant solve it, while any larger value only makes the upper wisdom constraints harder.",
+      "solution_variant": "two-city-extrema-and-topic-maxima"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "Distinct topics imply the invariant score form F(a)+bonus with bonus at most one; this tight one-point bound proves both the overlap impossibility condition and why two neutral barriers suffice.",
+      "solution_variant": "two-city-extrema-and-topic-maxima"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "A sparse map keyed by specialization stores H_t, the maximum dangerous lower-city wisdom, and deduplicates the required upper topics.",
+      "solution_variant": "two-city-extrema-and-topic-maxima"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "Each specialization task is pushed to the minimum safe integer above all lower strength and same-topic wisdom thresholds.",
+      "solution_variant": "two-city-extrema-and-topic-maxima"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "The general hard-framework variant sorts strengths and interval endpoints to generate barriers and legal topic-task positions.",
+      "solution_variant": "hard-framework-specialized-to-two-cities"
+    }
+  ]
+}
