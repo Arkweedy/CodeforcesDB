@@ -97,11 +97,13 @@ npm.cmd
 - 先派发 `3000+`、资料稀缺和需要自行证明的题，再处理普通题，尽量让长尾耗时被其他 worker 覆盖。
 - worker 使用滚动窗口；同一题只分配一次。并发槽满时，先保存并关闭已经完成的 worker，再补发下一片。
 - worker 返回长 JSON 后，主 agent 必须先解析并保存草稿，再关闭 worker。先关闭再取结果会造成重复传输或重做。
+- 收到完成通知后禁止再给该 worker 追加消息。补充请求会重新激活已完成 worker，并产生“通知已完成但 close 看到 running”的状态竞争；先保存、关闭，后续要求写入下一批初始 prompt。
 - 长尾 worker 不要直接重复派发；先保留已有分析，必要时由主 agent 只接管缺失的来源或证明。
 
 ### 来源检索捷径
 
 - NERC、NEERC 等 ICPC mirror 优先直接查官方 statement PDF、tutorial PDF、jury archive 和 runs archive，不要把时间耗在寻找不存在的普通 Codeforces blog editorial。
+- Codeforces editorial 静态 HTML 若只有 `Tutorial is loading...`，立即改用能执行页面脚本的浏览器读取正文；不要反复直连动态数据接口撞 Cloudflare。仍缺证明细节时，用明确 Accepted 的提交和实际读过的 Luogu/可靠博客交叉补足。
 - 遇到赛后修题面或更正语义时，先核对当前题面、主办方公告和官方分析的发布时间；以更正后的语义为准，并把更正公告写入 source notes，禁止复用基于旧题面的分析。确认一次后应把有效公告或官方 PDF URL 共享给同场其他 worker，避免重复检索。
 - Luogu 题解 URL 只是候选。只有实际打开并读取后才能写入 `sources[]`；页面为零篇题解或访问失败时应如实记录，不得当作算法证据。
 - 来源类型在合并前统一：`accepted_code` / `accepted_submission` 归一为 `accepted-code`，`independent_blog` / `reliable_blog` / `author_blog` 归一为 `blog`；主办方更正公告也使用 `blog`，并在 notes 中说明其官方性质。

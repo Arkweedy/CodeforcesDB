@@ -24,6 +24,7 @@ For every reviewed problem:
 2. Check whether the problem is a Div.1/Div.2 overlap alias. If the same round has both Div.1 and Div.2 entries, and the problem title appears in both, the Div.1 entry is canonical. Treat the Div.2 entry only as an alias/source.
 3. Read the statement and constraints.
 4. Check normal solution sources when available: Codeforces editorial, Luogu, reliable blogs, accepted code, or your own derivation.
+   - If a Codeforces editorial's static HTML only shows `Tutorial is loading...`, switch to a browser that executes the page scripts instead of repeatedly calling the dynamic endpoint through Cloudflare. Cross-check missing proof details against a verified Accepted submission and a source you actually read.
 5. Write the decisive idea, not just a vague category.
 6. Record materially different solution variants.
 7. Assign tags with importance:
