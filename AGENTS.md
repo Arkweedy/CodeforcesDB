@@ -82,6 +82,8 @@ worker 数量：
 - 默认最多开 `3` 个 worker。
 - 低中难度大批量超过 20 题时可开到 `4` 个 worker。
 - 不要为了追求数量让多个 worker 分析同一道题。
+- 优先启动最高 rating、资料最少或推导最重的题，让长尾分析和中低难题重叠进行。
+- 使用滚动窗口：worker 完成后先保存结果并关闭，再补发下一片；不要把已完成 worker 长时间留在并发槽位中。
 
 主 agent 职责：
 
@@ -91,7 +93,9 @@ worker 数量：
 - 汇总并审核 worker 的 reviewed JSON 草稿。
 - 统一判断新 tag 是否应该创建，避免近义 tag、重复 tag 或错误父级。
 - 同步维护 `web/src/i18n.ts` 中的新 tag 中文翻译。
+- 统一规范化来源类型和 URL；候选链接只有实际读取后才能进入 `sources[]`，无法确认 verdict 的代码不得标成 accepted code。
 - 串行运行 `apply_review_batch.py` 写入数据库。
+- 以 contest 为写入屏障：上一场的 DB 必须完成校验、commit 和 push，才允许 apply 下一场，避免 SQLite 二进制改动无法按场次拆分。
 - 统一运行搜索验收、`check_tag_translations.py`、后端测试和必要的前端构建。
 - DB 自动提交后立即 push；review payload、i18n 或文档改动另行提交并 push。
 
@@ -104,12 +108,20 @@ worker 职责：
 - 可以提议新 tag，但不能自行决定最终 taxonomy。
 - 不得直接写 `data/cfdb.sqlite`，不得运行 `apply_review_batch.py`，不得 commit 或 push。
 
+worker 生命周期：
+
+- 同一题只分配给一个 worker，并记录稳定的 problem label。
+- worker 最终输出应以每题一个完整 JSON code block 为主，减少主 agent 二次提取成本。
+- 主 agent 收到结果后必须先解析并保存草稿，再关闭 worker；不得先关闭再依赖重新传输长输出。
+- worker 成为长尾时，先保留其已有工作并检查进度；必要时由主 agent 接管缺失部分，不要直接重复派发同一道题。
+
 默认切片粒度：
 
 - `1400~2299`：每 worker `4~6` 题。
 - `2300~2799`：每 worker `2~4` 题。
 - `2800~2999`：每 worker `1~2` 题。
 - `3000+`：通常一题一个 worker。
+- 每批应先派发 `3000+` 和来源困难题，再派发其余题，避免它们在场次收尾时才进入关键路径。
 
 并行后的主 agent 复核清单：
 
