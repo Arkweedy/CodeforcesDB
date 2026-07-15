@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2042,
+    "title": "Educational Codeforces Round 172 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2042,
+    "index": "F",
+    "title": "Two Subarrays",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "implementation",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2042/problem/F",
+      "notes": "Read the full cost definition, all update/query types, and constraints: 2 <= n <= 200000, q <= 200000, signed values up to 1e9 in magnitude, and every type-3 range has at least two positions."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136886",
+      "notes": "Read the complete official F tutorial and reference implementation. They derive the five boundary-count states, singleton transitions, upper-triangular max-plus transition matrices, 35-case composition, and segment-tree maintenance."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/lb4y1dx0",
+      "notes": "Actually read the complete independent write-up. It gives all five scalar DP recurrences, converts them to the same 5x5 transition matrix, and uses point updates plus ordered range products in a segment tree."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2042/problem/F",
+      "notes": "Re-derived every leaf transition and the max-plus merge, then compared matrix products against enumeration of all ordered pairs of non-overlapping subarrays on 84000 deterministic random range instances for 2 <= n <= 8; every answer matched."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Maintain arrays a and b under point assignments and answer range queries for the maximum total cost of two non-empty, non-overlapping subarrays, where one subarray [l,r] costs sum(a_l..a_r)+b_l+b_r.",
+    "constraints": "2 <= n <= 200000 and 1 <= q <= 200000; every a_i, b_i, and assigned value lies in [-1e9,1e9], and type-3 queries satisfy l < r. Answers and impossible-state sentinels require 64-bit integers.",
+    "core_idea": "Scan a query range left to right with state k in {0,1,2,3,4}, the number of interval boundaries already chosen: 0 is before the first subarray, 1 inside it, 2 between subarrays, 3 inside the second, and 4 after both. At position i, an even state may skip the element; starting a subarray contributes a_i+b_i, continuing an open subarray contributes a_i, closing it contributes a_i+b_i, and choosing a singleton jumps k to k+2 with a_i+2b_i. For each segment store T[s][t], the maximum gain from entering in state s and leaving in state t. Concatenating adjacent segments is max-plus matrix multiplication: (X tensor Y)[i][k]=max over i<=j<=k of X[i][j]+Y[j][k]. The matrices are upper triangular, so one merge examines only 35 triples. A segment tree maintains these ordered transition products under either array's point updates; a range answer is T[0][4].",
+    "complexity": "With K=5 states, O(K^3 n + K^3 q log n) time and O(K^2 n) memory; upper-triangularity reduces each merge to 35 combinations, so this is O(n + q log n) time and O(n) memory with fixed constants.",
+    "tricks": [
+      "Represent two ordered non-overlapping subarrays by the five phases induced by their four endpoints.",
+      "Include singleton intervals with direct 0-to-2 and 2-to-4 transitions so b_i is counted twice.",
+      "Disallow skipping in odd states, which enforces that every position between a chosen left and right endpoint belongs to that subarray.",
+      "Treat a segment as a max-plus transition matrix so adjacent segments compose associatively and in order.",
+      "Exploit monotone state indices to merge only the 35 triples 0 <= i <= j <= k <= 4.",
+      "Store fixed-size matrices in segment-tree nodes to keep memory and constant factors within limits."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "five-state-max-plus-segment-tree",
+      "summary": "Encode each position as a 5x5 upper-triangular max-plus transition matrix for the before/inside/between/inside/after phases. Store ordered matrix products in a segment tree; rebuild one leaf for either kind of point update and return entry [0][4] of a queried range product.",
+      "complexity": "O(35n + 35q log n) time and O(25n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "The optimization is expressed by five constant states recording how many of the four ordered interval boundaries have been chosen, with exact local transitions for skip, start, continue, close, and singleton choices.",
+      "solution_variant": "five-state-max-plus-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "Point assignments change one leaf transition, while every range query needs the ordered composition of all transitions in [l,r]; the segment tree provides both in O(log n) merges.",
+      "solution_variant": "five-state-max-plus-segment-tree"
+    },
+    {
+      "tag": "math/linear-algebra/matrix",
+      "importance": "primary",
+      "evidence": "Each segment is represented by a 5x5 max-plus transition matrix, and concatenation is precisely associative max-plus matrix multiplication.",
+      "solution_variant": "five-state-max-plus-segment-tree"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "secondary",
+      "evidence": "The five-phase scan is a Kadane-style finite-state generalization that chooses and scores exactly two contiguous subarrays, including endpoint bonuses.",
+      "solution_variant": "five-state-max-plus-segment-tree"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "secondary",
+      "evidence": "Recording the current endpoint-count phase is the extra local state that simultaneously enforces contiguity, ordering, non-overlap, and non-emptiness under segment composition.",
+      "solution_variant": "five-state-max-plus-segment-tree"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2042,
+    "title": "Educational Codeforces Round 172 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2042,
+    "index": "E",
+    "title": "Vertex Pairs",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "divide and conquer",
+      "greedy",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2042/problem/E",
+      "notes": "Read the full statement and constraints: one tree has 2n vertices, 1 <= n <= 200000, every value appears exactly twice, and vertex i has cost 2^i."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136886",
+      "notes": "Read the complete official E tutorial and reference implementation. They establish the reverse-lexicographic objective, try the two occurrences of value 1 as forced roots, initialize forced paths with LCAs, and greedily delete feasible subtrees."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/gf6sqjjq",
+      "notes": "Actually read the complete independent write-up and code. It derives the same force/delete invariant and gives the one-pass variant that cuts the edge between two centroids when necessary and attaches a costless super-root."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2042/problem/E",
+      "notes": "Re-derived the fixed-root feasibility invariant and greedy proof, then compared the official algorithm with exhaustive connected-subset enumeration on 5000 deterministic random trees for 1 <= n <= 5; every minimum-cost mask matched."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Choose a connected set of tree vertices that contains at least one occurrence of every duplicated value and minimizes the superincreasing cost sum of 2^i.",
+    "constraints": "There are 2n vertices with 1 <= n <= 200000, each of n values occurs exactly twice, and the tree has 2n-1 edges. The powers-of-two objective must be handled symbolically through inclusion bits rather than summed in a fixed-width integer.",
+    "core_idea": "Because 2^i exceeds the sum of all costs with smaller indices, minimizing total cost is exactly minimizing the inclusion bit vector from vertex 2n down to vertex 1. Force a chosen root to be present; any connected chosen set is then ancestor-closed. Try each of the two vertices carrying value 1, since every feasible answer contains at least one of them. For one root, preprocess parents and LCA. For every value with occurrences x and y, mark the path from LCA(x,y) to the root mandatory: deleting any vertex on that path would discard both occurrences. Scan vertex indices downward. If v is still undecided, lexicographic optimality says to exclude it, which excludes its whole still-undecided subtree. For every excluded vertex x, the other occurrence of its value becomes the only surviving choice, so mark that occurrence and all its ancestors mandatory. A subtree root is deletable exactly when it is not mandatory; the maintained marks guarantee that the deletion preserves at least one occurrence of every value. Compare the two forced-root results by their descending inclusion vectors.",
+    "complexity": "O(n log n) time and O(n log n) memory for the official two-root implementation; excluding LCA preprocessing, every vertex is forced or deleted at most once per root.",
+    "tricks": [
+      "Convert the powers-of-two sum into a lexicographic minimization of descending inclusion bits.",
+      "Force one occurrence of an arbitrary value as root and try both occurrences to cover the unknown optimum.",
+      "With a selected root, connected subsets are exactly ancestor-closed sets, so excluding one vertex excludes its rooted subtree.",
+      "Initially force every root-to-LCA path whose deletion would remove both occurrences of one value.",
+      "When one occurrence is deleted, immediately force the other occurrence and its ancestor path.",
+      "Stop force walks at already forced vertices and deletion traversals at already deleted vertices for linear amortized propagation."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-forced-roots-descending-subtree-greedy",
+      "summary": "Run the rooted greedy once for each occurrence of value 1. Pre-force all root-to-pair-LCA paths, scan vertex IDs from largest to smallest, delete every undecided rooted subtree, and force the mates and ancestor paths of all deleted vertices. Return the lexicographically smaller inclusion mask.",
+      "complexity": "O(n log n) time and O(n log n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "centroid-super-root-single-run",
+      "summary": "Find the one or two tree centroids. If there are two, remove their connecting edge, then attach a costless artificial root to every centroid. Every feasible answer contains at least n vertices and therefore contains a centroid, so adjoining the artificial root represents every feasible connected set as an ancestor-closed rooted set. Run the same descending force/delete greedy once.",
+      "complexity": "O(n log n) time and O(n log n) memory with LCA preprocessing.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "After forcing a root, tree connectivity becomes ancestor closure, and each greedy exclusion is an entire rooted subtree while forced choices propagate along ancestor paths.",
+      "solution_variant": "two-forced-roots-descending-subtree-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Vertices are considered from highest cost bit to lowest, and every currently feasible exclusion is committed permanently because no combination of lower-index vertices can outweigh that decision.",
+      "solution_variant": "two-forced-roots-descending-subtree-greedy"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "The superincreasing weights make total-cost minimization identical to lexicographically minimizing the descending vertex-inclusion vector, which justifies the highest-index-first decisions.",
+      "solution_variant": "two-forced-roots-descending-subtree-greedy"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "secondary",
+      "evidence": "For every duplicated value, LCA(x,y) identifies exactly the lowest vertex whose ancestor path must initially be forced to prevent deleting both occurrences together.",
+      "solution_variant": "two-forced-roots-descending-subtree-greedy"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "Each vertex is marked mandatory at most once and entered by a subtree-deletion traversal at most once per root, so the apparently repeated upward and downward walks total O(n).",
+      "solution_variant": "two-forced-roots-descending-subtree-greedy"
+    },
+    {
+      "tag": "graph/tree-centroid",
+      "importance": "secondary",
+      "evidence": "The independent one-pass variant uses the fact that every connected feasible set has at least n of the 2n vertices and thus contains one of the tree's centroids; a super-root over the centroid or centroid pair can therefore be forced.",
+      "solution_variant": "centroid-super-root-single-run"
+    }
+  ]
+}

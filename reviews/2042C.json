@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2042,
+    "title": "Educational Codeforces Round 172 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2042,
+    "index": "C",
+    "title": "Competitive Fishing",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2042/problem/C",
+      "notes": "Read the complete grouping and scoring rules, all examples, and the limits t <= 1e4, n <= 2e5, k <= 1e9, with sum n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136886",
+      "notes": "Read the official round editorial section and reference implementation; confirmed computing positive suffix balances and greedily taking the largest ones."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/keb66go0",
+      "notes": "Actually read the full writeup; it independently derives that every cut has a fixed suffix-balance contribution and sorts those contributions in descending order."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2042/problem/C",
+      "notes": "Re-derived the cut-contribution identity by exchanging the sums over fish and cuts, then exhaustively matched the greedy result against all cut subsets for every binary string of length 2 through 8."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Split the ordered fish into the minimum number of nonempty contiguous groups so that Bob's total group-index score exceeds Alice's by at least k, or report that this is impossible.",
+    "constraints": "There are up to 1e4 test cases; 2 <= n <= 2e5, 1 <= k <= 1e9, and the sum of n is at most 2e5. There are n-1 possible cut positions, so enumerating partitions is impossible. A direct accumulated score can be Theta(n^2), so 64-bit accumulation is appropriate.",
+    "core_idea": "Let w_i be +1 for a Bob fish and -1 for an Alice fish. A partition is determined by its chosen cuts after positions c in {1,...,n-1}; fish p receives one extra point for every chosen cut c<p. Therefore Bob's score minus Alice's score equals the sum, over chosen cuts c, of delta_c=sum_{p=c+1}^n w_p. These suffix-balance contributions are independent because every subset of cut positions is a valid partition. For any fixed number q of cuts, the maximum attainable difference is the sum of the q largest delta_c, so discard nonpositive contributions, sort the positive ones descending, and take the shortest prefix whose sum reaches k. The answer is q+1 groups; if all positive contributions sum to less than k, answer -1.",
+    "complexity": "O(n log n) time and O(n) memory per test case; O(sum n log(max n)) time over the input.",
+    "tricks": [
+      "Represent a partition only by its cut positions",
+      "Exchange the order of summation so each cut contributes one independent suffix balance",
+      "Use the q largest positive contributions to maximize the score difference for exactly q cuts",
+      "Add one to the selected cut count to recover the number of groups"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "The contribution formula was checked directly against the original group-index scoring definition.",
+      "Exhaustive comparison covered every binary string of length 2 through 8 and every k from 1 through n^2+1.",
+      "No unresolved technical or source uncertainty remains."
+    ],
+    "main_agent_review_notes": [
+      "All proposed tags already exist in the live taxonomy; no candidate tag or translation is needed.",
+      "The official greedy tag was retained only after independently deriving the exchange argument."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-cut-contributions-greedy",
+      "summary": "Scan right-to-left to compute the Bob-minus-Alice balance of every suffix beginning after a legal cut. Sort the positive balances descending and select them until their sum reaches k; selected cuts plus one is the minimum group count.",
+      "complexity": "O(n log n) time and O(n) memory per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The decisive reduction assigns every possible cut c the independent contribution delta_c equal to the Bob-minus-Alice balance of the suffix after c; the total score difference is exactly the sum of selected cut contributions.",
+      "solution_variant": "suffix-cut-contributions-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For any q cuts, an exchange replacing a selected smaller contribution by an unselected larger one cannot decrease the score, so the minimum feasible q is the first descending prefix whose sum reaches k.",
+      "solution_variant": "suffix-cut-contributions-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting the positive suffix contributions in descending order exposes the best total for every possible cut count as a prefix sum.",
+      "solution_variant": "suffix-cut-contributions-greedy"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "A reverse cumulative sum computes the contribution of all n-1 cut positions in linear time instead of rescanning each suffix.",
+      "solution_variant": "suffix-cut-contributions-greedy"
+    }
+  ]
+}

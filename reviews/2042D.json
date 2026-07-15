@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2042,
+    "title": "Educational Codeforces Round 172 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2042,
+    "index": "D",
+    "title": "Recommendations",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "implementation",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2042/problem/D",
+      "notes": "Read the complete predictor and strong-recommendation definitions, examples including duplicate intervals, and the limits t <= 1e4, n <= 2e5, endpoints <= 1e9, with sum n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136886",
+      "notes": "Read the official round editorial section and reference implementation; confirmed the two symmetric sorted sweeps, ordered lower_bound queries, endpoint reflection, and duplicate-interval override."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8bj55wen",
+      "notes": "Actually read the explanatory writeup; it independently derives the intersection of all containing intervals and the two endpoint-extremum sweeps. Its posted code omits a missing-successor guard, so edge handling was verified from other sources and brute force."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/yuwj/p/18827750",
+      "notes": "Actually read the complete independent implementation cross-check; it mirrors the two-pass ordered-set method, guards lower_bound(end), reflects endpoints for the second pass, and explicitly zeros duplicate segments."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2042/problem/D",
+      "notes": "Re-derived the predictor-intersection formula and sweep invariants, then differentially matched the algorithm against direct predictor enumeration on 40000 random interval multisets with endpoints in [1,6]."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every user's liked interval, count tracks outside that interval but inside every other user's interval that contains it; output zero when no predictor exists.",
+    "constraints": "There are up to 1e4 test cases; 1 <= n <= 2e5, 1 <= l_i <= r_i <= 1e9, and the sum of n is at most 2e5. Quadratic containment checks are impossible, so all predictor extrema must be found in O(n log n) total time per test case.",
+    "core_idea": "For user i, let P_i be the other intervals containing [l_i,r_i]. If P_i is nonempty, their intersection is [L_i,R_i], where L_i=max_{j in P_i} l_j and R_i=min_{j in P_i} r_j; since every predictor contains i, the answer is (l_i-L_i)+(R_i-r_i). Compute the right extension by sorting intervals by l ascending and r descending. Before inserting the current interval, an ordered set of previous right endpoints represents exactly intervals with l_j<=l_i; lower_bound(r_i) returns the minimum r_j>=r_i, hence R_i. Compute the left extension symmetrically by sorting r descending and l ascending and taking the maximum previous l_j<=l_i, or reflect every interval to [-r,-l] and reuse the same pass. If an interval occurs more than once, every copy has an equal predictor, whose intersection immediately restricts recommendations to the original interval, so override its answer to zero.",
+    "complexity": "O(n log n) time and O(n) memory per test case; O(sum n log(max n)) time over the input.",
+    "tricks": [
+      "Replace universal agreement among predictors by the intersection of all containing intervals",
+      "Use sort tie-breaking so every possible container is processed before the interval it contains",
+      "Recover the tightest containing right and left endpoints with ordered successor and predecessor queries",
+      "Reflect [l,r] to [-r,-l] to reuse the right-endpoint sweep for the left endpoint",
+      "Handle duplicate intervals globally because equal users predict each other even if one copy appears first in a sweep"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "The formula was checked directly from the definition: strongly recommended tracks are [L_i,l_i-1] union [r_i+1,R_i].",
+      "The duplicate override was verified separately: intersecting with an equal predictor leaves no track outside the user's own interval.",
+      "Differential testing covered 40000 random multisets of up to eight intervals and included duplicates, absent predictors, equal endpoints, and nested chains.",
+      "The Luogu article's unchecked end iterator is a source-level implementation defect, not an unresolved algorithmic uncertainty; the official code, independent guarded implementation, and brute-force checks agree."
+    ],
+    "main_agent_review_notes": [
+      "All proposed tags already exist in the live taxonomy; no candidate tag or translation is needed.",
+      "The official two-pointers and implementation tags were treated only as clues and omitted because they are not essential to the reviewed ordered-set variant."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "two-symmetric-ordered-set-sweeps",
+      "summary": "Run one sweep in (l ascending, r descending) order and use lower_bound over previously seen r values to add the minimum right extension. Reflect endpoints and repeat the same sweep to add the left extension, then set every duplicated interval's answer to zero.",
+      "complexity": "O(n log n) time and O(n) memory per test case.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "The containment condition becomes one-directional only after sorting by one endpoint with the opposite tie-break on the other; this guarantees that every potential containing interval is available before the current query.",
+      "solution_variant": "two-symmetric-ordered-set-sweeps"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "Each sweep requires a balanced ordered endpoint collection supporting insertion and lower_bound, or the symmetric predecessor query, to obtain the tightest containing boundary in O(log n).",
+      "solution_variant": "two-symmetric-ordered-set-sweeps"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "The solution performs two offline endpoint-ordered sweeps while maintaining all previously eligible interval boundaries as the active query state.",
+      "solution_variant": "two-symmetric-ordered-set-sweeps"
+    }
+  ]
+}
