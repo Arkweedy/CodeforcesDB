@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2063,
+    "title": "Codeforces Round 1000 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2063,
+    "index": "F1",
+    "title": "Counting Is Not Fun (Easy Version)",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "graphs",
+      "hashing",
+      "implementation",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2063/problem/F1",
+      "notes": "Statement and constraints checked: after each prefix of n compatible matching-pair clues, count all balanced bracket sequences of length 2n; n <= 5000 and sum n <= 5000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138593",
+      "notes": "Official Round 1000 editorial and embedded C++ reference checked. It confirms Catalan counting and the O(n)-per-clue stack scan that multiplies one Catalan factor for each minimal free bracket region."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1t5fdtp8",
+      "notes": "Cross-checked the virtual outer pair, laminar-region factorization, and the split Cat(y) -> Cat(x) Cat(y-x-1) caused by adding one known pair."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2063/problem/F1",
+      "notes": "Independently proved the contraction/expansion bijection and exhaustively compared direct completion counts with the stack product for every balanced sequence and every clue order through n=5."
+    }
+  ],
+  "annotation": {
+    "summary": "A hidden balanced bracket sequence has n matching pairs. Matching-pair clues arrive one by one; output, before any clue and after every prefix, how many balanced sequences have all revealed pairs as their standard matches.",
+    "constraints": "t <= 1000, 2 <= n <= 5000, sum n <= 5000; each test supplies all n pairwise-distinct, mutually compatible matching pairs, and answers are modulo 998244353.",
+    "core_idea": "Add a virtual known pair (0,2n+1). Compatible matching-pair intervals are laminar. For every known pair v, delete the complete intervals of its immediate known children; the remaining unfixed positions directly inside v form an independent balanced bracket sequence. If their count is 2k, that region contributes Catalan(k), so the total is the product over all known pairs including the virtual root. After each clue, mark its endpoints and scan left to right with a stack: push known opens and unknown positions; at a known close, pop the unknown positions above its matching known open and multiply by Catalan(popped/2). Processed nested pairs disappear from the stack, exactly contracting child regions.",
+    "complexity": "O(n^2) time per test after O(Nmax) factorial/Catalan preprocessing, and O(n) working memory.",
+    "tricks": [
+      "Add a virtual outer matching pair so positions outside every revealed interval are handled by the same rule.",
+      "Contract each immediate known child interval; every remaining free region is an independent Catalan object.",
+      "Use the laminar close order and a stack to recover all direct-free region sizes in one scan after each clue.",
+      "F1 deliberately rebuilds all region factors after every update; F2 maintains only the one factor that splits."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "recompute-laminar-regions-with-stack",
+      "summary": "Precompute Catalan numbers. After each newly marked pair, scan the augmented position string with a stack, count the still-unknown positions directly belonging to every known pair, and multiply Catalan(count/2) over all regions.",
+      "complexity": "O(n^2) time per test and O(n) memory after Catalan preprocessing.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/catalan",
+      "importance": "primary",
+      "evidence": "Each independent region with 2k free positions can be filled in exactly Catalan(k) ways, and the answer is the product of these factors.",
+      "solution_variant": "recompute-laminar-regions-with-stack"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "Matching-pair intervals in one balanced sequence are nested or disjoint; this laminar structure makes immediate-child contraction and stack processing valid.",
+      "solution_variant": "recompute-laminar-regions-with-stack"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "primary",
+      "evidence": "Every answer is recomputed by a stack scan that matches revealed closes to revealed opens while counting only directly free positions.",
+      "solution_variant": "recompute-laminar-regions-with-stack"
+    },
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "secondary",
+      "evidence": "The objects being counted are regular bracket sequences and the clues fix pairs under standard bracket matching.",
+      "solution_variant": "recompute-laminar-regions-with-stack"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The easy bound permits rebuilding every region and its contribution from scratch after each of n clues.",
+      "solution_variant": "recompute-laminar-regions-with-stack"
+    }
+  ]
+}
+

@@ -1,0 +1,134 @@
+{
+  "contest": {
+    "contest_id": 2063,
+    "title": "Codeforces Round 1000 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2063,
+    "index": "E",
+    "title": "Triangle Tree",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2063/problem/E",
+      "notes": "Read the rooted-tree good-pair definition, triangle inequalities, and constraints: n <= 300000 and sum n <= 300000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138593",
+      "notes": "Official hint derives f(u,v)=2*min(dist(u,lca),dist(v,lca))-1; the embedded accepted C++ confirms the linear depth-count, subtree-size, and child-pair formula."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/53xhpq5y",
+      "notes": "Consulted an independent O(n) edge/threshold contribution derivation using DFS order, depth-layer counts, and subtree sizes."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ugl9bg0j",
+      "notes": "Consulted the full DSU-on-tree plus augmented FHQ-treap implementation for the materially different depth-multiset solution; its displayed min/max variable typo was corrected against the official formula and code."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Independent write-up cross-checks the O(n) decomposition into minimum-depth, LCA-depth, and good-pair-count contributions."
+    }
+  ],
+  "annotation": {
+    "summary": "For every unordered pair of vertices that are incomparable in the rooted tree, count integer third side lengths forming a non-degenerate triangle with their two branch distances to the LCA, and sum those counts.",
+    "constraints": "Up to 10000 tests, 1 <= n <= 300000, and the sum of n is at most 300000, requiring linear or near-linear processing with 64-bit totals.",
+    "core_idea": "For a good pair with branch lengths a,b >= 1, triangle inequalities allow exactly 2*min(a,b)-1 integer values. With depths dep and l=lca(u,v), this is 2*min(dep[u],dep[v])-2*dep[l]-1. Let sz[u] be subtree size, cnt[d] the number of vertices at depth d, and ge[d] the suffix count at depths at least d. Summing 2*dep[u]*(ge[dep[u]]-sz[u]) counts every unequal-depth good pair once from its shallower endpoint and every equal-depth pair twice; subtract sum_d d*cnt[d]*(cnt[d]-1) to remove the duplicate equal-depth orientation. For each l, sum_{i<j} sz[child_i]*sz[child_j] pairs have LCA l, so subtract (2*dep[l]+1) times that count. DFS plus depth suffix sums evaluates every term in linear time.",
+    "complexity": "O(n) time and O(n) memory per test case.",
+    "tricks": [
+      "Count integer x directly from |a-b| < x < a+b to obtain 2*min(a,b)-1.",
+      "Orient the minimum-depth term by its shallower endpoint and correct only equal-depth double counting.",
+      "Vertices outside u's subtree with depth at least dep[u] are exactly the possible opposite endpoints counted from u.",
+      "Count pairs with a fixed LCA by multiplying sizes of distinct child subtrees."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-depth-subtree-decomposition",
+      "summary": "Compute depths, subtree sizes, depth frequencies/suffix counts, and cross-child pair counts; combine the global minimum-depth term with per-LCA corrections using closed formulas.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dsu-on-tree-depth-multiset",
+      "summary": "At each node, count pairs from different child subtrees by querying a new child's depths against the kept depths of earlier children. An augmented ordered treap returns sum min(d,x) from prefix counts/sums, while DSU-on-tree keeps the heavy child's structure, adds light subtrees, and lazily shifts distances when moving to the parent.",
+      "complexity": "O(n log^2 n) expected time and O(n) memory with a standard augmented treap",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The solution classifies incomparable pairs by rooted subtrees and their LCA, and all aggregate counts come from depths and child-subtree sizes.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The pair value is decomposed into a minimum-depth contribution and an LCA/constant correction, each accumulated globally without enumerating pairs.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "A suffix sum of depth frequencies supplies ge[d], the number of vertices at depth at least d, in O(1) per vertex.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "Postorder DFS computes depths, subtree sizes, and cross-child pair totals used by every closed-form contribution.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "Strict triangle inequalities reduce the allowed integer interval for x to |a-b| < x < a+b and hence to 2*min(a,b)-1 values.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "secondary",
+      "evidence": "The alternative keeps the heavy child's depth set and reprocesses only light subtrees to amortize cross-subtree pair queries.",
+      "solution_variant": "dsu-on-tree-depth-multiset"
+    },
+    {
+      "tag": "data-structure/order-statistics-tree",
+      "importance": "secondary",
+      "evidence": "The alternative uses an augmented ordered treap with split, count, and sum aggregates to evaluate sums of min(current_depth,stored_depth).",
+      "solution_variant": "dsu-on-tree-depth-multiset"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "incidental",
+      "evidence": "LCA is central to the proof and pair classification, but the primary implementation never preprocesses or answers LCA queries.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "The primary linear solution is a fixed contribution formula over DFS statistics, not a dynamic program with competing states or transitions.",
+      "solution_variant": "linear-depth-subtree-decomposition"
+    }
+  ]
+}
+

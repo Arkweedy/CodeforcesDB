@@ -1,0 +1,127 @@
+{
+  "contest": {
+    "contest_id": 2063,
+    "title": "Codeforces Round 1000 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2063,
+    "index": "D",
+    "title": "Game With Triangles",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "geometry",
+      "greedy",
+      "implementation",
+      "math",
+      "ternary search",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2063/problem/D",
+      "notes": "Read the two-line geometry, deletion rules, all-k output requirement, and constraints: sums of n and m are at most 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138593",
+      "notes": "Official editorial and embedded accepted C++ derive two decreasing marginal-gain prefix sums, the feasible split interval, and ternary search for every k."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/x1k0oxs3",
+      "notes": "Consulted a full accepted O(n log n) reverse-greedy implementation that maintains the optimal count split while k decreases."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1000",
+      "notes": "Independent round write-up confirms the extreme pairing reduction and exchange argument: aside from the unrestricted greedy split, an optimum must lie on a resource boundary."
+    }
+  ],
+  "annotation": {
+    "summary": "Points lie on y=0 and y=2; each operation removes a non-collinear triple and earns its triangle area. Compute the maximum operation count and the best score for every exact count k.",
+    "constraints": "Up to 30000 tests; 1 <= n,m <= 200000, coordinate magnitudes are at most 1e9, and the separate sums of n and m are at most 200000. Scores require 64-bit integers.",
+    "core_idea": "A valid triangle uses two points from one line and one from the other, and because the height is 2 its area equals the horizontal distance of the same-line pair. After sorting, the best p pairs on a line are the p outermost pairs, whose marginal gains are strictly decreasing; build their prefix sums A and B. For k operations and p bases chosen on y=0, feasibility is max(0,2k-m) <= p <= min(k,n-k), and the score is A[p]+B[k-p]. Its discrete derivative is decreasing, so this function is concave/unimodal and can be maximized by integer ternary search. Feasibility also gives k_max=min(n,m,floor((n+m)/3)).",
+    "complexity": "O((n+m) log(n+m) + k_max log(min(n,m)+1)) time and O(n+m) memory per test case.",
+    "tricks": [
+      "Reduce area to a one-dimensional base length because the two horizontal lines are distance 2 apart.",
+      "Pair smallest with largest, second-smallest with second-largest, and so on to obtain decreasing marginal gains.",
+      "Translate point consumption into one feasible interval for the number of bases taken from the first line.",
+      "Use discrete concavity of the two prefix sums rather than enumerating every split."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "concave-split-ternary-search",
+      "summary": "Build the two extreme-pair gain prefix sums and, for every k, ternary-search A[p]+B[k-p] on its feasible integer interval, then check the final constant-size range.",
+      "complexity": "O((n+m) log(n+m) + k_max log(min(n,m)+1)) time and O(n+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "reverse-k-greedy-maintenance",
+      "summary": "Construct the optimal capped merge of the two decreasing gain sequences at k_max. As k decreases, both per-line caps relax by one while one selected gain must be removed; drop the smaller selected tail and perform boundary swaps when a newly allowed gain beats the opposite selected tail.",
+      "complexity": "O(n log n + m log m + k_max) time and O(n+m) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Sorting each line is what exposes the optimal outermost pair sequence and its strictly decreasing marginal distances.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "Every candidate split must be evaluated in O(1) as A[p]+B[k-p] during the per-k optimization.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "algorithm/search/ternary-search",
+      "importance": "primary",
+      "evidence": "The official main variant maximizes a discrete concave function of p on the feasible interval for each k.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "The geometric area formula turns every legal triangle into the horizontal distance between its two same-line vertices.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The marginal gain sequences are generated by moving inward from the two sorted endpoints and pairing opposite extremes.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "trick/maximum-count-bound",
+      "importance": "secondary",
+      "evidence": "The resource inequalities first yield the exact bound k_max=min(n,m,floor((n+m)/3)) and then bound every feasible split.",
+      "solution_variant": "concave-split-ternary-search"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The distinct reverse-k variant greedily merges decreasing gains under caps and repairs the optimum by boundary exchanges as caps relax.",
+      "solution_variant": "reverse-k-greedy-maintenance"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "The algorithm iterates over k because every f(k) must be output; it does not brute-force triangle choices or all feasible pair-count splits.",
+      "solution_variant": "concave-split-ternary-search"
+    }
+  ]
+}
+

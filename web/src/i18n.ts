@@ -389,6 +389,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "sign-assignment": "符号分配",
   "small-to-large": "小并大",
   "sorting": "排序",
+  "splay-tree": "伸展树",
   "sparse-candidate-edges": "稀疏候选边",
   "sparse-table": "Sparse Table",
   "sqrt-decomposition": "分块",

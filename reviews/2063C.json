@@ -1,0 +1,113 @@
+{
+  "contest": {
+    "contest_id": 2063,
+    "title": "Codeforces Round 1000 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2063,
+    "index": "C",
+    "title": "Remove Exactly Two",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2063/problem/C",
+      "notes": "Read the operation, edge cases, and constraints: 2 <= n <= 200000 and sum n <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138593",
+      "notes": "Official editorial identifies the degree-plus-adjacency objective; its embedded accepted implementation checks non-neighbors by global degrees and neighbors with a one-point penalty, and it explicitly notes tree DP as an alternative."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/d7yo5jli",
+      "notes": "Consulted full O(n log n) multiset solution that temporarily decreases every neighbor degree after fixing the first removed vertex."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Chen-Jinhui/p/18706731",
+      "notes": "Independent implementation cross-check for the ordered-multiset update/restore method and its O(n log n) bound."
+    }
+  ],
+  "annotation": {
+    "summary": "Delete exactly two distinct vertices from a tree and maximize the number of connected components in the remaining forest.",
+    "constraints": "There are up to 10000 tests, 2 <= n <= 200000 per test, and the sum of n is at most 200000, so quadratic pair enumeration is impossible.",
+    "core_idea": "For distinct u and v, the remaining component count is deg(u)+deg(v)-1 if they are nonadjacent and deg(u)+deg(v)-2 if they are adjacent. Fix u and define the second-vertex score as deg(v)-[uv is an edge]. Remove deg(u) from an ordered multiset, replace each neighbor degree deg(v) by deg(v)-1, query the maximum score, then restore all changes. This absorbs the adjacency case into one uniform maximum query.",
+    "complexity": "O(n log n) time and O(n) memory per test case.",
+    "tricks": [
+      "Express the answer solely through the two degrees and one adjacency penalty.",
+      "Temporarily decrement all neighbors so adjacent and nonadjacent second choices share one maximum query.",
+      "Each adjacency-list entry is updated only when its endpoint is fixed, for O(n) total multiset changes."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-first-delete-ordered-multiset",
+      "summary": "Enumerate u, remove its own degree, decrement neighbor keys in a global ordered multiset, and combine deg(u) with the largest remaining adjusted key.",
+      "complexity": "O(n log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "linear-postorder-pair-dp",
+      "summary": "Root the tree and postorder-compute the maximum degree in each subtree and among proper descendants. Check adjacent parent-child pairs with penalty 1, u against descendants at distance at least two, and vertices from two different child subtrees; recursion handles pairs internal to one child subtree.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The exact component formula follows because deleting vertices from a tree leaves a forest and the only overlap between their incident-edge losses is the edge uv.",
+      "solution_variant": "enumerate-first-delete-ordered-multiset"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "primary",
+      "evidence": "For every fixed u, the main solution deletes and reinserts duplicate degree keys and queries the maximum adjusted degree of the second vertex.",
+      "solution_variant": "enumerate-first-delete-ordered-multiset"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The first removed vertex is exhaustively enumerated, while all second choices are collapsed into one maximum query.",
+      "solution_variant": "enumerate-first-delete-ordered-multiset"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Fixing u changes only each neighbor's second-vertex contribution by -1, and those local score changes are applied and rolled back.",
+      "solution_variant": "enumerate-first-delete-ordered-multiset"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "The distinct linear alternative combines subtree maxima in postorder and classifies the optimal pair by its rooted-tree relationship.",
+      "solution_variant": "linear-postorder-pair-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "Taking the maximum adjusted second vertex after u is fixed is a data-structure query, not an independent irrevocable greedy process or exchange argument.",
+      "solution_variant": "enumerate-first-delete-ordered-multiset"
+    }
+  ]
+}
+

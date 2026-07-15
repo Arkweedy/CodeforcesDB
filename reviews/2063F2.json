@@ -1,0 +1,167 @@
+{
+  "contest": {
+    "contest_id": 2063,
+    "title": "Codeforces Round 1000 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2063,
+    "index": "F2",
+    "title": "Counting Is Not Fun (Hard Version)",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2063/problem/F2",
+      "notes": "Statement and constraints checked: the task is identical to F1, but n <= 3e5, t <= 1e4, and sum n <= 3e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138593",
+      "notes": "Official editorial, full splay-tree reference code, and the added linked-list small-to-large alternative checked. They confirm that one clue splits one minimal free region and that the unchanged regions should be preserved."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Cross-checked the laminar containment forest, direct-free length f[v], Catalan product, and reverse deletion where a removed pair merges its contribution into the nearest surviving parent using DSU."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://maspypy.com/codeforces-round-1000",
+      "notes": "Cross-checked the reverse-time rooted-tree interpretation: deleted pair vertices are grouped with their nearest ancestor whose pair remains known, and each group contributes one Catalan factor."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2063/problem/F2",
+      "notes": "Derived the forward split and reverse merge formulas independently, then exhaustively matched reverse-DSU outputs against direct enumeration for every balanced sequence and clue order through n=5."
+    }
+  ],
+  "annotation": {
+    "summary": "Answer the same incremental matching-pair completion counts as F1, but for up to 3e5 pairs in total, so all Catalan regions cannot be rescanned after each clue.",
+    "constraints": "t <= 10000, 2 <= n <= 3e5, sum n <= 3e5; all n clues are distinct and compatible, and answers are modulo 998244353.",
+    "core_idea": "Use the same laminar-region invariant as F1: a current free region containing 2k positions contributes Catalan(k). Adding a known pair consumes its two endpoints and splits one region into inside/outside regions of half-sizes a and b with a+b+1=k, so only Cat(k) is replaced by Cat(a)Cat(b). A simple hard-version solution is offline: use all n final pairs plus a virtual outer pair to build the containment tree by scanning endpoints with a stack. Start from the fully known state (answer 1) and delete clues in reverse. If v is deleted and p is its nearest still-known ancestor, their current region half-sizes x and y merge to x+y+1; update the product by Cat(x+y+1)/(Cat(x)Cat(y)). Union v into p, and DSU path compression skips ancestors already deleted. This recovers every prefix answer in reverse order.",
+    "complexity": "Recommended offline solution: O(n alpha(n)) time and O(n) memory per test after O(Nmax) Catalan/inverse preprocessing. Official online splay and linked-list small-to-large variants are O(n log n) amortized time and O(n) memory.",
+    "tricks": [
+      "Carry the exact F1 product invariant forward instead of treating official tags as the solution.",
+      "Reverse all updates so a difficult region split becomes a one-way merge into the nearest surviving ancestor.",
+      "Store region size in bracket-pair units: deleting v merges x and y into x+y+1 because v's two endpoints become one additional unknown pair.",
+      "Use DSU to jump over already deleted ancestors in the static laminar containment tree.",
+      "Alternatively maintain each free region as an implicit sequence and split/concatenate it online."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "offline-reverse-containment-dsu",
+      "summary": "Build the full matching-pair containment tree with a virtual root. Traverse clues backward; deleting vertex v merges its accumulated unknown-pair count into find(parent[v]), updates exactly two old Catalan factors into one new factor, and unions v upward.",
+      "complexity": "O(n alpha(n)) time and O(n) memory after linear preprocessing.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "online-implicit-splay-region-split",
+      "summary": "Represent every current free region as one implicit splay-tree component ordered by position. Splay l and r, cut out the between-endpoints subsequence, concatenate the outside prefix and suffix, remove l/r from the free region, and update subtree sizes and Catalan factors.",
+      "complexity": "O(n log n) amortized time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "online-small-to-large-linked-regions",
+      "summary": "Maintain free-region position lists and their region owners. When l,r split a list, walk both resulting sides in parallel, relabel only the smaller side, retain both region sizes, and update the same Catalan split ratio; every position is relabeled O(log n) times.",
+      "complexity": "O(n log n) amortized time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/catalan",
+      "importance": "primary",
+      "evidence": "Every current free region contributes Cat(size/2), and every update is exactly a replacement or merge of Catalan factors.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "All good-pair intervals are nested or disjoint, yielding the static containment tree on which reverse merging is performed.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "The recommended solution reads all clues, builds their final containment tree, and processes deletions in reverse to replace splits by merges.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "After deleting a pair, unioning it into its parent lets find(parent[v]) return the nearest ancestor whose pair is still known.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "A deletion changes only Cat(size[v]) and Cat(size[parent]) into Cat(size[v]+size[parent]+1); all other region factors remain untouched.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "data-structure/implicit-sequence",
+      "importance": "primary",
+      "evidence": "The official online solution keeps each free region as an ordered implicit sequence supporting cut, split, concatenate, and subtree-size queries.",
+      "solution_variant": "online-implicit-splay-region-split"
+    },
+    {
+      "tag": "data-structure/splay-tree",
+      "display_name": "Splay tree",
+      "importance": "primary",
+      "description": "A self-adjusting binary search tree, including implicit-key forms used to expose positions and split or concatenate dynamic sequences in amortized logarithmic time.",
+      "parent": "data-structure",
+      "created_reason": "The official online F2 solution specifically splays endpoints to component roots before cutting and joining region sequences; the existing implicit-sequence tag describes the represented object but not this classic balancing structure. Candidate for main-agent taxonomy review.",
+      "status": "candidate",
+      "evidence": "The official implementation uses rotations and splay operations to expose l and r, detach three subsequences, join the outside pieces, and maintain component sizes.",
+      "solution_variant": "online-implicit-splay-region-split"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "The official alternative relabels only the smaller side after each linked-list split, so each position changes region ownership only O(log n) times.",
+      "solution_variant": "online-small-to-large-linked-regions"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "secondary",
+      "evidence": "An endpoint scan with a stack builds the full laminar containment tree for the offline solution.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "Known pairs plus a virtual outer pair form a rooted containment tree, and reverse updates merge vertices toward surviving ancestors.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "secondary",
+      "evidence": "Both official hard-version variants can process clues in their original order while immediately maintaining the region product.",
+      "solution_variant": "online-implicit-splay-region-split"
+    },
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "secondary",
+      "evidence": "The counted structures and the laminar matching relation are those of regular bracket sequences.",
+      "solution_variant": "offline-reverse-containment-dsu"
+    }
+  ]
+}
+
