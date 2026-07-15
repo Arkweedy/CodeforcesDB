@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2049,
+    "title": "Codeforces Round 994 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2049,
+    "index": "E",
+    "title": "Broken Queries",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "bitmasks",
+      "brute force",
+      "constructive algorithms",
+      "implementation",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2049/problem/E",
+      "notes": "Read the full current statement, original interaction, and hack format. It confirms n is a power of two with 4 <= n <= 2^30, the array has exactly one 1, 2 <= k <= n-1, the hidden state is fixed before interaction, and the per-test query limit is 33."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137273",
+      "notes": "Read the official tutorial and accompanying code. They give equal-length cancellation followed by threshold binary search and the bound 2+1+29=32. The prose has a half/boundary wording slip; the official code queries the half without the 1, agreeing with the statement-derived condition that its length-n/2 answer is 1 exactly when k <= n/2."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2049/submission/297553061",
+      "notes": "Inspected the source and verified Codeforces verdict Accepted. This independent implementation uses two half queries plus two quarter queries to classify k into three ranges, then binary-searches with intervals whose membership bit is fixed; it uses at most 33 queries."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2049/problem/E",
+      "notes": "Re-derived Q(I) = [p in I] XOR [|I| >= k]. Exhaustively simulated every p and k for powers of two from 4 through 1024 and checked all boundary classes at n=2^30; the official variant always recovered k in at most 32 queries and the accepted alternative in at most 33."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Recover a hidden threshold k from an interval oracle on a hidden one-hot binary array. The oracle returns whether the unique 1 lies in the interval, but flips that bit exactly when the interval length is at least k. The current hack format reveals p and k, while this review records the original interactive strategy.",
+    "constraints": "Original interaction: 1 <= t <= 500; n=2^m with 2 <= m <= 30; the unique-1 position p is in [1,n]; 2 <= k <= n-1; p and k are fixed before interaction; at most 33 queries are allowed per test, and the final answer does not count. Current hacks use t <= 100 and supply n, p, and k explicitly.",
+    "core_idea": "For an interval I, write Q(I)=[p in I] XOR [|I| >= k]. First query A=[1,n/4] and B=[n/4+1,n/2]. Their corruption bits are identical, so Q(A) XOR Q(B) cancels the unknown threshold effect and equals 1 exactly when p lies in the first half. This identifies the half H containing p and the opposite empty half E. Query E with length n/2: because its membership bit is 0, the reply is 1 exactly when k <= n/2. If k <= n/2, querying a length-x subinterval of E returns [x >= k]. If k > n/2, any anchored interval of length x >= n/2 that contains H also contains p and returns 1 exactly when x < k. Each case is therefore a monotone threshold search in x, so binary search returns k. Since k has n-2 possible values and each reply is one bit, any decision tree needs at least ceil(log2(n-2)) queries; the construction spends only a constant number more to neutralize the nuisance position p.",
+    "complexity": "For n=2^m, the official strategy uses 2 quarter probes, 1 empty-half probe, and m-1 binary-search probes: m+2 <= 32 oracle queries, O(log n) local time, and O(1) memory. The alternative accepted decision tree uses at most m+3 <= 33 queries.",
+    "tricks": [
+      "Compare equal-length queries so the unknown length-threshold flip cancels.",
+      "Use an interval known to be empty or guaranteed to contain p, fixing the membership bit and exposing a monotone predicate on interval length.",
+      "Treat the boundary inclusively: an empty interval of length n/2 returns 1 when k <= n/2, including k=n/2.",
+      "Reflect all intervals around the midpoint to handle p in the right half without duplicating the search logic.",
+      "Keep protocol separate from inference: print '? l r', flush, read one bit, terminate immediately on -1, and print '! k'; the answer line is not a query."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "equal-length-cancellation-binary-search",
+      "summary": "Query two adjacent first-half quarters to locate which half contains p by response xor. Query the opposite empty half at length n/2 to decide whether k is at most n/2. Binary-search k using variable-length intervals in the empty half for the small case, or variable-length intervals guaranteed to contain p for the large case; mirror coordinates when p is in the right half.",
+      "complexity": "m+2 <= 32 oracle queries for n=2^m, O(log n) time, O(1) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "four-probe-three-range-decision-tree",
+      "summary": "Query both halves; their answers differ, and choose the half whose answer is 1. Query its two quarters. Quarter-answer sum 2 means that half is empty and k <= n/4; sum 0 means it is empty and n/4 < k <= n/2; sum 1 means it contains p and k > n/2. Binary-search the selected range with empty or guaranteed-containing anchored intervals.",
+      "complexity": "At most m+3 <= 33 oracle queries for n=2^m, O(log n) time, O(1) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "The task reconstructs the hidden threshold k from adaptive one-bit interval-oracle replies while treating the hidden position p as a nuisance parameter and respecting a strict query budget.",
+      "solution_variant": "equal-length-cancellation-binary-search"
+    },
+    {
+      "tag": "trick/query-differencing",
+      "importance": "primary",
+      "evidence": "The first two intervals have equal length, so xor-comparing their replies cancels the common threshold-corruption bit and reveals whether the unique 1 lies in their union, which is the first half.",
+      "solution_variant": "equal-length-cancellation-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "After fixing the queried interval's membership bit to 0 or 1, the oracle response changes exactly at length x=k, making the final phase a monotone binary search for the first flipped length.",
+      "solution_variant": "equal-length-cancellation-binary-search"
+    },
+    {
+      "tag": "trick/decision-tree",
+      "importance": "secondary",
+      "evidence": "The accepted alternative uses four fixed probes whose response pattern selects one of three disjoint k ranges and the correct monotone oracle for the remaining search.",
+      "solution_variant": "four-probe-three-range-decision-tree"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "incidental",
+      "evidence": "Reflecting interval endpoints maps the right-half case to the left-half case and keeps one binary-search implementation.",
+      "solution_variant": "equal-length-cancellation-binary-search"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2049,
+    "title": "Codeforces Round 994 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2049,
+    "index": "D",
+    "title": "Shift + Esc",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2049/problem/D",
+      "notes": "Read the row-shift operation, right/down path cost, and bounds n,m<=200 with total n*m<=5e4."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137273",
+      "notes": "The official editorial defines f(i,j) and shift-aware g(i,j,s), including the O(nm^2) recurrence and final minimum over shifts."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1gnzktvb",
+      "notes": "The opened Luogu write-up independently models shift as an expanded shortest-path state, presents an accepted Dijkstra implementation, and notes that the state graph can instead be relaxed as a DAG DP."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2049/problem/D",
+      "notes": "Re-derived when shift cost is charged and matched the O(nm^2) recurrence against exhaustive row shifts and all monotone paths on 1280 random grids with 1<=n,m<=4."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose a cyclic left shift for every grid row, paying k per unit shift, and then find a minimum-cost right/down path from (1,1) to (n,m) in the shifted grid.",
+    "constraints": "Up to 1e4 tests; 1 <= n,m <= 200, 0 <= k,a[i][j] <= 1e9, and sum(n*m) <= 5e4. The O(nm^2) bound is viable, and all costs must use 64-bit integers.",
+    "core_idea": "Only shifts s in [0,m-1] matter because m shifts restore a row and have nonnegative extra cost. Let prev[j] be the minimum cost at column j after processing the previous row. For a fixed shift s of row i, scan columns left to right and set g_s[j] = a[i][(j+s) mod m] + min(prev[j] + k*s, g_s[j-1]). The first predecessor enters this row from above and pays its shift exactly once; the second continues right in the same already-shifted row. After scanning all shifts, cur[j] = min_s g_s[j]. Initialize prev[0]=0 and all other entries to infinity before the first row; after n rows the answer is prev[m-1].",
+    "complexity": "O(nm^2) time and O(m) working DP memory, excluding storage of the input grid",
+    "tricks": [
+      "Reduce an arbitrary number of row shifts to residues 0..m-1 because shift cost is nonnegative.",
+      "Keep the chosen shift only inside the current-row state and minimize it away at the row boundary.",
+      "Charge k*s only on the transition entering a row, never again on horizontal continuation.",
+      "Use 64-bit infinity because both path values and accumulated shift costs can exceed 32-bit range."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "row-shift-augmented-grid-dp",
+      "summary": "For each row and each shift residue, perform a left-to-right DP combining entry from the previous row with horizontal continuation, then minimize over shifts for every column.",
+      "complexity": "O(nm^2) time and O(m) working memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "expanded-state-shortest-path",
+      "summary": "Create shift-layer states G(i,j,s), collapsed states F(i,j), horizontal edges that preserve s, and vertical-entry edges that choose s and pay k*s. The graph is acyclic and admits O(nm^2) topological relaxation; a generic nonnegative-edge Dijkstra implementation is an accepted O(nm^2 log(nm^2)) alternative documented by the Luogu source.",
+      "complexity": "O(nm^2) as DAG shortest path, or O(nm^2 log(nm^2)) with Dijkstra; O(nm^2) explicit-state memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "The optimum is propagated through right/down grid positions row by row, with transitions from the cell above or the previous column.",
+      "solution_variant": "row-shift-augmented-grid-dp"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "A cell coordinate alone is insufficient inside a row; the DP must additionally remember that row's chosen cyclic-shift residue so all horizontal cells use the same transformed row.",
+      "solution_variant": "row-shift-augmented-grid-dp"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The intended complexity comes from exhaustively trying all m possible shift residues for each row while DP handles all path choices.",
+      "solution_variant": "row-shift-augmented-grid-dp"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "With collapsed row-boundary nodes and shift-layer nodes, every transition advances the row or column order, so the expanded shortest-path graph is a DAG.",
+      "solution_variant": "expanded-state-shortest-path"
+    },
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "importance": "secondary",
+      "evidence": "The consulted Luogu alternative runs Dijkstra on the nonnegative expanded shift-state graph and is materially distinct from the compact row DP implementation.",
+      "solution_variant": "expanded-state-shortest-path"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "Modulo indexing of shifted rows, large infinity values, and charging each row shift once are the main implementation hazards.",
+      "solution_variant": "row-shift-augmented-grid-dp"
+    }
+  ]
+}

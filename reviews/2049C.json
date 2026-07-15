@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2049,
+    "title": "Codeforces Round 994 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2049,
+    "index": "C",
+    "title": "MEX Cycle",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2049/problem/C",
+      "notes": "Read the friendship graph, local MEX condition, output requirement, and the constraints sum(n) <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137273",
+      "notes": "The official editorial gives the alternating 0/1 construction rooted at x and the exact parity condition for replacing a_x by 2."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2049/problem/C",
+      "notes": "Independently checked every affected neighborhood and exhaustively verified the construction for every x<y and every 3<=n<=14."
+    }
+  ],
+  "annotation": {
+    "summary": "Label the vertices of a cycle plus the extra edge (x,y) so that every vertex label equals the MEX of the labels on its neighbors.",
+    "constraints": "Up to 1e4 tests; 3 <= n <= 2e5, 1 <= x < y <= n, and sum n <= 2e5. Any nonnegative labels up to 1e9 are allowed, so a linear explicit construction is intended.",
+    "core_idea": "Starting at x and walking around the cycle, assign 0,1,0,1,... . An even cycle whose chord endpoints have opposite parity is already valid: every 0 sees only 1 values and every 1 sees only 0 values. Otherwise, either the odd cycle closes with equal endpoint parity or the chord joins equal parity classes. Change only a_x from 0 to 2. In the odd-cycle case, x then sees both 0 and 1 on its two cycle sides; in the even same-parity-chord case, x sees 0 through y and 1 through its cycle neighbors. The vertices adjacent to x retain their missing value because their other cycle neighbor supplies the needed 0 or 1, and y is not disturbed by adding a neighbor labeled 2. Thus the repair is needed exactly when n is odd or x-y is even.",
+    "complexity": "O(n) time and O(n) output storage per test case",
+    "tricks": [
+      "Anchor the alternating pattern at x so chord behavior is determined by parity of x-y.",
+      "Use label 2 as a one-vertex repair for either an odd cycle or a same-parity chord.",
+      "Verify only x, y, and the two cycle neighbors of x after the repair; all other local MEX neighborhoods are unchanged."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "alternating-cycle-with-one-two",
+      "summary": "Write alternating 0 and 1 while traversing from x; set a_x=2 iff n is odd or x-y is even, otherwise leave the pure alternation.",
+      "complexity": "O(n) time and O(n) memory for the answer",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The required output is obtained by an explicit alternating labeling plus at most one deterministic repair, with no search or optimization.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "Correctness is exactly the local identities mex({1})=0, mex({0})=1, and mex({0,1})=2 for each neighborhood.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Whether pure alternation works is determined by parity of n and parity of the distance x-y; these conditions decide if the label-2 repair is necessary.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "The 0/1 base assignment is the two-coloring of the cycle; an odd cycle or a chord within one parity class is precisely the obstruction repaired with color 2.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The proof separates the already-bipartite parity case, odd n, and even n with a same-parity chord, then checks the few affected vertices.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "Implementation only needs circular indexing and careful parity after converting x and y to zero-based indices.",
+      "solution_variant": "alternating-cycle-with-one-two"
+    }
+  ]
+}

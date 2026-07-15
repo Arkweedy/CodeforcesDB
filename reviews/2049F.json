@@ -1,0 +1,125 @@
+{
+  "contest": {
+    "contest_id": 2049,
+    "title": "Codeforces Round 994 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2049,
+    "index": "F",
+    "title": "MEX OR Mania",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "data structures",
+      "dsu",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2049/problem/F",
+      "notes": "Read the full statement and constraints: n,q <= 1e5 per test, sums of n and q are at most 1e5, 0 <= a_i <= n initially, and every point update only increases one value."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137273",
+      "notes": "Official Round 994 editorial and reference code checked for the all-ones maximum characterization, one structure per power-of-two threshold, reverse-time activation, DSU component unions, frequency-map small-to-large merging, and the stated O((n+q) log^2 n) expected or O((n+q) log^3 n) ordered-map bounds."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/flgwg0se",
+      "notes": "Read the complete independent solution and code. It cross-checks the threshold-component invariant and gives a materially different forward solution: when an increment removes a position from a component, rebuild only the shorter split side and maintain valid component lengths in a multiset/map."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2049/problem/F",
+      "notes": "Re-derived the good-sequence equivalence, proved why only maximal threshold components matter, and checked the amortization: reverse components only merge, while in the forward variant an index moved into a rebuilt shorter side sees its containing interval at least halve."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "After every point increment, find the maximum length of a contiguous subarray b satisfying mex(b) - bitwise_OR(b) = 1.",
+    "constraints": "For each test case n,q <= 1e5, with total n and total q across tests each at most 1e5; initial 0 <= a_i <= n and every update adds 1..n, so a near-linear polylogarithmic dynamic solution is required.",
+    "core_idea": "Let M be the maximum of a candidate subarray. Since OR >= M and mex <= M+1, equality mex-OR=1 forces OR=M and mex=M+1. Hence every value 0..M occurs, and OR(0,1,...,M)=M holds exactly when M=2^k-1. For each threshold T=2^k <= n, mark positions with a_i<T. A maximal marked component is good exactly when its frequency map has T distinct keys, because its possible values are precisely 0..T-1; if complete, taking the whole component is the longest candidate at that threshold, while if incomplete no subarray inside it can be good. Read all updates and undo them from the final array. For every T the marked set then grows monotonically: a reverse update either changes one value inside its current component or activates the position and joins it to its marked neighbors. A DSU per threshold maintains these maximal components; each root stores total length and a value-frequency map, merged small-to-large. Per-threshold multisets of complete-component lengths and one global maximum structure give the answer for the current post-update state before each undo.",
+    "complexity": "With hash maps, expected O((n+q) log^2 n) time; with ordered maps, O((n+q) log^3 n) by the editorial bound (more tightly O(n log^3 n + q log^2 n)); O(n log n + q) memory.",
+    "tricks": [
+      "Squeeze mex-OR=1 between OR>=maximum and mex<=maximum+1.",
+      "The OR of every integer in [0,M] equals M only for an all-ones M=2^k-1.",
+      "For a fixed T=2^k, reduce all candidates to maximal contiguous components of values below T.",
+      "Reverse all increments so threshold components only activate and merge, never split.",
+      "Maintain each component's total size and distinct-value frequencies, and merge frequency maps small-to-large.",
+      "Record the answer before undoing update j, because that state is exactly the array after forward update j."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "offline-reverse-threshold-dsu-small-to-large",
+      "summary": "Apply every update to obtain the final array, build one DSU over active positions a_i<2^k for each relevant k, and sweep updates backward. Update a root's old/new value frequency while the position stays active; when it first crosses below a threshold, insert it and union its active neighbors. Merge component frequency maps small-to-large and maintain the maximum length among roots containing all 2^k values.",
+      "complexity": "Expected O((n+q) log^2 n) with hash maps, or O((n+q) log^3 n) with ordered maps; O(n log n + q) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-threshold-segment-smaller-half-splitting",
+      "summary": "Process increments online. For each T=2^k, explicitly maintain maximal intervals with values below T, a frequency map per interval, and an owner pointer for every active index. If a_i remains below T, replace its frequency entry. If it crosses T, remove i and split its interval; preserve the larger side's map and scan only the shorter side to build a new map and repair owner pointers. Maintain all complete interval lengths in a global multiset/map.",
+      "complexity": "Expected O((n+q) log^2 n) with hash maps, or O((n+q) log^3 n) with ordered maps; O(n log n) memory. Per threshold, an index is rescanned only when it enters the shorter split side, so its interval size at least halves and it moves O(log n) times.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "The decisive reduction proves that a good subarray must contain every value 0..M and have mex=M+1; this turns the condition into completeness of one threshold component.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "primary",
+      "evidence": "Undoing the monotone increments converts difficult component deletions and splits into one-way position activations and component unions.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "The main solution must first read and apply all queries, build the final threshold states, and then answer the query states in reverse order.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "For every power-of-two threshold, DSU roots are exactly the current maximal contiguous active components and union with the two neighbors when a position activates.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "data-structure/dsu/small-to-large",
+      "importance": "primary",
+      "evidence": "Every component carries a value-frequency dictionary; merging the smaller dictionary into the larger is required to keep all monotone DSU unions within the polylogarithmic bound.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "A bitwise argument restricts possible maxima to all-ones masks 2^k-1 and therefore supplies the O(log n) threshold family, but no mask DP or bitwise data structure performs the updates.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "In reverse time, each position becomes active at most once for each threshold and each adjacent component boundary is removed at most once; the remaining map-merging cost is controlled separately by small-to-large.",
+      "solution_variant": "offline-reverse-threshold-dsu-small-to-large"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "secondary",
+      "evidence": "The independent forward variant answers increments immediately by splitting threshold intervals and rebuilding only the smaller side.",
+      "solution_variant": "forward-threshold-segment-smaller-half-splitting"
+    }
+  ]
+}
