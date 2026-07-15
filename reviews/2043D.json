@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2043,
+    "title": "Educational Codeforces Round 173 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2043,
+    "index": "D",
+    "title": "Problem about GCD",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "flows",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2043/problem/D",
+      "notes": "Read the complete statement and constraints, including maximizing B-A, minimizing A among ties, t <= 1000, and l,r,G <= 1e18."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137801",
+      "notes": "Read the official editorial section and embedded C++ solution. The tutorial prose widget was unavailable, but the code confirms rounding to endpoint multiples of G and enumerating total endpoint shrink before testing gcd."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ae0403et",
+      "notes": "Actually read. It independently derives the scaled coprime-pair problem and proves a constant endpoint-search bound: one candidate among the first 6 scaled integers has only prime factors at least 7, and one of the last 17 is coprime to it."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2043/problem/D",
+      "notes": "Re-derived the objective and tie-break encoded by the nested-loop order, proved the singleton scaled value 1 case, and checked the algorithm against exhaustive pair search on 123240 small (l,r,G) cases."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Choose l <= A <= B <= r with gcd(A,B)=G, maximizing B-A and then minimizing A, or report that no pair exists.",
+    "constraints": "1 <= t <= 1000 and 1 <= l <= r,G <= 1e18. Iteration proportional to r-l is impossible; arithmetic and gcd calls must use 64-bit integers.",
+    "core_idea": "Let L=ceil(l/G) and R=floor(r/G). Every feasible pair has A=G*x and B=G*y with L<=x<=y<=R, and gcd(A,B)=G exactly when gcd(x,y)=1. If L>R there is no pair. If L=R, the pair is valid only for L=R=1, yielding A=B=G. Otherwise enumerate total endpoint shrink s=0,1,... and, for j=0..s, test x=L+j and y=R-(s-j). Every pair in that layer has distance G*(R-L-s), so the first successful layer maximizes distance; increasing j makes the first success in that layer minimize A. This brute force is bounded: for a long interval, among L..L+5 choose a number not divisible by 2,3,5. It has at most 12 distinct prime factors, all at least 7, below 1e18. In any 17 consecutive integers, the union bound sum ceil(17/p) over those factors is at most 16, so some y in R-16..R is coprime to it. Thus a solution is found after at most 21 total endpoint removals; short intervals are already of constant size.",
+    "complexity": "O(C^2 log U) time and O(1) memory per test, where C=21 and U<=1e18; at most 253 gcd tests are needed.",
+    "tricks": [
+      "Divide out the required gcd and round the original interval to valid multiples.",
+      "Enumerate total endpoint loss so search order exactly matches maximum distance.",
+      "Enumerate left loss second so the first pair also has the minimum A tie-break.",
+      "Use a prime-factor coverage bound to make the apparently unbounded brute force constant.",
+      "Treat the lone scaled value 1 as the only valid equal-endpoint case."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "scaled-coprime-endpoint-enumeration",
+      "summary": "Scale the interval by G, then test pairs in nondecreasing total distance from the two outer endpoints and increasing left endpoint until finding a coprime pair.",
+      "complexity": "O(C^2 log U) time and O(1) memory with C=21 and U<=1e18",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "Dividing A and B by G converts gcd(A,B)=G into the exact coprimality condition gcd(A/G,B/G)=1, which is both the reduction and the acceptance test.",
+      "solution_variant": "scaled-coprime-endpoint-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The intended algorithm explicitly enumerates endpoint-shrink layers and candidate pairs; the number-theoretic endpoint bound proves this exhaustive search performs only a constant number of gcd tests.",
+      "solution_variant": "scaled-coprime-endpoint-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "Feasible original values must be multiples of G, so ceiling and floor division produce the exact scaled interval before coprimality is tested.",
+      "solution_variant": "scaled-coprime-endpoint-enumeration"
+    }
+  ]
+}

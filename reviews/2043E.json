@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2043,
+    "title": "Educational Codeforces Round 173 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2043,
+    "index": "E",
+    "title": "Matrix Transformation",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "graphs",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2043/problem/E",
+      "notes": "Read the complete statement, both row-AND and column-OR operations, and constraints t<=100, n,m<=1000, n*m<=1000, and entries in [0,1e9]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137801",
+      "notes": "Read the official editorial section and full embedded C++ solution. It checks 30 bits independently, builds the row/column dependency graph from B, marks mismatch-forced operations, and runs three-color DFS only from forced roots."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/dan-da-dan/p/18629037",
+      "notes": "Actually read. This independent write-up explains the per-bit binary reduction, both edge directions, a super-source to mandatory operations, and why only its reachable induced subgraph must be a DAG."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/cqbzlym/p/18996534",
+      "notes": "Actually read. It gives a materially different reverse solution: repeatedly remove a target-all-zero row or target-all-one column, then require A and B to agree on the undeleted core."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2043/problem/E",
+      "notes": "Re-derived necessity and sufficiency of forced reachability plus acyclicity, and the equivalence of reverse peeling. Both criteria matched exhaustive enumeration of every operation sequence on all 292 binary A,B matrix pairs with dimensions up to 2 by 2."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2043E",
+      "notes": "The Luogu solution index returned an internal error during this review, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether row-wise bitwise AND operations and column-wise bitwise OR operations can transform integer matrix A into matrix B.",
+    "constraints": "1 <= t <= 100; 1 <= n,m <= 1000; n*m <= 1000; and 0 <= A_ij,B_ij <= 1e9. Only bits 0..29 can occur, and O(30*n*m) processing is intended.",
+    "core_idea": "Bits are independent: for one bit, a row AND can only reset an entire row to 0 and a column OR can only set an entire column to 1; single-bit masks let per-bit operation sequences be concatenated. Create one operation vertex R_i per row and C_j per column. If B_ij=0, add C_j->R_i: using C_j forces R_i later to restore this cell to 0. If B_ij=1, add R_i->C_j for the symmetric reason. Every mismatch seeds a mandatory operation: A_ij=1,B_ij=0 forces R_i, while A_ij=0,B_ij=1 forces C_j. Following outgoing edges gives the full forced closure. The bit is feasible exactly when this reachable subgraph is acyclic. Necessity follows because every edge is a strict repair-before relation between forced operations. For sufficiency, execute the closure in topological order: at every affected cell the last selected endpoint operation writes B_ij, while a cell with neither endpoint selected had A_ij=B_ij and stays unchanged. Cycles outside the mandatory closure are irrelevant because none of their operations need be used.",
+    "complexity": "O(30*(n*m+n+m)) time and O(n*m+n+m) auxiliary memory per test case.",
+    "tricks": [
+      "Isolate bits and realize each selected bit operation with masks neutral on all other bits.",
+      "Interpret a target bit as both an implication and an ordering edge between its row and column operations.",
+      "Seed reachability only from mismatches, because matching cells do not initially require an operation.",
+      "Reject only cycles reachable from mandatory operations; optional unreachable cycles can be ignored.",
+      "Use a topological order of the forced closure as a constructive sufficiency proof."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mandatory-operation-closure-dag",
+      "summary": "For each bit, build the bipartite directed dependency graph on row-reset and column-set operations. Start three-color DFS from mismatch-forced vertices; traversal computes the forced closure and rejects exactly when it encounters a reachable back edge.",
+      "complexity": "O(30*(n*m+n+m)) time and O(n*m+n+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "reverse-last-operation-peeling",
+      "summary": "For each bit, work backward from B. Repeatedly remove an active row whose remaining target cells are all 0 or an active column whose remaining target cells are all 1, treating it as the last operation on the active submatrix. When no more removals are possible, accept exactly if A and B agree on every remaining cell. Maintain row/column counts and a queue for linear work per bit.",
+      "complexity": "O(30*(n*m+n+m)) time and O(n+m) auxiliary memory beyond the matrices",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "AND and OR act independently on bits, reducing the integer-matrix problem to 30 separate binary row-reset/column-set feasibility problems.",
+      "solution_variant": "mandatory-operation-closure-dag"
+    },
+    {
+      "tag": "graph/dag/topological-sort",
+      "importance": "primary",
+      "evidence": "The selected operation closure is feasible exactly when its precedence graph has a topological ordering; that ordering is a valid sequence transforming the bit plane.",
+      "solution_variant": "mandatory-operation-closure-dag"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "The official implementation uses three-color DFS from mandatory operation vertices to compute their implication closure and detect a reachable directed cycle.",
+      "solution_variant": "mandatory-operation-closure-dag"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "The independent alternative undoes the operation sequence from B by repeatedly choosing a row or column that could have been the last operation.",
+      "solution_variant": "reverse-last-operation-peeling"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "In the reverse variant, any currently target-all-zero row or target-all-one column can be peeled as a safe last operation, and this local choice preserves feasibility.",
+      "solution_variant": "reverse-last-operation-peeling"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "contest": {
+    "contest_id": 2043,
+    "title": "Educational Codeforces Round 173 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2043,
+    "index": "F",
+    "title": "Nim",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "dp",
+      "games",
+      "greedy",
+      "implementation",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2043/problem/F",
+      "notes": "Read the complete game definition, nonempty-remnant requirement, optimal-removal counting objective, and constraints n,q <= 1e5 and 0 <= a_i <= 50."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137801",
+      "notes": "Read the full official tutorial and reference code; confirmed the zero-XOR Nim reduction, the at-most-two-kept-copies lemma, the value-frequency DP, tie counting, and the nonempty flag."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/wczvbnpq",
+      "notes": "Actually read the complete __vector__ writeup; independently cross-checked the frequency compression, three keep-count transitions, and combinatorial multipliers."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2043/problem/F",
+      "notes": "Re-derived why removing two equal kept piles preserves XOR, why the resulting subset remains nonempty, and why counting kept index sets is bijective with counting removal sets."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every static range, keep a nonempty subset of its piles such that the resulting Nim position is losing for the first player, maximize the number of removed piles, and count all optimal removal sets.",
+    "constraints": "n,q <= 1e5, 0 <= a_i <= 50, all range rounds are independent, and counts are modulo 998244353. The small 6-bit value domain permits a constant-size XOR DP, while the large query count requires O(1) range-frequency extraction per value.",
+    "core_idea": "A Nim position is losing exactly when the XOR of its pile sizes is zero, so the problem becomes finding a minimum-size nonempty zero-XOR subset of indices. If value x occurs c times, an optimal subset keeps only 0, 1, or 2 copies: keeping more than 2 allows two equal copies to be removed without changing XOR. Build per-value prefix frequencies. For each query, run a DP over values x in [0,50], XOR masks in [0,63], and a nonempty flag. A state stores the maximum removed count and the number of ways attaining it. Keeping 0, 1, or 2 copies contributes respectively c, c-1, or c-2 removals and has 1, c, or C(c,2) index choices. The answer is the best state with XOR 0 and nonempty=true.",
+    "complexity": "O(51*n + q*51*64) time and O(51*n + 51*64) memory.",
+    "tricks": [
+      "Convert the game condition to a nonempty zero-XOR subset using the Nim losing criterion",
+      "At most two occurrences of each value need to remain because two equal values cancel under XOR",
+      "Optimize the removed count and accumulate counts only across tied optimal transitions",
+      "Use a nonempty-state bit to reject the illegal solution that removes every pile",
+      "Choosing kept indices and choosing their removed complement are in bijection"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "value-frequency-xor-dp",
+      "summary": "Extract all 51 value frequencies for the query, then perform an objective-and-count DP over value, 6-bit XOR, and whether any pile has been kept, considering 0, 1, or 2 kept copies of each value.",
+      "complexity": "O(51*64) time per query after O(51*n) preprocessing, with O(51*n) total memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "Each Nim heap has Grundy value equal to its size, and the first player loses exactly when the XOR of all kept heap Grundy values is zero; this is the decisive reduction.",
+      "solution_variant": "value-frequency-xor-dp"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "The main algorithm is a DP over the 64 possible XOR masks, augmented with the processed-value index and a nonempty bit.",
+      "solution_variant": "value-frequency-xor-dp"
+    },
+    {
+      "tag": "algorithm/bitmask/xor-subset",
+      "importance": "primary",
+      "evidence": "After the game-theory reduction, the exact optimization target is a minimum-cardinality nonempty subset of indices whose values XOR to zero.",
+      "solution_variant": "value-frequency-xor-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "Keeping one or two copies of a value with frequency c contributes c or C(c,2) choices, and tied optimal DP transitions are summed modulo 998244353.",
+      "solution_variant": "value-frequency-xor-dp"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "A prefix-frequency table for each value in [0,50] supplies every query multiplicity in O(1), avoiding scanning the range.",
+      "solution_variant": "value-frequency-xor-dp"
+    }
+  ]
+}

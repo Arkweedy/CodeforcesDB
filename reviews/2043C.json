@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2043,
+    "title": "Educational Codeforces Round 173 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2043,
+    "index": "C",
+    "title": "Sums on Segments",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "dp",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2043/problem/C",
+      "notes": "Read the complete statement and constraints: subarrays may be empty, all but at most one element are -1 or 1, n is at most 200000, and the sum of n over tests is at most 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137801",
+      "notes": "Read the official editorial section and embedded Python solution. The tutorial prose widget was unavailable, but the code confirms two attainable integer ranges, prefix-extrema handling around the exceptional value, and linear-time merging."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/81bmlef1",
+      "notes": "Actually read. It independently proves that a {-1,1} segment attains every sum between its minimum and maximum subarray sums, then derives the exceptional-containing range from left suffix and right prefix extrema."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2043/problem/C",
+      "notes": "Re-derived the unit-step no-gaps lemma, the two-range decomposition, and the no-exceptional-element case. Exhaustive comparison with all subarrays matched on 18440 generated arrays of length at most 8."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Output every distinct sum of a possibly empty contiguous subarray when all array elements except at most one are -1 or 1.",
+    "constraints": "1 <= t <= 10000, 1 <= n <= 200000, sum(n) <= 200000, -1e9 <= a_i <= 1e9, and at most one a_i is outside {-1,1}. The answer has O(n) values despite a possible gap of size about 1e9 between its two ranges.",
+    "core_idea": "In any {-1,1} segment, the sums of intervals including the empty interval form every integer from the minimum subarray sum through the maximum subarray sum: shrink an extremal interval to empty one endpoint at a time, and the running sum changes by exactly 1 in absolute value, so it crosses every intermediate integer. If there is no exceptional element, this gives the whole answer. Otherwise split at its position p. Subarrays avoiding p lie wholly on the left or right; both attainable ranges contain 0, so their union is one interval whose endpoints are the smaller minimum and larger maximum subarray sums of the two sides. A subarray containing p consists of a suffix of the left side, a_p, and a prefix of the right side. The suffix-sum and prefix-sum walks also move by +/-1, so each fills an integer interval; their sums with a_p fill a second interval. Merge or concatenate the two intervals and enumerate them in sorted order.",
+    "complexity": "O(n + K) time and O(K) space when the K output values are materialized; K = O(n). The extrema themselves need O(1) working memory.",
+    "tricks": [
+      "Include the empty subarray so every ordinary-side range contains 0.",
+      "Use the unit-step no-gaps lemma to replace many subarrays by interval endpoints.",
+      "Split only at the unique exceptional value; every subarray either avoids it or contains it.",
+      "For containing subarrays, combine a left suffix-sum interval and a right prefix-sum interval.",
+      "Handle the case with no exceptional value as one ordinary {-1,1} segment."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "split-at-exceptional-value",
+      "summary": "Find the exceptional position if it exists. Compute minimum and maximum subarray sums on each {-1,1} side, plus minimum and maximum suffix sums on the left and prefix sums on the right. These values define at most two integer intervals; merge overlaps or adjacency and output their union.",
+      "complexity": "O(n + K) time and O(K) output storage, with K = O(n)",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/contiguous-reachable-range",
+      "importance": "primary",
+      "evidence": "Because every relevant prefix, suffix, or endpoint-shrinking sum walk changes by exactly +/-1, every integer between its minimum and maximum is attained; this no-gaps fact is what compresses all subarray sums into at most two ranges.",
+      "solution_variant": "split-at-exceptional-value",
+      "description": "Prove that an attainable set of integer values has no gaps, usually because a process moves in unit steps, and represent the entire set by its minimum and maximum. Use when the no-gaps proof is essential, not merely when answers happen to be bounded by an interval.",
+      "parent": "trick",
+      "created_reason": "The existing algorithm/interval-union tag covers merging explicit intervals and trick/interval-feasibility covers intersecting bounds; neither captures the reusable proof that a discrete reachable-value set itself is contiguous, common in +/-1 walks and unit-change processes.",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "primary",
+      "evidence": "The endpoints for sums avoiding the exceptional value are the minimum and maximum subarray sums of the two ordinary sides, computed by Kadane-style extrema scans.",
+      "solution_variant": "split-at-exceptional-value"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "The exact range of sums containing the exceptional element is determined by the minimum and maximum suffix sums to its left and prefix sums to its right.",
+      "solution_variant": "split-at-exceptional-value"
+    },
+    {
+      "tag": "algorithm/interval-union",
+      "importance": "secondary",
+      "evidence": "The final distinct answer is represented and emitted as the sorted union of at most two integer intervals, merging them when they overlap or are adjacent.",
+      "solution_variant": "split-at-exceptional-value"
+    }
+  ]
+}

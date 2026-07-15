@@ -230,6 +230,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "classify-overlap": "重叠分类",
   "combinatorics": "组合数学",
   "component-decomposition": "分量分解",
+  "contiguous-reachable-range": "连续可达值域",
   "communication": "通信",
   "connectivity": "连通性",
   "constructive": "构造",

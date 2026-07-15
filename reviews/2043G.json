@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2043,
+    "title": "Educational Codeforces Round 173 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2043,
+    "index": "G",
+    "title": "Problem with Queries",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2043/problem/G",
+      "notes": "Read the complete assignment/query rules, last-answer decoding, forced-online dependency, and constraints n <= 1e5, q <= 3e5, and 1 <= a_i <= n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137801",
+      "notes": "Read the full official tutorial; confirmed complementing unequal pairs to equal pairs, full-block interval maintenance, the row/column deferred-update split, and fringe reconstruction."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8ggsyx4g",
+      "notes": "Actually read the complete Gold14526 writeup; independently cross-checked the O((n+q)*sqrt(n)) decomposition through squared prefix-frequency norms and dynamically maintained prefix-vector dot products."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2043/problem/G",
+      "notes": "Re-derived the insertion/deletion delta for every full-block interval, verified that middle-middle, middle-fringe, and fringe-fringe equal pairs are counted exactly once, and checked the need for 64-bit answers."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Maintain an array under point assignments and answer encoded online range queries asking for the number of index pairs with unequal values.",
+    "constraints": "n <= 1e5, q <= 3e5, and all values lie in [1,n]. Queries are decoded using the previous type-2 answer, so they cannot be reordered. A range can contain C(1e5,2) pairs, requiring 64-bit arithmetic. The 1024 MB limit permits block-prefix frequency storage of size O(n*sqrt(n)).",
+    "core_idea": "For a range of length len, compute equal pairs E=sum_x C(freq_x,2) and return C(len,2)-E. Split the array into blocks of size B, with K=O(n/B) blocks. Maintain E[L][R] for every interval of complete blocks and per-value prefix counts over blocks. Inserting value x into block t changes every E[i][j] with i<=t<=j by count_x(i,j). Split this as count_x(i,t)+count_x(t+1,j): the first term is independent of j and becomes a row-suffix deferred update, while the second is independent of i and becomes a column-prefix deferred update. Difference-style update_right/update_left tables reduce both modification and retrieval of a full-block interval to O(K). For an arbitrary query, obtain the largest complete-block middle and scan the O(B) boundary elements, adding each element's pairs with the middle from block-prefix counts and its pairs with earlier fringe elements from a temporary frequency bucket.",
+    "complexity": "O(n*K + q*(B+K)) time and O(n*K + K^2 + n) memory; choosing B=Theta(sqrt(n)) and K=Theta(sqrt(n)) gives O((n+q)*sqrt(n)) time and O(n*sqrt(n)) memory.",
+    "tricks": [
+      "Count all pairs minus equal-value pairs instead of maintaining unequal pairs directly",
+      "Split an update contribution count_x(i,j) at the modified block so each half depends on only one interval boundary",
+      "Represent row-suffix and column-prefix additions with deferred difference-style tables",
+      "Partition query pairs into full-middle, middle-fringe, and fringe-fringe contributions",
+      "Process every encoded query immediately and retain last in 64-bit arithmetic"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "online-block-equal-pair-maintenance",
+      "summary": "Use square-root decomposition, maintain equal-pair counts for all complete-block intervals through row/column deferred contribution tables, and reconstruct arbitrary ranges by scanning their two boundary fragments.",
+      "complexity": "O((n+q)*sqrt(n)) time and O(n*sqrt(n)) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "The array is divided into Theta(sqrt(n)) blocks; complete-block intervals are maintained globally while only O(sqrt(n)) boundary elements are scanned per query.",
+      "solution_variant": "online-block-equal-pair-maintenance"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "primary",
+      "evidence": "The O(K^2) rectangle of affected full-block intervals is represented as row-suffix and column-prefix deferred additions, which are accumulated when a particular interval is queried.",
+      "solution_variant": "online-block-equal-pair-maintenance"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Inserting or deleting one occurrence changes an interval's equal-pair count by exactly the number of other equal occurrences in that interval; splitting and maintaining this delta is the central update invariant.",
+      "solution_variant": "online-block-equal-pair-maintenance"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "secondary",
+      "evidence": "Every operation is decoded with the previous query answer, so queries must be processed in input order and offline Mo-style reordering is unavailable.",
+      "solution_variant": "online-block-equal-pair-maintenance"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Per-value prefix counts over complete blocks provide count_x(L,R) in O(1), supporting both point-update deltas and middle-fringe query contributions.",
+      "solution_variant": "online-block-equal-pair-maintenance"
+    }
+  ]
+}
