@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2026,
+    "title": "Educational Codeforces Round 171 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2026,
+    "index": "C",
+    "title": "Action Figures",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "constructive algorithms",
+      "data structures",
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2026/problem/C",
+      "notes": "完整核对购买规则与约束：t<=1e4，n<=4e5，sum n<=4e5，且 s_n=1。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135680",
+      "notes": "同场动态 editorial 本轮只加载一次；展开 C Tutorial，核对固定免费数量 k 时应选择最右 k 个可访问日、交换论证、前缀配对条件及 O(n log n) 二分方案。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/25gfcgv6",
+      "notes": "实际阅读 zhouruoheng 的具体文章；核对从大到小选择免费商品、优先用较大的 0 位置配对，否则牺牲最小 1 位置的线性 deque 贪心。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2026/submission/332586228",
+      "notes": "Codeforces 页面核验 Verdict 为 Accepted，并读取 O(n) 双指针/计数源码。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2026/problem/C",
+      "notes": "把购买计划建模为“免费商品与更早付费商品的一一配对”，并用逐访问日枚举购买子集的精确 mask DP 对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "第 i 个手办价格为 i，最早第 i 天可买；只能在 s_i=1 的日子进店，同日买至少两个时最贵者免费。求买齐全部手办的最小总价。",
+    "constraints": "t<=1e4；1<=n<=4e5；所有测试 sum n<=4e5；s_n=1。总价需要 64 位整数。",
+    "core_idea": "先取全价和。若编号 x 的手办免费，它必须在某个可访问日与一个尚未使用、编号严格小于 x 的手办同买；通过交换可把免费商品规范为可访问日对应的手办。线性做法从右向左尝试每个 s_x=1：优先用最大的未使用 0 位置 y<x 作付费搭档，因为 0 位置不可能成为更优的免费候选；若没有，则用最小的未使用 1 位置作搭档。成功配对就从全价和减去 x。两端候选各删除一次。",
+    "complexity": "主解 O(n) 时间、O(n) 空间；用索引和计数可做到 O(1) 额外空间。",
+    "tricks": [
+      "把折扣最大化改写为带前缀约束的一一配对。",
+      "从大到小保留高价值免费候选，并优先消耗不能免费或更受约束的搭档。",
+      "官方替代方案对可免费数量 k 二分，检查每个前缀中免费候选数是否不超过付费候选数。"
+    ],
+    "taxonomy_notes": [
+      "official brute force、constructive 和笼统 data structures 不作为 reviewed 主标签；deque 仅是线性贪心的一种实现。"
+    ],
+    "small_scale_verification": {
+      "method": "对每个可访问日枚举当天购买的未购子集，以 mask DP 求真正最大折扣；同时实现线性 deque 贪心和官方二分检查。",
+      "coverage": "穷举 n=1..9、s_n=1 的全部 511 个访问字符串。",
+      "result": "511/511 个实例中，精确购买分配 DP、O(n) 贪心和官方 O(n log n) 方案答案完全一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "right-to-left-greedy-pairing",
+      "summary": "分别维护 0 位置和 1 位置；从最大的 1 候选开始，优先匹配最大的合法 0，否则匹配最小的剩余 1，并将当前大位置免费。",
+      "complexity": "O(n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "binary-search-free-count",
+      "summary": "二分最大可免费数量 k；取最右 k 个 1 为免费候选，线性扫描检查每个前缀的候选免费数不超过其余商品数，最后减去这些候选的价格和。",
+      "complexity": "O(n log n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "主解必须从高价到低价决定免费候选，并以不会损害后续可行性的顺序选择搭档，直接最大化折扣总和。",
+      "solution_variant": "right-to-left-greedy-pairing"
+    },
+    {
+      "tag": "trick/exchange-argument",
+      "importance": "primary",
+      "evidence": "正确性依赖交换：任意可行购买计划可把免费手办替换为对应的更大可访问日手办，并把被牺牲的 1 搭档换成最小剩余者而不降低答案。",
+      "solution_variant": "right-to-left-greedy-pairing"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "实现同时取最大的免费候选、最大的合法 0 搭档或最小的 1 搭档，每个位置只移动或删除一次。",
+      "solution_variant": "right-to-left-greedy-pairing"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "secondary",
+      "evidence": "官方 variant 利用“能免费 k 个则也能免费更少”的单调性，二分最大可行 k。",
+      "solution_variant": "binary-search-free-count"
+    },
+    {
+      "tag": "data-structure/deque",
+      "importance": "incidental",
+      "evidence": "Luogu 线性实现用 deque 同时弹出 1 位置的两端；该结构可被普通索引和计数替代。",
+      "solution_variant": "right-to-left-greedy-pairing"
+    }
+  ]
+}
+

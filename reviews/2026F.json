@@ -1,0 +1,165 @@
+{
+  "contest": {
+    "contest_id": 2026,
+    "title": "Educational Codeforces Round 171 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2026,
+    "index": "F",
+    "title": "Bermart Ice Cream",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "divide and conquer",
+      "dp",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2026/F",
+      "notes": "完整读取四类操作及约束：q<=3e4，商品 price/tastiness<=2000，背包询问容量<=2000，删除保证非空。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135680",
+      "notes": "与 E 共用同一次动态页面加载；实际读取 F 教程和 awoo 模型代码，确认版本树 DFS、可回滚 knapsack deque、均分重构及 O(qP)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/yf4nbo2w",
+      "notes": "阅读全文；核对双栈各存背包快照、空侧时把另一侧约一半元素重构过去，以及重构的摊还界。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/problemset/submission/2026/288823790",
+      "notes": "提交页明确显示 Accepted 468 ms / 271916 KB；源码独立实现版本树、双栈 deque、O(P) 合并和 DFS 撤销。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/n55i35mf",
+      "notes": "阅读全文和主要代码；确认替代解把 DFS 进退操作线性化为 O(q) 序列，为每件商品生成活跃区间，再做时间轴线段树分治背包。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2026/submission/288612638",
+      "notes": "提交页明确显示 Accepted 718 ms / 9720 KB；源码核实活跃区间挂线段树节点、递归复制/回滚 DP 的 O(qP log q) 变体。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2026/F",
+      "notes": "独立用势能证明均分重构摊还，并实现小规模版本树+knapsack deque，与逐店深拷贝和朴素 01 背包随机对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "维护可复制的商店版本；每店商品按加入时间排队，支持尾部加入、头部删除，并回答容量至多 2000 的 0/1 背包最大美味度。",
+    "constraints": "1<=q<=3e4；1<=price,tastiness<=2000；询问容量 1<=p<=2000；删除只发生在非空商店；内存限制 1024 MB。令 P=2000。",
+    "core_idea": "为每家店保存当前版本节点。类型 1/2/3 都从该版本新建子节点，边分别表示无变化复制、push_back 商品、pop_front 最老商品；类型 1 把新店映射到子节点而不改变原店，类型 2/3 更新原店映射，类型 4 直接挂在当前节点。DFS 版本树时用一个可撤销 deque 表示根到当前节点的商品序列：加入边进子树前 push_back、返回时 pop_back；删除边先保存并 pop_front、返回时 push_front。deque 由左右两个栈维护，每次栈 push 都复制上一层长度 P+1 的 0/1 背包数组并倒序转移，pop 即恢复快照；询问枚举预算切分 c，取 max(L[c]+R[p-c])。若需弹出的那一侧为空，就保持顺序把全部元素近似均分到两栈；重构后势能降为 O(1)，每次普通操作只改变 O(1)，故总搬移 O(q)，连同每次 O(P) 背包更新和查询得到 O(qP)。",
+    "complexity": "O(qP) amortized time and O(qP+q) memory for the primary solution, with P=2000.",
+    "tricks": [
+      "把复制持久化需求离线化为版本树，避免真正持久化整个背包。",
+      "DFS 回退把头删的逆操作变成 push_front，把尾加的逆操作变成 pop_back。",
+      "每个栈层保存完整 0/1 背包快照，使栈顶删除天然 O(1) 回滚。",
+      "两栈背包只需对单次询问容量做 O(P) 的 max-plus 预算切分。",
+      "空侧时按一半重构，保证双端操作摊还线性。",
+      "替代解把 DFS 操作序列中的商品在场区间挂到时间轴线段树上，以可回滚背包回答叶子询问。"
+    ],
+    "proof_risks": [
+      "不能只按商店编号建树；每次类型 2/3 都会改变该店当前版本，类型 1 则从当时版本分叉且原店继续独立。",
+      "类型 4 不创建版本节点，必须挂到该店当时的 current version。",
+      "类型 3 删除的是最早加入商品；DFS 回退必须把保存的同一商品 push_front。",
+      "栈背包转移容量必须倒序，dp[c] 语义为总价格不超过 c 的最大美味度。",
+      "合并必须枚举 0<=c<=p 的 L[c]+R[p-c]。",
+      "重构既要均分又要保持逻辑队列顺序。",
+      "每次都把整个非空栈完全倒到空栈会破坏摊还界。",
+      "主解空间为 O(qP)，依赖本题 1024 MB 限制。",
+      "时间轴分治变体必须为每件商品生成所有活跃半开区间，并在离开节点时完整回滚背包。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只显示 Tutorial is loading；在同一次渲染加载中读取了 E/F 教程和模型代码。",
+      "Luogu 题解索引是动态页；分别进入 yf4nbo2w 与 n55i35mf 两篇具体 article 后读取正文和代码链接。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；官方模型、两篇 Luogu 文章、两个独立 Accepted 实现和随机 oracle 一致。",
+      "Luogu 主文章的公式渲染容易把重构递推方向读混；本 review 采用标准势能论证。",
+      "提议新增 algorithm/divide-and-conquer/segment-tree-over-time 仅用于替代解；是否纳入 taxonomy 由主 agent 统一决定并同步 i18n。"
+    ],
+    "small_scale_verification": {
+      "method": "先随机双端操作逐步比较 knapsack deque 与朴素序列背包；再随机生成合法复制/加入/删除/询问，比较离线版本树答案与逐店深拷贝在线模拟。",
+      "coverage": "5000 条 deque 随机序列、每条 80 步；3000 组版本查询，合计核对 28286 次类型 4 询问。",
+      "result": "商品顺序、所有容量答案和版本分叉均完全一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "version-tree-knapsack-deque",
+      "summary": "离线建版本树并 DFS 回滚；用两个保存 0/1 背包快照的栈实现双端队列，空侧时均分重构，查询做一次 O(P) 预算切分。",
+      "complexity": "O(qP) amortized time and O(qP+q) memory, P=2000.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "time-segment-tree-rollback-knapsack",
+      "summary": "将版本树 DFS 的进入/退出线性化，配对每件商品的出现与消失得到活跃区间；区间挂到时间轴线段树，递归时加入物品并回滚背包，在询问叶读取 dp[p]。",
+      "complexity": "O(qP log q) time and O(q log q + P log q) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "复制看似要求持久化，但算法先收集全部操作并建版本树，再按 DFS 顺序统一回答各版本询问。",
+      "solution_variant": "version-tree-knapsack-deque"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "每个栈层都维护其物品集合在 0..P 容量上的 0/1 背包，查询再合并左右两组背包。",
+      "solution_variant": "version-tree-knapsack-deque"
+    },
+    {
+      "tag": "data-structure/deque",
+      "importance": "primary",
+      "evidence": "DFS 边及其逆操作需要同时支持 push/pop front 与 push/pop back；均分重构的双栈 deque 是 O(qP) 的核心。",
+      "solution_variant": "version-tree-knapsack-deque"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "secondary",
+      "evidence": "左右栈的每一层绑定一份背包快照，pop 栈顶即可同时撤销最近商品及其 DP 影响。",
+      "solution_variant": "version-tree-knapsack-deque"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "版本节点组成树，DFS 进入边应用修改、退出边执行逆修改，保证当前 deque 精确对应根到节点的版本。",
+      "solution_variant": "version-tree-knapsack-deque"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer/segment-tree-over-time",
+      "importance": "primary",
+      "evidence": "替代解把每件商品的活跃时间区间分解到时间轴线段树节点，在递归路径上应用并回滚 0/1 背包。",
+      "solution_variant": "time-segment-tree-rollback-knapsack",
+      "description": "Offline segment-tree-over-time technique: assign each object's active interval to O(log q) nodes of a time-axis segment tree, DFS the tree while applying rollbackable updates, and answer point-time queries at leaves.",
+      "parent": "algorithm/divide-and-conquer",
+      "created_reason": "Existing offline, segment-tree, and divide-and-conquer tags do not isolate the reusable active-interval plus rollback pattern; this accepted alternate solution is a canonical instance.",
+      "status": "candidate"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "替代解用线段树节点存完全覆盖其时间段的活跃商品列表，使每个商品只被加入 O(log q) 个节点。",
+      "solution_variant": "time-segment-tree-rollback-knapsack"
+    }
+  ]
+}
+

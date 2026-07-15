@@ -1,0 +1,126 @@
+{
+  "contest": {
+    "contest_id": 2026,
+    "title": "Educational Codeforces Round 171 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2026,
+    "index": "E",
+    "title": "Best Subsequence",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dfs and similar",
+      "flows",
+      "graph matchings",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2026/E",
+      "notes": "完整读取目标函数、n<=100、0<=a_i<2^60 与样例；n=1,a_1=5 输出 0 也确认空子序列必须允许。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135680",
+      "notes": "同场动态页面仅加载一次；实际读取 E 教程与 Neon 模型代码，确认二分图最大独立集、Konig 定理以及 n-maxflow 的实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/2gpd5l68",
+      "notes": "从 CF2026E 题解索引进入并阅读全文；独立核对低 60 位零数、最大独立集减 60、最终 n-matching 的常数消去。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/problemset/submission/2026/292694089",
+      "notes": "提交页明确显示 Accepted 77 ms；源码用 Kuhn 增广求元素点到 60 个 bit 点的最大匹配并输出 n-s。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2026/E",
+      "notes": "独立证明 chosen elements 与 OR 为 0 的 bit 组成最大独立集，并将子集暴力与匹配公式做穷举及随机对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "从数组中选任意（可为空）子序列，最大化所选元素数减去其按位 OR 的置位数。",
+    "constraints": "1<=t<=100；1<=n<=100；0<=a_i<2^60；每个测试的二分图至多 160 个点、6000 条元素-bit 边。",
+    "core_idea": "建二分图：左侧每个数组位置一个点，右侧为 60 个 bit；a_i 的第 j 位为 1 就连边。固定所选左点 L 后，能同时放入独立集的全部右点恰为 OR(L) 中为 0 的 bit，所以目标+60 等于某个独立集大小，最优值为 MIS-60。二分图中 MIS=V-minVertexCover=n+60-maxMatching，故答案是 n-maxMatching。等价地可建最大权闭合子图：元素权 +1、bit 权 -1，选择元素强制选择其所有置位 bit；s->元素容量 1、元素->bit 容量 INF、bit->t 容量 1，答案 n-mincut。",
+    "complexity": "Kuhn implementation: O(nE) time and O(n+60+E) memory, where E<=60n; n<=100.",
+    "tricks": [
+      "把 popcount 改写为 60-zeroes，使目标成为左点贡献与未覆盖 bit 贡献之和。",
+      "固定左点后应把所有不相邻右点补入，才能从可行独立集得到等号。",
+      "Konig 定理与独立集/点覆盖互补让两个 60 常数完全抵消。",
+      "最大权闭合子图给出不经过显式独立集的等价 min-cut 模型。"
+    ],
+    "proof_risks": [
+      "空子序列必须视为合法，否则 n=1,a_1=5 的样例无法得到 0。",
+      "边只在 a_i 的 bit 为 1 时连接；零 bit 才能与已选元素同时进入独立集。",
+      "最大独立集到原目标还有 -60；漏掉常数会得到 n+60-matching。",
+      "MIS=V-maximumMatching 只因图为二分图并结合 Konig 定理成立。",
+      "重复数是不同左点，可以分别贡献子序列长度，不能去重。",
+      "闭合图的元素->bit 容量必须大于所有有限收益总和，例如 INF>n。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只显示 Tutorial is loading；使用可执行页面一次加载后读取 E/F 两段动态教程。",
+      "Luogu 题解索引为动态页，先定位 article id，再进入具体文章阅读全文。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；最大匹配、官方 Dinic 闭合图、Luogu 推导和独立暴力相互一致。",
+      "max-flow 变体的形式化最坏复杂度取决于实现；推荐以 n<=100 下更清晰的 Kuhn O(nE) 为主。"
+    ],
+    "small_scale_verification": {
+      "method": "枚举所有子集求 max(|S|-popcount(OR))，与元素-bit 二分图的 n-maximumMatching 比较。",
+      "coverage": "穷举 B=4、n=1..4 的全部 69904 个数组；另随机测试 B<=8、n<=9 的 20000 个数组。",
+      "result": "全部一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bipartite-independent-set-matching",
+      "summary": "把所选元素与未置位 bit 视为二分图独立集，用 Konig 定理将最大独立集化为最大匹配，输出 n-matching。",
+      "complexity": "O(nE) time and O(n+60+E) memory with Kuhn; E<=60n.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "maximum-weight-closure-min-cut",
+      "summary": "元素点收益 +1、bit 点代价 1；元素到其置位 bit 连 INF 依赖边，最小割给出放弃元素与开启 bit 的最小总损失，答案 n-mincut。",
+      "complexity": "One max-flow on V=n+62 and E'=E+n+60 directed edges; comfortably within n<=100.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "Konig 定理把目标化为 n 减去元素-bit 二分图的最大匹配；Accepted 代码直接执行 Kuhn 增广。",
+      "solution_variant": "bipartite-independent-set-matching"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "primary",
+      "evidence": "元素位置与 bit 天然形成二部；正是二分性使最大独立集可由最小点覆盖和最大匹配多项式求解。",
+      "solution_variant": "bipartite-independent-set-matching"
+    },
+    {
+      "tag": "graph/flow/min-cut",
+      "importance": "primary",
+      "evidence": "闭合图变体用 INF 依赖边和单位收益/代价边建立 s-t 最小割，n-mincut 就是最优子序列价值。",
+      "solution_variant": "maximum-weight-closure-min-cut"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "incidental",
+      "evidence": "实现只逐位检查 a_i 的 60 个置位来建立图，没有 bitmask DP 或子集枚举。",
+      "solution_variant": "bipartite-independent-set-matching"
+    }
+  ]
+}
+

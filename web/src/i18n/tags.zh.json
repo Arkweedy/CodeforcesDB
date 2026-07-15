@@ -9,6 +9,7 @@
   "algorithm/bitmask/xor-subset": "异或子集",
   "algorithm/divide-and-conquer": "分治",
   "algorithm/divide-and-conquer/cartesian-tree": "笛卡尔树",
+  "algorithm/divide-and-conquer/segment-tree-over-time": "时间线段树分治",
   "algorithm/interval-union": "区间并集",
   "dp": "动态规划",
   "dp/argmin-interval-compression": "最优区间压缩",
@@ -118,6 +119,7 @@
   "algorithm/majority-vote/misra-gries": "Misra-Gries 多数投票",
   "algorithm/search/meet-in-the-middle": "折半搜索",
   "algorithm/prefix-sums": "前缀和",
+  "algorithm/prefix-sums/double-prefix-sums": "二阶前缀和",
   "algorithm/prefix-xor": "前缀异或",
   "algorithm/search": "搜索",
   "algorithm/search/binary-search": "二分",
@@ -389,6 +391,7 @@
   "trick/sum-xor-identity": "和异或恒等式",
   "trick/symmetry": "对称性",
   "trick/tight-loose-state": "紧/松状态",
+  "trick/triangular-index-mapping": "三角序列下标映射",
   "trick/tiling": "平铺构造",
   "trick/xor-interval-decomposition": "异或区间分解",
   "trick/xor-hashing": "异或哈希"

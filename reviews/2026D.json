@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2026,
+    "title": "Educational Codeforces Round 171 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2026,
+    "index": "D",
+    "title": "Sums of Segments",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2026/problem/D",
+      "notes": "完整读取 b 的子段和枚举顺序及约束：n,q<=3e5，-10<=a_i<=10，查询端点最大为 n(n+1)/2。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135680",
+      "notes": "与 C 共用一次动态页面加载；展开 D Tutorial，核对按左端点分块、位置到块的映射、块内二阶前缀和及块和前缀。展示公式末项把块基准误写为 p_l，实际应为 p_b；已用官方代码及独立验证纠正。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bpxpwxvg",
+      "notes": "实际阅读 lijunxi20231818 的具体文章；核对 block end、pre/pre2、完整块前缀和及左右残块公式。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2026/submission/300532339",
+      "notes": "该链接来自 Luogu 文章的 AC 记录；Codeforces 页面核验为 Accepted，并读取与文章一致的 C++17 源码。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2026/problem/D",
+      "notes": "独立推导 F(r)-F(l-1) 版本，并将所有公式与显式构造的 O(n^2) 序列 b 穷举对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "把原数组所有子段和按左端点递增、右端点递增的顺序组成长度 n(n+1)/2 的序列 b；每次询问 b 的一个区间和。",
+    "constraints": "n,q<=3e5；-10<=a_i<=10；1<=l<=r<=n(n+1)/2。不能显式构造二次规模的 b，块位置、块和及答案均需 64 位整数。",
+    "core_idea": "按固定左端点 i 将 b 分成长度 n-i+1 的块。令 P_j=sum(a_1..a_j)，Q_j=sum(P_1..P_j)，则同一块内从 s(i,L) 到 s(i,R) 的总和为 Q_R-Q_{L-1}-(R-L+1)P_{i-1}。再预处理每块总和及其前缀。第 i 块的结尾位置是 E_i=i(2n-i+1)/2；对 b 的前缀长度 x，用 lower_bound(E,x) 找到所在块及块内右端点，得到 F(x)=完整块之和+当前块前缀，查询即 F(r)-F(l-1)。",
+    "complexity": "O(n) 预处理，O(log n) 每次查询，总计 O(n+q log n) 时间、O(n) 空间。",
+    "tricks": [
+      "把 O(n^2) 的隐式序列按共同左端点切成三角形长度的块。",
+      "对普通前缀和再次取前缀，使一串同左端点子段和可 O(1) 聚合。",
+      "用块累计长度把一维位置映射回 (左端点, 右端点)。",
+      "统一计算 b 的前缀函数 F，自动覆盖查询两端落在同一块的情况。"
+    ],
+    "proof_risks": [
+      "块内公式减去的是 P_{i-1}，不是查询局部左偏移对应的前缀；动态 editorial 的渲染文本在此处有下标笔误。",
+      "若直接拼左右残块，同块查询需要让完整块前缀差抵消整块；F(r)-F(l-1) 写法更不易出错。",
+      "n(n+1)/2 和块和可远超 32 位。"
+    ],
+    "taxonomy_notes": [
+      "official dp tag 未保留：解法没有 DP 状态或转移，只有静态累计量与索引映射。"
+    ],
+    "small_scale_verification": {
+      "method": "显式生成 b 及其前缀和，与 editorial 的块定位、完整块前缀和和二阶前缀公式比较每个合法 [l,r]。",
+      "coverage": "穷举 n=1..6、a_i in {-2,-1,0,1,2} 的 19,530 个数组，共检查 4,021,530 个区间。",
+      "result": "全部区间答案一致，包括负数、零、单块、跨块和完整 b 边界。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "triangular-block-prefix-query",
+      "summary": "预处理 P、Q、每块总和及块和前缀；定义 b 的前缀聚合 F(x)，二分 x 所在块后用二阶前缀和补当前残块。",
+      "complexity": "O(n+q log n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-sums/double-prefix-sums",
+      "display_name": "Double prefix sums",
+      "importance": "primary",
+      "evidence": "Q 是 P 的前缀和；Q_R-Q_{L-1}-(R-L+1)P_{i-1} 正是 O(1) 聚合同左端点多个子段和的核心公式。",
+      "solution_variant": "triangular-block-prefix-query",
+      "description": "Apply a prefix sum over an existing prefix-sum array to aggregate ranges of ordinary prefix values, especially sums of many subarray sums sharing an endpoint; excludes multidimensional prefix sums.",
+      "parent": "algorithm/prefix-sums",
+      "created_reason": "现有 algorithm/prefix-sums 不能区分普通区间和与本题决定性的二阶累计技巧；该模式可复用于子段和之和、三角加权和等问题。",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/triangular-index-mapping",
+      "display_name": "Triangular index mapping",
+      "importance": "primary",
+      "evidence": "b 的第 i 块长度为 n-i+1，必须利用 E_i=i(2n-i+1)/2 将查询位置映射为块编号和块内右端点。",
+      "solution_variant": "triangular-block-prefix-query",
+      "description": "Map a linear index in a row-major triangular enumeration of pairs or subsegments to its row/block and in-block offset using cumulative row lengths, binary search, or an exact inverse formula.",
+      "parent": "trick",
+      "created_reason": "普通 binary-search 标签无法表达识别并索引隐式 O(n^2) 上三角序列这一可复用建模技巧；它常见于所有区间、所有有序点对的扁平枚举。",
+      "status": "candidate"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "任意查询统一改写为 F(r)-F(l-1)，只需实现一个隐式 b 的前缀聚合函数。",
+      "solution_variant": "triangular-block-prefix-query"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "块结尾 E_i 单调递增，每个查询端点通过 lower_bound 在 O(log n) 内定位所属块。",
+      "solution_variant": "triangular-block-prefix-query"
+    }
+  ]
+}
+
