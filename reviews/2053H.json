@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "H",
+    "title": "Delicate Anti-monotonous Operations",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2053/problem/H",
+      "notes": "Read the operation, both optimization objectives, and the full constraints: sum(n)<=10^6, so the final algorithm must be linear."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "Official hints, optimality lemmas, and O(n) reference implementation were inspected. They establish the w=2 invariant, the nw-1 target for w>=3, unimodality of final-w last-touch times, and the bidirectional run scan."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/pfwit941",
+      "notes": "Independent Luogu explanation was consulted for equality propagation, the treatment of terminal/internal w-runs, and the compressed-state brute checker used to debug the delicate boundary cases."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2053/problem/H",
+      "notes": "Re-derived the w=2 run invariant and the w>=3 reverse-wave model. A direct state-graph BFS was compared with a line-by-line port of the official O(n) algorithm on all 2,710 arrays for w=2,n<=7; w=3,n<=6; and w=4,n<=5, with exact agreement on both outputs."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Repeatedly replace an adjacent equal pair by any unequal pair in [1,w]. Determine the largest reachable array sum and, among all ways to reach it, the minimum number of operations.",
+    "constraints": "1<=t<=10^5, 1<=n<=2*10^5, 2<=w<=10^8, sum(n)<=10^6. The sum needs 64-bit arithmetic and the intended total complexity is O(sum(n)).",
+    "core_idea": "First separate immobile states: with no adjacent equality no operation is possible, and the all-w array is already optimal. For w=2, maximal runs of 1 are independent: an operation on 11 can remove exactly one 1 from its run but can never erase the run's final 1. If there are R runs and C ones, the answer is (2n-R, C-R). For w>=3, whenever an operation is available and the array is not all w, all-w is impossible because every performed pair must end unequal, while n-1 copies of w plus one w-1 are constructible; hence the maximum is nw-1. To minimize operations, view an equal pair as a movable operation token: aa followed by b can be rewritten so the equality moves one position, using a third value when w itself blocks the sweep. Reverse the process from the final single-defect array. The official last-touch lemma says the times at which the final w positions become fixed are first increasing and then decreasing, so an optimum is determined by a seed equal pair and one of the two expansion orientations. After optionally leaving terminal w-runs untouched, scan each orientation and enumerate every seed. The no-obstacle cost is the distance needed to carry the equality to the chosen end plus the return expansion. Internal maximal w-runs add a length-only penalty: 2 for a singleton and ceil(L/2) for L>=2, with one local saving when a singleton can be absorbed beside the seed. Maintaining this cumulative run penalty while scanning, and repeating on the reversed active interval, evaluates every optimal form in O(n).",
+    "complexity": "O(n) time and O(1) auxiliary memory per test case; O(sum(n)) overall.",
+    "tricks": [
+      "Treat an adjacent equal pair as the movable token that enables the next local rewrite.",
+      "Reverse from the unique w-1 defect and use unimodal last-touch times to reduce arbitrary operation histories to two directional sweeps.",
+      "For w=2, compress the process to independent maximal runs of 1.",
+      "For w>=3, aggregate each internal run of w by its closed-form extra cost instead of simulating operations.",
+      "Terminal w-runs may remain fixed; isolated w values next to the seed require a one-operation correction.",
+      "Run the same scan in both directions by reversing the active interval."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The high-level optimality follows the official two lemmas, but the editorial and Luogu article do not give a fully formal proof for every boundary correction in the compact scan.",
+      "The implementation is unusually case-sensitive: single w, two consecutive w values, long terminal w-runs, and the seed immediately after an isolated w must be distinguished.",
+      "Small-state exhaustive agreement strongly supports the implementation, but it is not a substitute for a complete published proof of all scan formulas."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-wave-run-scan",
+      "summary": "Handle w=2 by counting runs of 1. For w>=3, use the reverse last-touch characterization, enumerate the seed equality and both propagation directions, and maintain closed-form penalties of encountered w-runs while allowing terminal w blocks to stay fixed.",
+      "complexity": "O(n) time and O(1) auxiliary memory",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The maximum nw-1 for w>=3 is attained by explicitly propagating an equal pair and constructing n-1 values w plus one value w-1; the minimum-operation algorithm enumerates canonical constructions.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "primary",
+      "evidence": "Optimality and the linear scan are obtained by reversing from the final single-defect array and analyzing the last operation times of positions that become fixed at w.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "Correctness fundamentally splits into w=2 versus w>=3 and then distinguishes immobile arrays, all-w arrays, terminal w-runs, internal w-runs, and isolated-w absorption cases.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/helper-buffer",
+      "importance": "secondary",
+      "evidence": "The adjacent equal pair is maintained as a reusable local buffer/token: one operation rewrites it so that a new equality appears one position farther along the chosen sweep.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "secondary",
+      "evidence": "Potentially long blocks of w are handled by the aggregate penalty 2 for length 1 and ceil(L/2) for length at least 2, avoiding operation-by-operation simulation.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "For w=2 each initial run of 1 must retain one 1, while for w>=3 the final-w last-touch order is unimodal; these invariants provide the lower bounds matched by construction.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Leftward and rightward propagation are symmetric and are covered by running the same scan on the active interval and its reversal.",
+      "solution_variant": "reverse-wave-run-scan"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The accepted linear formula requires careful indexing and several boundary corrections, but implementation detail is not the conceptual retrieval target.",
+      "solution_variant": "reverse-wave-run-scan"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "D",
+    "title": "Refined Product Optimality",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "greedy",
+      "math",
+      "schedules",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2053/problem/D",
+      "notes": "阅读目标函数、单点加一修改及完整约束：n,q<=2e5，sum(n),sum(q)<=4e5，答案模 998244353。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解用交换论证证明两数组同序配对最优，并确认一次加一只需修改排序数组中对应值的最右位置。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/mupnb6yo",
+      "notes": "独立题解交叉确认排序配对、upper_bound 定位等值块末端，以及通过乘法逆元替换单个乘积贡献。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2053/problem/D",
+      "notes": "对 n<=7 的 7000 组随机数组穷举 b 的全部排列验证同序配对最优；另进行 285000 次随机单点加一，验证等值块末端更新、排序状态和维护乘积均与完整重算一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053D",
+      "notes": "Luogu 题解集合；本次使用的具体文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "两个数组中只有 b 可任意重排，需要最大化所有 min(a_i,b_i) 的乘积；随后在线处理对任一数组元素加一的修改。",
+    "constraints": "t<=1e4，n,q<=2e5，sum(n),sum(q)<=4e5，初值不超过 5e8；需要约 O(log n) 处理一次修改。",
+    "core_idea": "把 a 和 b 分别升序排列为 c 和 d。若配对中存在 c_i<=c_j 但 d_i>d_j 的逆序，交换 d_i,d_j 不会减小两个 min 的乘积，因此反复消除逆序后，同序配对达到最优。若原数组中的值 v 被加一，排序后的对应多重集中只需把最右侧的 v 改成 v+1；后继若存在必至少为 v+1，所以数组仍有序。用 upper_bound 找到该位置 p，只有 min(c_p,d_p) 这一项可能变化：更新 c 时，仅当 c_p<d_p 才把贡献从 c_p 替换为 c_p+1，更新 d 同理。通过模逆元删除旧贡献并乘入新贡献。",
+    "complexity": "O(n log n + q*(log n + log MOD)) time and O(n) memory.",
+    "tricks": [
+      "用相邻逆序交换论证证明同序配对最优。",
+      "单点加一时修改等值块的最右元素，可以在不移动其他元素的情况下维持排序。",
+      "总乘积只变化一个位置的贡献，可用模逆元进行乘法替换。",
+      "所有可能出现的数组值仍严格小于 998244353，因此旧贡献在模意义下非零且逆元存在。",
+      "Codeforces 的 schedules 标签不是该解法的实质，不纳入 reviewed tags。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-block-end-maintenance",
+      "summary": "分别维护两个升序数组和原数组。修改时在对应升序数组中二分找到旧值的最后一次出现，只替换该位置及其乘积贡献。",
+      "complexity": "O(n log n + q*(log n + log MOD)) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "通过不断交换逆序配对且证明乘积不减，可贪心消除全部逆序并得到同序最优配对。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "最大乘积被化为两个升序数组逐位置取 min 的乘积，动态维护也依赖排序后的等值块结构。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "trick/exchange-argument",
+      "display_name": "Exchange argument",
+      "description": "Prove optimality by swapping an inverted, conflicting, or locally inferior pair and showing that the objective does not worsen, repeatedly normalizing a solution into a greedy or sorted form.",
+      "parent": "trick",
+      "created_reason": "The taxonomy has no tag for the reusable local-swap proof pattern used in greedy ordering, matching, and scheduling arguments; generic greedy and sorting tags do not expose how optimality is proved.",
+      "status": "candidate",
+      "aliases": [
+        "exchange argument",
+        "swap argument",
+        "adjacent exchange",
+        "pairwise exchange",
+        "pairwise interchange",
+        "交换论证",
+        "邻项交换"
+      ],
+      "importance": "primary",
+      "evidence": "同序配对最优性的完整证明依赖交换任意一个逆序配对，并证明对应的两个 min 之积不会下降。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "每次修改只替换一个排序位置的 min 因子，因此答案通过删除旧因子并加入新因子在线维护。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "upper_bound 用于在升序数组中定位被增加数值的最右出现位置。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "secondary",
+      "evidence": "修改必须按输入顺序执行并在每次修改后立即输出当前最优乘积。",
+      "solution_variant": "sorted-block-end-maintenance"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "维护模乘积时使用费马小定理求旧贡献的乘法逆元。",
+      "solution_variant": "sorted-block-end-maintenance"
+    }
+  ]
+}

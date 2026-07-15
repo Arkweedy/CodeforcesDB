@@ -1,0 +1,144 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "F",
+    "title": "Earnest Matrix Complement",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dp",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2053/F",
+      "notes": "阅读题面、目标函数与完整约束：n*m 及其跨测试总和均不超过 6e5，颜色数 k<=n*m。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解证明每行空位可统一填一种颜色，给出按最后一行所选颜色的 DP、稀疏例外优化，以及 O(nm) 的 max-plus 懒标记实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/7jxuk87i",
+      "notes": "独立题解交叉确认统一颜色结论、O(nk) DP，并给出用支持全局 max-plus 变换和单点修正的线段树实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/11-twentythree/p/18641449",
+      "notes": "独立说明了固定相邻行时每个空位贡献线性、因此整行可取同一最优颜色，并确认 O(nm log k) 线段树方案。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2053/F",
+      "notes": "独立推导精确 DP 与 max-plus 变换合成；随机检查 4500 个小矩阵，任意逐格填充、逐行统一填充和 DP 的答案完全一致，并检查 100000 组懒变换合成恒等式。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053F",
+      "notes": "Luogu 题解集合页；本次实际采用的具体文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "矩阵每格取 1..k，部分位置为空。填满后，相邻两行对每种颜色的出现次数乘积之和构成美丽值，要求最大化总美丽值。",
+    "constraints": "t<=2e4，2<=n,m<=2e5，n*m<=6e5，sum(n*m)<=6e5，1<=k<=n*m；答案和 DP 值必须使用 64 位整数。",
+    "core_idea": "记 z_i 为第 i 行空位数，d_{i,u} 为该行初始颜色 u 的数量。固定相邻行后，第 i 行每个空位若填 u，新增贡献都是 d'_{i-1,u}+d'_{i+1,u}，目标对各空位是线性的，所以存在最优解使同一行所有空位都填同一种颜色。令 F_i(j) 表示前 i 行中第 i 行空位统一填 j 时、扣除固定-固定贡献后的最大值，则 M_i=max_w(F_{i-1}(w)+z_{i-1}d_{i,w})，且 F_i(j)=z_i d_{i-1,j}+max(M_i, F_{i-1}(j)+z_{i-1}d_{i,j}+z_{i-1}z_i)。对相邻两行都未出现的绝大多数颜色，转移统一退化为 x -> max(M_i,x+z_{i-1}z_i)。映射 T_{A,B}(x)=max(A,x+B) 在复合下仍由两个参数表示：T_{C,D}∘T_{A,B}=T_{max(C,A+D),B+D}。因此把公共转移懒合成，只对当前或上一行出现过的 O(m) 个颜色物化并按精确公式修正；M_i 也只需从全局最大值和当前行非零频次颜色中取得。另加每对相邻行的固定-固定贡献即可。",
+    "complexity": "官方实现 O(nm+k) time and O(k+m) memory per test case，因 k<=nm 可写为 O(nm) time；跨测试总复杂度 O(sum(nm))。",
+    "tricks": [
+      "固定邻行后，空位颜色只以线性系数出现；把整行空位全部移到最大系数颜色不会变差。",
+      "将固定-固定颜色贡献先独立累加，使 DP 只维护至少涉及一侧空位的增量。",
+      "颜色域可很大，但每一行只有 O(m) 个非零固定频次；公共转移懒执行，只物化相邻两行支持集的并集。",
+      "把 x -> max(A,x+B) 看成 max-plus 仿射映射，并用两个标量 O(1) 合成任意多次全局转移。",
+      "遍历两行原始元素时必须去重同一颜色；用时间戳数组可避免清空 O(k) 或重复修正。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "线性实现最容易错在物化某颜色时忘记先应用累计的全局 max-plus 标记，或在同一行重复处理相同颜色。",
+      "固定-固定贡献应与 DP 增量严格分离，否则相邻行已有同色元素会被重复计数。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "linear-sparse-exception-dp",
+      "summary": "官方主解。维护每种颜色的压缩 DP 值及全局映射 T_{A,B}(x)=max(A,x+B)。每过一对相邻行，先由全局最大值和当前行出现颜色求 M_i，给所有颜色复合公共映射，再仅枚举两行出现过的颜色，物化旧值并按完整转移覆盖或修正。",
+      "complexity": "O(nm+k) time, O(k+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "segment-tree-max-plus-lazy-dp",
+      "summary": "按相同 DP 建一棵颜色轴线段树，节点维护区间最大值，懒标记表示 max-plus 映射 x -> max(A,x+B)；公共转移做整棵树更新，非零频次颜色做单点物化与修正。实现更直接但多一个 log k。",
+      "complexity": "O((nm+k) log k) time, O(k+m) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "统一每行空位颜色后，F_i(j) 以当前行所选颜色 j 为状态，并由上一行各颜色状态取最大值；整个目标沿行相邻关系递推。",
+      "solution_variant": "linear-sparse-exception-dp"
+    },
+    {
+      "tag": "trick/linear-objective-extreme-choice",
+      "importance": "primary",
+      "evidence": "固定相邻行时，每个空位选择颜色 u 的收益是同一个线性系数；将整行所有空位集中到系数最大的单一颜色必不变差，这是降到 k 状态 DP 的前提。",
+      "solution_variant": "linear-sparse-exception-dp"
+    },
+    {
+      "tag": "trick/lazy-affine-update",
+      "importance": "primary",
+      "evidence": "绝大多数颜色每轮都接受同一个 max-plus 仿射映射 x -> max(A,x+B)，该映射族可用两个参数闭合复合并延迟到颜色被访问时再物化。",
+      "solution_variant": "linear-sparse-exception-dp"
+    },
+    {
+      "tag": "trick/sparse-exception-updates",
+      "display_name": "Sparse exception updates",
+      "importance": "primary",
+      "description": "Maintain a large indexed state family when each step applies one common bulk transition to almost every state and only an explicitly enumerable sparse set needs an exceptional recalculation. Lazily compose the bulk transition and materialize states only when they enter the exception set; do not use merely because the input itself is sparse.",
+      "parent": "trick",
+      "created_reason": "Existing lazy-affine-update describes the composable max-plus map, but does not capture the separate sparsity argument that reduces this problem from O(nk) to O(nm): only colors appearing in either adjacent row deviate from the default transition. This reusable default-plus-sparse-corrections pattern currently has no tag.",
+      "status": "candidate",
+      "aliases": [
+        "sparse exception update",
+        "default transition with sparse exceptions",
+        "sparse corrections"
+      ],
+      "evidence": "For each adjacent row pair, every color outside the union of their nonzero frequency supports uses one common transition, while only O(m) supported colors require exact recomputation; explicitly exploiting this split removes the factor k.",
+      "solution_variant": "linear-sparse-exception-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "实现将固定-固定贡献独立出来，只维护相邻行所选空位颜色产生的可变贡献。",
+      "solution_variant": "linear-sparse-exception-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "独立替代解把颜色 DP 存在线段树中，支持全局可合成 max-plus 更新、单点修正和全局最大值查询。",
+      "solution_variant": "segment-tree-max-plus-lazy-dp"
+    },
+    {
+      "tag": "data-structure/lazy-propagation",
+      "importance": "secondary",
+      "evidence": "在线段树变体中，max-plus 变换标记在内部节点合成，仅在访问需要修正的颜色前下传。",
+      "solution_variant": "segment-tree-max-plus-lazy-dp"
+    }
+  ]
+}

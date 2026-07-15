@@ -1,0 +1,124 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "E",
+    "title": "Resourceful Caterpillar Sequence",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "games",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2053/problem/E",
+      "notes": "阅读完整博弈规则、必须移动的补充说明和约束：n<=2e5，sum(n)<=4e5，需要统计使 Aron 获胜的有序端点对。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解证明若有人获胜则必在前两回合内，并给出按叶子、叶子邻点和非叶邻居数量分类的 O(n) 直接计数公式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sdw97oma",
+      "notes": "独立题解交叉确认胜负分类，并给出以有向边两侧的安全节点数量进行统计的换根 DP 实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://gdst.dev/posts/CF2053E/",
+      "notes": "独立分析将节点分为叶子、叶子邻点和距叶至少二步的安全节点，交叉确认 Aron 第二回合获胜的必要充分条件。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2053/problem/E",
+      "notes": "构建完整有限状态博弈并进行吸引域求解；对 2<=n<=7 的全部 18248 棵有标号树，逐个有序端点对验证胜负分类，同时验证 O(n) 公式与枚举计数一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053E",
+      "notes": "Luogu 题解集合；本次使用的具体文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "在树上由有序端点 (p,q) 定义一条毛毛虫路径，Nora 和 Aron 分别移动头、尾并试图让自己的端点到达叶子。统计所有使后手 Aron 获胜的初始有序端点对。",
+    "constraints": "t<=2e4，2<=n<=2e5，sum(n)<=4e5；答案最多为 n*(n-1)，需要 64 位整数和 O(n) 处理。",
+    "core_idea": "对手总能在下一次同侧行动中撤销上一次移动，因此若某玩家不能在当前对应回合获胜，也不可能首次在再后两个回合获胜；所有胜负可压缩到初始、第 1 回合和第 2 回合。若 q 是叶子且 p 不是叶子，Aron 初始获胜，贡献为 L*(n-L)，其中 L 是叶子数。若两端均非叶，Nora 第 1 回合获胜当且仅当 p 邻接叶子。否则 Nora 的任意移动都会让尾端退到 m=f(p,q)，即 q 沿路径通向 p 的邻点；Aron 第 2 回合获胜当且仅当 m 邻接叶子。令 S 为所有非叶且不邻接任何叶子的安全节点数量。枚举一个邻接叶子的非叶节点 m，令 k_m 为其非叶邻居数。固定任意安全 p 后，k_m 个候选 q 中恰有一个位于 m 通向 p 的方向而不满足 f(p,q)=m，其余 k_m-1 个均合法，因此该 m 贡献 S*(k_m-1)。没有非叶邻居的 m 贡献为 0。",
+    "complexity": "O(n) time and O(n) memory per test case.",
+    "tricks": [
+      "用可撤销移动证明持续 10^100 回合的博弈只需分析最初两个回合。",
+      "按是否为叶子、是否邻接叶子把所有节点压缩成少量结构类型。",
+      "固定中间节点 m 和安全头端 p 后，利用树上唯一路径排除唯一一个朝向 p 的尾端邻居。",
+      "直接公式只需度数和叶子邻接信息，不需要真正执行博弈 DP。",
+      "换根实现可把每条有向边对应的安全节点侧大小作为独立贡献。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "degree-classification-formula",
+      "summary": "统计叶子数 L、安全节点数 S，以及每个叶子邻点 m 的非叶邻居数 k_m；答案为 L*(n-L) 加所有有效 S*(k_m-1)。",
+      "complexity": "O(n) time, O(n) adjacency memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "directed-edge-side-rerooting",
+      "summary": "标记安全节点并任选根。预处理每棵子树中的安全节点数；对每条满足条件的有向边 q->m，使用子树和或全树减子树得到删边后 m 一侧的安全 p 数量并累加。",
+      "complexity": "O(n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "必须在双方最优且以避免对方获胜为次级目标的规则下，推导 Aron 获胜的必要充分条件。",
+      "solution_variant": "degree-classification-formula"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "撤销论证把可能持续 10^100 回合的博弈压缩为初始状态及前两个回合的有限分类。",
+      "solution_variant": "degree-classification-formula"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "计数依赖树上唯一路径、叶子邻接关系，以及固定 m 后非叶邻居对应的删边方向。",
+      "solution_variant": "degree-classification-formula"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "胜负被完整划分为双叶平局、单端叶子立即获胜、Nora 第一回合获胜、Aron 第二回合获胜和最终平局。",
+      "solution_variant": "degree-classification-formula"
+    },
+    {
+      "tag": "dp/rerooting-dp",
+      "importance": "secondary",
+      "evidence": "替代解法需要对每个有向树边取得删边后指定一侧的安全节点数，可由子树和与补集实现换根统计。",
+      "solution_variant": "directed-edge-side-rerooting"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "换根变体通过一次 DFS 计算父节点、子树大小和子树安全节点数量。",
+      "solution_variant": "directed-edge-side-rerooting"
+    }
+  ]
+}

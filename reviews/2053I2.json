@@ -1,0 +1,144 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "I2",
+    "title": "Affectionate Arrays (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "graphs",
+      "greedy",
+      "math",
+      "shortest paths",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2053/I2",
+      "notes": "阅读修正后的完整题面、I2 的 value 求和目标与约束；题面明确说明比赛原版已被替换且原提交被移除。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方修正版题解确认插空方案数等于子序列出现次数之和，并给出在 I1 最短长度 DP 上维护计数 g、分段 deque 与全局标记的 O(n) 实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/aabk4vs5",
+      "notes": "独立题解交叉确认前缀和充要条件、I1 的两层值/最优区间结构、I2 的特殊区间与非特殊区间计数转移，以及按连续段均摊维护的实现细节。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2053/I2",
+      "notes": "独立推导显式 f/g DP 与 deque 压缩转移；对 n<=5、a_i in [-3,3] 且满足题设的全部 6160 个数组，将 O(n*s^2) 显式 DP 与官方线性算法逐一对拍，全部一致，并复现全部样例。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053I2",
+      "notes": "Luogu 题解索引；本次实际采用的具体专栏文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "在保持 a 为子序列、总和不变、最大子段和最小且长度也最小的所有整数数组 b 中，求 a 在这些 b 中的子序列出现次数总和。",
+    "constraints": "t<=1e5，1<=n<=3e6，sum(n)<=3e6，|a_i|<=1e9，且 max(|a_i|)<=sum(a_i)。前缀和状态上界 s=sum(a_i) 可达约 3e15，不能按 s 建数组；答案模 998244353。",
+    "core_idea": "令 s=sum(a)。任何 b 的最大子段和至少为整个数组和 s；它恰为 s 当且仅当所有前缀和都位于 [0,s]，因为任意子段和是两个前缀和之差。最短合法 b 在 a 的 n+1 个空隙中每处至多插入一个数。令 f_i(j) 为处理前 i 个原元素、当前前缀和为 j 时的最少插入数，g_i(j) 为达到该最优值的插空描述数。初始 f_0(0)=0、f_0(j>0)=1，且每个状态计数为 1。若 L_i={k | 0<=k+a_i<=s}，则 f_i(j)=min_{k in L_i}(f_{i-1}(k)+[j!=k+a_i])。I1 只需维护 f：每层仅取 v 或 v+1，取 v 的位置形成连续区间。I2 还要维护 g：该最优区间平移后形成特殊区间并直接复制前驱计数；其余位置在保留可用的无插入前驱计数之外，再统一加上所有合法最小层前驱的计数和。修正版题意的关键是，每个插空描述与最终 b 中选择一次 a 的子序列嵌入一一对应，因此即使多个描述生成同一个 b，它们的重数恰好就是 value，g_n(s) 正是所求。虽然 j 域巨大，f/g 都可表示为 O(n) 个连续常值段。按 a_i 正负，转移只会从 deque 一端裁掉若干长度、整体平移、在另一端补块，并对特殊/非特殊部分做统一加法；用坐标偏移、两类 lazy tag 与两类计数和即可 O(1) 均摊更新。",
+    "complexity": "O(n) time and O(n) memory per test batch; each compressed interval is inserted and removed at most once.",
+    "tricks": [
+      "把最小最大子段和转化为所有前缀和必须落在 [0,s] 的路径约束。",
+      "证明最短超序列的每个原数组空隙至多放一个新数，从而得到按原元素分层的最少插入 DP。",
+      "I1 只维护最优值及其连续区间；I2 额外维护所有最优插空描述的权重分布。",
+      "利用插空描述与 a 在 b 中一次子序列嵌入的双射，正确处理相同元素导致的重复 b。",
+      "把巨大前缀和值域上的 DP 压成连续常值段，并用 deque 支持两端裁剪/补段。",
+      "使用全局坐标偏移和特殊/非特殊两套加法标记，避免逐段平移和全区间更新。",
+      "每个段只入队、出队一次，所有 while 循环总复杂度为 O(n)。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "只适用于当前修正后的 I2 题意；比赛原版要求计数不同 b，官方原解曾被判错并已移除，旧题解或旧提交不能混作证据。",
+      "I2 与 I1 的本质差异是维护最优方案计数 g 及其分段 lazy 更新，而不是重新求最短长度。",
+      "实现时必须区分特殊最优区间与其补集的总和和 lazy tag；当裁剪后全域 f 同值时要正确合并两类状态。",
+      "s=0 时由约束推出所有 a_i=0，答案为 1；单独处理可避免零长度初始段。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "piecewise-constant-deque-optimal-counting-dp",
+      "summary": "在 I1 的最少插入 DP 上同时维护最优计数。把前缀和值域划分为 f 与 g 均一致的连续段，deque 处理由 a_i 正负决定的前后缀裁剪和补段；用整体坐标偏移、特殊/非特殊 lazy 加法及聚合和实现所有计数转移。",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "I2 的答案由 g_i(j) 统计达到 f_i(j) 最少插入数的所有插空描述；必须在优化 DP 上同步合并最优前驱计数，而 I1 只维护 f。",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "最大子段和最小值为 s 的条件被精确转化为每个前缀和均在 [0,s]，由此前缀和 j 才成为完整且可转移的 DP 状态。",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "trick/state-compression/piecewise-constant",
+      "display_name": "Piecewise-constant state compression",
+      "importance": "primary",
+      "description": "Represent a large one-dimensional state function by maximal intervals on which all maintained values are constant, and update those interval runs instead of individual coordinates. Use when the interval-run bound and run operations are essential to removing dependence on a huge coordinate range, not for ordinary coordinate compression of finitely listed points.",
+      "parent": "trick/state-compression",
+      "created_reason": "The existing state-compression tag is too broad, while string/run-length-encoding would misclassify a numerical DP. CF2053I2 crucially replaces an impossible O(sum(a)) state array by O(n) constant-value intervals and performs every transition on those runs.",
+      "status": "candidate",
+      "aliases": [
+        "piecewise constant compression",
+        "interval run compression",
+        "run-compressed DP",
+        "分段常值压缩"
+      ],
+      "evidence": "s may be about 3e15, but the f/g distribution has only O(n) maximal constant intervals; maintaining exactly these intervals is what makes the hard version linear and independent of s.",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "data-structure/deque",
+      "importance": "primary",
+      "evidence": "Positive and negative a_i cause symmetric suffix/prefix deletion and opposite-end block insertion, so both ends of the compressed interval sequence must be updated; deque gives the required linear implementation.",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "trick/lazy-affine-update",
+      "importance": "secondary",
+      "evidence": "The implementation stores a global coordinate translation and separate additive tags for special and non-special runs, delaying bulk shifts/additions until a run is inspected.",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "Every constant interval is created O(1) times and permanently removed from a deque end at most once, so all variable-length popping loops total O(n).",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "secondary",
+      "evidence": "The corrected hard-version objective counts occurrences of a as a subsequence; the proof identifies each occurrence with one insertion-slot description, resolving multiplicities when equal values make different descriptions produce the same b.",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "At every I1 layer f has only two adjacent values v,v+1 and the v states form one interval; I2 preserves this structure while refining g into constant runs, which justifies the compressed updates.",
+      "solution_variant": "piecewise-constant-deque-optimal-counting-dp"
+    }
+  ]
+}

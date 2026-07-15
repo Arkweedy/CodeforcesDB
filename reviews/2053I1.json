@@ -1,0 +1,124 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "I1",
+    "title": "Affectionate Arrays (Easy Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2053/I1",
+      "notes": "阅读完整题面与约束：需要先最小化最大子段和，再在最优无聊值下最小化包含 a 为子序列的数组长度；sum(n)<=3e6。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解确认最优无聊值为 S=sum(a)，给出前缀和区间 DP、最优状态连续区间不变量和只维护 l,r,v 的 O(n) 实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/aabk4vs5",
+      "notes": "Luogu 独立题解中的 qlen() 与推导交叉确认合法前驱区间、区间相交/重置更新及最终答案 cur+[r<S]+n。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/-cchen-/p/18642699",
+      "notes": "独立中文题解完整写出 f[i][j] 转移，并归纳证明每层 DP 极差不超过 1、最小值位置构成连续区间。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2053/problem/I1",
+      "notes": "独立重证前缀和等价与 DP 压缩；将 O(nS) 完整 DP 和 O(n) 区间算法在 n<=7、a_i in [-3,3] 的全部 316504 个合法数组上对拍，答案完全一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2053/submission/299228386",
+      "notes": "独立题解附带的 accepted submission；Codeforces 反爬页阻止了本次直接读取，因此未作为证据来源。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定整数数组 a，构造总和相同且包含 a 为子序列的数组 b；先使 b 的最大子段和最小，再使长度最小，输出该最短长度。",
+    "constraints": "t<=1e5，n<=3e6，sum(n)<=3e6，|a_i|<=1e9，且 max|a_i|<=S=sum(a_i)。S 和前缀和端点可达 3e15，必须使用 64 位整数，不能枚举 0..S。",
+    "core_idea": "令 S=sum(a)。整个 b 本身就是一个子段，所以无聊值至少为 S；无聊值恰为 S 当且仅当 b 的每个前缀和都位于 [0,S]：越过 S 的前缀或低于 0 后的后缀都会产生大于 S 的子段，而全部前缀在区间内又使任意两前缀之差至多 S。于是只需最少插入整数，让依次放入原元素时的前缀和始终合法。任意两个合法前缀和之间一次插入即可跳转，因此每个相邻原元素的间隙最多考虑一个插入数。定义 f_i(j) 为处理完 a_1..a_i、并允许在 a_i 后插入至多一个数、当前前缀和为 j 时的最少插入数。初始 f_0(j)=[j!=0]，转移为 f_i(j)=min_{0<=k+a_i<=S}(f_{i-1}(k)+[k+a_i!=j])。归纳可证每层只取 v_i 与 v_i+1 两个值，且取最小值 v_i 的状态恰为一个整数区间 [l_i,r_i]。令合法前驱区间 K_i=[max(0,-a_i),min(S,S-a_i)]。若 [l,r] 与 K_i 相交，则无需新增插入，最优区间变为 ([l,r] intersect K_i)+a_i；若不相交，则所有合法前驱至少多花一次，令 v++，最优区间重置为 K_i+a_i。最后到达前缀和 S 的插入数为 v+[S not in [l,r]]，由于 r<=S 可写成 v+[r<S]，答案再加原数组长度 n。",
+    "complexity": "O(n) time and O(n) memory per test case because S must be known before the scan; total O(sum(n)) time. The DP state itself is compressed to O(1) variables.",
+    "tricks": [
+      "用前缀和刻画最大子段和：最优值 S 等价于整条前缀和路径始终留在 [0,S]。",
+      "两个合法前缀和之间可以用一个任意整数直接跳转，所以同一间隙插入多个数永远不会改善最短长度。",
+      "证明整层 DP 只有相邻的两个值，且最小值状态构成连续整数区间。",
+      "每个元素只需将当前最优区间与合法前驱区间相交后平移；空交集恰好强制增加一次插入。",
+      "总和和区间端点使用 64 位整数；输入规模还要求快速 I/O。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "官方英文题解在 I1 段落中把 maximum subarray sum 误写成 LIS，但其前缀和证明、转移和参考代码均明确对应本题无聊值。",
+      "当 S=0 时题面保证迫使所有 a_i=0，区间算法自然返回 n，无需特殊构造。",
+      "末尾还可能需要一次插入把前缀和送到 S，不能漏掉最终的 [r<S]。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "argmin-interval-compressed-dp",
+      "summary": "从前缀和状态 DP 出发，只维护当前最少插入数 v 和所有最优前缀和组成的区间 [l,r]；每读一个 a_i，与其合法前驱区间求交并平移，空交时令 v 加一并重置区间。",
+      "complexity": "O(n) time and O(n) input storage; O(1) auxiliary DP state",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/argmin-interval-compression",
+      "display_name": "Argmin interval compression",
+      "importance": "primary",
+      "description": "Compress a dynamic program over an ordered numeric state space by proving that all minimum-valued states form one contiguous interval and that the remaining state values are determined by a constant offset; maintain only the minimum and interval endpoints. Use when this argmin-interval invariant is the central complexity reduction, not for ordinary interval DP whose state itself is [l,r].",
+      "parent": "dp",
+      "created_reason": "The existing generic dp and trick/state-compression tags cannot retrieve the distinctive O(S)-to-O(1)-state invariant used here: every DP layer has exactly two adjacent cost levels and one contiguous argmin interval. This pattern is reusable and materially different from dp/interval-dp.",
+      "status": "candidate",
+      "aliases": [
+        "argmin interval dp",
+        "interval of optimal states",
+        "two-level dp compression",
+        "最优区间压缩"
+      ],
+      "evidence": "The full prefix-sum DP has S+1 states, but the proof that its minimum positions are exactly one interval [l,r] and all other states cost v+1 reduces every layer to three scalars and makes the required O(n) algorithm possible.",
+      "solution_variant": "argmin-interval-compressed-dp"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "primary",
+      "evidence": "The original maximum-subarray optimization becomes the bounded-prefix-path condition 0<=P_i<=S for every prefix, which exposes the prefix-sum DP state.",
+      "solution_variant": "argmin-interval-compressed-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "A nominally enormous state vector indexed by every j in [0,S] is represented exactly by only (v,l,r).",
+      "solution_variant": "argmin-interval-compressed-dp"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "For each a_i, preserving the current optimum is equivalent to whether the optimal-prefix interval intersects the legal predecessor interval K_i; only their intersection and shift matter.",
+      "solution_variant": "argmin-interval-compressed-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "The compressed implementation can be read as greedily keeping the current insertion count whenever the intervals intersect, but this choice is justified by and equivalent to the exact DP invariant rather than an independent greedy argument.",
+      "solution_variant": "argmin-interval-compressed-dp"
+    }
+  ]
+}

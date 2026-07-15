@@ -1,0 +1,165 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "G",
+    "title": "Naive String Splits",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "greedy",
+      "hashing",
+      "math",
+      "number theory",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2053/G",
+      "notes": "读取完整题面、修改后的限制与大输入提示：2<=n<=m<=5e6，T<=1e5，sum(m)<=1e7。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解用于确认短串优先贪心、公共最小循环节反例、只需检查 c/c+1 次回撤，以及分块加二分达到总线性复杂度；同时核对官方 rolling-hash 实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/xwuj8uak",
+      "notes": "实际阅读的 Luogu 独立题解；详细解释多次回撤为何强制公共循环节、c/c+1 两个候选、线性批量匹配和被 hack 的边界情形。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/caijianhong/p/18701073",
+      "notes": "独立笔记交叉确认交换关系导致 gcd 周期、特殊分支与 sum log(n/i)=O(n) 的全局复杂度证明。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2053/G",
+      "notes": "独立重建直接字符串比较版算法，并对所有二进制 s（2<=n<=7）、t（n<=m<=9）和全部分割点，与位置可达 DP 穷举对拍，共 1,191,024 个 split 实例全部一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053G",
+      "notes": "Luogu 题解集合页候选；本次实际采用的具体专栏已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "对 s 的每个非空前缀/后缀分割 (x,y)，判断 t 能否完全分割为若干个 x 或 y。",
+    "constraints": "T<=1e5，2<=n<=m<=5e6，sum(m)<=1e7；必须把所有 n-1 个分割的总处理压到 O(n+m) 量级，并使用紧凑的 O(n+m) 存储。",
+    "core_idea": "对一个分割令 X 为短串、Y 为长串。一般情况下从 t 的当前位置尽量匹配 X；失配后设 c 为 Y 前缀中完整 X 的最大个数，则第一个可行 Y 只可能从撤回 c 或 c+1 个 X 后开始，用哈希各检查一次。若还需要更深回撤，两个对齐会推出 tail+X=X+tail，因而 X、Y 共享周期；这正是贪心不唯一的唯一异常。预先求 s 的最小周期 P：当 X、Y、t 都由 P 周期生成时，答案改为判断非负整数方程 |X|a+|Y|b=m 是否有解。其余情况使用上述唯一化贪心。每轮最大 X 连续段不能逐个或整段二分：以 B=floor(n/|X|) 个 X 为一批，每次 O(1) 哈希跨越约 n 个字符，再在最后一批内二分；结合长串长度至少 n/2、每轮只检查两个回撤点，以及 sum_i log(n/i)=O(n)，所有分割总复杂度为线性。",
+    "complexity": "Expected O(n+m) time and O(n+m) memory per test case with randomized rolling hash; O(sum(m)) overall because n<=m.",
+    "tricks": [
+      "始终把较短 token 作为贪心填充对象，使每次成功放置长 token 至少推进 n/2。",
+      "把长串写成 X^c 加尾巴；失配时只检查撤回 c 与 c+1 个短串。",
+      "证明第三个及更深回撤候选会产生字符串交换关系，从而归入公共周期特判。",
+      "公共周期分支退化为两个长度的非负线性丢番图可表示性。",
+      "以 floor(n/|X|) 个短串为批次跨越约 n 个字符，再二分最后不足一批的数量。",
+      "用 sum log(n/i)=O(n) 汇总所有分割点的二分成本；哈希实现需注意碰撞风险与大数组内存。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "官方主实现使用单模随机基数 rolling hash，理论上存在极低碰撞概率；需要完全确定性时可换成确定性 LCP/字符串结构，但核心贪心证明不变。",
+      "最容易出错的边界是 Y 的尾巴同时为 X 的前缀，此时必须检查 c+1 次回撤；只检查 c 会被 abaabaab/abaababa 一类数据 hack。",
+      "公共周期方程右端是 |t|=m，不是题解措辞中可能混淆的 |s|。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "linear-batched-greedy-periodic-exception",
+      "summary": "官方线性方案：rolling hash 支持重复块、周期和 token 等值检查；每个分割先处理公共最小周期特例，否则短串贪心、每轮仅验证 c/c+1 两个长串起点，并通过长度约 n 的批次加末批二分找到最大短串连续段。",
+      "complexity": "Expected O(n+m) time and O(n+m) memory per test case",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "harmonic-full-rollback-greedy",
+      "summary": "较易实现的官方/独立变体仍先隔离公共周期特例，但在每轮失配时枚举所有可能的短串回撤位置或直接二分整段；用长 token 的不交推进和跨全部 split 长度的调和级数控制总工作。",
+      "complexity": "Expected O((n+m) log n) time and O(n+m) memory",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/segmentation",
+      "importance": "primary",
+      "evidence": "每个答案位本质上判断 t 是否属于由两个固定 token X、Y 生成的自由幺半群 {X,Y}*；完整解析与分段边界就是目标。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "非公共周期情形下，算法尽量匹配短串，并在失配时选择最早可行的长串起点；周期性证明保证这个局部选择不会漏掉后续方案。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "两次以上有效回撤会导出 tail+X=X+tail，从而强制 X、Y 共享周期；识别并单独处理这一异常是贪心正确性的核心。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "algorithm/hashing/rolling-hash",
+      "display_name": "Rolling hash",
+      "importance": "primary",
+      "description": "Use one-dimensional polynomial or rolling prefix hashes to compare substrings, repeated blocks, or periodic segments in O(1); use for sequence/string substring equality, not unordered-map hashing or two-dimensional hashing.",
+      "parent": "algorithm/hashing",
+      "created_reason": "The database has generic algorithm/hashing and a 2D rolling-hash child, but no tag that retrieves the standard one-dimensional prefix-hash technique central to CF2053G's O(1) token and periodicity checks.",
+      "status": "candidate",
+      "aliases": [
+        "rolling hash",
+        "polynomial hash",
+        "string hash",
+        "字符串哈希"
+      ],
+      "evidence": "所有 split 的 token 相等、X 连续重复次数、Y 候选位置以及最小周期检查都依赖 O(1) 子串哈希比较，否则无法达到总线性时间。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "primary",
+      "evidence": "一次跨越 B=floor(n/|X|) 个 X，使每次批量检查推进约 n 个字符，再只对最后一批二分，消除了逐个匹配和全区间二分造成的额外因子。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "二分求 Y 前缀包含多少个完整 X，并在每个批量跨越后的不足一批内二分最大 X 重复数。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "math/number-theory/linear-diophantine-equation",
+      "display_name": "Linear Diophantine equation",
+      "importance": "secondary",
+      "description": "Solve or test integer or nonnegative-integer equations such as ax+by=c using gcd, extended Euclid, solution bounds, or bounded enumeration; use when representability by integer linear combinations is an explicit algorithmic condition.",
+      "parent": "math/number-theory",
+      "created_reason": "No existing taxonomy tag identifies linear Diophantine representability. In CF2053G the entire common-period exception becomes the nonnegative equation |X|a+|Y|b=|t|, which generic divisibility or gcd alone does not fully describe.",
+      "status": "candidate",
+      "aliases": [
+        "linear diophantine",
+        "diophantine equation",
+        "ax+by=c",
+        "线性丢番图方程"
+      ],
+      "evidence": "当 X、Y、t 共享基本周期时，字符内容不再区分 token，是否可分段恰好等价于 |X|a+|Y|b=m 存在 a,b>=0。",
+      "solution_variant": "linear-batched-greedy-periodic-exception"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "secondary",
+      "evidence": "较简单变体枚举回撤位置，并用跨 token 长度的调和级数约束总工作；线性主解进一步用批处理和 sum log(n/i)=O(n) 消去该对数。",
+      "solution_variant": "harmonic-full-rollback-greedy"
+    }
+  ]
+}

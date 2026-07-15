@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2053,
+    "title": "Good Bye 2024: 2025 is NEAR"
+  },
+  "problem": {
+    "contest_id": 2053,
+    "index": "C",
+    "title": "Bewitching Stargazer",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "divide and conquer",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2053/problem/C",
+      "notes": "阅读递归观察规则与完整约束：t<=1e5，1<=k<=n<=2e9，必须按 O(log n) 处理每组数据。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136455",
+      "notes": "官方题解确认同一轮所有区间等长、递归轮数为 O(log n)，并给出中心对称求和与递归统计两种做法。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://gdst.dev/posts/CF2053C/",
+      "notes": "独立题解交叉确认选中位置关于 (n+1)/2 对称，以及 f(len)=2*f(floor(len/2))+(len mod 2) 的计数递推。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2053/problem/C",
+      "notes": "独立推导逐层贡献公式，并对所有 n<=200、1<=k<=n 与直接递归模拟逐项比较，全部一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2053C",
+      "notes": "Luogu 题解集合候选；本次未将其作为证据来源。"
+    }
+  ],
+  "annotation": {
+    "summary": "递归划分区间；每当当前区间长度为奇数时，把中点下标加入答案。长度小于 k 的区间停止处理，求最终下标总和。",
+    "constraints": "t<=1e5，1<=k<=n<=2e9；不能展开递归树，需要把每组数据压缩到 O(log n) 轮。",
+    "core_idea": "递归到深度 d 时共有 2^d 个等长区间，其长度为 floor(n/2^d)。若该长度为奇数且至少为 k，这一层的所有中点关于 (n+1)/2 中心对称，因此本层中点和为 2^d*(n+1)/2。令 len=n、cnt=1，反复把 len 除以 2、cnt 乘以 2；当 len 为奇数时累加 cnt，最后乘以 (n+1)/2。等价地，选中星星数量满足 f(len)=0 当 len<k，否则 f(len)=2*f(floor(len/2))+(len mod 2)，总下标和为 f(n)*(n+1)/2。",
+    "complexity": "O(log n) time and O(1) auxiliary memory.",
+    "tricks": [
+      "按递归深度整体处理所有等长区间，而不是展开完整递归树。",
+      "利用中心对称：每对选中位置之和恒为 n+1。",
+      "反复右移 n 后的奇偶性等价于依次读取相关二进制位。",
+      "乘积 f(n)*(n+1) 必为偶数，因此整数除以 2 始终合法。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "round-symmetry-halving",
+      "summary": "逐轮维护当前区间长度和区间数量。当前长度为奇数时，利用中心对称直接加入这一整轮的中点总和。",
+      "complexity": "O(log n) time, O(1) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "recursive-selected-count",
+      "summary": "递归计算长度为 len 的区间最终选中多少个位置，再利用整个选中集合关于原区间中心对称，将数量转换成下标总和。",
+      "complexity": "O(log n) time, O(log n) recursion stack",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "每一轮的区间及其中点成中心对称分布，使一整轮的下标和只由选中数量和 n+1 决定。",
+      "solution_variant": "round-symmetry-halving"
+    },
+    {
+      "tag": "trick/recursive-halving",
+      "importance": "primary",
+      "evidence": "每轮区间长度都变为 floor(len/2)，只需沿长度序列 n,floor(n/2),... 扫描 O(log n) 个状态。",
+      "solution_variant": "round-symmetry-halving"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "题目过程由两个同构子区间组成，替代解法直接通过两个半区间的选中数量建立递归式。",
+      "solution_variant": "recursive-selected-count"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "迭代实现通过反复右移 n 并检查最低位，确定哪些递归层的公共区间长度为奇数。",
+      "solution_variant": "round-symmetry-halving"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "答案通过对称配对和等差中心公式化为 f(n)*(n+1)/2。",
+      "solution_variant": "round-symmetry-halving"
+    }
+  ]
+}
