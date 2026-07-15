@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "H1",
+    "title": "Cool Swap Walk (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/H1",
+      "notes": "Read the complete current statement, examples, walk semantics, and all constraints; H1 permits at most 2n+4 walks."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "Read the full official H1 tutorial and complete reference implementation. It derives the key path, anchors a minimum, simulates odd-even transposition phases on the remaining values, restores the minimum with the top-row/right-column path, and handles the rotating frame by parity."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6wzo3ykh",
+      "notes": "Actually read the complete independent H2 article. Its operation model and H1 discussion independently cross-check that RD/RRDD tiles move the first value to the end while selecting disjoint adjacent swaps, and that H1 spends a second walk per odd-even phase to restore the first value."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ymyc27dn",
+      "notes": "Actually read the complete H1 article. It describes shift/shuffle macros and a suffix-building alternative, but explicitly relies on trying ad hoc pre-transformations and supplies no worst-case 2n+4 proof, so it was not used as correctness evidence."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/136563",
+      "notes": "Read the linked community post behind the Luogu H1 alternative. The author explicitly asks how to hack the heuristic and reports only stress testing; it is retained as a cautionary source, not as a validated solution."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/H1",
+      "notes": "Independently proved the key-path permutation, restoring-path permutation, rotating-coordinate reduction to alternating odd-even phases, and walk bound. A path-level simulator checked all permutations through n=8, all arrays over values 1..3 through n=8, and 150 random arrays up to n=500 as part of a 56,214-case joint check. Every route was monotone with exactly 2n-2 moves and every H1 result sorted within 2n-1 walks."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given an integer array, output at most 2n+4 monotone paths from (1,1) to (n,n); entering (i,j) swaps a_i and a_j when i differs from j, and the accumulated walks must sort the array nondecreasingly.",
+    "constraints": "1 <= t <= 10000, 2 <= n <= 500, 1 <= a_i <= n, and the sum of n^2 over tests is at most 2.5e5. Every output path has exactly 2n-2 moves, and H1 allows at most 2n+4 paths.",
+    "core_idea": "Tile a walk along the diagonal by RD or RRDD. Starting with a carried value a_1, either tile advances it past one value unchanged or past two values while swapping those two; hence one key walk maps [a_1,a_2,...,a_n] to [b_2,...,b_n,a_1], where b is obtained from [a_2,...,a_n] by arbitrary disjoint adjacent swaps. First use one selector-shaped walk to place a minimum at position 1. A key walk can then realize one compare-exchange matching of odd-even transposition sort on the other m=n-1 values, but sends the minimum to position n. The path R^(n-1)D^(n-1) maps [c_1,...,c_m,mn] to [mn,c_m,c_1,...,c_{m-1}], restoring the minimum and rotating the tail right by one. Define the logical tail after r rounds by rotating the physical tail left by r; the parity-adjusted physical matching becomes exactly the alternating odd/even matching in that logical frame, with the wraparound pair omitted. Odd-even transposition sort finishes after m phases, so one optional selector plus two walks for each phase sorts the array in at most 2n-1 walks.",
+    "complexity": "O(n^2) time and O(n^2) output size per test; O(n^2) memory when paths are buffered, or O(n) auxiliary memory if streamed.",
+    "tricks": [
+      "View RD and RRDD as diagonal tiles that carry the first value while optionally compare-swapping one disjoint adjacent pair.",
+      "Keep a minimum as a sentinel at position 1 between sorting phases.",
+      "Analyze the tail in a coordinate frame counter-rotating against the restoring path.",
+      "Skip exactly the physical pair that would wrap across the logical tail boundary.",
+      "Use strict greater-than compare-exchanges so duplicate values remain valid."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the official odd-even construction after source cross-checks, the independent rotating-frame proof, and path-level exhaustive/random verification.",
+      "The independent H1 Luogu/community suffix-building construction has no published worst-case proof for its trial pre-transformations and is intentionally not recorded as a solution variant.",
+      "algorithm/sorting/odd-even-transposition-sort is absent from the current registry and is proposed as a reusable candidate; applying this payload requires taxonomy approval and a WebUI translation."
+    ],
+    "proof_risks": [
+      "A key walk does not allow arbitrary swaps: it moves the old first value to the end and permits only a matching of disjoint adjacent swaps among the remaining values.",
+      "The restoring path also right-rotates the tail. Reusing fixed physical parity pairs without compensating for that rotation does not simulate odd-even transposition sort.",
+      "The omitted comparison is the pair crossing the logical boundary after rotation, not an arbitrary inconvenient pair.",
+      "The proof needs m=n-1 alternating phases on the tail and one optional minimum-placement walk; the resulting bound is 2n-1, safely below 2n+4.",
+      "Duplicate values require compare-exchange on > rather than >=; no permutation assumption is needed for H1."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "minimum-anchor-rotating-odd-even-sort",
+      "summary": "Anchor a minimum at the front, encode each odd-even compare-exchange phase into one diagonal-tiled key walk, then use the top-row/right-column walk to restore the minimum while tracking the induced cyclic shift in a logical coordinate frame.",
+      "complexity": "O(n^2) time and output, at most 2n-1 walks, and O(n^2) buffered or O(n) streaming auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting/odd-even-transposition-sort",
+      "display_name": "Odd-even transposition sort",
+      "importance": "primary",
+      "evidence": "The tail is sorted by exactly n-1 alternating odd/even parallel compare-exchange phases; the rotating-frame parity mapping is the central correctness argument.",
+      "solution_variant": "minimum-anchor-rotating-odd-even-sort",
+      "description": "Sort a sequence by alternating parallel compare-exchange phases on pairs (1,2),(3,4),... and (2,3),(4,5),.... Use when this phase schedule or sorting-network structure is essential, not for arbitrary adjacent-swap sorting.",
+      "parent": "algorithm/sorting",
+      "created_reason": "Both CF2039H versions encode one odd-even comparison phase into each constrained grid walk; the broad algorithm/sorting tag does not expose this decisive reusable phase-based sorting method.",
+      "status": "candidate",
+      "aliases": [
+        "odd-even sort",
+        "brick sort"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly constructing bounded monotone grid paths whose induced swap permutations realize every sorting phase and the minimum-restoration step.",
+      "solution_variant": "minimum-anchor-rotating-odd-even-sort"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Between phase pairs the minimum is restored to position 1, while the logical tail is defined by a counter-rotation that preserves the interpretation as one fixed odd-even sorting network.",
+      "solution_variant": "minimum-anchor-rotating-odd-even-sort"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "The physical matching and unmatched endpoint depend on n and phase parity so that, after undoing the accumulated rotation, logical odd and even comparison layers alternate correctly.",
+      "solution_variant": "minimum-anchor-rotating-odd-even-sort"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Each abstract pass, compare-exchange, singleton, and restoring permutation must be serialized into one legal R/D path of exactly 2n-2 moves without crossing the grid boundary.",
+      "solution_variant": "minimum-anchor-rotating-odd-even-sort"
+    }
+  ]
+}

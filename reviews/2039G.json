@@ -1,0 +1,155 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "G",
+    "title": "Shohag Loves Pebae",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/G",
+      "notes": "Read the complete English statement, all three examples, and limits: one tree with 2 <= n <= 1000000, 1 <= m <= 1000000000, 5 seconds, 768 MB, and answers modulo 998244353. Path length means its number of vertices."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "Read the rendered full 2039G tutorial and model code, not only the collapsed public index. It gives the per-vertex h_u reduction, the restricted Mobius formula, rough-number and Dirichlet-prefix machinery, the D > 2 sqrt(m) shortcut, and grouped threshold handling. Its sharper final small-case complexity claim explicitly leaves the proof for later."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/cut1opsf",
+      "notes": "Actually opened and read the complete Luogu article. It independently recovers the prime-length path reduction, least-prime-factor thresholds, gcd inversion, floor-quotient grouping, and a largest-prime-factor/prime-counting alternative. Its final asymptotic discussion is intentionally vague, so it is used as a mathematical cross-check rather than the source of the recorded complexity."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Sktn0089/p/18660526",
+      "notes": "Read the full independent post and code. It cross-checks the rough-number formula, Du/Min25-style summatory computation, and the diameter half-bound. The prose duplicates the same inequality in both case bullets; the code and official tutorial resolve the second bullet as the complementary small-diameter case."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18702724",
+      "notes": "Read the complete CF2039G section and implementation. It independently shows the two-pass tree DP, compressed floor-quotient sieve arrays, large-diameter prime-only shortcut, and a conservative O(m log n / log m) product-aggregation bound. No accepted verdict was inferred from this blog."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2039/submission/381929916",
+      "notes": "The Codeforces status and submission pages visibly showed Accepted (1234 ms, 53980 KB), and the complete source was read. It independently implements iterative rerooting, compressed prime counting, a dynamic-phi/rough-number split, and restricted Mobius prefix sums, validating the same reduction and summation formula with a refined implementation threshold."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/G",
+      "notes": "Independently proved the path-to-least-prime-factor equivalence, the D-rough Mobius formula, the restricted Dirichlet recurrence, both diameter cases, and a conservative quotient-state complexity bound. In-memory exhaustive checks covered every labeled tree for 2 <= n <= 5 and every 1 <= m <= 6 (870 tree/m cases); direct path-LCM enumeration, the local threshold test, and the Mobius formula always agreed. Also checked 2900 restricted-prefix states and 21424 valid large-diameter threshold vectors."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count assignments a_u in [1,m] on a tree such that for every path with k vertices, k does not divide the LCM of its vertex values, while gcd(a_1,...,a_n)=1.",
+    "constraints": "Single test case; 2 <= n <= 1000000, 1 <= m <= 1000000000; the input is a tree; time limit 5 seconds, memory limit 768 MB, modulus 998244353.",
+    "core_idea": "For each vertex u, let h_u be the maximum number of vertices on a simple path containing u, and let D=max h_u, the tree diameter in vertices. A valid assignment is equivalent to lpf(a_u)>h_u for every u, with lpf(1)=infinity: if a prime p<=h_u divides a_u, take a p-vertex subpath of a longest path through u; conversely, every vertex on a k-vertex path has h_u>=k, so no prime divisor of k occurs in any path value and k cannot divide the LCM. Define R(x,t)=#{y<=x:lpf(y)>t}. Mobius inversion of the global gcd condition gives Ans=sum_{d<=m} mu(d)[lpf(d)>D] product_u R(floor(m/d),h_u). The restriction on d is exact because some vertex has h_u=D; for D-rough d, writing a_u=d b_u preserves each local roughness condition. Group d by equal floor(m/d). For block coefficients use M_D(x)=sum_{d<=x,lpf(d)>D}mu(d); with Q_D(x)=R(x,D), the restricted convolution mu_D * 1_D = epsilon yields M_D(x)=1-sum_{b=2..x,lpf(b)>D} M_D(floor(x/b)), evaluated by floor-quotient grouping. Compute all R(q,h) and M_D(q) only on the O(sqrt(m)) distinct quotients q=floor(m/i), using Min25/Legendre-phi style prime elimination and a Du-sieve recurrence. Tree geometry supplies h_u>=ceil(D/2). If D>2 floor(sqrt(m)), every locally allowed value is 1 or a prime, so the answer is product_u(1+max(0,pi(m)-pi(h_u)))-max(0,pi(m)-pi(D)). Otherwise replace every h_u by pi(h_u), group equal thresholds, and raise each rough-number count to its frequency before the quotient-block sum.",
+    "complexity": "For a compressed floor-quotient implementation, tree rerooting is O(n). Standard prime-count/rough-number and restricted-Mobius preparation is O(m^(3/4) polylog m) or better on O(sqrt(m)) quotient states. All changing threshold primes lie in [ceil(D/2),D], apart from at most one boundary representative that is greater than D/4 by Bertrand's postulate. A threshold p touches O(sqrt(m)) states for p<=sqrt(m) and O(m/p) states otherwise; summing over the relevant primes is O(m/log m), and binary exponentiation adds a factor O(log n). Thus a conservative proved bound is O(n + m^(3/4) polylog m + (m/log m) log n) time and O(n+sqrt(m)) auxiliary memory, with m<=2 handled directly. The official recursive implementation states O(m^(2/3)) for restricted summatory queries and a sharper small-case product bound, but its tutorial omits that sharper proof.",
+    "tricks": [
+      "Use prime-length subpaths through a chosen vertex to turn every path-LCM restriction into a local least-prime-factor threshold.",
+      "Treat 1 as having infinite least prime factor so rough-number counts include it uniformly.",
+      "Apply Mobius inversion to gcd=1, then observe that only multipliers with no prime factor <=D can divide every assigned value.",
+      "Run the Dirichlet-prefix recurrence inside the multiplicative semigroup of D-rough numbers rather than using the ordinary Mertens prefix.",
+      "Compress all arithmetic arguments to the distinct values floor(m/i).",
+      "Group h_u by pi(h_u), because rough-number counts change only when the threshold crosses a prime.",
+      "Use h_u>=ceil(D/2) from diameter endpoints both for the prime-only shortcut and for the product-DP complexity bound.",
+      "Aggregate equal threshold groups with modular exponentiation instead of multiplying once per vertex."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains in the local-threshold equivalence, restricted Mobius formula, or large-diameter subtraction after the independent proofs and exhaustive checks.",
+      "The official tutorial states a sharper small-diameter bound of roughly O(m/log^2(m) times a logarithmic factor) and says its proof will be added later. This payload deliberately records the weaker O((m/log m) log n) aggregation bound that can be derived directly from the quotient-state implementation.",
+      "The Luogu article describes a materially different largest-prime-factor enumeration with soft-O(m^(3/4)) prime-counting support, but omits enough final complexity detail that it is not promoted to a separate reviewed solution variant.",
+      "The Sktn0089 post has a duplicated case inequality in prose; this is a source typo, not an algorithmic ambiguity, because its code and the official tutorial use complementary large/small cases.",
+      "The accepted submission uses a refined dynamic-phi versus rough-enumeration threshold rather than the tutorial's exact D split. It is implementation corroboration, not a second taxonomy variant.",
+      "No new taxonomy tag is proposed: the current tags for tree diameter, rerooting DP, Mobius, Du sieve, and Min25 sieve cover the reusable techniques."
+    ],
+    "proof_risks": [
+      "h_u and D count vertices, while rerooting arm lengths usually count edges; h_u is one plus the two largest incident-arm lengths.",
+      "For necessity, a p-vertex path containing u is obtained as a contiguous subpath of a longest path through u. It is not always valid to assume another vertex is distance p-1 from u, for example when u is a star center.",
+      "For sufficiency, one must use h_u>=k for every vertex u on the chosen k-vertex path; checking only an endpoint or only one prime factor is insufficient.",
+      "The Mobius multiplier d must be D-rough, where D=max h_u. Restricting it only by min h_u or forgetting that some diameter vertex has h_u=D gives extra impossible terms.",
+      "R(x,t) includes 1. Base cases that return zero when x<=t lose assignments containing value 1.",
+      "The prime-only shortcut requires every h_u>floor(sqrt(m)). At equality a square of a prime may still be an allowed composite, so the branch boundary must be handled exactly.",
+      "In the prime-only branch, gcd>1 occurs exactly when all vertices receive the same prime p>D. Use max(0,pi(m)-pi(D)) and similarly clip every local prime count when h_u>m.",
+      "M_D is not the ordinary Mertens function. In its convolution recurrence, both the divisor and cofactor ranges are restricted to numbers with no prime factor <=D.",
+      "A quotient block for q=floor(m/d) is d in [floor(m/(q+1))+1, floor(m/q)]; off-by-one errors corrupt the restricted Mobius coefficient.",
+      "The first threshold group may be represented by the largest prime <=min h_u and therefore lie below D/2. Handle it separately; Bertrand's postulate only guarantees it is greater than D/4.",
+      "The complexity reduction relies on all other threshold changes lying in the interval induced by h_u in [ceil(D/2),D]. Treating the h_u as arbitrary recreates the prohibitive O(n sqrt(m)) work.",
+      "Recursive DFS on a path with n=1000000 can overflow the process stack; an implementation should use iterative rooting/rerooting or explicitly safe stack management.",
+      "Restricted Mobius block sums are signed; normalize negative residues only after preserving their integer or modular difference correctly."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "diameter-threshold-mobius-min25",
+      "summary": "Compute every h_u by two-pass rerooting, replace the path constraints by h_u-rough value choices, enforce gcd=1 with a D-rough Mobius sum, and evaluate rough counts plus restricted Mobius prefixes on compressed floor quotients. Use the 1-or-prime closed form when D>2 floor(sqrt(m)); otherwise group vertices by pi(h_u) and accumulate the quotient-block sum.",
+      "complexity": "Conservative quotient-state bound: O(n + m^(3/4) polylog m + (m/log m) log n) time and O(n+sqrt(m)) auxiliary memory; standard implementations can improve the summatory subroutines and the official tutorial claims a sharper small-case bound.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/lcm",
+      "importance": "primary",
+      "evidence": "The decisive structural proof converts the condition k not dividing the LCM on every k-vertex path into the exact local rule lpf(a_u)>h_u by extracting prime-length subpaths and excluding every prime divisor of k.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "math/number-theory/mobius",
+      "importance": "primary",
+      "evidence": "The global gcd=1 indicator is expanded as sum_{d|all a_u}mu(d), producing the central formula sum_d mu(d)[d is D-rough] product_u R(floor(m/d),h_u).",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "math/number-theory/min25-sieve",
+      "importance": "primary",
+      "evidence": "The algorithm must evaluate prime counts and h-rough counts R(q,h) for large m across all distinct q=floor(m/i); prime-elimination DP on the O(sqrt(m)) quotient states is the Min25-style core that removes dependence on m or n per query.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "math/number-theory/du-sieve",
+      "importance": "primary",
+      "evidence": "Each quotient block needs M_D(r)-M_D(l-1), where M_D is the restricted Mobius prefix. It is obtained from mu_D*1_D=epsilon by a memoized floor-division Dirichlet recurrence, exactly the Du-sieve pattern on D-rough numbers.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "graph/tree-diameter",
+      "importance": "primary",
+      "evidence": "D=max h_u is the tree diameter and every h_u>=ceil(D/2). This bound is essential both to the D>2 sqrt(m) prime-only branch and to bounding the number and cost of threshold groups in the general branch.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "dp/rerooting-dp",
+      "importance": "secondary",
+      "evidence": "A bottom-up pass computes the two deepest child arms and a top-down pass supplies the best parent-side arm, yielding h_u for all vertices in O(n).",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "The only global coupling is gcd(a_1,...,a_n)=1; its divisor structure determines the Mobius inversion and the all-equal-prime subtraction in the large-diameter branch.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The solution separates D>2 floor(sqrt(m)), where every allowed value is 1 or prime, from the general rough-number sieve case; the first branch avoids the expensive Mobius product entirely.",
+      "solution_variant": "diameter-threshold-mobius-min25"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "D",
+    "title": "Shohag Loves GCD",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/D",
+      "notes": "实际阅读英文题面、约束与样例；确认 m<=n<=10^5、S 严格递增且元素在 [1,n]，sum(n)<=3*10^5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "实际展开并阅读 2039D 官方 Tutorial 及两种方案；核对了可比下标条件、Omega(i)+1 链长、闭式构造和倍数筛式贪心。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qosg8jny",
+      "notes": "实际阅读完整证明与标注为 AC CODE 的实现；交叉确认按约数前驱转移层级以及从大到小选 S 中元素的构造。未据此声称 Codeforces accepted verdict。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/D",
+      "notes": "独立证明充分性、无解阈值和字典序最优性；穷举 n<=6、S 子集大小 m<=4 的全部数组，闭式结果与真正字典序最大合法数组完全一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "从递增集合 S 中构造长度 n 的字典序最大数组，使任意 i<j 都有 a[gcd(i,j)]!=gcd(a[i],a[j])，无解时输出 -1。",
+    "constraints": "t<=10000；1<=m<=n<=10^5；S 含 m 个递增且互异的 [1,n] 整数；sum(n)<=3*10^5；2 秒，256 MB。",
+    "core_idea": "先把全体二元条件化为约数偏序上的局部条件。若 d|i 且 d<i，则原式等价于 a[d] 不整除 a[i]；反之若某对 i,j 违例，令 g=gcd(i,j)，则 a[g] 同时整除 a[i]、a[j]，会在可比对 (g,i) 或 (g,j) 上违例，所以检查所有真约数关系已充分。设 S={s1<...<sm}，Omega(i) 为 i 的质因子总数并计重数。构造 a[i]=s[m-Omega(i)]：真约数 d|i 满足 Omega(d)<Omega(i)，故 a[d]>a[i]，正整数中较大数不可能整除较小数。任意 i 的质因子逐个加入可形成含 Omega(i)+1 个顶点的约数链，因此至少需要 Omega(i)+1 个不同层级；而 max_{i<=n}Omega(i)=floor(log2 n)，故有解当且仅当 m>=floor(log2 n)+1。按下标归纳时，这条链已占用 S 的前 Omega(i) 个最大值，a[i] 取下一大值恰为字典序最优。",
+    "complexity": "用最小质因子筛预处理 1..N 的 Omega，O(N log log N) 时间、O(N) 空间；随后每组 O(n) 构造并输出，总计 O(N log log N+sum(n)) 时间，其中 N=10^5。线性筛可把预处理降为 O(N)。",
+    "tricks": [
+      "把任意 gcd 下标对的违例下沉到 gcd(i,j) 与其倍数之间，从而只处理约数可比关系。",
+      "使用计重数的质因子个数 Omega(i) 作为约数链深度，而不是不同质因子个数。",
+      "所有 S 的具体整除关系都不再重要，只使用其升序排名并让值沿约数链严格下降。",
+      "用 2^k 是 Omega=k 的最小正整数，得到 max Omega=floor(log2 n) 和精确无解阈值。",
+      "字典序证明按 i 递增归纳：通往 i 的链已封锁所有更大的候选排名。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "source_blockers": [
+      "未读取带可见 Codeforces verdict 的独立提交，因此不记录 accepted-code；官方两种解法、Luogu 题解代码和独立穷举已经相互验证。",
+      "Luogu 交叉来源采用试除数前驱并给出 O(n sqrt(n)) 级实现；payload 的更优复杂度来自同一 Omega 公式配合标准 SPF/线性筛。"
+    ],
+    "proof_risks": [
+      "Omega(i) 必须按质因子重数计数；例如 Omega(12)=3，而不是不同质因子数 2。",
+      "链长若按边数是 Omega(i)，按顶点数是 Omega(i)+1；可用元素数和无解阈值必须采用后者。",
+      "从任意违例对降到 g=gcd(i,j) 时，要覆盖 g=i 的情形：此时原对本身就是 i|j 的可比对；g<i 时再使用 (g,i) 或 (g,j)。",
+      "仅要求可比位置取不同值并不足以一般性推出合法；本构造还依赖 a[d]>a[i]，从而保证 a[d] 不整除 a[i]。",
+      "字典序最优性不能只由某一条链需要不同值一句带过；需按下标归纳说明链上较小 Omega 层已经恰好占用所有更大的 S 排名。",
+      "S 在题面中已递增，公式使用 1-based 的 s[m-Omega(i)]；Omega(1)=0，因此 a[1]=s[m]。",
+      "n=1 时 floor(log2 n)+1=1，构造应直接输出 S 的最大值。"
+    ],
+    "uncertainty_points": [
+      "闭式构造、存在性阈值和字典序最优性均已通过官方证明、Luogu 交叉来源及 n<=6 穷举确认，无遗留正确性不确定处。",
+      "官方第二种倍数筛式贪心与闭式 Omega 构造产生同一结果，作为独立实现变体保留；主推荐仍是更简单、更快的闭式方案。",
+      "未提出新 tag；现有 gcd、divisibility、prime-factor-count、constructive、greedy 与 divisor-sieve 已覆盖可检索结构。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "omega-level-closed-form",
+      "summary": "预处理每个下标的 Omega(i)，若 m<floor(log2 n)+1 则无解，否则直接令 a[i] 为 S 中第 Omega(i)+1 大的元素。",
+      "complexity": "O(N log log N+sum(n)) time and O(N) auxiliary space with an SPF sieve; O(N+sum(n)) with a linear sieve.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "multiple-sieve-greedy",
+      "summary": "按 i 从小到大选择当前未被其真约数禁用的最大 S 元素，再把该选择标记为所有后续倍数位置的禁用值；若某位置无候选则无解。",
+      "complexity": "O(n log^2 n) time and O(n log n) stored divisor-multiple prohibitions in the set-based official implementation.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "主解给出显式构造 a[i]=s[m-Omega(i)]，并用约数链严格降值直接保证所有 gcd 条件。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "字典序最大要求每个下标在固定前缀后取最大可行排名；约数链恰好封锁前 Omega(i) 个最大值，因此贪心选择下一大值。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "math/number-theory/prime-factor-count",
+      "importance": "primary",
+      "evidence": "计重数的 Omega(i) 同时给出最长约数链层数、位置 i 应选的 S 排名和 m>=floor(log2 n)+1 的存在性阈值。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "关键充分性证明令 g=gcd(i,j)，把任意二元违例化为 g 与其倍数之间的违例，从而将原条件完整降维。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "对 d|i，条件精确化为 a[d] 不整除 a[i]；构造通过 a[d]>a[i] 一次满足全部约数关系。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "secondary",
+      "evidence": "按下标递增固定前缀，并证明每个位置所有更大排名都已被某个链上真约数占用，是字典序最优性的核心论证。",
+      "solution_variant": "omega-level-closed-form"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "官方第二方案把位置 i 选中的值传播到 i 的所有倍数作为禁用项，按所有 divisor-multiple 关系做筛式贪心。",
+      "solution_variant": "multiple-sieve-greedy"
+    }
+  ]
+}

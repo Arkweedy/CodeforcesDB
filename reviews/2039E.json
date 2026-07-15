@@ -1,0 +1,137 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "E",
+    "title": "Shohag Loves Inversions",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/E",
+      "notes": "实际阅读英文题面、操作、样例与约束；确认 2<=n<=10^6、sum(n)<=10^6，答案模 998244353。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "实际展开并阅读 2039E 官方 Tutorial、主代码和 without initial casework 代码；核对 k>max(a) 后的等价状态、后缀和 DP 与初始小 k 分类。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/cq1a9jr9",
+      "notes": "实际阅读完整题解和实现；独立交叉确认 dp[i]=i*sum_{j>i}dp[j]+1、首次进入 k>1 的计数及 O(n) 后缀和优化。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ghucsjlb",
+      "notes": "实际阅读完整推导和代码；提供 F/G 两统计量的前向 O(n) 递推，作为不同状态设计的交叉解法。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/E",
+      "notes": "独立推导插入位置对逆序对数的影响；逐层生成并去重 n<=8 的全部可达数组，两种 DP 均与精确计数 1,2,5,19,102,682,5321 一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "从 [0,1] 出发，每次把当前逆序对数 k 插入任意位置；对每个 n 统计能得到的不同长度 n 数组数。",
+    "constraints": "t<=10000；2<=n<=10^6；sum(n)<=10^6；模数 998244353；2 秒，256 MB。",
+    "core_idea": "一旦当前逆序对数 k>max(a)，数组的具体内容可以压缩掉。若当前长度为 i，把 k 插在末尾不增加逆序对；插在任一非末尾位置时，新逆序对数增加右侧元素个数，因而严格大于 k，并继续大于新数组最大值。令 dp[i] 表示处于该稳定状态、当前长度 i 时扩展到目标长度 n 的不同结果数。可以先在末尾追加若干个 k，再进行第一次非末尾插入；相等 k 形成尾部块后，真正不同的非末尾位置始终只有原来的 i 个，因此 dp[i]=i*sum_{j=i+1..n}dp[j]+1，后缀和可 O(n) 计算，+1 表示余下元素全在末尾追加。初始 k<=1 的可达数组单独计数：最终始终未超过 1 的数组有 n-1 个；首次在长度 m 进入 k>1 的数组数为 w[m]=((m-1)(m-2))/2-1=m(m-3)/2。故答案为 n-1+sum_{m=3..n}w[m]*dp[m]。另一种前向写法令 F[i] 为长度 i 的可达数组数，G[i] 为所有这些数组中“值等于各自当前逆序对数”的元素出现次数总和，则 F[i+1]=(i+1)F[i]-G[i]、G[i+1]=G[i]+F[i]+1，F[2]=G[2]=1。",
+    "complexity": "官方稳定状态 DP 对每个询问 O(n)，结合 sum(n)<=10^6 为 O(sum(n)) 总时间、O(max(n)) 空间；前向 F/G 变体可一次预处理到最大询问，O(max(n)+t) 时间、O(max(n)) 空间。",
+    "tricks": [
+      "证明 k>max(a) 后，所有具体数组共享只依赖当前长度的后续计数状态。",
+      "末尾插入保持 k，非末尾插入让 k 严格增大；按第一次非末尾插入的位置分解整条过程。",
+      "尾部相等 k 的多个插入缝隙会生成同一数组，因此转移系数是初始长度 i，而不是追加后的长度。",
+      "用后缀和把 dp[i] 对所有更长状态的转移从 O(n^2) 降到 O(n)。",
+      "对尚未进入稳定状态的 k=0、k=1 序列单独做组合计数。",
+      "前向变体用 F/G 两个全局统计量消去具体数组与逆序对值。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "source_blockers": [
+      "未读取带可见 Codeforces verdict 的独立提交，因此不记录 accepted-code；官方两份代码、两篇 Luogu 推导和精确状态生成已经交叉验证。",
+      "官方 Tutorial 的数学正文位于动态折叠区，静态抓取只给出代码；本次通过实际渲染页面读取完整正文。"
+    ],
+    "proof_risks": [
+      "稳定状态必须是严格的 k>max(a)；仅有 k>=max(a) 时，非末尾插入和重复值的论证可能失效。",
+      "在 k>max(a) 时，插入后的新增逆序对数等于新元素右侧的旧元素个数；末尾为 0，其他位置至少为 1。",
+      "先追加 r 个 k 后，它们构成尾部相等块；第一次改变逆序对数的不同插法只有原状态长度 i 个，不能误写为 i+r。",
+      "dp[i] 中的 +1 是一直在末尾追加到目标长度的唯一结果，不能漏掉或对每个 j 重复加入。",
+      "首次进入 k>1 的系数应化简为 m(m-3)/2；m=3 时为 0，循环边界或模意义下的负数处理容易出错。",
+      "统计不同数组时，在一个含 c 个当前 k 的父数组中插入 k 只有 i+1-c 个不同结果，不能直接按全部缝隙计数。",
+      "前向 G[i] 统计的是各数组中数值等于 inv(a) 的元素个数之和，不是逆序对数之和；转移中的特殊 +1 来自唯一的零逆序链。",
+      "前向 F/G 递推还依赖不同父数组的规范化插入结果不重叠；实现或证明时应使用删除新增最大值、处理相等块的可逆性，不能只做形式求和。",
+      "所有减法和除以 2 都要在模 998244353 下规范化；可先做整数乘积除 2，或乘逆元 inv2。"
+    ],
+    "uncertainty_points": [
+      "官方后缀 DP 的状态、初始分类和 O(n) 复杂度均已由 Luogu 同构解法及 n<=8 精确生成确认，无遗留主解正确性不确定处。",
+      "前向 F/G 变体的交叉来源对跨父状态不重叠的证明较简略；小规模穷举和代码结果一致，但主推荐仍采用证明链更直接的官方稳定状态 DP。",
+      "未提出新 tag；现有 counting-dp、prefix-sum-optimization、state-compression、combinatorics 与 inversion-count 已覆盖本题。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "stable-state-suffix-dp",
+      "summary": "把 k>max(a) 的所有数组按长度合并为 dp[i]，用第一次非末尾插入分解得到 dp[i]=i*sum_{j>i}dp[j]+1，再组合计入 k<=1 的初始阶段。",
+      "complexity": "O(n) time and O(n) space per target n; O(sum(n)) total under the input bound.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-two-statistic-dp",
+      "summary": "维护 F[i] 为长度 i 的不同可达数组数，G[i] 为其中当前逆序对数在数组内的总出现次数，使用 F[i+1]=(i+1)F[i]-G[i] 与 G[i+1]=G[i]+F[i]+1 前向预处理。",
+      "complexity": "O(max(n)+t) time and O(max(n)) space for all queries.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "主解的 dp[i] 直接统计从长度 i 的稳定状态扩展到目标长度 n 的不同数组数，答案再按首次进入稳定状态的组合数加权求和。",
+      "solution_variant": "stable-state-suffix-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "决定性观察是 k>max(a) 后，后续结果数与数组内容和 k 的具体值无关，只需保留当前长度 i。",
+      "solution_variant": "stable-state-suffix-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "转移含 sum_{j>i}dp[j]，维护后缀和后每个 i 可 O(1) 计算，把总复杂度从 O(n^2) 降为 O(n)。",
+      "solution_variant": "stable-state-suffix-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "需要精确计算相等 k 导致的重复插入、始终 k<=1 的 n-1 个数组，以及长度 m 首次进入 k>1 的 m(m-3)/2 种起点。",
+      "solution_variant": "stable-state-suffix-dp"
+    },
+    {
+      "tag": "trick/inversion-count",
+      "importance": "secondary",
+      "evidence": "插入当前逆序对数后，新逆序对的增量由插入位置右侧元素数决定，末尾保持、非末尾严格增加的性质支撑整个状态压缩。",
+      "solution_variant": "stable-state-suffix-dp"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "进入 k>max(a) 后，末尾插入保持该性质，非末尾插入得到 k'>k=max(new a)，因此稳定状态在后续操作中封闭。",
+      "solution_variant": "stable-state-suffix-dp"
+    }
+  ]
+}

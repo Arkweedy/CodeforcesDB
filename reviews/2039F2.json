@@ -1,0 +1,149 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "F2",
+    "title": "Shohag Loves Counting (Hard Version)",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "number theory"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2039F1",
+    "relationship": "The statement and single-valley/strict-suffix-GCD characterization are unchanged. F2 has t <= 300000, m <= 1000000, and no bound on sum(m), so F1's per-query m-to-1 DP is too expensive and cannot share work; the linear divisor DP must be transposed/reformulated to precompute every prefix answer in increasing m."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/F2",
+      "notes": "Read the complete hard statement and constraints. The task is identical to F1, but t <= 300000, m <= 1000000, and sum(m) is explicitly unrestricted."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "Read the complete official F1 and F2 tutorials plus both F2 code listings. F2 removes length from the state, reverses the processing direction, precomputes all bounds, and uses either Mobius inversion in O(sum_{d|i} tau(d)) per i or divisor SOS in O(tau(i) omega(i)) per i."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0m4vshqc",
+      "notes": "Actually read the full independent F2 article and code. It gives a Cartesian-tree proof of the 2^(n-1) reduction, writes the F1 Mobius DP as a linear network, transposes every update to run x upward, and obtains O(M log^2 M + t) preprocessing/query complexity."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/nb084syd",
+      "notes": "Actually read the full transposition-principle article and both F1/F2 code paths. It explicitly reverses the order of elementary linear updates, changes x<-x+k*y into y<-y+k*x, and explains why the transposed run produces all prefix answers in one pass."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/F2",
+      "notes": "Independently reconstructed the official forward recurrence and compared it in memory against direct enumeration/strict-suffix-GCD counting through M=20; every value matched, including sample answers 4, 29, and 165. No files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count the same good arrays as F1, but answer up to 300000 independent bounds m <= 1000000 with no aggregate input bound. The hard task is to turn F1's upper-bound-dependent descending divisor DP into one ascending precomputation with O(1) queries.",
+    "constraints": "1 <= t <= 300000; 1 <= m <= 1000000; there is no limit on the sum of m; answers are modulo 998244353. The time limit is 4 seconds and the memory limit is 500 MB.",
+    "core_idea": "The F1 proof is unchanged: every good array is a 2^(n-1)-weighted single-valley arrangement of distinct values b_1<...<b_n whose suffix GCDs are strictly increasing, and n <= floor(log2(m))+1. The descending F1 DP, however, starts at the query bound and is a composition of linear updates, so separate queries cannot reuse it. Transpose the linear algorithm: reverse the update order and replace every elementary update x<-x+k*y by y<-y+k*x. This yields an increasing sweep x=1..M. In the official Mobius form, for every d|x compute q[d]=1+2*(sum_{c|d} dp[c]-f[d]); then apply divisor Mobius inversion dp[d]+=sum_{c|d} mu(c)*q[d/c], set f[d]+=q[d], and finally ans[x]=ans[x-1]+f[x]. The subtraction forbids an unchanged suffix GCD, the factor 2 carries the deque-arrangement weight, and Mobius inversion converts cumulative divisibility contributions into exact GCD classes. Thus all answers are prefix values of one precomputation.",
+    "complexity": "Let M=max query m. The primary Mobius implementation takes O(M log M + sum_{x=1}^M sum_{d|x} tau(d)) = O(M log^2 M) preprocessing time, O(sum_{x=1}^M tau(x)) = O(M log M) memory for divisor lists plus O(M) state, and O(1) per query. The official divisor-SOS alternative takes O(M log M + sum_{x=1}^M tau(x) omega(x)) preprocessing time.",
+    "tricks": [
+      "Reuse the complete F1 structural reduction; only the constraint-driven DP direction changes.",
+      "Recognize the bound-dependent divisor DP as a linear algorithm and transpose its elementary updates.",
+      "Precompute ans[x] for every x <= M so unrestricted queries become O(1).",
+      "Use Mobius inversion on divisor chains to isolate exact GCD transitions.",
+      "Fold both the singleton base term and the 2^(length-1) arrangement weight directly into the forward recurrence."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the primary forward Mobius variant after complete official code inspection, two independent Luogu derivations, and direct small-value comparison through M=20.",
+      "The optional divisor-SOS variant is stated by the official editorial with O(sum tau(i) omega(i)) time, but no full SOS implementation was independently reconstructed in this review; it is therefore recorded with medium confidence.",
+      "The exact primary complexity is the nested divisor sum. O(M log^2 M) is its standard aggregate bound; it should not be confused with running the F1 complexity independently for every query.",
+      "trick/transposition-principle is absent from the current taxonomy and is proposed as a reusable candidate. If this payload is later applied, it requires main-agent taxonomy approval and a WebUI Chinese translation.",
+      "As in F1, this payload selects the existing math/number-theory/mobius-inversion tag rather than the overlapping older math/number-theory/mobius tag."
+    ],
+    "proof_risks": [
+      "Merely changing the F1 loop from descending to ascending is wrong. The order of all elementary linear updates must be reversed and each update must be transposed.",
+      "The -f[d] term is essential: without it, transitions whose suffix GCD does not change are counted as valid.",
+      "The +1 singleton term occurs for every touched divisor state in the transposed recurrence; moving it only to d=x changes the linear transpose and gives wrong values.",
+      "Mobius indices and signs must match dp[d]+=sum_{c|d} mu(c)*q[d/c]; reversing c and d/c or failing to normalize negatives modulo 998244353 corrupts exact-GCD counts.",
+      "The prefix answer adds f[x] after processing x. Summing all current f[d] at every step double-counts arrays across maximum values.",
+      "The full divisor lists up to 10^6 contain O(M log M) integers; vector overhead and slow push_back-heavy generation are practical 4-second risks even when the asymptotic bound is correct."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "forward-transposed-mobius-precomputation",
+      "summary": "Transpose the length-free F1 divisor DP and sweep the maximum bound x upward. For d|x form q[d]=1+2*(sum_{c|d}dp[c]-f[d]), use Mobius inversion to distribute q into exact divisor/GCD states, accumulate f[d], and append f[x] to the prefix answer. One run computes every m <= M.",
+      "complexity": "O(M log M + sum_{x=1}^M sum_{d|x} tau(d)) = O(M log^2 M) preprocessing time, O(M log M) memory, and O(1) per query.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-transposed-divisor-sos",
+      "summary": "Use the same ascending/transposed counting state, but encode the divisor lattice of each x through its distinct prime factors and perform SOS-style propagation to obtain exact GCD classes instead of nested Mobius divisor loops.",
+      "complexity": "O(M log M + sum_{x=1}^M tau(x) omega(x)) preprocessing time, O(M log M) memory, and O(1) per query.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/transposition-principle",
+      "display_name": "Transposition principle",
+      "importance": "primary",
+      "evidence": "F2 becomes feasible only after transposing the linear F1 DP: reverse the elementary-update order and redirect x<-x+k*y as y<-y+k*x so all bounds can be processed in increasing order.",
+      "solution_variant": "forward-transposed-mobius-precomputation",
+      "description": "Transpose a linear algorithm or dynamic program by reversing its elementary linear operations and transposing each update, typically to reverse the processing direction or turn a bound-dependent computation into reusable prefix precomputation.",
+      "parent": "trick",
+      "created_reason": "CF2039F2's decisive optimization is more specific than ordinary reverse processing: every linear update of the F1 divisor DP is transposed to make an ascending all-prefix computation. The current taxonomy has no tag for this reusable technique.",
+      "status": "candidate",
+      "aliases": [
+        "transpose principle",
+        "algorithm transposition",
+        "transposed dp"
+      ]
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The forward state counts strict suffix-GCD chains with the 2^(length-1) arrangement weight already folded into each transition.",
+      "solution_variant": "forward-transposed-mobius-precomputation"
+    },
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "The main forward recurrence uses divisor Mobius inversion at every x to convert cumulative divisibility sums into exact GCD transition classes.",
+      "solution_variant": "forward-transposed-mobius-precomputation"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "Validity is exactly a strict suffix-GCD chain, and every DP transition is classified by an exact gcd relation on divisors of the current value.",
+      "solution_variant": "forward-transposed-mobius-precomputation"
+    },
+    {
+      "tag": "dp/sos-dp",
+      "importance": "primary",
+      "evidence": "The official alternative accelerates each divisor-lattice transition by SOS propagation over the distinct-prime-factor subset representation of divisors.",
+      "solution_variant": "forward-transposed-divisor-sos"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "Both hard variants precompute divisors and aggregate states along divisor/multiple relations for every x <= 10^6.",
+      "solution_variant": "forward-transposed-mobius-precomputation"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The DP weights each valid selected value chain by the 2^(n-1) deque arrangements of its single-valley array.",
+      "solution_variant": "forward-transposed-mobius-precomputation"
+    }
+  ]
+}

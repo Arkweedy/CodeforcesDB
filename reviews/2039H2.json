@@ -1,0 +1,125 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "H2",
+    "title": "Cool Swap Walk (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/H2",
+      "notes": "Read the complete current statement, examples, walk semantics, and all constraints; H2 differs from H1 only by reducing the walk limit to n+4."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "Read the full official H2 tutorial and complete reference implementation, including stable rank normalization, the selector path, small/large block preparation, even and odd schedules, and the n+4 count."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6wzo3ykh",
+      "notes": "Actually read the complete independent write-up. It identifies the three path macros, odd-even phases, the two-block cycling construction for even n, and the four preparatory operations plus protected minimum needed for odd n."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/H2",
+      "notes": "Independently proved stable rank reduction, selector extraction, the block-rotation invariant, even and odd phase counts, and the n+4 bound. A path-level simulator checked all permutations through n=8, all arrays over values 1..3 through n=8, and 150 random arrays up to n=500 as part of a 56,214-case joint check. Every route was monotone with exactly 2n-2 moves and every H2 result had sorted ranks within n+4 walks."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Perform the same grid-walk-induced swaps as H1, but construct at most n+4 monotone paths rather than 2n+4, and finish with the original array sorted nondecreasingly.",
+    "constraints": "1 <= t <= 10000, 2 <= n <= 500, 1 <= a_i <= n, and the sum of n^2 over tests is at most 2.5e5. Every output path has exactly 2n-2 moves, and H2 allows at most n+4 paths.",
+    "core_idea": "Replace equal values by distinct stable ranks obtained by sorting (value,original_index); sorting the ranks is sufficient to sort the original values. A selector walk through increasing columns p_1<...<p_k extracts the values currently at those positions into prefix positions 1..k in order. In at most four preparatory walks, put rank 1 first, use one key walk to send it to the end without leaving rank n first, select n and 1 into the first two positions, then select all S={1,...,ceil(n/2)} into a prefix with rank 1 first; the rest form B. A key walk left-rotates the array while realizing one matching of adjacent compare-exchanges inside any chosen contiguous block. For n=2k, apply k key walks while S migrates from front to back and perform alternating odd-even phases only inside B; the layout becomes B,S with B sorted. Apply k more while B migrates and sort S, returning to sorted S,B. For n=2k+1, take |S|=k+1 and |B|=k: k+1 first-half walks sort B while S migrates, then k walks sort S without its already-minimum leading rank 1 while B migrates. The active block shifts left after every walk, so its physical pairing parity flips with its head. Thus exactly n sorting walks plus at most four preparation walks suffice.",
+    "complexity": "O(n^2) time and O(n^2) output size per test; O(n^2) memory when paths are buffered, or O(n) auxiliary memory when streamed. The number of walks is at most n+4.",
+    "tricks": [
+      "Stable-rank duplicate values so the construction may reason about one permutation.",
+      "Use a monotone selector path to extract any increasing sequence of positions into a prescribed prefix.",
+      "Exploit the key walk's unavoidable left rotation instead of undoing it after every sorting phase.",
+      "Partition ranks into a small prefix block and a large suffix block, sorting one while the other block cycles around it.",
+      "For odd n, keep rank 1 fixed at the front of the small block and sort only the other k small ranks in k phases."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains after reading the official code and Luogu derivation, reconstructing the even/odd invariants, and path-level exhaustive/random verification.",
+      "The official prose compresses the odd-n case to two additional operations; the exact protected-rank-1 argument and k+1 then k phase schedule were reconstructed from the reference code and independently checked.",
+      "algorithm/sorting/odd-even-transposition-sort is absent from the current registry and is proposed as a reusable candidate; applying this payload requires taxonomy approval and a WebUI translation."
+    ],
+    "proof_risks": [
+      "Rank normalization must assign distinct stable ranks to ties and carry those ranks through swaps; merely compressing equal values to equal ranks would break the permutation-based preparation.",
+      "The selector lemma guarantees only the selected prefix order; the unselected suffix is unspecified and must never be assumed sorted.",
+      "Before selecting [n,1], rank n must be away from positions 1 and n, and before selecting all small ranks, rank n at position 1 ensures the first selected position contains rank 1.",
+      "For odd n=2k+1, the two sorting halves have k+1 and k walks, not k and k; the second half sorts S without its leading rank 1.",
+      "The active block's physical head decreases after every left rotation, so compare-pair parity must change with it.",
+      "n=2 bypasses the general four-walk preparation and must retain its dedicated boundary handling."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "rank-block-cycling-odd-even-sort",
+      "summary": "Stable-rank the array, use selector walks to form consecutive small and large rank blocks with rank 1 positioned for the odd case, then spend exactly n key walks cycling one block around the other while alternating odd-even comparison phases inside the stationary block.",
+      "complexity": "O(n^2) time and output, at most n+4 walks, and O(n^2) buffered or O(n) streaming auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting/odd-even-transposition-sort",
+      "display_name": "Odd-even transposition sort",
+      "importance": "primary",
+      "evidence": "Each block is sorted by alternating disjoint adjacent compare-exchange phases while the opposite block migrates around it; the exact phase count proves the n-walk sorting stage.",
+      "solution_variant": "rank-block-cycling-odd-even-sort",
+      "description": "Sort a sequence by alternating parallel compare-exchange phases on pairs (1,2),(3,4),... and (2,3),(4,5),.... Use when this phase schedule or sorting-network structure is essential, not for arbitrary adjacent-swap sorting.",
+      "parent": "algorithm/sorting",
+      "created_reason": "Both CF2039H versions encode one odd-even comparison phase into each constrained grid walk; the broad algorithm/sorting tag does not expose this decisive reusable phase-based sorting method.",
+      "status": "candidate",
+      "aliases": [
+        "odd-even sort",
+        "brick sort"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution explicitly assembles selector and diagonal-tiled grid paths whose induced permutations first form the rank blocks and then sort them within the strict n+4 budget.",
+      "solution_variant": "rank-block-cycling-odd-even-sort"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "Throughout each half, one value class migrates from front to back while the other remains a contiguous moving window receiving one alternating compare-exchange phase; this block invariant is the key improvement over H1.",
+      "solution_variant": "rank-block-cycling-odd-even-sort"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "Even n uses two k-phase blocks, whereas odd n needs sizes k+1 and k, a protected minimum, and k+1 then k phases; physical pairing also flips as the active window head changes parity.",
+      "solution_variant": "rank-block-cycling-odd-even-sort"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "Stable ranks turn the input into a permutation whose lower and upper rank intervals can be selected into contiguous blocks and tracked exactly under cyclic movement.",
+      "solution_variant": "rank-block-cycling-odd-even-sort"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "The selector, singleton pass, compare-swap tile, and shifting active window must all be emitted as valid full-length monotone R/D paths with careful n=2 and odd-n boundaries.",
+      "solution_variant": "rank-block-cycling-odd-even-sort"
+    }
+  ]
+}

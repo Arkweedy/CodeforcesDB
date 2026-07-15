@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "F1",
+    "title": "Shohag Loves Counting (Easy Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math",
+      "number theory"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2039F2",
+    "relationship": "Same counting problem and structural characterization. F1 has t <= 10000 and sum(m) <= 100000, so an upper-bound-dependent descending divisor DP may be run separately per query; F2 raises m to 1000000, t to 300000, and removes the sum(m) bound, forcing one reusable ascending precomputation."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/F1",
+      "notes": "Read the complete statement, definition of f(k), example, input/output, and easy constraints: t <= 10000 and 1 <= m with sum(m) <= 100000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "Read the complete official F1 tutorial and code. It proves the divisibility chain, logarithmic length bound, 2^(n-1) deque arrangements, strict suffix-GCD reduction, and descending divisor-inversion DP; it also gives the length-free weighted optimization."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8uvb4zcp",
+      "notes": "Actually read the full independent F1 article. It derives the single-valley structure, exact-gcd transition, Mobius inversion over divisors, maintained multiple sums, and O(sum tau(i)^2) complexity."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0m4vshqc",
+      "notes": "Actually read the full cross-version article. Its Cartesian-tree argument independently shows that every subtree size must occur, hence the max Cartesian tree is a chain and each chosen value set has 2^(n-1) valid arrangements; it also explains why the F1 descent cannot be shared across F2 queries."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/F1",
+      "notes": "Independently proved the adjacent-maximum support argument and weighted GCD-DP recurrence. An in-memory exhaustive check enumerated all arrays for m <= 9 and lengths through 5, matching the strict-suffix-GCD characterization and counts 4, 29, and 165 for the samples; no files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every nonempty length, count arrays over [1,m] for which the GCDs of all length-k subarray maxima are pairwise distinct. This is the same combinatorial object as F2, but F1's aggregate bound permits a separate descending DP for each query.",
+    "constraints": "1 <= t <= 10000; 1 <= m and the sum of m over all tests is at most 100000; answers are modulo 998244353. The time limit is 4 seconds and the memory limit is 500 MB.",
+    "core_idea": "Let s_k be the sequence of length-k window maxima and g_k=gcd(s_k). Since s_{k+1} is obtained by replacing adjacent pairs of s_k by their maximum, every entry of s_{k+1} is an entry of s_k and g_k divides g_{k+1}. Distinct g_k therefore form a strict divisibility chain, so n <= floor(log2(m))+1. Moreover, the supports of s_1,s_2,... form n nested sets with a strict loss at every step; because s_1 has at most n distinct values and s_n has one, the original values are all distinct and every step deletes exactly the current minimum. Thus good arrays are exactly single-valley arrays obtained by choosing b_1<...<b_n and inserting each b_i (i>=2) at either deque end, giving 2^(n-1) arrangements. Their g_k are gcd(b_k,...,b_n), so all suffix GCDs must be distinct. Process a possible new minimum i from m down to 1, aggregate already-built increasing chains by their GCD h, and prepend i only when gcd(i,h)<h; this doubles the 2^(length-1) weight. Divisor zeta sums plus Mobius-style subtraction recover each exact gcd(i,h) class without scanning all h.",
+    "complexity": "After global divisor-list precomputation, O(sum_{i=1}^m tau(i)^2) time per test and O(m + sum_{i=1}^m tau(i)) memory; over the input, O(sum_tests sum_{i=1}^{m_t} tau(i)^2) time. This is commonly bounded as near O(sum(m) log^3(max m)) for these constraints.",
+    "tricks": [
+      "View longer-window maxima as repeated adjacent-maximum transforms.",
+      "Use strict nested support loss to prove distinct values and the single-valley/deque characterization.",
+      "Fold the 2^(length-1) arrangement count into DP values, multiplying by 2 on every extension.",
+      "Maintain sums over GCD states divisible by each divisor, then invert on the divisor lattice to recover exact gcd classes.",
+      "Exclude transitions with h=gcd(i,h), because they repeat a suffix GCD instead of making the chain strict."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the primary F1 variant after the complete statement/editorial reads, two independent Luogu derivations, and exhaustive small-instance checks.",
+      "The exact complexity recorded here is the divisor-sum bound O(sum tau(i)^2); informal O(m log^3 m) statements in independent writeups are average-order simplifications, not a per-integer worst-case identity.",
+      "The current taxonomy contains both math/number-theory/mobius and math/number-theory/mobius-inversion. This payload uses the latter because its definition specifically covers recovering exact divisibility/GCD classes from cumulative divisor counts and it is the more-used current tag.",
+      "No new F1 tag is proposed; all emitted F1 tags already exist in the current taxonomy."
+    ],
+    "proof_risks": [
+      "Pairwise distinct g_k is stronger than merely having distinct array values: the selected increasing values must also have strictly changing suffix GCDs.",
+      "Calling the array single-valley without proving the nested-support loss is insufficient; the proof must rule out duplicate values and multiple values disappearing in one adjacent-max step.",
+      "The factor 2 is already folded into each extension. Multiplying the final DP result by 2^(length-1) again double-counts every arrangement.",
+      "Exact-gcd inversion must remove the h=g class. In the optimized recurrence this is the subtraction of the aggregate whose current GCD already equals the target divisor.",
+      "The descending state depends on the query's upper bound m. Reusing it naively for a larger m omits chains containing newly introduced larger values."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "descending-weighted-exact-gcd-dp",
+      "summary": "Process i from m down to 1. Let A[h] be the total 2^(length-1)-weighted count of valid increasing chains whose first value is greater than i and whose total GCD is h, and maintain Z[d]=sum_{d|h} A[h]. Divisor-lattice inversion extracts E[d]=sum_{gcd(i,h)=d} A[h] for every d|i. Create weight 2(E[d]-A[d]) at GCD d to exclude unchanged h=d, add the singleton chain at d=i, then merge the new states into A and all relevant Z divisors.",
+      "complexity": "O(sum_{i=1}^m tau(i)^2) time and O(m + sum_{i=1}^m tau(i)) memory after divisor precomputation.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The answer is computed by a weighted counting DP over the current minimum and exact total GCD; every extension doubles the stored arrangement weight.",
+      "solution_variant": "descending-weighted-exact-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "Transitions know cumulative counts for GCD states divisible by d and must invert these divisor sums to isolate states with gcd(i,h)=d exactly.",
+      "solution_variant": "descending-weighted-exact-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The structural criterion is a strict chain of suffix GCDs, and the DP transition changes state h to gcd(i,h) while rejecting equality.",
+      "solution_variant": "descending-weighted-exact-gcd-dp"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "Precomputed divisor lists and maintained sums over multiples make every exact-GCD transition run on the divisibility poset instead of scanning all values.",
+      "solution_variant": "descending-weighted-exact-gcd-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "After the single-valley reduction, each valid increasing value chain contributes exactly 2^(n-1) left/right deque insertion arrangements.",
+      "solution_variant": "descending-weighted-exact-gcd-dp"
+    }
+  ]
+}

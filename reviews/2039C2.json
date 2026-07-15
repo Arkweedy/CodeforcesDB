@@ -1,0 +1,113 @@
+{
+  "contest": {
+    "contest_id": 2039,
+    "title": "CodeTON Round 9 (Div. 1 + Div. 2, Rated, Prizes!)"
+  },
+  "problem": {
+    "contest_id": 2039,
+    "index": "C2",
+    "title": "Shohag Loves XOR (Hard Version)",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2039/problem/C2",
+      "notes": "实际阅读英文题面与样例；确认 t<=10000，x<=1000000，m<=10^18，且所有测试的 sum(x)<=10^7。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136523",
+      "notes": "实际展开并阅读 2039C2 官方 Tutorial 与代码；核对了按 x 整除、按 y 整除及交集去重的 O(x) 分类。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zrh783ox",
+      "notes": "实际阅读完整题解和代码；交叉确认 p=x xor y 的边界倍数计数、y<=x 枚举及 y=x 去重。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2039/problem/C2",
+      "notes": "独立补全异或上下界与交集证明；穷举 x<=100、m<=500 的全部 50000 组参数，快速公式与直接枚举完全一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定 x 和可达 10^18 的 m，统计 1<=y<=m 中满足 x xor y 能被 x 或 y 整除的 y。",
+    "constraints": "t<=10000；1<=x<=10^6，1<=m<=10^18；sum(x)<=10^7；2 秒，256 MB。",
+    "core_idea": "令 z=x xor y，并分别计数 x|z 与 y|z。对 x|z，写 z=kx、y=x xor z。异或满足 |z-x|<=x xor z<=z+x：所有 z<=m-x 的非负 x 的倍数都自动给出 y<=m，只需排除 z=x 导致的 y=0；所有 z>m+x 都不可能，而区间 (m-x,m+x] 恰有两个 x 的倍数，直接检查即可。对 y|z，若 y>x，则 0<z<x+y<2y，唯一可能的正倍数 y 又会迫使 x=0，因此无解；所以只枚举 y<=min(x,m)。两类的唯一交集是 y=x，最终减去一次。",
+    "complexity": "每组 O(min(x,m)) 时间、O(1) 额外空间；总时间 O(sum(x))，在 sum(x)<=10^7 下可行。",
+    "tricks": [
+      "把 x xor y 重参数化为整除对象 z，再用 y=x xor z 恢复候选。",
+      "利用 |a-b|<=a xor b<=a+b，把 m 达到 10^18 的范围压缩为整段计数和两个边界倍数。",
+      "先证明 y>x 时 y|(x xor y) 不可能，再把暴力范围限制到 y<=x。",
+      "分别计数两个整除条件，最后只对 y=x 做容斥去重。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "source_blockers": [
+      "未读取带可见 Codeforces verdict 的独立提交，因此没有记录 accepted-code 来源；官方 Tutorial、Luogu 题解和独立穷举已形成三方交叉验证。",
+      "官方博客的静态页面只显示折叠标题和代码，教程正文通过实际展开后的渲染 DOM 阅读。"
+    ],
+    "proof_risks": [
+      "题意是 x xor y 能被 x 或 y 整除，取模方向必须写成 (x xor y)%x 或 (x xor y)%y，不能反写。",
+      "在 x|z 分支中 z=0 对应 y=x，是合法候选；z=x 对应 y=0，必须排除，二者不可混淆。",
+      "边界区间必须使用 (m-x,m+x]；取 q=floor(m/x) 后只检查 qx 与 (q+1)x，并单独处理 1<=y<=m。",
+      "官方 editorial 在交集段使用了 x!=y 时 lcm(x,y)>=2max(x,y) 的简写；当一个数整除另一个数时该不等式不成立。此时应另证 lcm=max，而 x xor y=max 会迫使较小操作数为 0，所以正整数下仍无解。",
+      "两类计数都包含 y=x 时才需要减一；仅当 x<=m 时执行去重。",
+      "m 和边界倍数必须使用 64 位整数；p+x 最大约为 10^18+10^6，仍在有符号 64 位范围内。"
+    ],
+    "uncertainty_points": [
+      "主结论、边界和复杂度均已由官方解法、Luogu 实现与小范围穷举确认，无遗留正确性不确定处。",
+      "未提出新 tag；现有 divisibility、bitmask、case-analysis、brute-force 与 threshold-decomposition 足以描述本题。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "divisibility-split-boundary-enumeration",
+      "summary": "按 x|(x xor y) 与 y|(x xor y) 分类：第一类对 x 的倍数做整段计数并只检查 m 附近两个倍数，第二类证明 y>x 不可能后枚举 y<=x，最后去重 y=x。",
+      "complexity": "O(min(x,m)) time and O(1) extra space per test case; O(sum(x)) total time.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "解法的主分解是分别统计 x|(x xor y) 与 y|(x xor y)，第一类枚举隐含的 x 倍数，第二类用小于 2y 的倍数界排除 y>x。",
+      "solution_variant": "divisibility-split-boundary-enumeration"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "核心变量替换 z=x xor y 以及 |z-x|<=x xor z<=z+x 的按位异或界，直接把 10^18 候选域压缩到可计数区间。",
+      "solution_variant": "divisibility-split-boundary-enumeration"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "正确性依赖 x 整除、y 整除和两者交集三个结构化分支；每个分支的候选范围和去重规则不同。",
+      "solution_variant": "divisibility-split-boundary-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "证明 y>x 时 y|(x xor y) 不可能后，只需直接检查 y=1..min(x,m)，总枚举量由 sum(x) 约束控制。",
+      "solution_variant": "divisibility-split-boundary-enumeration"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "secondary",
+      "evidence": "按 z<=m-x、m-x<z<=m+x、z>m+x 分段；中间段恒定只有两个 x 的倍数需要显式验证。",
+      "solution_variant": "divisibility-split-boundary-enumeration"
+    }
+  ]
+}
