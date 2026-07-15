@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "C",
+    "title": "Trapped in the Witch's Labyrinth",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "graphs",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/C",
+      "notes": "读取完整题面、方向规则、最大化目标与 n*m 总和不超过 10^6 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "核对官方反图搜索方案：从网格外反向标记必然逃脱的固定方向格，再判断问号格。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/382791168",
+      "notes": "页面确认 verdict 为 Accepted；实现采用正向遍历部分函数图、识别逃脱路径和环，并单独处理问号格。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Repeater11/p/18579287",
+      "notes": "完整中文题解与代码独立确认外部汇点、固定边反图 BFS 和问号格的最终判定。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2034C",
+      "notes": "核对洛谷题面翻译与约束；本次未检索到可稳定读取的独立洛谷题解文章。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/C",
+      "notes": "独立证明剩余格可以整体封闭，并穷举 1x1、1x2、1x3、2x2 的全部 780 个含问号基础网格，与所有问号赋值暴力结果一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2034C",
+      "notes": "Luogu 题解索引候选；本次未成功取得可核验的独立文章，因此未移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "为每个问号格选择方向，使最终永远留在网格内的起点数量最大。",
+    "constraints": "1 <= t <= 10^4；1 <= n,m <= 1000；所有测试的 n*m 之和不超过 10^6；时限 3 秒、内存 256 MB。",
+    "core_idea": "只考虑固定方向格，把网格外建成一个汇点。若固定格的箭头指向另一个固定格或网格外，就向该固定格连反边；从外部汇点 BFS，所有被访问的固定格都必然逃脱。未被访问的固定格，其唯一后继一定仍在未标记集合中或是问号格。对问号格，如果四个可选方向全部越界或指向已标记的必然逃脱固定格，那么它无论如何都会逃脱；否则它可以指向一个仍可保留在网格内的邻格。所有相邻问号天然互相提供可选邻格，因而这里无需迭代删除。把未标记固定格和拥有可用邻格的问号格组成集合 S：固定格的后继留在 S，每个问号也可选一个 S 内邻格，所以赋值后所有从 S 出发的路径永不离开有限集合 S，最终必然进入环。",
+    "complexity": "O(n*m) time and O(n*m) memory per test case.",
+    "tricks": [
+      "把最大化受困格数转成求必然逃脱格的补集。",
+      "只对固定箭头建反边，问号不能提前当作确定边传播。",
+      "相邻问号可以互相定向形成封闭结构，因此问号判定只需一次。",
+      "用有限封闭集合中的路径必然进入环来证明构造存在。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "主方案经官方题解、独立中文题解、Accepted 代码的不同实现及小网格穷举交叉确认，没有未解决的正确性问题。",
+      "本次洛谷检索只稳定获得题面页，没有把未实际读取的题解索引记作来源。",
+      "Accepted 代码使用正向函数图分类而非官方反图 BFS，因此作为等价变体记录。"
+    ],
+    "proof_risks": [
+      "反图 BFS 中不能给问号格建立任意出边，否则会把可选择的方向误判成强制逃脱。",
+      "越界方向对问号只是一个可选的坏方向；只有所有四个方向都越界或指向必然逃脱格时，问号才必然逃脱。",
+      "问号不需要反复传播：只要两个问号相邻，它们就都可以留在候选集合中并互相提供封闭方向。",
+      "未被 BFS 标记的固定格不能指向已标记固定格，否则它本应通过反边被继续标记。",
+      "证明答案可达时必须说明整个剩余集合对选定后继封闭，而不能只说每个格局部看起来有一个安全方向。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-exit-bfs",
+      "summary": "建立固定箭头的反图和外部汇点，从汇点 BFS 标记必然逃脱的固定格，再统计未标记固定格及至少拥有一个非逃脱邻格或问号邻格的问号格。",
+      "complexity": "O(n*m) time and O(n*m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-functional-path-classification",
+      "summary": "沿固定箭头正向遍历部分函数图，把到达网格外或已知逃脱路径的链标记为逃脱；碰到问号或当前路径中的环则保留，再检查每个问号是否有可保留邻格。",
+      "complexity": "O(n*m) time and O(n*m) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bfs",
+      "importance": "primary",
+      "evidence": "官方主解从网格外汇点在固定箭头反图上 BFS，求出全部必然逃脱的固定格；答案是其补集经过问号判定后的大小。",
+      "solution_variant": "reverse-exit-bfs"
+    },
+    {
+      "tag": "graph/functional-graph",
+      "importance": "secondary",
+      "evidence": "每个固定方向格至多有一个后继，形成带外部汇点和问号终止点的部分函数图；逃脱链、环和到达问号的链构成完整分类。",
+      "solution_variant": "forward-functional-path-classification"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "虽然无需输出方向，但最优性证明必须为所有保留问号选择集合内后继，构造一个对后继封闭的有限集合。",
+      "solution_variant": "reverse-exit-bfs"
+    }
+  ]
+}

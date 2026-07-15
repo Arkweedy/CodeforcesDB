@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "D",
+    "title": "Darius' Wisdom",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/D",
+      "notes": "读取完整操作定义、至少存在一个 1、输出不超过 n 次操作和 sum(n) <= 2*10^5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "核对官方按目标值分桶、用 1 中转 0 与 2、优先处理较少极值及操作数不超过 n 的证明。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/382754798",
+      "notes": "页面确认 verdict 为 Accepted；实现从右向左放置 2，再修复 1 区间，用有序位置集合维护可交换下标。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/iowmd4ei",
+      "notes": "读取完整洛谷题解与代码；独立给出先固定较少的 0 或 2、两步跨越 0/2 和总操作数上界。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Repeater11/p/18579287",
+      "notes": "中文题解提供按目标位置逆序放置 2、1、0 的另一种集合实现，并解释最坏错位形态。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/D",
+      "notes": "独立实现较少极值优先的两阶段构造，穷举 n<=8 的全部 9330 个至少含一个 1 的三值数组；每步合法、最终有序且操作数均不超过 n。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "数组元素只为 0、1、2；每次只能在差为 1 的两项间转移一个单位，要求不超过 n 次操作把数组排成非递减。",
+    "constraints": "1 <= t <= 3000；1 <= n <= 2*10^5；a_i in {0,1,2}；至少一个元素为 1；所有测试的 n 之和不超过 2*10^5；时限 2 秒。",
+    "core_idea": "差为 1 的两列进行转移后，两项数值实际交换，所以允许交换 0<->1 和 1<->2，但不能直接交换 0 与 2。设数量为 c0,c1,c2，并按最终数组划分 0、1、2 三个目标区间。若 c0<=c2，先修复 0 区间；否则完全对称地先修复 2 区间。以修复 0 为例：目标 0 区间中的 1 可和区间外的 0 一步交换；必须先处理这些 1，把至少一个 1 留到区间外。目标区间中的 2 用区间外的 1 和 0 两步修复：先交换 2 与 1，使目标位置变成 1，再与 0 交换，且新的 1 留在区间外继续充当中介。修复 0 后只剩 1、2，两者可以直接交换完成排序。若 x=min(c0,c2)，y=max(c0,c2)，第一阶段至多 2x 步，第二阶段至多 min(c1,y) 步；因为 x<=y，所以 2x+min(c1,y)<=x+y+c1=n。",
+    "complexity": "使用 3x3 的实际值/目标区间位置桶时为 O(n) time and O(n) memory；输出操作数不超过 n。",
+    "tricks": [
+      "把转移操作识别成相邻数值之间的交换。",
+      "用值 1 作为 0 与 2 之间可持续复用的中介。",
+      "优先固定数量较少的极值，使两步修复的总成本受 n 约束。",
+      "先处理目标极值区间里的 1，再处理相反极值，保证中介位于区间外。",
+      "按实际值和目标区间建立 3x3 位置桶，常数时间取得下一对错位位置。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "主构造经官方题解、完整洛谷题解、另一份中文题解、Accepted 代码和 n<=8 全枚举确认，没有未解决的正确性问题。",
+      "Accepted 代码采用从右向左放置的集合实现，和主记录的较少极值分桶实现并非逐行相同，但使用相同的 1 中转机制。",
+      "没有提出新 tag；现有 constructive、greedy、count-balancing、frequency-buckets 和 sorting 足以描述本题。"
+    ],
+    "proof_risks": [
+      "操作不是任意交换；只有当前数值为 0/1 或 1/2 的两项可以交换，0 与 2 必须经过 1 中转。",
+      "至少存在一个 1 是构造可行性的必要保证，不能把它当作无关题面条件。",
+      "修复目标极值区间时应先处理其中的 1，再处理相反极值，否则中介 1 可能暂时留在错误位置而难以按同一证明继续。",
+      "一个目标位置上的相反极值需要两步，证明不超过 n 时必须选择数量较少的 0 或 2 先固定。",
+      "每次交换后要同步更新实际值和位置桶；继续使用已经失效的下标会输出非法操作。",
+      "修复第一个极值区间后，剩余区间只能含 1 和另一个极值，才能用一步交换完成第二阶段。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "smaller-extreme-two-phase-buckets",
+      "summary": "选择数量较少的 0 或 2，借助值 1 在两步内修复其目标区间，再直接交换剩余的 1 与另一极值；用 3x3 错位位置桶维护候选。",
+      "complexity": "O(n) time and O(n) memory, with at most n operations.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "right-to-left-ordered-sets",
+      "summary": "用三个有序位置集合从右向左安置 2，再安置中间的 1；遇到 0 应放 2 的位置时仍通过一个 1 完成两次合法交换。",
+      "complexity": "O(n log n) time and O(n) memory, with at most n operations.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求显式输出不超过 n 次合法操作；算法分阶段构造目标区间，并同时证明每一步合法和总步数上界。",
+      "solution_variant": "smaller-extreme-two-phase-buckets"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "选择数量较少的极值先归位，并立即修复其目标区间，才能把最坏两步操作的数量控制在可证明的范围内。",
+      "solution_variant": "smaller-extreme-two-phase-buckets"
+    },
+    {
+      "tag": "trick/count-balancing",
+      "importance": "primary",
+      "evidence": "核心上界为 2*min(c0,c2)+min(c1,max(c0,c2))<=n；按 0、1、2 的数量平衡决定先修复哪一侧。",
+      "solution_variant": "smaller-extreme-two-phase-buckets"
+    },
+    {
+      "tag": "data-structure/frequency-buckets",
+      "importance": "secondary",
+      "evidence": "按实际值和目标区间维护常数个位置桶，可以在每次操作后 O(1) 取得并更新错位下标。",
+      "solution_variant": "smaller-extreme-two-phase-buckets"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "问题本质是在只允许相邻数值交换的限制下，把三值数组整理为三个连续目标区间。",
+      "solution_variant": "smaller-extreme-two-phase-buckets"
+    }
+  ]
+}

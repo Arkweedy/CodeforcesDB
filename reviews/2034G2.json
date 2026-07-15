@@ -1,0 +1,149 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "G2",
+    "title": "Simurgh's Watch (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2034G1",
+    "relationship": "G2 checks the exact-one-color condition only at covered integer times, while G1 checks every real time. The one-color criterion and the universal three-color construction coincide, but two-color feasibility can differ because an open cell between x and x+1 is irrelevant in G2. G1 reduces to G2 after doubling endpoints; the reverse shortcut, or applying G1 directly to the original G2 coordinates, is invalid."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2034/G2",
+      "notes": "Read the complete current statement, examples, and limits. Confirmed that only covered integer times are constrained; t <= 10000, n <= 200000, sum(n) <= 200000, and endpoints are in [1,10^9]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "Read the complete official G2 tutorial and implementation. It proves the persistent-witness lemma, sweeps only l, r, l-1, and r+1 checkpoints, maintains reachable unique-witness candidates, reconstructs two colors through predecessors, and uses the same one/three-color constructions."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9541lhc6",
+      "notes": "Read the full independent article and code. It normalizes each witness interval to one contiguous responsibility block, derives disjoint and overlapping witness handoffs, preprocesses the at-most-two crossing-interval transitions with a sweep set, and reconstructs a two-color solution in O(n log n)."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/294096375",
+      "notes": "Read maroonrk's full C++23 submission; the page explicitly showed Accepted in 452 ms. It changes [l,r] to half-open [l,r+1), splits disconnected components, tracks reachable witness/predecessor states, reconstructs two colors, and falls back to the farthest-right three-color chain."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2034/G2",
+      "notes": "Re-derived the witness-block normalization, handoff parity, adjacency-preserving compression, and three-color bound. An in-memory exhaustive check covered all 8007 interval multisets of size at most 6 over endpoints {0,1,2,3}; the translated witness DP matched brute-force two-color feasibility and every instance was three-colorable. It also found a concrete G1/G2 separation example. No files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Color closed integer-endpoint intervals with the minimum number of colors so that at every covered integer time some active color occurs exactly once. The answer is still at most three, but deciding two colors requires a reachable-witness DP because invalid active sets between adjacent integers do not matter.",
+    "constraints": "1 <= t <= 10000; 1 <= n <= 200000 per test; sum(n) <= 200000; 1 <= l_i <= r_i <= 10^9; closed intervals; only integer time points are relevant. The time limit is 2 seconds and the memory limit is 256 MB.",
+    "core_idea": "For two colors, call an interval a witness at integer x if its color occurs exactly once among intervals covering x. Normalize a feasible coloring so a chosen interval's witness times form one contiguous block. The key lemma is that if interval i can witness at x, future intervals can be colored opposite to i so that i remains the witness through every integer x..r_i without changing already validated points. Sweep critical coordinates and maintain which active intervals can be the current witness of some feasible prefix, together with a predecessor and whether the next witness keeps or flips color. There are two canonical handoffs between witness blocks: if the old block ends at x and the next begins at x+1 without overlap, the witnesses may keep the same color; if two witness intervals overlap across the boundary, they must have opposite colors and no third interval may cross from x to x+1. A sweep set exposes these overlapping transitions only when exactly two relevant intervals cross, so the transition graph is linear-size. Equivalently, the official goods/bads candidate sets update reachable witnesses when intervals end and start. If a witness reaches the end of every covered component, backtrack predecessors, assign witness colors by handoff parity, and color each ordinary interval opposite to the witness block containing its start. If no state reaches the end, two colors are impossible. One color is checked separately. For the fallback, greedily choose a farthest-reaching cover chain, alternate colors 1 and 2 on it, and color all other intervals 3.",
+    "complexity": "O(n log n) time and O(n) memory per test for coordinate compression, active ordered sets, linear-size witness transitions, and reconstruction; O(sum(n) log sum(n)) in the usual aggregate bound. The exact constant depends on whether the official candidate-set formulation or the explicit handoff graph is implemented.",
+    "tricks": [
+      "Treat the uniquely colored interval as a moving certificate for a feasible prefix, rather than storing complete partial colorings.",
+      "Normalize every witness's responsibility times to one contiguous integer block.",
+      "Distinguish disjoint handoffs, which can preserve witness color, from overlapping handoffs, which flip it.",
+      "Use l-1 and r+1, or equivalently half-open [l,r+1), so coordinate compression preserves integer adjacency.",
+      "Record predecessor and parity information during feasibility DP so the coloring can be reconstructed.",
+      "Reuse the alternating farthest-reaching chain only for the unconditional three-color fallback."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The official explanation is code-oriented and does not fully formalize the goods/bads invariant or every reconstruction case; the Luogu handoff formulation and the Accepted maroonrk implementation provide independent corroboration but are not identical line-by-line proofs.",
+      "The exhaustive verification covers only small endpoint domains and does not independently prove the persistent-witness normalization for arbitrary instances.",
+      "The O(n log n) bound assumes each interval and each legal witness handoff enters a constant number of ordered-set operations; an implementation that materializes arbitrary candidate pairs would not satisfy it.",
+      "A new taxonomy tag, graph/conflict-free-coloring, is proposed as a candidate. Its final parent and naming need main-agent taxonomy review."
+    ],
+    "proof_risks": [
+      "A G1 two-color failure at a non-integer point does not imply G2 failure; only integer checkpoints may reject a G2 coloring.",
+      "The persistent-witness lemma must recolor only intervals that begin in the future, otherwise extending a witness could invalidate already processed integer points.",
+      "Compressing only l and r loses whether two represented checkpoints are consecutive integers; include l-1 and r+1 or use [l,r+1) half-open intervals.",
+      "Overlapping witness handoffs require opposite colors and the absence of a third interval crossing the boundary. Missing either condition creates false DP transitions.",
+      "Disjoint and overlapping handoffs use different color parity; reconstruction must preserve that distinction and must treat duplicate intervals by identity.",
+      "Every non-witness interval must be assigned opposite to the correct witness block, not merely opposite to an arbitrary active witness at one endpoint.",
+      "The three-color proof still requires the chosen chain to cover each component and same-parity chosen intervals to be disjoint."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "reachable-witness-sweep-dp",
+      "summary": "Sweep adjacency-preserving checkpoints while keeping the active intervals that can be the unique-color witness of some feasible prefix. The persistent-witness lemma compresses many colorings into candidate witness sets; predecessor and parity links reconstruct two colors. If no candidate survives a covered component, use the alternating farthest-reaching three-color construction.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "explicit-witness-block-handoff-dp",
+      "summary": "Represent a two-color solution as contiguous witness blocks. Sweep active intervals to add only disjoint consecutive-block transitions and overlapping transitions at boundaries crossed by exactly two intervals, run reachability over these O(n) transitions, then backtrack witness colors and color ordinary intervals oppositely.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/conflict-free-coloring",
+      "display_name": "Conflict-free coloring",
+      "importance": "primary",
+      "evidence": "Every integer point induces a hyperedge of active intervals and requires some color of frequency exactly one; this is conflict-free interval-hypergraph coloring, not pairwise proper coloring.",
+      "solution_variant": "reachable-witness-sweep-dp",
+      "description": "Color vertices or objects so every relevant hyperedge or query range containing at least one object has a color that occurs exactly once. Use when exact-one color witnessing, rather than ordinary proper coloring, is the defining feasibility condition.",
+      "parent": "graph",
+      "created_reason": "CF2034G1 and G2 are exact conflict-free coloring problems on interval hypergraphs. Existing edge-coloring and generic constructive or greedy tags do not retrieve the exact-one-frequency condition or distinguish it from proper coloring.",
+      "status": "candidate",
+      "aliases": [
+        "conflict free coloring",
+        "unique-color coloring"
+      ]
+    },
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "Two-color feasibility is reachability over prefix states compressed to the current witness interval, and predecessor states are stored to reconstruct the coloring.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "Starts, ends, and adjacency boundaries are processed in coordinate order while active intervals and the legal witness handoffs are maintained dynamically.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "A potentially exponential set of partial two-colorings is represented only by intervals that can currently serve as a unique-color witness plus predecessor/parity metadata.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    },
+    {
+      "tag": "trick/coordinate-compression",
+      "importance": "secondary",
+      "evidence": "The algorithm compresses l, r, l-1, and r+1 so that endpoint events and consecutive-integer handoffs remain distinguishable despite coordinates up to 10^9.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "The DP stores enough predecessor information to output an optimal coloring, while failure invokes an explicit three-color cover-chain construction.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "The universal upper bound is constructed by repeatedly taking the farthest-reaching interval covering the leftmost still-uncovered point and alternating two special colors.",
+      "solution_variant": "reachable-witness-sweep-dp"
+    }
+  ]
+}

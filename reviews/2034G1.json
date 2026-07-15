@@ -1,0 +1,155 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "G1",
+    "title": "Simurgh's Watch (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "greedy",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2034G2",
+    "relationship": "Both versions color the same closed intervals with integer endpoints, but G1 requires a uniquely occurring color at every covered real point, including open cells between consecutive integer coordinates. G1 can be reduced to G2 only after replacing [l,r] by [2l,2r], so even coordinates represent endpoints and odd coordinates represent open cells. Applying G1's direct continuous feasibility test to an unscaled G2 instance is not equivalent, because G2 may ignore a bad non-integer active set."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2034/G1",
+      "notes": "Read the complete current statement, examples, and limits. Confirmed that every covered real time, including non-integers, must have a color occurring exactly once; t <= 10000, n <= 200000, sum(n) <= 200000, and endpoints are in [1,10^9]."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "Read the full official G1 tutorial and implementation. It gives the one-color check, an alternating farthest-reaching three-color construction, the start-ascending/end-descending two-color greedy, event validity checks, and the reduction to G2 after doubling coordinates."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/136579#comment-1223389",
+      "notes": "Read the problem author's linked proof sketch for the G1 greedy. It supplies the exchange argument for choosing the longest interval among equal starts and the earliest-ending active singleton in the two-color case, but remains informal."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9541lhc6",
+      "notes": "Read the complete independent cross-version article and code. It confirms that G1 is reduced by multiplying endpoints by two, proves the alternating special-interval three-color construction, and develops the discrete witness-block DP used after scaling."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/294089598",
+      "notes": "Read tourist's full C++20 submission; the page explicitly showed Accepted in 187 ms. It independently uses an event sweep with parity-DSU constraints for the two-color case and an alternating farthest-reaching chain for three colors, corroborating the result through a formulation different from the editorial greedy."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2034/G1",
+      "notes": "Re-derived the active-count invariant, exchange choices, three-color chain proof, and scale-by-two equivalence. An in-memory exhaustive check covered all 8007 interval multisets of size at most 6 over endpoints {0,1,2,3}; the official greedy matched brute-force two-color feasibility and every instance had a valid coloring with at most three colors. No files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Color closed intervals with the minimum number of colors so that at every covered real time some active color occurs exactly once. The optimum is always 1, 2, or 3; G1's difficult part is deciding and constructing two colors while respecting both endpoints and every open cell between them.",
+    "constraints": "1 <= t <= 10000; 1 <= n <= 200000 per test; sum(n) <= 200000; 1 <= l_i <= r_i <= 10^9; closed intervals; all real time points are relevant. The time limit is 2 seconds and the memory limit is 256 MB.",
+    "core_idea": "At any relevant sweep state with two colors, validity is exactly count(color 1)=1 or count(color 2)=1. Compress endpoints, process starts by increasing l and, for equal l, decreasing r, and maintain the two active color classes ordered by right endpoint. Remove expired intervals first and test the deletion-only state, which represents the open cell before the next starts. For each new interval: if an active color class is empty, use that empty color (or an arbitrary color if both are empty); if both are nonempty with unequal sizes, the smaller class is the sole singleton, so add to the larger class; if both sizes are one, add to the color whose current singleton ends first, leaving the later-ending interval as the future witness. Test after every insertion. The linked exchange proof argues that any feasible coloring can be normalized to these choices; therefore the first bad nonempty state proves that two colors are impossible. If the greedy succeeds, its used palette is the optimum 1 or 2. Otherwise three colors always suffice: greedily choose a chain of farthest-reaching intervals that covers every covered component, color consecutive chosen intervals alternately 1 and 2, and color every unchosen interval 3. Nonconsecutive chosen intervals are disjoint, so every covered point sees at least one chosen interval and at most one interval of each special color.",
+    "complexity": "O(n log n) time and O(n) memory per test, including sorting/compression and ordered active sets; O(sum(n) log sum(n)) time in the usual aggregate bound over all tests. The scale-by-two G2 alternative has the same asymptotic bounds.",
+    "tricks": [
+      "Translate conflict-free coloring into the active-count condition that at least one of two color counts equals exactly one.",
+      "Check deletion-only sweep states as well as insertion states, because they represent open real cells that G2 does not inspect.",
+      "Sort equal-left-endpoint intervals by decreasing right endpoint; the longest new interval receives the proof-critical color first.",
+      "When the active counts are 1 and 1, sacrifice the earlier-ending singleton so the later-ending interval remains the unique witness.",
+      "Obtain the universal three-color upper bound from an alternating farthest-reaching cover chain.",
+      "Alternatively double every endpoint and run the discrete G2 algorithm; odd integer points then represent half-points."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The official tutorial states the greedy and provides code, while its linked author comment gives only a brief exchange sketch rather than a fully formal invariant proof; the accepted tourist code corroborates feasibility through a different parity-DSU formulation, not the same greedy.",
+      "The exhaustive verification is strong finite evidence but covers only small endpoint domains and cannot replace the global exchange proof.",
+      "The three-color chain proof was independently reconstructed and matches all consulted implementations, but the official prose compresses several component-boundary details into a short greedy description.",
+      "A new taxonomy tag, graph/conflict-free-coloring, is proposed as a candidate. Its placement under graph rather than a future hypergraph/coloring parent needs main-agent approval."
+    ],
+    "proof_risks": [
+      "This is conflict-free coloring, not proper interval coloring: overlapping intervals may share a color as long as some active color has frequency exactly one.",
+      "Checking only compressed endpoint states misses an invalid open cell unless removals are tested before starts at the next event.",
+      "Changing the equal-start order from decreasing r invalidates the exchange argument; the longest interval must receive the forced opposite color first.",
+      "In the 1-versus-1 active case, choosing the later-ending singleton's color instead of the earlier-ending singleton's color can destroy the only witness immediately after an expiration.",
+      "The three-color proof needs both facts: the selected intervals cover the union and nonconsecutive selected intervals are disjoint. Alternation alone is insufficient.",
+      "The scale-by-two reduction must retain both even endpoint states and odd open-cell states; merely running G2 on the original coordinates solves a weaker problem."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "continuous-event-greedy-with-three-color-backbone",
+      "summary": "Sweep endpoints with two active color sets. Process equal starts longest first and make the only locally canonical choice that preserves a singleton witness; reject two colors if a nonempty active state has neither count equal to one. On rejection, choose a farthest-reaching cover chain, alternate colors 1 and 2 on the chain, and give all other intervals color 3.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "scale-by-two-and-run-discrete-witness-dp",
+      "summary": "Replace every [l_i,r_i] by [2l_i,2r_i]. Every continuous active set occurs either at an even endpoint coordinate or throughout an open cell represented by an odd coordinate, so the G2 integer-point witness DP returns exactly the G1 optimum and coloring.",
+      "complexity": "O(n log n) time and O(n) memory, using 64-bit-safe coordinate arithmetic.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/conflict-free-coloring",
+      "display_name": "Conflict-free coloring",
+      "importance": "primary",
+      "evidence": "The required property is exactly conflict-free coloring of an interval hypergraph: every nonempty point-induced hyperedge must contain a color whose frequency is one, rather than requiring every intersecting pair to differ.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone",
+      "description": "Color vertices or objects so every relevant hyperedge or query range containing at least one object has a color that occurs exactly once. Use when exact-one color witnessing, rather than ordinary proper coloring, is the defining feasibility condition.",
+      "parent": "graph",
+      "created_reason": "CF2034G1 and G2 are exact conflict-free coloring problems on interval hypergraphs. Existing edge-coloring and generic constructive or greedy tags do not retrieve the exact-one-frequency condition or distinguish it from proper coloring.",
+      "status": "candidate",
+      "aliases": [
+        "conflict free coloring",
+        "unique-color coloring"
+      ]
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The two-color decision is a forced event-order greedy: preserve the existing singleton when counts differ, and in the 1-versus-1 case sacrifice the singleton with the earlier right endpoint.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "Correctness is evaluated over successive continuous active sets, including deletion-only open-cell states, while two ordered sets maintain active intervals by color and right endpoint.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "Both the optimal one/two-color assignment and the unconditional alternating-backbone three-color assignment are explicitly reconstructed.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone"
+    },
+    {
+      "tag": "trick/exchange-argument",
+      "importance": "secondary",
+      "evidence": "The greedy proof exchanges any feasible coloring toward choosing the longest equal-start interval first and retaining the later-ending singleton witness.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone"
+    },
+    {
+      "tag": "trick/coordinate-compression",
+      "importance": "secondary",
+      "evidence": "Only endpoint states and the open cells between consecutive endpoints are distinct; compression plus removal-before-start event order preserves all of them.",
+      "solution_variant": "continuous-event-greedy-with-three-color-backbone"
+    },
+    {
+      "tag": "dp",
+      "importance": "secondary",
+      "evidence": "The official alternative doubles coordinates and invokes G2's reachable-witness dynamic program without changing the asymptotic bound.",
+      "solution_variant": "scale-by-two-and-run-discrete-witness-dp"
+    }
+  ]
+}

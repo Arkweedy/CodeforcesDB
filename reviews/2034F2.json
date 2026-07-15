@@ -1,0 +1,151 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "F2",
+    "title": "Khayyam's Royal Decree (Hard Version)",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math",
+      "sortings"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2034F1",
+    "relationship": "题面和答案完全相同，但 k 与 sum(k) 从 500 提升到 5000。F1 的 O(k^3) direct-path 容斥无法通过；F2 利用翻倍系数 2^c 的子集组合意义，允许 DP 转移穿过未选卷轴，把复杂度降为 O(k^2)。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/F2",
+      "notes": "读完完整题面与 Hard 约束：k <= 5000，sum(k) <= 5000，其余随机过程和 F1 相同。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "核对官方 F2 教程和实现：格路总数、后缀 weight DP、2^c 的卷轴子集解释，以及 O(k^2) 转移。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/qvdfv88x",
+      "notes": "完整阅读题解与代码。独立确认所有抽取序列等概率、按路径和所选卷轴子集计数，以及转移区间可以经过未选卷轴。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/keysky/p/19045606",
+      "notes": "完整阅读推导和实现。通过固定路径上的价值望远镜拆分，确认每个卷轴贡献 V_i*2^(后续卷轴数) 及 O(k^2) 后缀 DP。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/cjoierzdc/p/18581287",
+      "notes": "阅读完整说明与实现，交叉确认复制品解释、钦定卷轴子集和 f_i=sum T(i,j)f_j 的递推。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/F2",
+      "notes": "独立推导望远镜恒等式和子集链计数；用内存脚本对 n,m <= 4 的 4000 组随机卷轴集合比较全路径暴力、F1 DP 与 F2 DP，结果完全一致，未写文件或数据库。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/294135546",
+      "notes": "cf-problemset 的提交表显示 verdict 为 OK，但 Codeforces 源码页触发 Cloudflare 检查，未读到代码正文，因此不能移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "计算与 F1 相同的随机宝石翻倍期望，但卷轴数提高到 5000，要求避免三次容斥。",
+    "constraints": "1 <= t <= 500；1 <= n,m <= 2e5；0 <= k <= 5000；sum(n), sum(m) <= 2e5；sum(k) <= 5000；模数 998244353。",
+    "core_idea": "仍将卷轴转为背包坐标 (x,y)=(n-r,m-b)，并将随机过程视为等概率单调格路。记 V(x,y)=2x+y。对一条依次经过卷轴 s_1,...,s_c 的固定路径，把各段新增价值及其后续翻倍次数展开并望远镜化，最终价值等于 V(end)+sum_h V(s_h)*2^(c-h)。关键是 2^(c-h) 正好是 s_h 之后所经卷轴的子集数量。于是改为计数一条路径和一个被钦定经过的卷轴子集；路径还可以经过未被选入子集的卷轴。令 W_end=1，W_i 为从卷轴 i 到终点的后缀路径及所选卷轴链数量，则 W_i=sum_{j>i} T(i,j)W_j，其中 T(i,j)=C(dx+dy,dx)，j 是所选链中的下一个点，而 i 到 j 的路径无需避开其他卷轴。卷轴 i 的总贡献为 V_i*T(origin,i)*W_i。对所有实际卷轴和虚拟终点求和，再除以 T(origin,end)，即得到期望。",
+    "complexity": "阶乘预处理 O(n+m)，排序 O(k log k)，后缀 DAG DP O(k^2)；总时间 O(n+m+k log k+k^2)，空间 O(n+m+k)。若显式保存全部 T(i,j)，空间会增至 O(k^2)，但并非必要。",
+    "tricks": [
+      "对固定路径先望远镜拆分价值，把每段增量改写为各卷轴前缀价值的贡献。",
+      "把后续 c 个卷轴带来的 2^c 解释为这些卷轴的子集数。",
+      "DP 转移只要求选中的下一卷轴可达，区间内允许经过任意未选卷轴，因此不再需要 direct-path 容斥。",
+      "加入虚拟终点并设 W_end=1，统一覆盖原始价值和未选择任何卷轴的情况。",
+      "组合数在坐标不可达时返回 0，从而只在卷轴偏序 DAG 上产生有效转移。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "主算法经官方实现、三份独立题解和 4000 组小规模对拍确认，没有未解决的正确性问题。",
+      "部分非官方题解在中间展开式中存在坐标符号笔误；最终 recurrence 与代码一致，未把有疑问的单行公式作为证明依据。",
+      "Codeforces accepted submission 的源码正文无法匿名读取，因此仅保留为 reference candidate。",
+      "提议新增 lattice-path-counting tag；是否创建由主 agent 统一决定。"
+    ],
+    "proof_risks": [
+      "F2 的转移不能使用 F1 的 direct path。i 到 j 之间经过但未被选入子集的卷轴必须被允许，否则无法产生恰好 2^c 的重数。",
+      "2^c 对应的是一条固定路径上后续实际经过卷轴的全部子集，不是全局 k 个卷轴的任意子集。",
+      "固定路径价值的望远镜式必须保留虚拟终点 V(end)；若只对实际卷轴求和，需要另行加回基础价值 2n+m。",
+      "T(origin,i) 允许前缀经过其他卷轴，因为这些卷轴可以不属于当前所选子集；误用无障碍路径数会少算。",
+      "同一条完整路径和同一卷轴子集在递推中必须有唯一的所选链顺序；该唯一性来自坐标偏序和路径访问顺序。",
+      "所有完整红蓝序列等概率需要单独证明，不能因为每一步的红蓝选择概率不同就对格路赋相同的局部边概率。",
+      "不可达点对必须贡献 0；直接向组合数传入负 dx 或 dy 而不检查会产生错误下标。",
+      "排序只负责给出拓扑顺序；真正的可达性仍需同时检查 x_j>=x_i 和 y_j>=y_i。",
+      "F2 的总复杂度是 O(k^2)，不是对 F1 三次容斥做常数优化；保留 direct 矩阵会重新退化到无法通过的复杂度。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "selected-scroll-subset-dag-dp",
+      "summary": "把每条路径上后续翻倍次数对应的 2 的幂解释为卷轴子集数，并在卷轴偏序 DAG 上统计钦定卷轴链和任意中间路径。",
+      "complexity": "O(n+m+k log k+k^2) time and O(n+m+k) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "W_i 统计从卷轴 i 到终点的路径与所选后续卷轴链数量，并通过所有可达下一卷轴进行 O(k^2) 计数转移。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "把一颗宝石经历 c 次后续翻倍的系数 2^c 解释为这 c 个卷轴的子集数，是从 O(k^3) 降到 O(k^2) 的决定性转化。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "math/combinatorics/lattice-path-counting",
+      "importance": "primary",
+      "evidence": "前缀和后缀转移都依赖 C(dx+dy,dx) 计算两个可比较卷轴坐标之间的单调格路数。",
+      "solution_variant": "selected-scroll-subset-dag-dp",
+      "status": "candidate",
+      "parent": "math/combinatorics",
+      "description": "使用二项式或多项式系数计算可比较格点之间的单调路径，并可结合必经点、禁点或关键点限制；不用于仅在网格上普通遍历而不做组合路径计数的题。",
+      "created_reason": "现有 math/combinatorics 过于宽泛，graph/path-counting 也不能区分经典二项式格路技术；本题两种解法都以该技术作为核心可复用组件。"
+    },
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "secondary",
+      "evidence": "最终期望被拆成各卷轴前缀价值的独立贡献之和，再统一除以等概率格路总数。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "需要证明不放回抽取产生的每个完整红蓝序列概率相等，才能用组合路径计数计算期望。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "卷轴按二维坐标可达关系构成 DAG，W_i 按逆拓扑序累加所有可达后继。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "卷轴需要按 x+y 或兼容坐标偏序的顺序排列，以便逆序执行后缀 DP。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    }
+  ]
+}

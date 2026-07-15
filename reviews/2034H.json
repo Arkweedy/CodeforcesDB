@@ -1,0 +1,142 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "H",
+    "title": "Rayan vs. Rayaneh",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dfs and similar",
+      "dp",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/H",
+      "notes": "Read the complete statement, integer-linear-combination definition, distinctness condition, n <= 1e5, a_i <= 1e5, sum(n) <= 3e6, and 4-second limit."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "Read the full official H tutorial and embedded implementation. Confirmed the Bezout/gcd criterion, distinct prime-power witnesses, multiple-count condition, k <= 6 bound, recursive enumeration, reconstruction, and official complexity analysis."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/j9tnffgd",
+      "notes": "Read the complete proof and code. It independently precomputes about 8.52e5 admissible prime-power tuples, scans adjacent sorted values for the size-two case, uses a divisor sieve, and reconstructs witnesses."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Read the CF2034H section and full implementation. It cross-checks the valuation witness model and gives a more aggressively pruned online DFS over candidate products."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/NanguX/p/19518987",
+      "notes": "Consulted for an additional pruning perspective only. Its displayed multiple-count inequality is reversed, so it was not used as a correctness authority."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/H",
+      "notes": "Re-derived the certificate equivalence, distinct-witness argument, reconstruction uniqueness, pair fallback, and size bound. An in-memory test on 1000 random distinct sets with values <= 15 matched exhaustive subset checking and certificate enumeration; no files or database rows were written."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/380069402",
+      "notes": "Codeforces contest.status reported an OK verdict, but the anonymous source page returned HTTP 403. Do not promote to sources until the code body is actually read."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a maximum subset S of the given positive integers such that no x in S belongs to the integer span of S without x, and output one such subset.",
+    "constraints": "1 <= t <= 100; 1 <= n <= 1e5; distinct 1 <= a_i <= V=1e5; sum(n) <= 3e6; time limit 4 seconds; memory limit 512 MB.",
+    "core_idea": "By Bezout, the integer span of S\\{a_i} is exactly the multiples of gcd(S\\{a_i}), so independence is equivalent to gcd(S\\{a_i}) not dividing a_i for every i. Therefore each a_i has a witness prime p_i whose valuation in a_i is strictly smaller than in every other selected number; witness primes for different elements must be distinct. Set q_i=p_i^(v_p_i(a_i)+1) and G=product(q_i). Then a certificate tuple exists exactly when, for every i, some input number is divisible by G/q_i but not by G. With CM[d] equal to the number of input values divisible by d, this is CM[G/q_i] > CM[G], treating CM[G]=0 when G>V. Enumerate tuples of powers of distinct primes by a pruned DFS. For k>=3, after sorting q_1<...<q_k, G/q_1<=V and q_1<=sqrt(V); moreover k<=6 because seven distinct prime bases would force the product excluding the smallest above V. Handle answers one and two separately, then keep the largest feasible tuple and reconstruct one value for every omitted q_i.",
+    "complexity": "Let K<=6, C be the number of admissible prime-power tuples (about 8.52e5 for V=1e5), and L their total lengths. After one-time candidate generation, O(t*V*log V + t*L + sum(n_i)*K) time; equivalently C=O(V*sqrt(V)/log V) gives the official coarse bound O(t*C*K + t*V*log V + sum(n_i)*K). The official shared traversal uses O(t*V + sum(n_i)) memory; precomputing every tuple instead uses O(C*K + V + n) memory.",
+    "tricks": [
+      "Replace integer-span membership by divisibility by the gcd of the remaining elements.",
+      "Give every selected element a distinct prime-power witness and encode the whole subset by their product G.",
+      "Test each witness in O(1) through CM[G/q_i] > CM[G] after a divisor/multiple sieve.",
+      "Use q_min <= sqrt(V), G/q_min <= V, distinct prime bases, and K <= 6 to prune the certificate DFS.",
+      "Find a size-two answer from two incomparable values under divisibility; a strict divisibility chain can contain only O(log V) distinct values."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness issue remains after the official proof and code, two independent full implementations, and small exhaustive cross-checking.",
+      "The separate accepted submission is only a reference candidate because its source body could not be read anonymously.",
+      "Published complexity presentations differ because one implementation stores all candidate tuples while the official code traverses them once across all test cases; the payload states both resource models.",
+      "No new taxonomy tag is proposed; existing gcd, linear-Diophantine, divisibility, divisor-sieve, brute-force, and candidate-pruning tags cover the reusable method."
+    ],
+    "proof_risks": [
+      "This is integer-span dependence, not vector-space dependence over Q; all nonzero integers have rational rank one, while their Z-span is determined by gcd.",
+      "Witness primes must be proved pairwise distinct: one prime cannot simultaneously have v_p(a_i)<v_p(a_j) and v_p(a_j)<v_p(a_i).",
+      "The multiple-count inequality is CM[G/q_i] > CM[G], never the reverse, because every multiple of G is already a multiple of G/q_i.",
+      "A tuple entry is a prime power, and different entries must have different prime bases; choosing two powers of the same prime invalidates the certificate.",
+      "The q_1<=sqrt(V) argument requires k>=3; the k=1 and k=2 cases must be handled separately.",
+      "Values chosen for two different witnesses are automatically distinct because divisibility by both G/q_i and G/q_j would imply divisibility by G, but this should be stated rather than assumed.",
+      "The official dp and dfs tags should not be mapped literally: there is no dynamic programming, and the DFS is bounded arithmetic candidate enumeration rather than graph traversal."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "shared-prime-power-certificate-dfs",
+      "summary": "Store the multiple-count arrays for all test cases, recursively enumerate ordered powers of distinct primes under G/q_min<=V, and test each candidate against every case that can still improve. Reconstruct values from the best certificate.",
+      "complexity": "O(t*C*K + t*V*log V + sum(n_i)*K) time and O(t*V + sum(n_i)) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "precomputed-certificate-tuple-list",
+      "summary": "Precompute all admissible tuples of three to six prime powers once, storing every complement G/q_i. For each test case build CM by a divisor sieve, scan the tuple list, and reconstruct the best feasible tuple.",
+      "complexity": "O(C*K + t*(V*log V + L) + sum(n_i)*K) time and O(C*K + V + n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "Bezout turns membership in the integer span of the remaining elements into the decisive condition gcd(S without a_i) not dividing a_i.",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "After proving that every answer has at most six distinct prime-power witnesses, the main algorithm exhaustively enumerates all structurally admissible witness tuples.",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    },
+    {
+      "tag": "trick/candidate-pruning",
+      "importance": "primary",
+      "evidence": "The enumeration is feasible only after enforcing distinct prime bases, q_min<=sqrt(V), G/q_min<=V, K<=6, and current-best/product lower-bound pruning.",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    },
+    {
+      "tag": "math/number-theory/linear-diophantine-equation",
+      "importance": "secondary",
+      "evidence": "The problem's integer-linear-combination predicate is reduced using Bezout's identity rather than by ordinary linear algebra.",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "A certificate is verified entirely through divisibility by G/q_i and non-divisibility by G, including the special incomparable-pair case.",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "CM[d], the number of input values divisible by d, is computed by summing frequencies over multiples so every certificate condition can be tested in O(1).",
+      "solution_variant": "shared-prime-power-certificate-dfs"
+    }
+  ]
+}

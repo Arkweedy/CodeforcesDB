@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "E",
+    "title": "Permutations Harmony",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "constructive algorithms",
+      "greedy",
+      "hashing",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/E",
+      "notes": "读取 k 个排列两两不同、所有列和相等的定义，以及 sum(n*k)<=5*10^5 的输出规模约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "核对官方可行性分类、互补排列配对、奇数 n 的三排列基底及继续添加互补对的构造。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/382761863",
+      "notes": "页面确认 verdict 为 Accepted；实现判定阶乘和奇偶边界，构造三排列基底并递归枚举互补排列对。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Repeater11/p/18579287",
+      "notes": "完整中文题解独立确认偶数 k 的互补配对、奇数 k 的必要条件以及 n=2x+1 时的三排列构造。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://www.luogu.com.cn/problem/CF2034E?lang=zh-CN",
+      "notes": "核对洛谷题面翻译；本次未检索到可稳定读取的独立洛谷题解文章。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/E",
+      "notes": "独立补全 k=n!-1 的反证、三排列公式和复杂度证明；对 n<=6 的全部 k 及 n=7 的关键边界共 886 个实例验证分类、互异性和列和。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2034E",
+      "notes": "Luogu 题解索引候选；本次未取得可核验的独立文章，因此未移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定 n、k，构造 k 个互不相同的 n 阶排列，使每一列的元素和相同，或判断不存在。",
+    "constraints": "1 <= t <= 1000；1 <= n,k <= 10^5；所有测试的 n*k 之和不超过 5*10^5；时限 2 秒、内存 256 MB。",
+    "core_idea": "所有列的总和为 k*n*(n+1)/2，所以若列和相等，每列必须为 k*(n+1)/2。这给出 n 为偶数时 k 必须为偶数的必要条件；还必须有 k<=n!。对任意排列 p，定义互补排列 q_i=n+1-p_i，则每列 p_i+q_i=n+1。n>1 时该映射没有不动点，因此全部 n! 个排列被分成 n!/2 个互补对，任意偶数 k 都可选 k/2 对。若 n 为奇数且 k 为奇数，先构造三个排列。令 n=2x+1，使用恒等排列 p0；对 0-based 下标 i，偶数 i 令 p1[i]=x+1-i/2、p2[i]=n-i/2，奇数 i 令 p1[i]=n-floor(i/2)、p2[i]=x-floor(i/2)。三者都是排列，每列和均为 3(x+1)=3(n+1)/2。之后添加 (k-3)/2 个未与基底冲突的互补对。n>1 时 k=1 不可能；k=n!-1 也不可能，因为全部 n! 个排列本身和谐，若删去一个排列后仍和谐，则被删排列作为两组列和之差也必须每列相等，但单个排列不可能所有元素相同。因此完整分类为：n=1 仅 k=1；n>1 且 k>n! 不可行；偶数 k 可行；奇数 k 仅在 n 为奇数且 3<=k<=n!-3 时可行。",
+    "complexity": "O(n*k) time and O(n*k) stored output in the direct implementation; this matches the mandatory output size and the global sum(n*k)<=5*10^5 bound.",
+    "tricks": [
+      "先用所有列总和推出每列唯一可能的和值和奇偶必要条件。",
+      "用逐元素映射 v -> n+1-v 把排列组成列和恒定的互补对。",
+      "为奇数 n 显式构造一个大小为 3 的和谐基底，再添加互补对。",
+      "利用全部 n! 个排列本身和谐，通过取补集排除 k=n!-1。",
+      "计算阶乘时只需截断到超过 k 的值，避免溢出。",
+      "枚举互补对时只保留 p<mirror(p)，并跳过与三排列基底冲突的对。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "可行性分类和构造经官方题解、完整中文题解、Accepted 代码和小规模全分类验证，没有未解决的正确性问题。",
+      "本次 Luogu 检索只稳定取得题面页，未把动态题解索引作为已阅读来源。",
+      "Accepted 代码使用递归枚举排列；数据库中的核心描述采用更直接的 lexicographic enumeration 表述，但生成集合相同。",
+      "官方 hashing tag 只对应去重实现，并非决定性算法，因此没有纳入默认匹配 tag。"
+    ],
+    "proof_risks": [
+      "列和必须为 k*(n+1)/2；n 为偶数时 n+1 为奇数，因此奇数 k 必然不可行。",
+      "互补映射无不动点只对 n>1 成立；n=1 必须单独处理。",
+      "k<=n! 只是必要条件，不足以覆盖 k=1、k=n!-1 和偶数 n 的奇数 k。",
+      "大小为 3 的基底只适用于奇数 n>=3；必须逐列验证三项和，而不能只凭样例模式猜测。",
+      "添加互补对时要同时排除 p 和 mirror(p) 与三排列基底或已有输出重复。",
+      "不能直接计算大 n 的 n!；只需乘到超过 k 或 k+1 后截断。",
+      "枚举达到所需 k 后必须立即停止，复杂度应按输出规模 O(n*k) 控制。",
+      "证明 k=n!-1 不可行时，需要使用全部排列集合的列和恒定性，而不是仅凭与 k=1 的直觉对称。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "case-split-complement-pair-construction",
+      "summary": "先按 n、k、n! 和奇偶性分类；偶数 k 直接输出互补排列对，奇数可行情形先输出三个显式排列，再补充互补对。",
+      "complexity": "O(n*k) time and O(n*k) output/storage.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "除判定边界外，必须显式输出 k 个不同排列；主算法构造互补对和奇数规模的三排列基底。",
+      "solution_variant": "case-split-complement-pair-construction"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "可行性依赖总列和 k*n*(n+1)/2、排列总数 n!、全部排列集合的对称计数及奇偶性。",
+      "solution_variant": "case-split-complement-pair-construction"
+    },
+    {
+      "tag": "trick/complement-symmetry",
+      "importance": "primary",
+      "evidence": "映射 p_i -> n+1-p_i 把排列无不动点地配对，每一对的所有列和都为 n+1；偶数构造和奇数构造的扩展都以此为核心。",
+      "solution_variant": "case-split-complement-pair-construction"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "secondary",
+      "evidence": "必须比较 k 与 n!；k=n!-1 的不可行性也通过全部 n! 个排列在每列的出现次数证明。",
+      "solution_variant": "case-split-complement-pair-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "完整答案需要分别处理 n=1、k>n!、偶数 k、偶数 n 的奇数 k、k=1、k=n!-1 和其余奇数情形。",
+      "solution_variant": "case-split-complement-pair-construction"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "contest": {
+    "contest_id": 2034,
+    "title": "Rayan Programming Contest 2024 - Selection (Codeforces Round 989, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2034,
+    "index": "F1",
+    "title": "Khayyam's Royal Decree (Easy Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math",
+      "sortings"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2034F2",
+    "relationship": "题面和随机过程完全相同，只有 k 与 sum(k) 的上限不同。F1 允许 k <= 500，可用 O(k^3) 的无中间卷轴路径容斥 DP；F2 提升到 k <= 5000，必须改用 O(k^2) 的卷轴子集计数 DP。F2 算法也能直接通过 F1，但 F1 的三次算法不能用于 F2。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2034/problem/F1",
+      "notes": "读完题面、触发时序、取模期望定义及 Easy 约束：k <= 500，sum(k) <= 500，sum(n), sum(m) <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136579",
+      "notes": "核对官方 F1 教程和实现：宝箱坐标转背包坐标、格路计数、无中间卷轴路径的 O(k^3) 容斥，以及终点不翻倍的加权 DP。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/9jyd4k8e",
+      "notes": "完整阅读。独立确认格路模型、枚举上一个实际经过的卷轴，以及转移中必须乘起点到前驱的组合数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/biyimouse/p/19170074",
+      "notes": "阅读 CF2034F1 小节。其公式和说明交叉确认 direct-path 容斥、加权前缀 DP 与 O(k^3) 复杂度。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2034/problem/F1",
+      "notes": "独立推导路径等概率性、direct recurrence 和 DP；用内存脚本对 n,m <= 4 的 4000 组随机卷轴集合比较全路径暴力、F1 DP 与 F2 DP，结果完全一致，未写文件或数据库。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2034/submission/294135551",
+      "notes": "cf-problemset 的提交表显示 verdict 为 OK，但 Codeforces 源码页触发 Cloudflare 检查，未读到代码正文，因此不能移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "随机取完 n 个红宝石和 m 个蓝宝石；当剩余数量命中卷轴时，已取宝石的价值翻倍。求最终总价值的期望。",
+    "constraints": "1 <= t <= 500；1 <= n,m <= 2e5；0 <= k <= 500；sum(n), sum(m) <= 2e5；sum(k) <= 500；模数 998244353。",
+    "core_idea": "把卷轴 (r,b) 变为背包坐标 (x,y)=(n-r,m-b)。每一种红蓝抽取顺序对应从 (0,0) 到 (n,m) 的单调格路，且所有格路概率均为 1/C(n+m,n)。加入起点和终点并按 x+y 排序，令 T(i,j)=C(dx+dy,dx) 为两点间全部格路数。令 D(i,j) 为从 i 到 j 且途中不经过其他卷轴的格路数；按最后一个中间卷轴划分，有 D(i,j)=T(i,j)-sum_l T(i,l)D(l,j)。再令 S_i 为所有到达 i 的前缀格路在处理 i 后的价值总和。由前驱 j 转移时，旧价值贡献为 S_j，区间新增价值固定为 V_i-V_j，其中 V(x,y)=2x+y，并需乘到达 j 的全部前缀数 T(0,j)。因此 S_i=d_i*sum_j D(j,i)*(S_j+T(0,j)*(V_i-V_j))，实际卷轴 d_i=2，虚拟终点 d_i=1。最后用 S_end/C(n+m,n) 得到期望。",
+    "complexity": "预处理阶乘 O(n+m)；direct-path 容斥 O(k^3)，价值 DP O(k^2)，排序 O(k log k)；总时间 O(n+m+k^3)，空间 O(n+m+k^2)。",
+    "tricks": [
+      "证明不放回抽取的所有红蓝类型序列等概率，再把期望转成格路权值和除以总格路数。",
+      "将卷轴从宝箱剩余坐标转换为背包已取坐标，触发点才与路径顶点一致。",
+      "按最后一个中间卷轴划分，容斥得到两关键点之间不经过其他卷轴的路径数。",
+      "转移区间新增价值时乘 T(0,j)，否则会漏掉到达前驱 j 的不同前缀。",
+      "虚拟终点参与 DP 但不能执行翻倍。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "主算法经官方实现、两份独立题解和 4000 组小规模对拍确认，没有未解决的正确性问题。",
+      "Codeforces accepted submission 源码页无法匿名读取，因此仅保留为 reference candidate。",
+      "提议新增 lattice-path-counting tag；是否创建由主 agent 结合全局 taxonomy 决定。"
+    ],
+    "proof_risks": [
+      "坐标必须转换为 (n-r_i,m-b_i)；直接使用宝箱剩余坐标会反转路径方向和触发时刻。",
+      "逐步抽红或抽蓝的条件概率并不相等，但任意完整类型序列的概率都等于 n!m!/(n+m)!，必须证明后才能按格路等权计数。",
+      "D(i,j) 的减法应按唯一的最后一个中间卷轴划分；若同时使用 unrestricted prefix 和 unrestricted suffix，会重复计算经过多个卷轴的路径。",
+      "S_j 只表示价值总和，区间新增价值必须乘 T(0,j) 才能覆盖所有到达 j 的前缀。",
+      "不可比较的两个卷轴不能出现在同一路径上；组合数函数必须在 dx<0 或 dy<0 时返回 0。",
+      "实际卷轴到达后翻倍，起点和虚拟终点不翻倍；统一乘 2 会使最终答案多一倍。",
+      "F1 的 O(k^3) direct 矩阵在 k=5000 时不可行，不能原样用于 F2。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "last-scroll-inclusion-exclusion-dp",
+      "summary": "预处理任意两卷轴间不经过其他卷轴的路径数，再枚举最后经过的卷轴转移路径价值总和。",
+      "complexity": "O(n+m+k^3) time and O(n+m+k^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "selected-scroll-subset-dag-dp",
+      "summary": "直接复用 F2 的子集组合意义，把每次翻倍产生的 2 的幂改写为后续卷轴子集数量，允许转移区间穿过未选卷轴。",
+      "complexity": "O(n+m+k log k+k^2) time and O(n+m+k) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "主解维护每个卷轴处所有前缀路径的价值总和，并按最后实际经过的卷轴进行计数转移。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "必须从两点间全部格路中减去经过中间卷轴的路径，才能得到相邻触发卷轴之间的 direct path 数。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp"
+    },
+    {
+      "tag": "math/combinatorics/lattice-path-counting",
+      "importance": "primary",
+      "evidence": "所有转移数量均通过 C(dx+dy,dx) 计算两点间单调格路数，格路组合计数是整个 DP 的基础。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp",
+      "status": "candidate",
+      "parent": "math/combinatorics",
+      "description": "使用二项式或多项式系数计算可比较格点之间的单调路径，并可结合必经点、禁点或关键点限制；不用于仅在网格上普通遍历而不做组合路径计数的题。",
+      "created_reason": "现有 math/combinatorics 过于宽泛，graph/path-counting 也不能区分经典二项式格路技术；本题两种解法都以该技术作为核心可复用组件。"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "需要先证明所有完整红蓝抽取序列等概率，再把路径权值总和除以 C(n+m,n)。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "卷轴按坐标偏序形成 DAG，价值 DP 和 direct-path 容斥都沿其拓扑序进行。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "作为替代解法，可将某颗宝石经历 c 次后续翻倍得到的 2^c 解释为这些后续卷轴的子集数。",
+      "solution_variant": "selected-scroll-subset-dag-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "卷轴需要按 x+y 或其他兼容坐标偏序的顺序排列，以便执行 DAG 转移。",
+      "solution_variant": "last-scroll-inclusion-exclusion-dp"
+    }
+  ]
+}
