@@ -134,7 +134,7 @@ review JSON 文件和文档/代码变更需要单独手动提交。
 如需禁用自动提交：
 
 ```powershell
-python scripts/apply_review_batch.py reviews/2170A.json --no-auto-commit
+.venv\Scripts\python.exe scripts\apply_review_batch.py reviews\2170A.json --no-auto-commit
 ```
 
 ## 不允许的行为

@@ -194,7 +194,7 @@ trick/maintain-contribution
 新增 tag 默认使用 `candidate`。创建新 tag 后还应维护 WebUI 中文翻译，并运行：
 
 ```powershell
-python scripts/check_tag_translations.py
+.venv\Scripts\python.exe scripts\check_tag_translations.py
 ```
 
 详细规则见 [docs/tagging.md](docs/tagging.md)。
@@ -227,8 +227,10 @@ python scripts/check_tag_translations.py
 
 运行测试：
 
+优先使用仓库虚拟环境；系统 Python 可能缺少 FastAPI 等项目依赖，从而产生与代码无关的假失败。
+
 ```powershell
-$env:PYTHONDONTWRITEBYTECODE='1'; python -m unittest discover -s tests
+$env:PYTHONUTF8='1'; $env:PYTHONDONTWRITEBYTECODE='1'; .venv\Scripts\python.exe -m unittest discover -s tests
 ```
 
 提交前确认：

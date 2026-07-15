@@ -60,7 +60,7 @@ New tags must include:
 - `created_reason`: why existing tags are insufficient.
 - `status`: usually `candidate`.
 
-When creating a new tag, also keep the WebUI translation in sync. Add the full tag path to `web/src/i18n/tags.zh.json` and, when the new path segment is reusable, add its fallback label to `web/src/i18n.ts`. Then run `python scripts/check_tag_translations.py`; if a translation is intentionally deferred, explicitly record that the English fallback is acceptable for now.
+When creating a new tag, also keep the WebUI translation in sync. Add the full tag path to `web/src/i18n/tags.zh.json` and, when the new path segment is reusable, add its fallback label to `web/src/i18n.ts`. Then run `.venv\Scripts\python.exe scripts\check_tag_translations.py`; if a translation is intentionally deferred, explicitly record that the English fallback is acceptable for now.
 
 Good examples:
 
@@ -82,31 +82,31 @@ Bad examples:
 List pending AI reviews:
 
 ```powershell
-python scripts/list_pending_reviews.py --limit 20
+.venv\Scripts\python.exe scripts\list_pending_reviews.py --limit 20
 ```
 
 Generate a reviewed JSON template:
 
 ```powershell
-python scripts/make_review_template.py 2170E --out reviews/2170E.json
+.venv\Scripts\python.exe scripts\make_review_template.py 2170E --out reviews\2170E.json
 ```
 
 Apply one reviewed problem:
 
 ```powershell
-python scripts/apply_reviewed_problem.py reviews/2170E.json
+.venv\Scripts\python.exe scripts\apply_reviewed_problem.py reviews\2170E.json
 ```
 
 Apply a batch and auto-commit the database:
 
 ```powershell
-python scripts/apply_review_batch.py reviews/
+.venv\Scripts\python.exe scripts\apply_review_batch.py reviews\
 ```
 
 Validate searches:
 
 ```powershell
-python scripts/search.py --tag dp --tag paradigm/greedy --show-tags
+.venv\Scripts\python.exe scripts\search.py --tag dp --tag paradigm/greedy --show-tags
 ```
 
 ## Reviewed JSON Shape
