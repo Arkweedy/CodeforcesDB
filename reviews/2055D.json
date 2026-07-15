@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2055,
+    "title": "Codeforces Round 996 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2055,
+    "index": "D",
+    "title": "Scarecrow",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2055/D",
+      "notes": "阅读连续移动和瞬时传送规则及完整约束：sum(n)<=2*10^5，位置和时间可以为非整数，要求输出最短时间的两倍。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138343",
+      "notes": "官方题解给出稻草人不交换顺序、交接位置 b_i、最大化传送距离，以及三个可达区间情形的线性贪心递推。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "独立题解从乌鸦当前位置和当前时间出发，给出下一只稻草人在区间左侧、覆盖当前位置或位于右侧时的三种转移。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/chen-nie/p/18667678",
+      "notes": "独立题解使用两倍坐标实现整数递推，并从同时间位置越右越优的支配关系说明贪心选择。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2055/D",
+      "notes": "独立推导交接位置递推，并在 80000 组随机小数据上比较精确 Fraction 版官方公式与两倍坐标整数实现，结果完全一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2055D",
+      "notes": "洛谷题解候选页；本次未找到可稳定读取且信息量高于已参考独立博客的具体文章，因此未作为 evidence。"
+    }
+  ],
+  "annotation": {
+    "summary": "若干稻草人可以以单位速度连续移动，并通过保持在乌鸦身后不足 k 的距离触发瞬时传送。安排它们的移动，使乌鸦最早到达位置 l。",
+    "constraints": "t<=10^4，1<=n<=2*10^5，sum(n)<=2*10^5，1<=k<=l<=10^8，初始位置非降。最优时间可能为半整数，输出其两倍。",
+    "core_idea": "最左稻草人必须先花 a_1 时间到达 0。稻草人无需互相穿越，因此按初始顺序依次接管乌鸦。令 b_i 为第 i 只稻草人开始控制乌鸦时的位置，T 为上一次交接发生的最早时间，此时乌鸦位于 b_{i-1}+k。第 i 只稻草人在时间 T 的可达区间为 [a_i-T,a_i+T]。若区间在目标点右侧，两只稻草人相向移动并在中点交接；若区间覆盖目标点，就令它恰好位于 b_{i-1}+k；若区间完全在左侧，就取最右可达位置 a_i+T。三个情形统一为 b_i=min(l,a_i+T,max(b_{i-1}+k,(a_i-T+b_{i-1}+k)/2))。该选择在相同时间下使交接位置不劣，同时不会牺牲此前可获得的传送距离。总时间等于 a_1+l-d，其中 d=sum min(k,b_{i+1}-b_i)，并定义 b_{n+1}=l。把所有坐标和时间乘 2 后可全程使用整数。",
+    "complexity": "O(n) time and O(1) auxiliary memory.",
+    "tricks": [
+      "证明稻草人不需要交换相对顺序，从而可以按坐标顺序扫描。",
+      "把复杂的连续控制过程压缩为当前最早时间和最优交接位置。",
+      "下一只稻草人的可达区间相对乌鸦位置只有右侧、覆盖、左侧三种情形。",
+      "把答案写成初始等待和连续移动距离减去总传送距离。",
+      "所有关键位置均为整数或半整数，将坐标、距离和时间统一乘 2 可避免浮点误差。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "handoff-position-greedy",
+      "summary": "维护最早交接时间 T 与上一交接位置 b，按可达区间的三种关系选择下一交接位置，并累计每段最多 k 的传送距离。",
+      "complexity": "O(n) time and O(1) auxiliary memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "doubled-coordinate-crow-scan",
+      "summary": "把所有位置与时间乘 2，直接维护当前控制稻草人的位置和已用时间；下一只稻草人无法及时到达时计算双方相向移动的会合时间，否则把它夹到当前乌鸦位置或取最右可达点。",
+      "complexity": "O(n) time and O(1) auxiliary memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "扫描到第 i 只稻草人时，只保留最早且最靠右的不劣交接状态，并选择相对理想交接点 b_{i-1}+k 最近的可达位置。",
+      "solution_variant": "handoff-position-greedy"
+    },
+    {
+      "tag": "trick/state-dominance",
+      "display_name": "State dominance",
+      "description": "比较部分过程状态对所有未来延续的影响，并删除在时间、位置、代价或可行性上不会优于另一状态的被支配状态；仅在这种支配证明直接导出状态压缩、贪心或剪枝时使用。",
+      "parent": "trick",
+      "created_reason": "现有 paradigm/greedy 只能说明选择方式，trick/state-compression 又偏向有限状态压缩，均不能准确检索本题依靠“同时间位置越右越优、同位置时间越早越优”支配关系保留唯一前缀状态的证明模式。",
+      "status": "candidate",
+      "aliases": [
+        "state dominance",
+        "dominance pruning",
+        "pareto dominance"
+      ],
+      "main_agent_review_required": true,
+      "importance": "primary",
+      "evidence": "若两个前缀状态时间相同，控制位置更靠右者对所有后续稻草人都不劣；若控制位置相同，时间更早者可以等待模拟较晚状态。因此每个前缀只需保留一个不被支配状态。",
+      "solution_variant": "handoff-position-greedy"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "每次转移由下一只稻草人的可达区间位于目标交接点右侧、覆盖目标点或位于左侧三个互斥情形确定。",
+      "solution_variant": "handoff-position-greedy"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "稻草人顺序和交接位置均保持非降；已在乌鸦左侧的稻草人只需继续向右移动，允许从左到右一次扫描。",
+      "solution_variant": "handoff-position-greedy"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "相向移动的交接点由中点公式确定，且总时间可分解为 a_1+l 减去各段传送距离之和。",
+      "solution_variant": "handoff-position-greedy"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "将所有量乘 2 可用整数精确表示半整数时间，但这只是实现保障，并非决定贪心正确性的核心。",
+      "solution_variant": "doubled-coordinate-crow-scan"
+    }
+  ]
+}

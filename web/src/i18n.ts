@@ -206,6 +206,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "bounding-box": "轴对齐包围盒",
   "cartesian-tree": "笛卡尔树",
   "canonical-form": "规范形",
+  "candidate-pruning": "候选剪枝",
   "case-analysis": "分类讨论",
   "cactus": "仙人掌",
   "catalan": "Catalan 数",
@@ -255,6 +256,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "euler-phi": "欧拉函数",
   "eulerian-number": "欧拉数",
   "expected-progress": "期望推进",
+  "exchange-argument": "交换论证",
   "expression": "表达式",
   "extreme-position": "极端位置",
   "euler-trail": "欧拉路径",
@@ -409,6 +411,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "sprague-grundy": "Sprague-Grundy",
   "state-augmentation": "状态增强",
   "state-compression": "状态压缩",
+  "state-dominance": "状态支配",
   "stirling-number": "Stirling 数",
   "string": "字符串",
   "submask-supermask": "子掩码/超掩码",
@@ -442,7 +445,8 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "xor-basis": "异或线性基",
   "xor-pair-counting": "异或差数对计数",
   "xor-vector-space": "异或向量空间",
-  "xor-subset": "异或子集"
+  "xor-subset": "异或子集",
+  "z-function": "Z 函数"
 };
 
 export function readStoredLocale(): Locale {

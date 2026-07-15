@@ -1,0 +1,143 @@
+{
+  "contest": {
+    "contest_id": 2055,
+    "title": "Codeforces Round 996 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2055,
+    "index": "E",
+    "title": "Haystacks",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "data structures",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2055/E",
+      "notes": "阅读题面、操作限制与完整约束：每堆首次清空前无容量上限，之后容量为 b_i；sum(n)<=5e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138343",
+      "notes": "官方题解用于确认固定顺序的最大前缀压力公式、相邻交换条件、Johnson 式排序以及枚举末堆的线段树实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ri9uemcs",
+      "notes": "独立题解将问题解释为最小初始资源的比较贪心，并给出排序后用前后缀状态删除每个末堆候选的 O(n) 扫描。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Hstry/articles/18758874",
+      "notes": "第二份独立说明交叉确认前缀压力、末堆可行条件、两组排序规则和前后缀最值实现。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2055/E",
+      "notes": "独立证明固定顺序下的溢出下界与可达性，并将全排列最优值与 Johnson 排序后枚举末堆的算法在 7200 组 n<=7 随机实例上对拍，全部一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2055E",
+      "notes": "洛谷题解索引；本次实际使用的具体文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "移动草捆使每个草堆至少清空一次；草堆首次清空后受容量 b_i 限制。求最少移动次数，无法完成时输出 -1。",
+    "constraints": "t<=10^4，2<=n<=5*10^5，sum(n)<=5*10^5，1<=a_i,b_i<=10^9；总草捆数和答案需用 64 位整数，目标复杂度为 O(n log n)。",
+    "core_idea": "固定首次清空顺序 p。最后一个草堆在此前始终无上限，因此前 n-1 堆都能被清空；最终可行当且仅当 A=sum a_i <= sum_{i<n} b_{p_i}=B-b_{p_n}。每个草捆至少移动一次，而临时溢入最后一堆的草捆还要再移动一次。所需最小溢出量恰为 M=max_{1<=i<n}(sum_{j<=i}a_{p_j}-sum_{j<i}b_{p_j})，故答案为 A+M。忽略末堆约束时，对相邻两项 i,j 比较可得 i 在 j 前不劣当且仅当 min(a_j,b_i)>=min(a_i,b_j)；将其整理成可传递的 Johnson 顺序：a_i<=b_i 的项按 a_i 升序在前，a_i>b_i 的项按 b_i 降序在后。固定任意合法末堆 x 后，其余项沿这一全局顺序删除 x 即为最优。把一段表示为 (need,delta)，叶子为 (a_i,a_i-b_i)，合并 L*R=(max(L.need,L.delta+R.need),L.delta+R.delta)。预处理该顺序的前缀、后缀合并值，即可 O(1) 求删除每个 x 后的 M，取所有满足 A<=B-b_x 的候选最小值。",
+    "complexity": "O(n log n) time and O(n) memory；排序后的候选扫描为 O(n)。",
+    "tricks": [
+      "固定清空顺序后，只有最后一堆能否在其他堆容量内清空会决定整体可行性。",
+      "把必移一次之外的代价写成最大前缀容量缺口，既给出下界也能按优先填已清空堆的策略达到。",
+      "用相邻交换推导 Johnson 式两段排序；必须显式处理 a_i=b_i 的分组，避免非严格比较器破坏 std::sort。",
+      "将区间压缩成可结合的 (need,delta) 状态，用前后缀合并在 O(1) 内删除一个末堆候选。",
+      "所有总和、缺口和答案使用 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "johnson-order-prefix-suffix-monoid",
+      "summary": "按 Johnson 规则排序所有 (a_i,b_i)。构造 (need,delta) 的前缀与后缀合并值；枚举满足总容量条件的末堆 x，合并 x 左右两段即可得到删除 x 后的最小峰值缺口，最终加上 sum(a)。",
+      "complexity": "O(n log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "johnson-order-segment-tree",
+      "summary": "官方实现把排序后的每项作为 (a_i,a_i-b_i) 线段树叶子。枚举合法末堆时临时把该叶改为单位元并把候选放到末尾，根节点给出全序列最大前缀压力；可行性保证末项不会抬高答案。",
+      "complexity": "O(n log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/exchange-argument",
+      "display_name": "Exchange argument",
+      "importance": "primary",
+      "description": "Prove optimality by swapping an inverted, conflicting, or locally inferior pair and showing that the objective does not worsen, repeatedly normalizing a solution into a greedy or sorted form.",
+      "parent": "trick",
+      "created_reason": "The taxonomy has no tag for the reusable local-swap proof pattern used in greedy ordering, matching, and scheduling arguments; generic greedy and sorting tags do not expose how optimality is proved.",
+      "status": "candidate",
+      "aliases": [
+        "exchange argument",
+        "swap argument",
+        "adjacent exchange",
+        "pairwise exchange",
+        "pairwise interchange",
+        "交换论证",
+        "邻项交换"
+      ],
+      "evidence": "最优顺序由比较 i,j 两项相邻交换后的最大前缀压力推导，并分类化为 a<=b 按 a 升序、a>b 按 b 降序的 Johnson 式规则。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "n 可达 5e5，必须先按两组 Johnson 规则排序；固定任何末堆后，其余元素保持这一相对顺序即为最优。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "预处理排序序列两侧的 (need,delta) 前后缀状态后，才能对每个可能的末堆在 O(1) 时间求删除后的最大前缀缺口。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "官方变体在线段树中维护可结合的最大前缀压力与净变化，临时删除候选末堆后从根节点取得答案。",
+      "solution_variant": "johnson-order-segment-tree"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "secondary",
+      "evidence": "清空顺序可视为带初始资源需求 a_i 和完成后资源变化 b_i-a_i 的任务调度，目标是最小化所需峰值缓冲。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    },
+    {
+      "tag": "trick/constraint-relaxation",
+      "importance": "secondary",
+      "evidence": "先忽略仅由末堆引起的可行性限制求全局最优排序，再枚举合法末堆并从该顺序中删除，是将约束重新加入的关键分解。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "incidental",
+      "evidence": "固定顺序的上界证明会显式把草捆优先放入已清空堆、溢出放入末堆再搬回；题目本身只要求最小次数，并不输出操作序列。",
+      "solution_variant": "johnson-order-prefix-suffix-monoid"
+    }
+  ]
+}

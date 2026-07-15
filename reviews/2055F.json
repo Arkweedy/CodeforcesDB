@@ -1,0 +1,153 @@
+{
+  "contest": {
+    "contest_id": 2055,
+    "title": "Codeforces Round 996 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2055,
+    "index": "F",
+    "title": "Cosmic Divide",
+    "rating": 3200,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "geometry",
+      "hashing",
+      "math",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2055/F",
+      "notes": "Read the convex-polyomino and translation-only congruence definitions, examples, and the sum(n)<=2e5 constraint."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138343",
+      "notes": "Official editorial and implementation confirm the horizontal/vertical special cases, monotone diagonal cut, row-width quotient recurrence, perimeter rolling-hash filter, exact reconstruction, and the generating-function bound on surviving shifts."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/19127335",
+      "notes": "Independent write-up and full implementation replace rolling hash with a Z-function over boundary differences, derive each diagonal split from its starting row, and perform deterministic exact validation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2055/problem/F",
+      "notes": "Independently ported the deterministic implementation and compared it with brute enumeration of every half-area connected translation-congruent partition on 1,047 row/column-convex polyominoes in grids up to 4x4 (area<=14); no mismatch was found."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2055F",
+      "notes": "The Luogu solution index entered a redirect loop/internal error during review, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether an even-area convex polyomino, given by one occupied interval per row, can be partitioned into two connected shapes that differ only by a translation.",
+    "constraints": "1<=t<=1e4, 1<=n<=2e5, sum(n)<=2e5, and 1<=l_i<=r_i<=1e9. The input is guaranteed row- and column-convex and connected; coordinates and areas require 64-bit arithmetic.",
+    "core_idea": "Any valid pair of congruent pieces is itself convex. Handle pure horizontal and vertical translations directly by normalizing row intervals. Otherwise the separating path is monotone diagonal and the two pieces are translates by k rows, so choosing k and the left/right orientation fixes the whole split. If a_i=r_i-l_i+1 and b_i is one piece's row width (zero outside its height), then a_i=b_i+b_{i-k}, hence b_i=a_i-a_{i-k}+a_{i-2k}-...; this is polynomial division A(x)/(1+x^k). Testing every k exactly is quadratic. The official solution first compares the repeated outer-perimeter difference segments in O(1) with prefix rolling hashes, leaving only a small set of k, and then reconstructs the cut and verifies positivity, connectivity, coverage, and translation congruence in O(n) per survivor. Reflect horizontally to cover the opposite diagonal orientation. The factorization condition (1+x^k)B(x)=A(x) bounds the number of genuine survivors through cyclotomic factors; hash collisions can only cause extra exact checks, not a wrong answer.",
+    "complexity": "O(n*(1+f(n))) time and O(n) memory for the official method, where f(n) is the number of shifts surviving the perimeter filter; the editorial gives f(n)<=9 (proof omitted) and a weaker proved f(n)=O(sqrt(n) log log n). The deterministic Z-function variant is reported as O(n log n) time and O(n) memory.",
+    "tricks": [
+      "Prove the two congruent parts must be convex, reducing arbitrary connected partitions to horizontal, vertical, or monotone-diagonal cuts.",
+      "Parameterize every diagonal split by one row offset k; after k is fixed, alternating subtraction uniquely reconstructs all row widths and cut positions.",
+      "Compare normalized perimeter-difference segments cheaply before running an O(n) exact reconstruction.",
+      "Use exact validation after hashing, so collisions affect runtime only and cannot create a false YES.",
+      "Reflect the polyomino horizontally and reuse one directional checker for both diagonal orientations."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The editorial omits the proof of its strongest f(n)<=9 survivor bound; it does include a weaker cyclotomic-factor argument sufficient for a subquadratic bound.",
+      "The independent Z-function source states an O(log n) survivor count only briefly, so that variant is kept at medium confidence even though its implementation passed exhaustive small-shape comparison.",
+      "The Luogu solution index was unavailable in this environment; the independent source used instead was a detailed CNBlogs write-up with complete code."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "perimeter-hash-prune-and-reconstruct",
+      "summary": "Check horizontal and vertical translations, then enumerate diagonal row shifts in both left/right orientations. Rolling hashes of normalized boundary differences discard impossible shifts in O(1); for every survivor, divide the width sequence by 1+x^k, construct both row-interval sequences, and exactly test connectivity and translation congruence.",
+      "complexity": "O(n*(1+f(n))) time and O(n) memory; f(n)<=9 is claimed by the editorial, while its included proof gives f(n)=O(sqrt(n) log log n).",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "z-function-boundary-pruning",
+      "summary": "Encode one boundary by adjacent differences, compute its Z-array, and use prefix matches plus the boundary-junction equation to select possible row offsets deterministically. Reconstruct and validate each surviving cut, then repeat after horizontal reflection.",
+      "complexity": "O(n log n) time and O(n) memory as analyzed by the independent source.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The decisive reduction classifies translation-congruent partitions of a convex polyomino into horizontal, vertical, and monotone-diagonal geometric cuts, then validates row-interval connectivity.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "algorithm/hashing",
+      "importance": "primary",
+      "evidence": "The official solution uses normalized polynomial rolling hashes of left/right perimeter difference sequences to reject almost all row offsets before their O(n) reconstruction.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "trick/candidate-pruning",
+      "importance": "primary",
+      "evidence": "There are Theta(n) possible offsets and each exact check costs O(n); the solution is fast only because cheap necessary perimeter conditions reduce them to a small survivor set before exact checking.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct",
+      "description": "Apply a cheap necessary condition or fingerprint to a large candidate set before running an expensive exact verifier on the few survivors. Use only when this two-stage filtering is central to the complexity, not for ordinary constant-time early exits.",
+      "parent": "trick",
+      "created_reason": "No existing tag distinguishes prune-then-verify algorithms from candidate precomputation. CF2055F's main difficulty and complexity hinge precisely on filtering row offsets before linear reconstruction.",
+      "status": "candidate",
+      "aliases": [
+        "candidate filtering",
+        "prune and verify",
+        "filter then verify"
+      ]
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "After pruning, the algorithm still enumerates every surviving offset and performs a full linear construction/verification for it.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "secondary",
+      "evidence": "Two row-interval shapes are compared modulo translation by their row widths and left-boundary offsets normalized to the first row.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Horizontal reflection converts the opposite diagonal-cut orientation into the same one-directional checker.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "math/generating-function",
+      "importance": "incidental",
+      "evidence": "The editorial expresses the width recurrence as (1+x^k)B(x)=A(x) and uses cyclotomic factors only to bound how many offsets may survive; it is not needed to implement the checker.",
+      "solution_variant": "perimeter-hash-prune-and-reconstruct"
+    },
+    {
+      "tag": "string/z-function",
+      "importance": "primary",
+      "evidence": "The deterministic alternative computes Z-values of the boundary-difference sequence so equality between the first perimeter segment and its shifted copy is tested for every offset in linear preprocessing.",
+      "solution_variant": "z-function-boundary-pruning",
+      "description": "Use the Z-function of a sequence or string, where Z[i] is the longest prefix matching the suffix starting at i, as a central tool for prefix-vs-substring equality, periods, or repeated-pattern constraints.",
+      "parent": "string",
+      "created_reason": "The taxonomy has KMP prefix-function and general string tags but no Z-function tag. CF2055F's deterministic alternative specifically relies on Z-values to prune geometric boundary shifts.",
+      "status": "candidate",
+      "aliases": [
+        "z algorithm",
+        "z-function",
+        "z array"
+      ]
+    }
+  ]
+}

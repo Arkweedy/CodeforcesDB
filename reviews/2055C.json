@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2055,
+    "title": "Codeforces Round 996 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2055,
+    "index": "C",
+    "title": "The Trail",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2055/C",
+      "notes": "阅读完整题面与约束：路径包含 n+m-1 个格子，sum(n*m)<=10^6，只能修改路径格子，并需让所有行列具有相同的和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138343",
+      "notes": "官方题解确认可固定公共和为 0，并沿路径依次消去已经不会再次访问的行或列。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/uciqosp9",
+      "notes": "洛谷题解给出把公共和保留为未知量的线性表达式解法，用于交叉确认路径顺序能够逐个确定变量。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/chen-nie/p/18667678",
+      "notes": "独立题解确认 R 时消去当前列、D 时消去当前行，以及最后一格会同时满足剩余行列约束。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2055/C",
+      "notes": "独立证明最后一个行列约束由总和恒等式自动满足，并随机生成 9800 组路径和矩阵验证所有最终行列和均为 0。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2055C",
+      "notes": "洛谷题解索引；本次实际参考的具体文章已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "网格中一条从左上角到右下角的单调路径被清零。只修改路径格子，使恢复后的每一行与每一列都具有同一个元素和。",
+    "constraints": "t<=10^4，2<=n,m<=1000，sum(n*m)<=10^6，原值绝对值不超过 10^6；输出值允许在 [-10^15,10^15] 内，应使用 64 位整数。",
+    "core_idea": "直接选择所有行列的目标和 S=0。预先维护每行与每列的当前和，从左上角沿路径处理。若下一步为 D，离开后当前行不会再出现未赋值格子，因此把当前格设为当前行和的相反数；若下一步为 R，则同理把当前格设为当前列和的相反数。赋值后同步更新对应行列和。处理完路径移动后，除最后一行和最后一列外的约束都已满足；把右下角设为最后一行当前和的相反数。此时所有行和为 0，网格总和也为 0，而此前所有列和均为 0，所以最后一列也必然为 0。",
+    "complexity": "O(n*m) time and O(n+m) auxiliary memory, excluding the output matrix.",
+    "tricks": [
+      "公共行和与公共列和分别计算总网格和，选择 S=0 可无条件满足一致性。",
+      "每次根据下一步方向，消去离开后不会再包含未知路径格子的行或列。",
+      "最后一个行列约束线性相关，只需显式满足其中一个。",
+      "维护行列当前和，避免反复扫描整行或整列。",
+      "路径赋值可能累积大量原始元素贡献，需要使用 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "zero-sum-path-elimination",
+      "summary": "固定公共和为 0，沿路径逐个确定当前格，使即将离开的行或列和归零；最后利用总和恒等式自动满足剩余列约束。",
+      "complexity": "O(n*m) time and O(n+m) auxiliary memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "symbolic-common-sum-elimination",
+      "summary": "把公共行列和保留为未知量 S，使每个路径格成为关于 S 的仿射表达式；沿路径完成消元后再由最后的行列一致性确定 S。该方法更一般，但本题选择 S=0 即可避免符号运算。",
+      "complexity": "O(n*m) time and O(n*m) stored affine expressions",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出任意合法矩阵；主解法沿给定路径显式构造每个被清零格子的最终值。",
+      "solution_variant": "zero-sum-path-elimination"
+    },
+    {
+      "tag": "math/linear-algebra/linear-system",
+      "importance": "primary",
+      "evidence": "每个行和、列和都是路径变量的线性约束；路径结构给出了无需高斯消元的逐变量消元顺序。",
+      "solution_variant": "zero-sum-path-elimination"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "算法维护每行、每列的当前总贡献，使每个路径变量能通过一次取相反数立即确定。",
+      "solution_variant": "zero-sum-path-elimination"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "离开某行或列时立即将其和固定为 0，且后续路径不再访问该约束，因此已完成约束永远不会被破坏。",
+      "solution_variant": "zero-sum-path-elimination"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "路径上的赋值按顺序立即完成，但每次选择实际上由待消去的线性约束唯一确定，并不存在优化意义上的贪心竞争。",
+      "solution_variant": "zero-sum-path-elimination"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "incidental",
+      "evidence": "实现用行列坐标沿路径同步移动；这只是遍历方式，不是通常用于区间或有序序列优化的双指针算法。",
+      "solution_variant": "zero-sum-path-elimination"
+    }
+  ]
+}
