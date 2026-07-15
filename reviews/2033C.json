@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2033,
+    "title": "Codeforces Round 981 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2033,
+    "index": "C",
+    "title": "Sakurako's Field Trip",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "two pointers"
+    ],
+    "canonical_url": "https://codeforces.com/contest/2033/problem/C"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2033/problem/C",
+      "notes": "确认镜像位置交换规则、disturbance 定义以及 sum(n) <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/136146/en3",
+      "notes": "官方解法从中心向外决定镜像对取向；局部交换不会影响已经确定的内层最优值。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/s4vfm0gr",
+      "notes": "以中心层和相邻四元组分类计数，独立支持按镜像层处理的结论。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2033/submission/287850715",
+      "notes": "已核验 Accepted；实现使用镜像层局部分类，结果与官方贪心一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "每个镜像对 (i,n-i+1) 可以选择保留或交换，目标是最小化相邻相等对数量。",
+    "constraints": "2 <= n <= 2e5，所有测试的 sum(n) <= 2e5。",
+    "core_idea": "把数组划分为由中心向外的镜像层，每层只有两种取向。相邻两层的贡献是左右两条边的相等判断；翻转内层只会交换外层两种取向对应的贡献，因此该边界的最小值与内层具体取向无关。于是可以从中心向外，对每个外层比较保留和交换后的局部贡献并取较小者。",
+    "complexity": "O(n) time, O(1) extra space",
+    "tricks": [
+      "把任意多次合法操作压缩为每个镜像对的二态取向",
+      "从中心向外确定边界贡献",
+      "奇数中心点和偶数中央边的贡献均不受中央镜像对取向影响"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "proof_risks": [
+      "必须从中心向外处理，反向贪心没有相同的独立性保证",
+      "偶数长度的中央边只能计数一次，不能因左右比较重复计数",
+      "局部比较必须同时考虑边界的左右两条边，不能分别独立选择"
+    ],
+    "uncertainty_points": []
+  },
+  "solution_variants": [
+    {
+      "name": "center-outward-local-greedy",
+      "summary": "从中心向外枚举镜像层，比较当前外层保留和交换后与内层形成的两条边贡献，选择较小者，最后统计整个数组。",
+      "complexity": "O(n) time, O(1) extra space",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "two-state-mirror-pair-dp",
+      "summary": "把每个镜像层的保留/交换作为两个状态，按相邻层边界贡献转移；中央贡献单独处理。",
+      "complexity": "O(n) time, O(1) extra space after rolling",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "相邻层边界的最小贡献与内层具体取向无关，因此可以由中心向外逐层作出不可反悔的局部最优选择。",
+      "solution_variant": "center-outward-local-greedy"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "primary",
+      "evidence": "合法操作只发生在镜像位置，核心建模是把每个镜像对压缩成一个二态变量。",
+      "solution_variant": "center-outward-local-greedy"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "等价解法中每个镜像层只有保留/交换两个状态，转移仅依赖相邻内层。",
+      "solution_variant": "two-state-mirror-pair-dp"
+    }
+  ]
+}

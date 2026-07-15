@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2033,
+    "title": "Codeforces Round 981 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2033,
+    "index": "F",
+    "title": "Kosuke's Sloth",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "math",
+      "number theory"
+    ],
+    "canonical_url": "https://codeforces.com/contest/2033/problem/F"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2033/problem/F",
+      "notes": "确认 n <= 1e18、k <= 1e5、sum(k) <= 1e6，要求第 n 个被 k 整除的 Fibonacci 项下标。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/136146/en3",
+      "notes": "官方使用 Fibonacci 模 k 的周期上界和零点倍数结构，扫描首个零点后乘 n。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://lailai.one/blog/solution/CF2033F",
+      "notes": "代码直接扫描首个零点并处理 k=1；正文把首零点称作 period，术语不严谨，未直接沿用该表述。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/lwiwi/p/18794539",
+      "notes": "交叉验证 Pisano 周期上界与 gcd(F_a,F_b)=F_gcd(a,b) 的强整除性质。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2033/submission/287851461",
+      "notes": "已核验 Accepted；模 k 递推至首个零点 z(k)，输出 n*z(k) mod 1e9+7。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2033F",
+      "notes": "本轮未能稳定读取具体题解正文，因此仅保留为候选，不计入已参考 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "求 Fibonacci 数列中第 n 个能被 k 整除的项的下标，并对 1e9+7 取模。",
+    "constraints": "1 <= n <= 1e18，1 <= k <= 1e5，所有测试的 sum(k) <= 1e6。",
+    "core_idea": "令 z(k) 为最小正整数 m，使 k|F_m。Fibonacci 模 k 的 Pisano 周期不超过 6k，因此可以在线性于 k 的范围内找到 z(k)。由 gcd(F_a,F_b)=F_gcd(a,b)：若 k 同时整除 F_z 和 F_m，则 k|F_gcd(z,m)；z 的最小性迫使 gcd(z,m)=z，所以 z|m。反向由 z|m 推出 F_z|F_m。因此所有零点下标恰为 z(k) 的正倍数，第 n 个下标是 n*z(k)。",
+    "complexity": "O(k) time per test, O(1) space; total O(sum(k))",
+    "tricks": [
+      "区分 Pisano period 与首个零点 rank of apparition",
+      "用 Fibonacci 强整除性质证明零点下标恰为首零点的倍数",
+      "只对递推值取模 k，最终答案才取模 1e9+7"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "proof_risks": [
+      "不能把 Pisano 周期长度直接当成首个零点 z(k)",
+      "题目采用 F1=F2=1，扫描时必须处理 F0/F1 初始化与下标偏移",
+      "k=1 时 z(1)=1，初始化值也必须先模 k",
+      "n*z(k) 可能超过 64 位安全乘积范围，应先令 n%=1e9+7 再乘 z(k)"
+    ],
+    "uncertainty_points": [
+      "官方和交叉来源把 Pisano 周期不超过 6k 作为已知结论，本轮未从第一原理完整重证该上界。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "rank-of-apparition-first-zero-scan",
+      "summary": "模 k 递推 Fibonacci，找到首个正零点 z(k)，再依据强整除性质输出 n*z(k) mod 1e9+7。",
+      "complexity": "O(k) time, O(1) space",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/fibonacci",
+      "importance": "primary",
+      "evidence": "解法决定性地使用 Fibonacci 的 Pisano 周期、首零点以及 gcd(F_a,F_b)=F_gcd(a,b) 的强整除性质。",
+      "solution_variant": "rank-of-apparition-first-zero-scan",
+      "status": "candidate",
+      "parent": "math/number-theory",
+      "description": "Fibonacci 专项数论：使用 Fibonacci 恒等式、整除结构、rank of apparition 或 Pisano 周期作为核心解题条件；不包含仅按定义生成 Fibonacci 数的普通模拟题。",
+      "created_reason": "现有 periodicity 和 gcd 标签无法直接检索 Fibonacci 专项数论题；该知识点具有明确边界并会在多道经典数论题中复用。"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "Fibonacci 模 k 的周期上界保证能够在 O(k) 次递推内找到首个零点。",
+      "solution_variant": "rank-of-apparition-first-zero-scan"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "零点下标恰为 z(k) 的倍数依赖 gcd(F_a,F_b)=F_gcd(a,b) 的证明。",
+      "solution_variant": "rank-of-apparition-first-zero-scan"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "在已知 O(k) 上界后直接枚举 Fibonacci 模 k 的状态直到首次出现 0。",
+      "solution_variant": "rank-of-apparition-first-zero-scan"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "状态递推在模 k 意义下进行，最终下标乘法在模 1e9+7 意义下进行。",
+      "solution_variant": "rank-of-apparition-first-zero-scan"
+    }
+  ]
+}

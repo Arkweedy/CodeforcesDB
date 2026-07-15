@@ -1,0 +1,94 @@
+{
+  "contest": {
+    "contest_id": 2033,
+    "title": "Codeforces Round 981 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2033,
+    "index": "E",
+    "title": "Sakurako, Kosuke, and the Permutation",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "greedy",
+      "math"
+    ],
+    "canonical_url": "https://codeforces.com/contest/2033/problem/E"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2033/problem/E",
+      "notes": "确认操作为交换两个位置上的排列值，目标是令 p[p[i]]=i。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/136146/en3",
+      "notes": "官方将排列分解为环；长度 x 的环需要 floor((x-1)/2) 次内部交换。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/fvzdleb7",
+      "notes": "说明跨环交换会合并环，而环内交换可以拆环，并给出线性遍历代码。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2033/submission/287851002",
+      "notes": "已核验 Accepted；统计每个排列环长度并累加 (size-1)/2。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "通过最少次数交换排列中的两个值，使排列只包含长度为 1 或 2 的环。",
+    "constraints": "1 <= n <= 1e6，所有测试的 sum(n) <= 1e6。",
+    "core_idea": "排列天然分解为互不相交的环。简单排列恰好是所有环长度不超过 2。一次同环交换最多把一个环拆成两个，因此长度 L 的环至少需要 ceil(L/2)-1=floor((L-1)/2) 次；反复从长环中切出一个 2 环可以达到该下界。交换不同环中的值只会合并环，不可能改善最优值。",
+    "complexity": "O(n) time, O(n) space",
+    "tricks": [
+      "把 p[p[i]]=i 翻译为排列环长度至多为 2",
+      "用一次交换至多增加一个环给出下界",
+      "每次切出一个 2 环构造达到下界"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "proof_risks": [
+      "操作交换的是两个位置上的 p 值，需要正确理解其对排列环的拆分或合并作用",
+      "答案是 floor((L-1)/2)，偶数环不能误写成 floor(L/2)",
+      "长度 1 和 2 的环贡献均为 0，遍历时仍需完整标记"
+    ],
+    "uncertainty_points": []
+  },
+  "solution_variants": [
+    {
+      "name": "cycle-decomposition-and-splitting",
+      "summary": "线性找出所有排列环，对每个长度 L 累加 floor((L-1)/2)；该值同时由拆环下界和逐次切出 2 环的构造证明。",
+      "complexity": "O(n) time, O(n) space",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/functional-graph",
+      "importance": "primary",
+      "evidence": "排列形成出度、入度均为 1 的函数图，问题完全分解为独立环的处理。",
+      "solution_variant": "cycle-decomposition-and-splitting"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "条件 p[p[i]]=i 等价于排列的每个循环长度不超过 2，环结构是答案公式的直接来源。",
+      "solution_variant": "cycle-decomposition-and-splitting"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "可通过反复从长环中切出一个 2 环达到每环的理论下界。",
+      "solution_variant": "cycle-decomposition-and-splitting"
+    }
+  ]
+}

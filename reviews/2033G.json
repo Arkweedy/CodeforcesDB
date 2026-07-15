@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2033,
+    "title": "Codeforces Round 981 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2033,
+    "index": "G",
+    "title": "Sakurako and Chefir",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "trees"
+    ],
+    "canonical_url": "https://codeforces.com/contest/2033/problem/G"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2033/problem/G",
+      "notes": "确认向父亲移动消耗 1 点体力、向儿子移动免费，以及 sum(n),sum(q) <= 2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/136146/en3",
+      "notes": "官方在线解：树 DP 求向下最远和次远分支，用倍增聚合祖先路径上排除来路后的最优分支。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/136126/en1?locale=en&mobile=false",
+      "notes": "社区题解给出离线换根：DFS 改变当前起点距离，线段树查询允许祖先子树内的最大距离。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/dx86d7oq",
+      "notes": "给出重链剖分方案，维护祖先链上的 max(best_excluding_path_child-depth)。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2033/submission/287854002",
+      "notes": "已核验 Accepted；实现离线 DFS 换根、Euler 区间加、线段树最大值和倍增找 k 级祖先。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "在根为 1 的树上，从 v 出发向父亲最多走 k 次、向儿子免费，求可到达节点与 v 的最大距离。",
+    "constraints": "n,q <= 2e5，所有测试的 sum(n), sum(q) <= 2e5。",
+    "core_idea": "到任意终点 y 的简单路径先向上到 LCA(v,y)，再向下；消耗恰为 depth(v)-depth(LCA)。因此可以枚举 v 向上的至多 k 个祖先 u，再选择 u 的最深分支，但必须排除通向 v 的那个儿子。树 DP 预处理每个节点的最深和次深向下分支，倍增表同时聚合祖先区间上的标准化候选值，即可 O(log n) 回答。等价离线视角是：令 p 为 v 的第 min(k,depth(v)) 级祖先，可达终点恰为 subtree(p)；DFS 换根维护 dist(v,x)，查询该子树最大值。",
+    "complexity": "Primary: O((n+q) log n) time and O(n log n) space",
+    "tricks": [
+      "最优路径可以删去往返段，规范化为先上后下",
+      "祖先处必须排除通向查询点的儿子，使用最深和次深分支",
+      "把候选写成 depth(v)+best_excluding_child(u)-depth(u) 后做区间最大值",
+      "离线方案中换根到儿子等价于全局距离 +1、儿子子树距离 -2"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "proof_risks": [
+      "k 必须截断到 depth(v)，否则 k 级祖先不存在",
+      "必须包含完全不向上的 x=0 情况，即 v 子树中的最深后代",
+      "祖先 u 的最深分支若正好指向 v，必须改用次深分支，避免沿同一条边折返",
+      "倍增聚合区间的端点容易漏掉最近祖先或最远允许祖先",
+      "离线换根时必须先全局 +1，再对进入的儿子子树 -2，并在 DFS 返回时完整撤销"
+    ],
+    "uncertainty_points": []
+  },
+  "solution_variants": [
+    {
+      "name": "binary-lifting-ancestor-branch-maximum",
+      "summary": "树 DP 计算每个节点最深/次深向下分支；为每条父子方向记录排除该儿子后的候选值，并在倍增祖先表中维护区间最大值。",
+      "complexity": "O((n+q) log n) time, O(n log n) space",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "offline-reroot-euler-segment-tree",
+      "summary": "把询问挂到起点 v；DFS 换根过程中用 Euler 区间加维护所有 dist(v,x)，对第 k 级祖先的子树区间查询最大值。",
+      "complexity": "O((n+q) log n) time, O(n log n) space including ancestor table",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "heavy-light-ancestor-chain-maximum",
+      "summary": "用重链剖分拆分允许的祖先路径，线段树查询每段中 best_excluding_path_child(u)-depth(u) 的最大值。",
+      "complexity": "O(n log n + q log^2 n) time, O(n) auxiliary space",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/binary-lifting",
+      "importance": "primary",
+      "evidence": "官方主解需要同时跳过 2^j 个祖先并聚合这段祖先上的最大分支候选。",
+      "solution_variant": "binary-lifting-ancestor-branch-maximum"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "必须自底向上计算每个节点的最深和次深向下路径，才能排除通向查询点的儿子。",
+      "solution_variant": "binary-lifting-ancestor-branch-maximum"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "可达性由 LCA、祖先路径和根子树结构刻画。",
+      "solution_variant": "binary-lifting-ancestor-branch-maximum"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "离线换根方案通过 Euler 序上的区间加和子树区间最大值查询维护当前起点到所有节点的距离。",
+      "solution_variant": "offline-reroot-euler-segment-tree"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "将询问按起点挂载到 DFS 节点，在遍历到该起点时统一回答，从而把多次独立换根转为一次遍历。",
+      "solution_variant": "offline-reroot-euler-segment-tree"
+    },
+    {
+      "tag": "graph/heavy-light-decomposition",
+      "importance": "primary",
+      "evidence": "Luogu 变体将允许的祖先路径拆成重链区间，再查询每段的标准化最大候选。",
+      "solution_variant": "heavy-light-ancestor-chain-maximum"
+    }
+  ]
+}

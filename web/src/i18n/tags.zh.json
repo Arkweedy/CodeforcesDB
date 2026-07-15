@@ -256,6 +256,7 @@
   "math/number-theory/divisor-sieve": "因子筛",
   "math/number-theory/du-sieve": "杜教筛",
   "math/number-theory/euler-phi": "欧拉函数",
+  "math/number-theory/fibonacci": "Fibonacci 数论",
   "math/number-theory/gcd": "GCD",
   "math/number-theory/gcd-convolution": "GCD 卷积",
   "math/number-theory/lcm": "LCM",

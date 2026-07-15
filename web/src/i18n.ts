@@ -283,6 +283,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "euler-tour": "欧拉序",
   "edge-orientation": "边定向",
   "fenwick-tree": "树状数组",
+  "fibonacci": "Fibonacci 数论",
   "finite-state-dp": "有限状态 DP",
   "floyd-warshall": "Floyd-Warshall",
   "fft": "FFT",
