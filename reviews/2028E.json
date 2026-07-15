@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2028,
+    "title": "Codeforces Round 986 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2028,
+    "index": "E",
+    "title": "Alice's Adventures in the Rabbit Hole",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "games",
+      "greedy",
+      "math",
+      "probabilities",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2028/problem/E",
+      "notes": "完整阅读题面、随机移动规则、最优对抗条件、模概率输出和约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136096",
+      "notes": "在渲染页面中实际展开并阅读 2028E Solution；确认 Alice 始终向父亲移动、Queen 进入最近叶方向，以及 d(v)/(d(v)+1) 的路径概率和自根向下的乘积公式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/e5hkqd7b",
+      "notes": "阅读完整推导和代码；交叉确认局部爬到父亲的概率 g(v)=1/(2-min g(child))，通过整数参数 h(v)=1+min h(child) 避免比较模意义分数。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2028/problem/E",
+      "notes": "独立推导 Bellman 最优方程。枚举 n<=7 的全部 18248 棵以 1 为根的有标号树，用 Fraction 精确验证公式满足 V(v)=(max_neighbor V+min_neighbor V)/2，并确认父亲取最大、最近叶方向取最小。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "树的出口为根 1，Alice 从每个顶点分别出发。每分钟随机决定由 Alice 或 Queen 移动一步；Alice 最大化逃脱概率，Queen 最小化它，进入任意非根叶即失败。求所有起点的最优逃脱概率。",
+    "constraints": "1 <= t <= 10^4；2 <= n <= 2*10^5；所有测试的 n 之和不超过 2*10^5；答案模 998244353。",
+    "core_idea": "把树根化于 1。Alice 的最优移动一定是父亲，因为逃脱最终必须经过父亲；Queen 一定向下，并选择最容易到达叶子的子树。令 d(v) 为 v 到其有根子树内最近叶子的距离，叶子的 d=0。再令 q(v) 为从 v 出发、在到达叶子前先到达 parent(v) 的概率。Alice 获得移动权时立即成功；Queen 获得移动权时进入使 q 最小的孩子，若从孩子返回 v，过程重新开始。因此 q(v)=1/2+(1/2)*min_c q(c)*q(v)，即 q(v)=1/(2-min_c q(c))。归纳代入 q(c)=d(c)/(d(c)+1)，得到 q(v)=d(v)/(d(v)+1)。最终 ans(1)=1，ans(v)=ans(parent(v))*d(v)/(d(v)+1)。先后序求 d，再前序传播答案。",
+    "complexity": "预处理 1..n 的模逆元后，每个测试 O(n) 时间、O(n) 空间；若逐次快速求逆则为 O(n log MOD)。",
+    "tricks": [
+      "先证明双方的最优方向，把随机对抗过程压缩到父边和最近叶方向。",
+      "不要在模数下比较概率；先用整数最近叶深度确定 Queen 的选择。",
+      "局部爬到父亲的概率满足带返回自环的 Bellman 方程。",
+      "公平路径上的吸收概率是线性的，得到 d/(d+1) 的 gambler's ruin 公式。",
+      "全局逃脱概率按根路径上的局部成功概率相乘。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "对 n<=7 的全部有标号树进行了精确有理数 Bellman 验证，共 18248 棵。",
+      "每个非根非叶顶点均满足父亲概率为邻点最大值，最近叶方向的孩子给出邻点最小值。",
+      "公式与官方实现、Luogu 的 g/h 递推完全一致。"
+    ],
+    "uncertainty_points": [
+      "未额外读取独立 Codeforces Accepted submission 正文；官方完整题解与代码、Luogu 独立推导和穷举 Bellman 验证已经形成三重交叉验证。",
+      "提议新增 math/probability/gamblers-ruin；是否纳入 taxonomy 由主 agent 统一审核。"
+    ],
+    "source_blockers": [
+      "Codeforces editorial 的静态页面只显示 Tutorial is loading；切换到执行脚本的渲染页面后成功读取完整 Solution。",
+      "MathJax 渲染会重复输出公式文本，最终公式已用官方代码和 Luogu 推导校正。"
+    ],
+    "proof_risks": [
+      "根 1 即使度数为 1 也是出口，不能按普通叶子处理为失败。",
+      "d(v) 是有根子树内的最近叶距离，不能允许路径经过父亲。",
+      "局部递推中的 min 必须在真实有理概率或整数 d 上比较，不能比较模数下的余数。",
+      "传播到孩子 v 时使用 d(v)/(d(v)+1)，不是父节点的 d。",
+      "必须先证明 Alice 走父亲、Queen 走孩子的最优性，不能直接假设游戏只发生在一条链上。",
+      "递归 DFS 深度可达 2*10^5，实际实现宜使用迭代遍历或确保栈空间足够。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "nearest-leaf-gamblers-ruin-tree-dp",
+      "summary": "后序 DP 求每个有根子树到最近叶的距离，再用局部 gambler's ruin 概率 d/(d+1) 从根向下传播答案。",
+      "complexity": "O(n) time and O(n) memory with precomputed modular inverses.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "核心是求带最优决策的吸收概率，并通过局部条件概率和根路径乘法组合全部顶点的逃脱概率。",
+      "solution_variant": "nearest-leaf-gamblers-ruin-tree-dp"
+    },
+    {
+      "tag": "math/game-theory/minimax",
+      "importance": "primary",
+      "evidence": "每个非终止状态都由 Alice 选择最大价值邻点、Queen 选择最小价值邻点；证明双方最优方向是递推成立的前提。",
+      "solution_variant": "nearest-leaf-gamblers-ruin-tree-dp"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "算法先后序计算 d(v)=1+min d(child)，再前序计算 ans(v)=ans(parent)*d(v)/(d(v)+1)。",
+      "solution_variant": "nearest-leaf-gamblers-ruin-tree-dp"
+    },
+    {
+      "tag": "math/probability/gamblers-ruin",
+      "importance": "secondary",
+      "evidence": "在长度为 d+1 的公平随机游走路径上，先到父端而非叶端的概率为 d/(d+1)，该闭式是树上递推的局部核心。",
+      "solution_variant": "nearest-leaf-gamblers-ruin-tree-dp",
+      "status": "candidate",
+      "parent": "math/probability",
+      "description": "使用一维随机游走在两个吸收边界之间的先到概率，通常由调和方程、线性概率函数或 gambler's ruin 公式求解；不用于泛指所有随机过程或普通期望题。",
+      "created_reason": "现有 math/probability 无法精确检索以吸收边界先到概率为核心的经典随机游走题；该模式具有明确边界且可复用于多道题。"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "唯一父路径和有根子树结构使最优方向、最近叶距离及根路径概率乘积成立。",
+      "solution_variant": "nearest-leaf-gamblers-ruin-tree-dp"
+    }
+  ]
+}
+

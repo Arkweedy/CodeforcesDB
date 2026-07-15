@@ -1,0 +1,140 @@
+{
+  "contest": {
+    "contest_id": 2028,
+    "title": "Codeforces Round 986 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2028,
+    "index": "F",
+    "title": "Alice's Adventures in Addition",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "dp",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2028/problem/F",
+      "notes": "完整阅读表达式运算优先级、目标判定、32 MB 空间限制及 n、m、a_i 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136096",
+      "notes": "在渲染页面中实际读取完整 2028F Solution 和官方代码；确认分段乘积 DP、0/1/>1 三类转移、bitset 批量位移及只保留 O(log m) 个历史状态的空间压缩。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/anowzs9x",
+      "notes": "阅读完整题解与实现；交叉确认表达式等价于连续分段后的乘积和、乘积增长界、1 段和 0 段的特殊处理，以及 O(m log m) bit 空间。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2028/problem/F",
+      "notes": "独立实现枚举所有加号位置的 oracle，并复现官方滚动 bitset DP。穷举长度 n<=7、元素取 0..4 的全部 97655 个数组，对所有合法目标 1..30 比较可达集合，结果完全一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "在数组相邻元素间插入加号或乘号，并按正常优先级计算，判断能否得到目标 m。等价地，把数组划分为若干连续非空段，使各段元素乘积之和等于 m。",
+    "constraints": "1 <= t <= 10^4；1 <= n <= 2*10^5；sum(n) <= 2*10^5；1 <= m <= 10^4；0 <= a_i <= 10^4；内存限制 32 MB。",
+    "core_idea": "令 D_i 为前 i 个元素能得到的和的 bitset，D_0[0]=1。若最后一段为 [k,i]，其乘积为 P，则执行 D_i |= D_{k-1} << P。直接枚举 k 是 O(n^2m)。当段内所有非 0/1 因子至少为 2 时，只要出现超过 floor(log2 m) 个此类因子，乘积就超过 m，因此每个 i 只需回看 O(log m) 个非 1 断点。bitset 的整体左移和按位或同时完成所有和的转移。a_i=1 时，既可乘入当前段使值不变，也可单独加 1，所以 D_i 包含 D_{i-1} 和 D_{i-1}<<1。a_i=0 时，任意以 i 结尾且包含该 0 的段乘积为 0，因此 D_i 是此前所有 D_j 的按位或；另维护 zero bitset，使后续正数仍可接在乘积为 0 的段后。最终只保留 prev、prefix-or、zero 和最近 O(log m) 个非 1 位置对应的 DP 行。",
+    "complexity": "O(n*m*log(m)/w) 时间；O(m*log(m)) bits，即 O(m*log(m)/w) machine words 空间，其中 w 为机器字长。",
+    "tricks": [
+      "利用乘法优先级把运算符选择转成连续分段乘积和。",
+      "乘积不超过 m 的连续段至多含 O(log m) 个大于 1 的因子。",
+      "使用 bitset 左移表示给所有可达和统一加上当前段乘积。",
+      "值 1 不改变乘积但可以贡献独立的加法段，需要单独转移。",
+      "值 0 让任意跨过它的末段乘积归零，需要 prefix OR 和 zero 累积状态。",
+      "32 MB 限制迫使 DP 行滚动保存，不能建立 n 个长度 m 的 bitset。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "穷举 97655 个数组，每个数组枚举全部 2^(n-1) 种运算符放置。",
+      "对每个数组同时比较目标 1..30，覆盖大量连续 0、连续 1、零后正数和多段乘法情况。",
+      "允许官方实现内部暂时保留值 0 的伪状态；题目保证 m>=1，穷举确认该状态不会污染正目标答案。"
+    ],
+    "uncertainty_points": [
+      "未读取独立 Codeforces Accepted submission 正文；官方完整代码、Luogu 独立实现和穷举 oracle 已充分交叉验证。",
+      "提议新增 trick/product-growth-bound；是否创建及中文翻译由主 agent 统一审核。",
+      "官方实现固定 LOG=14，依赖 m<=10000；通用实现应按 m 动态计算安全的历史长度。"
+    ],
+    "source_blockers": [
+      "Codeforces editorial 的静态抓取只有 Tutorial is loading；通过渲染页面读取了完整正文。",
+      "Luogu 题解列表为动态页面；先读取列表，再进入可稳定访问的具体文章进行交叉验证。"
+    ],
+    "proof_risks": [
+      "必须按正常优先级把表达式解释为连续段乘积之和，不能按从左到右顺序直接计算。",
+      "O(log m) 上界只计算大于 1 的因子；0 和 1 必须分开处理。",
+      "a_i=0 时需要 OR 所有可能的前缀 DP 行，而不只是 D_{i-1}。",
+      "保存非 1 断点时应绑定该元素之前的 DP 状态；绑定处理后的状态会产生下标偏移。",
+      "累乘前应使用 prod > m/x 判断是否越界，避免整数溢出。",
+      "所有 bitset 位移后只需保留 0..m；更大的和不可能通过后续非负运算回到 m。",
+      "如果把每个 i 的 bitset 全部保存下来，会直接违反 32 MB 限制。",
+      "官方对 a_i=1 的初始化可能保留可达值 0；该技巧依赖题目 m>=1，不能无条件推广到允许 m=0 的版本。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "rolling-bitset-segment-product-dp",
+      "summary": "以最后一个连续乘积段为转移，bitset 批量维护可达和；利用乘积增长限制回看断点数，并为 0、1 维护专用状态，最后滚动保存 O(log m) 行。",
+      "complexity": "O(n*m*log(m)/w) time and O(m*log(m)/w) machine words.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "状态按数组前缀定义，每次转移选择最后一个连续段，并把该段乘积加入此前分段结果。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    },
+    {
+      "tag": "dp/bitset-dp",
+      "importance": "primary",
+      "evidence": "每个段乘积 P 对应整行状态左移 P 后取或；word-parallel bitset 是把 O(n*m*log m) 降为 O(n*m*log m/w) 的必要优化。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    },
+    {
+      "tag": "trick/product-growth-bound",
+      "importance": "primary",
+      "evidence": "任一有用段的乘积不超过 m，而每个大于 1 的因子至少使乘积翻倍，因此只需保留最近 O(log m) 个乘法断点。",
+      "solution_variant": "rolling-bitset-segment-product-dp",
+      "status": "candidate",
+      "parent": "trick",
+      "description": "利用每个乘数至少为 2 时乘积指数增长，在乘积或目标上界 M 下，将需要回看或选择的非单位因子数限制为 O(log M)；不用于仅做普通乘法溢出检查的题。",
+      "created_reason": "现有 trick/state-compression 过于宽泛，而 trick/maximum-count-bound 偏向选择数量和目标值优化，不能准确检索通过乘积增长截断 DP 依赖的题。"
+    },
+    {
+      "tag": "data-structure/bitset",
+      "importance": "secondary",
+      "evidence": "算法依赖固定长度 packed bit vector 的左移与按位或，同时更新 m+1 个布尔状态。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "0、1 和大于 1 的元素具有本质不同的末段乘积行为，正确性和复杂度都依赖三类转移完整覆盖。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "从 O(n) 行 DP 历史压缩为 prev、prefix-or、zero 和 O(log m) 个非 1 断点状态，才能满足空间限制。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "32 MB 空间要求使用滚动 bitset、短队列和流式读取，但这些是主 DP 推导后的工程约束。",
+      "solution_variant": "rolling-bitset-segment-product-dp"
+    }
+  ]
+}
+

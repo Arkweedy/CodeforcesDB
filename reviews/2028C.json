@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2028,
+    "title": "Codeforces Round 986 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2028,
+    "index": "C",
+    "title": "Alice's Adventures in Cutting Cake",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dp",
+      "greedy",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2028/problem/C",
+      "notes": "完整读取连续分块要求、每个生物至少 v、Alice 块可为空及 sum(n)<=2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136096",
+      "notes": "在同一次渲染加载中读取 2028C Solution 和代码；确认前后缀可喂数量、单调右端点及 O(n) 双指针。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tyonekgi",
+      "notes": "先从 CF2028C 题解索引定位后阅读全文和代码；交叉确认正数数组上的最早切割贪心、反向贪心及双指针。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2028/submission/382774625",
+      "notes": "页面显示 Accepted；核对前后缀贪心计数、前缀和及按单调性寻找 Alice 右端点。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2028/problem/C",
+      "notes": "独立证明极值边界支配性，并与枚举 Alice 区间和全部分割位置的 oracle 对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "把正数数组切成 m 个满足区间和至少 v 的生物块和一个可为空的 Alice 块，最大化 Alice 所得连续区间的和。",
+    "constraints": "1<=t<=1e4；1<=m<=n<=2e5；1<=v,a_i<=1e9；所有测试的 n 之和<=2e5，区间和需用 64 位整数。",
+    "core_idea": "令 L[x] 为从左开始贪心取得 x 个生物块后最小可能的结束位置，每块一达到 v 就立即切；令 R[y] 为从右开始取得 y 个生物块后最大可能的开始位置。枚举 x 个生物放在 Alice 左边、m-x 个放在右边。若 L[x]<=R[m-x]，Alice 可取得 [L[x],R[m-x])，其和由前缀和计算。因为所有 a_i>0，任何可行方案的左侧 x 块结束位置都不早于 L[x]，右侧 y 块开始位置都不晚于 R[y]，所以该区间包含同一分配下的任意可行 Alice 块并达到最大值。若所有分配均不合法则输出 -1。",
+    "complexity": "O(n+m) time and O(n+m) memory per test case; since m<=n, this is O(n).",
+    "tricks": [
+      "先枚举生物在 Alice 左右两侧的数量，而不是枚举全部切点。",
+      "正数性保证达到 v 后立即切割能留下最多空间。",
+      "从左右两端维护极值边界，Alice 的最优块就是两边界之间的区间。",
+      "L[x]=R[m-x] 时 Alice 取得空块，答案 0 合法。"
+    ],
+    "proof_risks": [
+      "总和至少 m*v 并不单独保证可按连续顺序切出 m 块。",
+      "贪心正确性依赖 a_i 全为正数。",
+      "x=0 时必须令 L[0]=0；m-x=0 时必须令 R[0]=n。",
+      "边界相等表示空块而非不可行；只有左边界超过右边界才冲突。",
+      "前缀和最大可达约 2e14，必须使用 64 位整数。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只有 Tutorial is loading；渲染后读取了完整 C 段落。",
+      "Luogu 动态题解索引只直接暴露 article 链接，进入具体文章后正文可稳定读取。"
+    ],
+    "uncertainty_points": [],
+    "small_scale_verification": {
+      "method": "枚举 Alice 的所有半开区间、左右生物数量及每侧全部分割位置，与极值边界算法比较。",
+      "coverage": "穷举 n<=6、a_i属于{1,2,3} 的全部 73809 组参数，并随机测试 n<=8 的 10000 组。",
+      "result": "全部一致，覆盖不可行、空 Alice 块和最优块贴近首尾等边界。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-extreme-boundaries",
+      "summary": "预处理每个块数对应的最早左结束位置和最晚右开始位置，枚举左右生物数量并用前缀和计算中间块。",
+      "complexity": "O(n+m) time and O(n+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "prefix-suffix-count-two-pointers",
+      "summary": "计算每个前缀和后缀最多能喂饱的生物数；枚举 Alice 左端点，用单调右指针找到满足 pfx[i]+sfx[j]>=m 的最大 j。",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "每个生物块一达到 v 就立即切割能得到最早左边界或最晚右边界，并支配所有其他同块数分割。",
+      "solution_variant": "greedy-extreme-boundaries"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "官方变体中 pfx 单调不降、sfx 随位置单调变化，使 Alice 的最大合法右端点可随左端点单调移动，总扫描 O(n)。",
+      "solution_variant": "prefix-suffix-count-two-pointers"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "确定左右极值边界后，用 P[R]-P[L] 在 O(1) 时间计算 Alice 块的美味度。",
+      "solution_variant": "greedy-extreme-boundaries"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "L[x] 保存左侧 x 块的最早结束位置，R[y] 保存右侧 y 块的最晚开始位置，两组极值边界直接刻画最优中间区间。",
+      "solution_variant": "greedy-extreme-boundaries"
+    }
+  ]
+}
+

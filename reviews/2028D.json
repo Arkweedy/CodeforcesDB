@@ -1,0 +1,150 @@
+{
+  "contest": {
+    "contest_id": 2028,
+    "title": "Codeforces Round 986 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2028,
+    "index": "D",
+    "title": "Alice's Adventures in Cards",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "dp",
+      "graphs",
+      "greedy",
+      "implementation",
+      "ternary search"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2028/problem/D",
+      "notes": "完整读取三份偏好排列、双方严格偏好、卡牌编号必须递增及 q/k/j 方案输出要求。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136096",
+      "notes": "在同一次渲染加载中读取 2028D Solution 和代码；确认从 n 反推可达性并维护三个后缀最小偏好值及其卡牌编号。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6ahc9g4n",
+      "notes": "从 CF2028D 题解索引进入并阅读线性正向解法；确认只维护已可达卡牌的三组前缀最大值和前驱即可。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/h30opybx",
+      "notes": "阅读有序集合的隐式图搜索解法与代码；用于确认 O(n log n) 的独立可达性构造变体。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2028/submission/382474018",
+      "notes": "页面显示 Accepted；其正向实现只把已可达卡牌加入三棵最大值结构，并保存玩家及前驱，交叉确认 reachable-only 不变量。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2028/problem/D",
+      "notes": "把合法交易视为编号递增的隐式 DAG，独立证明反向 DP，并与显式枚举全部边的可达性 oracle 对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Alice 从卡牌 1 出发，只能换到编号更大的卡牌；若某位玩家对当前卡牌的偏好值大于目标卡牌，则该玩家愿意交换。判断能否到达 n，并输出任意合法交易序列。",
+    "constraints": "1<=t<=1e4；2<=n<=2e5；三行均为 1..n 的排列；所有测试的 n 之和<=2e5。",
+    "core_idea": "定义 good[i] 表示从卡牌 i 能否继续到达 n，并从 n-1 向 1 处理。对每位玩家 s，维护所有已知 good 的较大编号卡牌 b 中最小的偏好值 min_s=p_s[b] 及取得它的编号 arg_s。若某个 s 满足 p_s[i]>min_s，则 i 可以经该玩家换到 arg_s，再沿已有方案到 n；记录该玩家和下一张卡。若三组均不满足，则不存在任何可作为路径第一步的 good 卡牌。i 成为 good 后，用它更新三位玩家各自的最小值。最后从 1 沿记录的严格递增指针重构方案。",
+    "complexity": "O(n) time and O(n) memory per test case, including reconstruction pointers.",
+    "tricks": [
+      "按卡牌编号逆序处理，把所有可能后继压缩成每位玩家一个最小偏好值。",
+      "极值必须只统计已经能到达 n 的卡牌。",
+      "保存极值对应的 argmin，判定可达时即可同时保存构造前驱。",
+      "正向等价做法维护已从 1 可达卡牌的三组最大偏好值。"
+    ],
+    "proof_risks": [
+      "偏好比较必须是严格大于，卡牌编号也必须严格增加。",
+      "不能把不可达卡牌纳入后缀最小值或前缀最大值。",
+      "i 被标记 good 后要更新三位玩家的极值，而不只更新本次选中的玩家。",
+      "重构输出的是目标卡牌编号，并使用 q、k、j 对应正确玩家。",
+      "题目只要求任意方案，不要求最少交易次数；editorial 的 Bonus 不属于本题要求。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只显示 Tutorial is loading；渲染页面一次加载后抽取了完整 D 解法。",
+      "Luogu 索引中的文章标题不在链接文本内，需读取卡片上下文再进入具体 article。"
+    ],
+    "uncertainty_points": [
+      "Accepted 实现用线段树维护正向最大值，但由于按编号顺序处理，三组标量最大值已经足够；规范主解采用官方 O(n) 反向 DP。"
+    ],
+    "small_scale_verification": {
+      "method": "显式建立所有 i<j 且存在玩家满足 p_s[i]>p_s[j] 的边，比较图可达性，并逐边验证反向 DP 输出路径。",
+      "coverage": "穷举 n=2..4 的全部 14048 组三排列，并随机测试 n<=10 的 100000 组。",
+      "result": "可达判定和所有重构边均完全一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "backward-reachability-suffix-minima",
+      "summary": "从 n 反推 good 状态，每位玩家只维护 good 后继中的最小偏好值及其编号，并记录下一跳。",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-reachability-prefix-maxima",
+      "summary": "从 1 正向处理，只维护已可达卡牌在三份排列中的最大偏好值及 argmax；若任一最大值超过当前值，则当前卡牌可达并记录前驱。",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "ordered-set-reachability-expansion",
+      "summary": "显式按可达卡牌扩展隐式 DAG，用三棵按玩家偏好排序的集合批量找出可交易目标；每张卡被发现或丢弃后从所有集合删除。",
+      "complexity": "O(n log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "good[i] 是卡牌 i 能否到达 n 的布尔状态，逆序转移通过已经求出的较大编号 good 状态完成。",
+      "solution_variant": "backward-reachability-suffix-minima"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "每次可达转移同时保存玩家和下一张卡，最终沿严格递增指针输出完整合法交易序列。",
+      "solution_variant": "backward-reachability-suffix-minima"
+    },
+    {
+      "tag": "dp/prefix-max-optimization",
+      "importance": "primary",
+      "evidence": "正向变体把所有已可达前驱压缩为三位玩家各自的最大偏好值和 argmax，使每个状态 O(1) 判定。",
+      "solution_variant": "forward-reachability-prefix-maxima"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "primary",
+      "evidence": "有序集合变体把每张卡视为顶点，合法交易边总从较小编号指向较大编号，因此形成 DAG，并求 1 到 n 的可达路径。",
+      "solution_variant": "ordered-set-reachability-expansion"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "官方主解不从 1 扩展，而是从终点 n 逆序维护哪些卡牌能够继续到达终点。",
+      "solution_variant": "backward-reachability-suffix-minima"
+    },
+    {
+      "tag": "data-structure",
+      "importance": "secondary",
+      "evidence": "O(n log n) 变体使用三棵有序集合批量提取满足偏好逆序关系的未处理目标，并摊还删除每张卡一次。",
+      "solution_variant": "ordered-set-reachability-expansion"
+    }
+  ]
+}
+

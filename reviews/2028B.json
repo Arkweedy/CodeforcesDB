@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2028,
+    "title": "Codeforces Round 986 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2028,
+    "index": "B",
+    "title": "Alice's Adventures in Permuting",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2028/problem/B",
+      "notes": "完整读取等差数组定义、替换最左最大值的 MEX 操作、0-based 排列定义及 1e18 约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136096",
+      "notes": "在同一次渲染加载中读取 2028B Solution 和代码；确认 b=0 的三类答案及 b>0 时按已有合法值数量计数。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/69g8rpj3",
+      "notes": "先从 CF2028B 题解索引定位后阅读全文和代码；交叉确认退化常数数组的循环边界及整除公式。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2028/submission/382812897",
+      "notes": "页面显示 Accepted；实现与官方的 b=0 分支及 c<n 时的严格计数公式一致。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2028/problem/B",
+      "notes": "独立证明 distinctness 不变量，并对小参数精确模拟 MEX 过程直至排列或重复状态。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定 a_i=b(i-1)+c，每次把最左侧最大值替换为当前 MEX，求首次成为 0..n-1 排列所需操作数，若进入循环则输出 -1。",
+    "constraints": "1<=t<=1e5；1<=n<=1e18；0<=b,c<=1e18，必须使用 64 位整数和避免构造数组的 O(1) 解法。",
+    "core_idea": "当 b>0 时初始元素互异；只要尚非排列，n 个互异非负数中必有一个值缺失于 [0,n-1]，同时有最大值 >=n。MEX 因而小于 n，替换后互异性保持，合法区间内元素数恰增加 1，所以答案等于初始 a_i>=n 的个数。若 c<n，已有合法值数为 floor((n-1-c)/b)+1，否则为 0。若 b=0，则数组全为 c：c>=n 时依次写入 0..n-1，答案 n；c=n-1 或 n-2 时答案 n-1；c<=n-3 时填出 0..c-1 后仍有至少两个 c，最大值在 c+1 与 c+2 间循环，永远不能成为排列。",
+    "complexity": "O(1) time and O(1) memory per test case.",
+    "tricks": [
+      "用互异非负数的鸽巢原理证明非排列状态下 max>=n 且 MEX<n。",
+      "把操作数转成等差数列中不小于 n 的项数。",
+      "b=0 时必须单独分析重复值和二状态循环。",
+      "计数条件是 a_i<n 的严格不等式。"
+    ],
+    "proof_risks": [
+      "b=0 且 c>=n 的答案是 n，不是 n-1。",
+      "c=n-2 仍可在 n-1 步得到排列；只有 c<=n-3 才循环。",
+      "当 c>=n 时不能直接套用含 n-c-1 的整除式。",
+      "n、b、c 可达 1e18，不能构造数组或使用 32 位整数。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只有 Tutorial is loading；使用执行脚本的浏览器后成功读取完整 Solution。",
+      "Luogu 题解列表是动态页面，先访问索引再进入具体 article。"
+    ],
+    "uncertainty_points": [
+      "Luogu 正文的第二个分支标题有 b!=0/b=0 记号笔误；其代码、官方题解和 Accepted 实现一致，未影响结论。"
+    ],
+    "small_scale_verification": {
+      "method": "直接维护数组，严格选择最左最大值、计算 MEX，并用状态集合检测循环。",
+      "coverage": "穷举 n=1..8、b=0..8、c=0..11，共 864 组。",
+      "result": "全部与闭式分类一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "case-split-mex-invariant",
+      "summary": "b>0 时利用互异性把答案化为越界项计数；b=0 时按 c 与 n 的关系判定填充完成或二状态循环。",
+      "complexity": "O(1) time and O(1) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "核心证明依赖每次 MEX 都是缺失的区间内值，并据此精确描述替换过程和常数数组循环。",
+      "solution_variant": "case-split-mex-invariant"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "b>0 时所有元素始终互异，因此每次操作恰好把一个区间外元素换成新的区间内元素。",
+      "solution_variant": "case-split-mex-invariant"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "b>0 与 b=0 的行为本质不同，而 b=0 又必须区分 c>=n、c属于{n-1,n-2} 和 c<=n-3。",
+      "solution_variant": "case-split-mex-invariant"
+    }
+  ]
+}
+
