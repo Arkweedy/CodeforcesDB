@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2050,
+    "title": "Codeforces Round 991 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2050,
+    "index": "E",
+    "title": "Three Strings",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "implementation",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2050/problem/E",
+      "notes": "Read the statement and constraints: c is a character-modified interleaving of a and b, with |c|=|a|+|b| and aggregate source lengths at most 2000 each."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/137644/en2",
+      "notes": "The official English editorial revision and reference implementation confirm the two-prefix DP and mismatch-cost transitions; the prose widget itself was dynamically unavailable."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/uqhaj17x",
+      "notes": "The Luogu solution independently formulates the equivalent maximum-match DP over used prefixes of a and b."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2050/problem/E",
+      "notes": "Re-derived the minimum-mismatch recurrence and exhaustively compared it with every interleaving for all binary a,b of lengths up to 3 and every target c; all cases matched."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum number of positions to change in c so that it becomes an interleaving of a and b while preserving the internal order of both source strings.",
+    "constraints": "1 <= |a|,|b| <= 1000, |c|=|a|+|b|, and the sums of |a| and |b| over test cases are each at most 2000; an O(|a||b|) DP is intended.",
+    "core_idea": "Let dp[i][j] be the minimum mismatches after taking the first i characters of a and first j characters of b to form c[0..i+j). The next output position is fixed as i+j, so transition from dp[i-1][j] by taking a[i-1], or from dp[i][j-1] by taking b[j-1], adding one exactly when that character differs from c[i+j-1]. The answer is dp[|a|][|b|].",
+    "complexity": "O(|a||b|) time and O(|a||b|) memory; rolling rows reduce memory to O(min(|a|,|b|)).",
+    "tricks": [
+      "Use i+j to identify the forced position in c.",
+      "Replace exponential enumeration of interleavings by a lattice of prefix pairs.",
+      "Treat a replacement as a unit mismatch cost on each transition."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "min-cost-interleaving-grid-dp",
+      "summary": "Run shortest-path-style DP on the (i,j) prefix grid, where each right/down step chooses the next character from one source and pays its mismatch with c[i+j].",
+      "complexity": "O(|a||b|) time and O(|a||b|) memory, or O(min(|a|,|b|)) memory with rolling rows",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "The complete solution is a two-dimensional DP over the prefix lattice (i,j), with transitions from adjacent lattice cells.",
+      "solution_variant": "min-cost-interleaving-grid-dp"
+    },
+    {
+      "tag": "string/interleaving",
+      "importance": "primary",
+      "evidence": "The central object is a merge of two strings that preserves the internal order of each source, and the DP chooses which source supplies every next position.",
+      "solution_variant": "min-cost-interleaving-grid-dp",
+      "description": "Problems where a target sequence is formed by interleaving two or more source sequences while preserving each source's internal order, typically solved by prefix-state dynamic programming.",
+      "parent": "string",
+      "created_reason": "The existing string/subsequence tag is broader and does not let users retrieve the classic order-preserving interleaving or shuffle DP pattern directly.",
+      "status": "candidate"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "secondary",
+      "evidence": "In every feasible unmodified merge, a and b both appear as order-preserving subsequences of the resulting string.",
+      "solution_variant": "min-cost-interleaving-grid-dp"
+    }
+  ]
+}

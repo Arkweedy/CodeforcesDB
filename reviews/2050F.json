@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2050,
+    "title": "Codeforces Round 991 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2050,
+    "index": "F",
+    "title": "Maximum modulo equality",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "divide and conquer",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2050/problem/F",
+      "notes": "Read the range-query statement and constraints: total n and q are each at most 2e5, and equal ranges require output 0 for an unbounded modulus."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/137644/en2",
+      "notes": "The official English editorial revision and reference implementation confirm adjacent absolute differences plus a GCD sparse table; the prose widget itself was dynamically unavailable."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/v9qesykr",
+      "notes": "The Luogu solution independently proves the difference-GCD characterization and supplies a segment-tree range-GCD implementation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2050/problem/F",
+      "notes": "Proved both directions of the congruence/divisibility equivalence and exhaustively compared the formula with direct modulus enumeration on random arrays of length up to 7 over all intervals; all cases matched."
+    }
+  ],
+  "annotation": {
+    "summary": "For every subarray [l,r], find the largest modulus m for which all values have the same remainder, outputting 0 when every value is equal and m is unbounded.",
+    "constraints": "Across test cases, sum n <= 2e5 and sum q <= 2e5, with a_i <= 1e9; each query therefore needs logarithmic or constant time after preprocessing.",
+    "core_idea": "Values in a range are all congruent modulo m iff m divides every pairwise difference, and it is enough to require divisibility of adjacent differences. Therefore the maximum finite m is gcd(|a_l-a_{l+1}|,...,|a_{r-1}-a_r|). Build the adjacent-difference array and answer static range-GCD queries; gcd 0 exactly represents the all-equal, unbounded case required to print 0.",
+    "complexity": "O(n log n + q) time and O(n log n) memory with a sparse table; a segment tree gives O((n+q) log n) time and O(n) memory.",
+    "tricks": [
+      "Convert equal-remainder constraints into divisibility of differences.",
+      "Adjacent differences generate every pairwise difference by telescoping.",
+      "Use gcd 0 as the required sentinel for an all-equal interval."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "difference-gcd-sparse-table",
+      "summary": "Build absolute adjacent differences, preprocess an idempotent GCD sparse table, and query the difference interval [l,r-1] in O(1).",
+      "complexity": "O(n log n + q) time and O(n log n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "difference-gcd-segment-tree",
+      "summary": "Use the same adjacent-difference reduction but maintain range GCD with a segment tree, as in the consulted Luogu solution.",
+      "complexity": "O((n+q) log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "The answer is exactly the GCD of all adjacent differences in the queried range; this equivalence is the mathematical core.",
+      "solution_variant": "difference-gcd-sparse-table"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "primary",
+      "evidence": "Replacing a by adjacent absolute differences turns a modulo-equality condition on [l,r] into one range aggregate query on [l,r-1].",
+      "solution_variant": "difference-gcd-sparse-table"
+    },
+    {
+      "tag": "data-structure/sparse-table",
+      "importance": "primary",
+      "evidence": "The official main solution preprocesses static range GCD and answers each query in O(1) using overlapping sparse-table blocks.",
+      "solution_variant": "difference-gcd-sparse-table"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "A segment tree is a fully valid alternative range-GCD engine with O(log n) per query, independently confirmed by the Luogu solution.",
+      "solution_variant": "difference-gcd-segment-tree"
+    }
+  ]
+}

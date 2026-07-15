@@ -1,0 +1,87 @@
+{
+  "contest": {
+    "contest_id": 2050,
+    "title": "Codeforces Round 991 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2050,
+    "index": "G",
+    "title": "Tree Destruction",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2050/problem/G",
+      "notes": "Read the path-deletion operation and constraints: one path, possibly a single vertex, is removed from a tree with total n at most 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/137644/en2",
+      "notes": "The official English editorial revision and reference implementation confirm a linear DFS DP that keeps the best one-arm value and combines the two best child arms; the prose widget itself was dynamically unavailable."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4vml41tk",
+      "notes": "The Luogu solution independently uses tree DP states for the removed path avoiding a node, ending at it, or passing through it, and combines the two best child contributions."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2050/problem/G",
+      "notes": "Derived components(P)=2+sum_{v in P}(deg(v)-2), then compared the resulting maximum-weight-path DP against explicit removal of every endpoint path on 1000 random trees for each n=2..10; all cases matched."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose one simple path in a tree, delete all its vertices, and maximize the number of connected components left behind.",
+    "constraints": "2 <= n <= 2e5 per test and total n <= 2e5, so the answer must be computed in O(n) or O(n log n).",
+    "core_idea": "For a removed path P, every remaining component is attached by exactly one edge from P to outside P. Thus the component count is sum_{v in P} deg(v)-2(|P|-1)=2+sum_{v in P}(deg(v)-2). Assign vertex weight w(v)=deg(v)-2 and find a maximum-weight simple path. Root the tree; down[v]=w(v)+max(0,max down[child]), while the best path through v combines w(v) with the two largest positive child down-values. Add 2 to the global maximum path sum.",
+    "complexity": "O(n) time and O(n) memory per test case.",
+    "tricks": [
+      "Count surviving components by off-path edges.",
+      "Rewrite the objective as an additive vertex weight deg(v)-2.",
+      "Combine the two best positive downward arms at each vertex."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "degree-weighted-maximum-path-dp",
+      "summary": "Transform every vertex to weight deg(v)-2, then run a diameter-style tree DP that keeps the best downward arm and combines the top two child arms.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "endpoint-middle-component-dp",
+      "summary": "Directly store the best component count for a deleted path ending at the current vertex and for a path passing through it, combining one or two child states as in the official and Luogu formulations.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp/maximum-path",
+      "importance": "primary",
+      "evidence": "After the degree-weight reduction, the algorithm is the standard top-two-arms tree DP for a maximum-weight simple path.",
+      "solution_variant": "degree-weighted-maximum-path-dp",
+      "description": "Tree dynamic programming that maximizes an additive score over one simple path by storing the best downward arm at each vertex and combining the two best child arms.",
+      "parent": "dp/tree-dp",
+      "created_reason": "The existing dp/tree-dp tag is too broad to retrieve the recurring maximum-path or diameter-style top-two-child recurrence directly.",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "The proof that off-path branches become distinct components and the linear parent-child recurrence both depend essentially on the input being a tree.",
+      "solution_variant": "degree-weighted-maximum-path-dp"
+    }
+  ]
+}
