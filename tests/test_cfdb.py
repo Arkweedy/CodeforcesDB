@@ -230,6 +230,11 @@ class CfDbTests(unittest.TestCase):
         self.assertEqual(eligibility.status, "excluded")
         self.assertIn("IOI-style", eligibility.reason or "")
 
+    def test_russian_familiarization_round_is_excluded(self) -> None:
+        eligibility = classify_contest("Технокубок 2022 - Ознакомительный Раунд 1")
+        self.assertEqual(eligibility.status, "excluded")
+        self.assertIn("familiarization", eligibility.reason or "")
+
     def reviewed_payload(self) -> dict[str, object]:
         return {
             "contest": {"contest_id": 2, "title": "Synthetic Contest"},

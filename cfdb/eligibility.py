@@ -12,6 +12,7 @@ EXCLUDED_PATTERNS = [
     ("winter challenge", "challenge or optimization style contest"),
     ("ioi rules", "IOI-style contest with subtask scoring"),
     ("tact smart battle", "platform-specific smart contract contest"),
+    ("ознакомительный", "familiarization or practice round"),
 ]
 
 MANUAL_REVIEW_PATTERNS = [
