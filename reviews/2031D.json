@@ -1,0 +1,138 @@
+{
+  "contest": {
+    "contest_id": 2031,
+    "title": "Codeforces Round 987 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2031,
+    "index": "D",
+    "title": "Penchick and Desert Rabbit",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "greedy",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2031/problem/D",
+      "notes": "读完题面和约束。一次合法跳跃恰好对应下标和值大小关系相反的一对位置；同一逆序对的两个方向都允许跳跃。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136260",
+      "notes": "核对官方线性解：用前缀最大值和后缀最小值判断相邻位置是否属于同一可达连通块，并从右向左计算答案。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2031/submission/291677082",
+      "notes": "实际读取官方题解链接的 Accepted C++23 源码；实现了 pref、suff 和严格条件 pref[i] > suff[i+1] 的 O(n) 递推。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/peuzzi3p",
+      "notes": "读完独立的 O(n log n) 解法：从右向左做可达最大值 DP，并用树状数组查询值域前缀最大值。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/luckyblock/p/18576620",
+      "notes": "读完 CF2031D 小节；同时给出了树状数组 DP 和前缀最大值、后缀最小值分段的线性做法。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2031/problem/D",
+      "notes": "把所有逆序对建成无向边，以 BFS 求每个连通分量的最大 a 值；对 20000 组 n<=8 的随机数组，与线性递推逐项比较，结果全部一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定数组。若两个位置的下标顺序和值大小顺序相反，兔子可以在两者之间双向跳跃。对每个起点，求其能够到达的位置中最大的 a 值。",
+    "constraints": "1 <= t <= 5*10^5，1 <= n <= 5*10^5，1 <= a_i <= n，所有测试的 n 之和不超过 5*10^5，需要 O(sum n) 或 O(sum n log n) 解法。",
+    "core_idea": "把每个逆序对视为一条无向边，问题变为求逆序图中每个连通分量的最大点权。令 pref[i]=max(a[1..i])，suff[i+1]=min(a[i+1..n])。若 pref[i]>suff[i+1]，存在跨过切口 i 的逆序边；取左侧最大值位置 x 和右侧最小值位置 y，可以通过 i-x-y-(i+1) 的链证明 i 与 i+1 属于同一连通分量。若 pref[i]<=suff[i+1]，任意左侧值都不大于任意右侧值，不存在跨切口的边，切口将图分离。于是从右向左递推：ans[n]=pref[n]；若 pref[i]>suff[i+1]，则 ans[i]=ans[i+1]，否则 ans[i]=pref[i]。",
+    "complexity": "主解法 O(n) 时间、O(n) 额外空间；所有测试总复杂度 O(sum n)。",
+    "tricks": [
+      "把看似有向的跳跃条件识别为逆序对上的双向边。",
+      "用 prefix maximum 与 suffix minimum 在 O(1) 时间判断每个切口是否存在跨界逆序边。",
+      "跨界边存在时，用边界位置、左侧最大值位置和右侧最小值位置构造连通链。",
+      "从右向左继承整个连通块的最大值，不需要显式建图或运行 DSU。",
+      "另一种解法把前缀最大值作为当前必达基准，用树状数组维护值域支配查询。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "官方题解、官方 Accepted 源码和独立博客均确认线性递推。",
+      "Luogu 题解提供了不同的树状数组 DP，用另一种方式确认了逆序连通关系。",
+      "随机 oracle 对 20000 个小数组显式建逆序图，全部匹配线性答案。"
+    ],
+    "uncertainty_points": [
+      "没有剩余的核心正确性疑点。",
+      "Luogu 来源主要验证 O(n log n) 变体，而线性主解由官方题解、Accepted 源码、博客和随机 oracle 共同验证。",
+      "未采用 official tags 中的 binary search、DSU、two pointers 等宽泛标签，因为它们不是所记录解法的决定性技术。",
+      "没有提出新 tag；使用的路径均已存在于当前 taxonomy。"
+    ],
+    "proof_risks": [
+      "跨切口条件必须是严格的 pref[i] > suff[i+1]；相等时不会产生逆序边。",
+      "后缀最小值必须取区间 i+1..n，不能把 a[i] 包含进去。",
+      "证明 i 能到达左侧最大值位置时要处理相等情况：若 a[i] 已等于前缀最大值，可直接选 x=i；否则存在严格逆序边。",
+      "同理，连接右侧最小值位置与 i+1 时，也要单独处理 a[i+1] 已是后缀最小值的情况。",
+      "pref[i]<=suff[i+1] 不只是没有某一条跨边，而是保证所有左侧值均不大于所有右侧值，因此不存在任何跨界逆序边。",
+      "树状数组变体的查询条件同样必须严格：只查询 a[j] < pref[i] 的后缀状态。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "linear-inversion-cut-segmentation",
+      "summary": "预处理前缀最大值和后缀最小值，识别逆序图中不会被连通分量跨越的切口；从右向左在同一分量内继承答案，在分隔切口处写入左侧前缀最大值。",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "fenwick-dominance-dp",
+      "summary": "令 dp[i] 为位置 i 所在逆序连通分量的最大值。位置 i 能先到达其前缀最大值位置，再连接所有满足 j>i 且 a[j]<pref[i] 的后缀状态；从右向左用树状数组按 a[j] 查询这些 dp[j] 的最大值。",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/connectivity",
+      "importance": "primary",
+      "evidence": "合法跳跃恰好把数组的逆序对变成双向边；最终答案完全由逆序图的连通分量及其最大点权决定。",
+      "solution_variant": "linear-inversion-cut-segmentation"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "pref[i] 与 suff[i+1] 的严格比较能够完整判定每个数组切口是否存在跨界逆序边，是 O(n) 解法的核心判据。",
+      "solution_variant": "linear-inversion-cut-segmentation"
+    },
+    {
+      "tag": "trick/barrier-segmentation",
+      "importance": "secondary",
+      "evidence": "满足 pref[i]<=suff[i+1] 的切口是连通分量无法跨越的屏障，所有答案可按这些屏障划分出的连续块统一计算。",
+      "solution_variant": "linear-inversion-cut-segmentation"
+    },
+    {
+      "tag": "dp/prefix-max-optimization",
+      "importance": "secondary",
+      "evidence": "O(n log n) 变体以 pref[i] 为必达基准，并把 dp[i] 写成对满足值域约束的后缀状态最大值转移。",
+      "solution_variant": "fenwick-dominance-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "树状数组变体按 a[j] 建立值域索引，支持后缀状态的点更新和严格前缀最大值查询。",
+      "solution_variant": "fenwick-dominance-dp"
+    }
+  ]
+}

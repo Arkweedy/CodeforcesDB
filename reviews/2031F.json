@@ -1,0 +1,170 @@
+{
+  "contest": {
+    "contest_id": 2031,
+    "title": "Codeforces Round 987 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2031,
+    "index": "F",
+    "title": "Penchick and Even Medians",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "interactive",
+      "probabilities"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2031/problem/F",
+      "notes": "读完当前英文题面、完整交互协议、查询限制和 hack 格式。原题要求在非自适应隐藏排列中用至多 80 次偶长子序列中位数查询找出两个全局中位数的位置。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136260",
+      "notes": "读完官方 2031F 教程的三个方案：随机寻找跨越中位数的基准对、确定性的六类补集查询，以及对同侧位置对同时二分。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/mss6tr1e",
+      "notes": "读完完整随机化题解和代码；核对基准对成功概率、剩余位置两两查询、候选位置枚举及最坏失败概率。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/dwroknfb",
+      "notes": "读完确定性分类题解和完整实现；核对 n/2 次补集查询、同侧位置对的交叉检测、最终候选定位和 79 次上界。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/KiharaTouma/p/18999455",
+      "notes": "读完 CF2031F 小节和完整代码；独立确认六种响应、上下半区位置对数量相等，以及 n/2+floor(n/4)+4 的确定性查询上界。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2031/problem/F",
+      "notes": "独立推导全部六种补集响应和四元素查询含义，并实现离线 oracle。穷举 n=6 的 720 个、n=8 的 40320 个排列全部正确；另对每个偶数 n=6..100 随机验证 2000 个排列，均在 80 次内恢复答案。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2031/submission/291677671",
+      "notes": "官方题解链接的确定性实现；提交页面触发 Cloudflare 检查，未实际读取源码正文，因此未移入 sources。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2031/submission/291677713",
+      "notes": "官方题解链接的同时二分实现；提交页面触发 Cloudflare 检查，未实际读取源码正文，因此未移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "隐藏一个长度为偶数的排列。每次可以询问一个长度至少为 4 的偶长下标集合，并得到对应值的两个中位数；要求在 80 次内找出值 n/2 和 n/2+1 所在的位置。",
+    "constraints": "原交互格式：1 <= t <= 1000，6 <= n <= 100，n 为偶数，sum(n) <= 10000，每个测试最多 80 次查询，交互器非自适应。当前 hack 格式额外直接给出完整排列。",
+    "core_idea": "令 L=n/2、R=L+1。把位置任意两两配对，并对每一对询问其补集，即剩余 n-2 个位置。删除值对后只有六种关键响应：删除两个不大于 L 的值返回 (R,R+1)；删除两个不小于 R 的值返回 (L-1,L)；删除严格小于 L 和严格大于 R 的两个值返回 (L,R)；删除严格小于 L 的值和 R 返回 (L,R+1)；删除 L 和严格大于 R 的值返回 (L-1,R)；恰好删除 L、R 返回 (L-1,R+1)。最后一种可直接回答；第四、第五种直接给出一个包含目标中位数的位置对。剩余困难情况是两个同属下半区或上半区的位置对。由于整个排列中下半区和上半区各有 n/2 个值，初始配对中这两类位置对数量必然相等。将一个上半区对和一个下半区对合并询问四个位置；其两个中位数分别是下半区对的最大值和上半区对的最小值，因此响应包含 L 当且仅当下半区对含 L，包含 R 当且仅当上半区对含 R。逐对检查后可得到两个各含一个目标的位置对。枚举这两个位置对的四种交叉选择，删除候选二元组并询问补集；响应为 (L-1,R+1) 的选择就是答案。",
+    "complexity": "确定性主方案使用至多 n/2+floor(n/4)+4 次 oracle 查询，n<=100 时至多 79 次。由于前 n/2 次查询各输出 n-2 个下标，总输出和本地构造时间为 O(n^2)，额外空间 O(n)；若只计算 oracle 调用数，则为 O(n)。",
+    "tricks": [
+      "询问 n-2 个位置，把一个未知二元组压缩成仅六种中央响应。",
+      "利用排列恰有 n/2 个下半区值和 n/2 个上半区值，证明同侧下半区对与同侧上半区对数量相等。",
+      "把一个下半区对和一个上半区对放入同一四元查询，响应恰是下半区最大值与上半区最小值。",
+      "先定位两个大小为 2 的候选位置对，再枚举四种交叉选择，而不是逐个识别所有元素。",
+      "随机化变体先寻找严格跨越 L、R 的基准对，再把四元查询变成目标中位数成员检测器。",
+      "交互实现必须在每次查询后 flush，并在读到 -1 时立即退出；hack 格式下则不再真正调用 oracle。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "离线 oracle 对给定下标集合取出排列值、排序并返回中间两项。",
+      "确定性主方案穷举 n=6 的全部 720 个排列，最大使用 8 次查询。",
+      "确定性主方案穷举 n=8 的全部 40320 个排列，最大使用 10 次查询。",
+      "对每个偶数 n=6..100 随机测试 2000 个排列，全部正确；n=100 的观测最大值为 72，理论最坏上界仍为 79。",
+      "随机方案按完整剩余预算计算时，最坏失败率出现在 n=100：单次成功率约 0.48505，28 次均失败的概率约为 8.4998e-9。"
+    ],
+    "uncertainty_points": [
+      "官方 n/2+O(log n) 方案的文字说明较短，且其链接源码受 Cloudflare 阻挡，因此该变体记录为 medium confidence；确定性的 79 次主方案则有两份完整独立实现和离线穷举支持。",
+      "当前 hack 格式直接给出排列，可以 O(n) 扫描得到答案；本标注保留原交互题的算法内容，而不是把 hack 退化实现当作主解。",
+      "官方随机方案的一处文字把基准对上侧条件简写为大于 n/2；精确条件必须是严格大于 R=n/2+1。",
+      "没有提出新 tag；当前 oracle-reconstruction、oracle-design、case-analysis、binary-search、randomized 和 probability 已足够描述本题。"
+    ],
+    "proof_risks": [
+      "六种补集响应中的严格与非严格边界不能混用。特别是严格小于 L 与严格大于 R 才返回 (L,R)；若删掉 R 或 L，响应会偏移一侧。",
+      "随机基准对必须一个值严格小于 L、另一个严格大于 R。只满足一个不大于 L、另一个不小于 R 时，基准对可能含目标中位数，后续成员检测不成立。",
+      "同侧位置对数量相等来自全局上下半区计数平衡；若初始位置没有形成互不相交的完整配对，这个结论不能直接使用。",
+      "四元查询中必须恰含一个下半区位置对和一个上半区位置对；此时第 2、3 小值才分别是下半区最大值和上半区最小值。",
+      "返回值包含 L 说明下半区候选对含 L，包含 R 说明上半区候选对含 R，不能把两侧对应关系写反。",
+      "最终验证需要删除所选的两个候选位置并询问其补集；只有响应 (L-1,R+1) 才证明删除的恰为 L、R。",
+      "n>=6 保证 n-2 仍是至少为 4 的合法偶数查询长度；所有四元查询还必须保证四个下标互异。",
+      "查询预算应计入最后最多四次候选验证：n/2+floor(n/4)+4 在 n=100 时为 79，而不是只计算分类阶段。",
+      "随机方案是 Monte Carlo；非自适应交互器使固定排列下的概率分析有效，但仍必须设置固定尝试上限，不能无限循环。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "deterministic-six-response-pair-classification",
+      "summary": "对固定位置配对逐一询问 n-2 个元素，用六种响应分类位置对；再一一组合上下半区同侧对，通过四元询问找到两个目标候选对，最后检查四种交叉选择。",
+      "complexity": "At most n/2+floor(n/4)+4 <= 79 queries, O(n^2) transmitted indices/local construction time, and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "deterministic-balanced-pair-binary-search",
+      "summary": "完成 n/2 次补集分类后，不逐一组合上下半区同侧对，而是在两边选取相同数量的位置对并询问其并集；响应是否含 L、R 可同时判断两个目标对是否位于所选子集，从而同时二分两个候选列表。",
+      "complexity": "n/2+O(log n) oracle queries, O(n^2) total transmitted indices due to the initial complement queries, and O(n) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    },
+    {
+      "name": "randomized-bracketing-pair-detection",
+      "summary": "随机选择两个位置并询问其补集，直到响应为 (L,R)，从而得到一个严格位于两个目标外侧的基准对。把其余位置两两配对，与基准对共同做四元询问，找出包含 L、R 的一至两个候选对，再枚举候选位置。",
+      "complexity": "Expected n/2+O(1) queries and O(n^2) transmitted indices. With 78-n/2 random trials, the worst failure probability over n<=100 is about 8.5e-9.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "核心目标是在严格的 80 次查询预算下，从子序列中位数 oracle 的响应中重构两个隐藏目标值的位置。",
+      "solution_variant": "deterministic-six-response-pair-classification"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "选择某一位置对的补集作为查询，把任意未知值对编码为六种可解释的中央响应；后续四元查询又把目标成员关系编码为是否出现 L 或 R。",
+      "solution_variant": "deterministic-six-response-pair-classification"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "primary",
+      "evidence": "确定性主方案必须完整区分删除值对相对 L、R 的六种情况，并为每种响应维护不同的候选位置对。",
+      "solution_variant": "deterministic-six-response-pair-classification"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "算法显式构造一组始终合法且不超过查询上限的补集查询、四元查询和最终验证查询。",
+      "solution_variant": "deterministic-six-response-pair-classification"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "官方更省查询的确定性变体通过查询等量上下半区位置对的并集，同时二分包含 L 和 R 的两个候选对。",
+      "solution_variant": "deterministic-balanced-pair-binary-search"
+    },
+    {
+      "tag": "paradigm/randomized",
+      "importance": "secondary",
+      "evidence": "随机变体反复均匀抽取被删除的位置对，以常数成功概率寻找严格跨越两个目标中位数的基准对。",
+      "solution_variant": "randomized-bracketing-pair-detection"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "随机基准对的单次成功率为 2*(n/2-1)^2/(n*(n-1))，固定尝试次数后的失败率可用独立重复试验精确控制。",
+      "solution_variant": "randomized-bracketing-pair-detection"
+    }
+  ]
+}

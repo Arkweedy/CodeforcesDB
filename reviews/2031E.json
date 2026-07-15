@@ -1,0 +1,160 @@
+{
+  "contest": {
+    "contest_id": 2031,
+    "title": "Codeforces Round 987 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2031,
+    "index": "E",
+    "title": "Penchick and Chloe's Trees",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "dp",
+      "greedy",
+      "implementation",
+      "math",
+      "sortings",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2031/problem/E",
+      "notes": "读完树收缩操作、完美二叉树定义和全部约束。父亲编号严格小于儿子编号，可直接逆序进行树 DP。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/136260",
+      "notes": "核对官方递推：叶子为 0；唯一儿子时加 1；至少两个儿子时答案为 ceil(log2(sum 2^dp[v]))，并给出排序归一化实现。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2031/submission/291677229",
+      "notes": "实际读取官方题解链接的 Accepted 源码；代码对儿子深度排序，以规格化的系数和二进制指数计算容量的最小二次幂上界。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2031/submission/291671084",
+      "notes": "实际读取并确认 Accepted 的 O(n) 变体；用时间戳数组保存二进制位，对每个儿子贡献的 2^dp[v] 做摊还进位。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/m4ugiadx",
+      "notes": "读完完整题解和代码；从收缩操作的逆过程出发，用小根堆反复合并两个最小儿子深度，得到 O(n log n) 树 DP。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/luckyblock/p/18576620",
+      "notes": "读完 CF2031E 小节；独立确认子树深度贡献可以解释为二进制容量，并可通过计数和进位求最小完美二叉树深度。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2031/problem/E",
+      "notes": "独立推导子树占用 2^d 个叶槽的容量模型；对 50000 组随机儿子深度多重集，比较精确公式与小根堆两两合并，结果全部一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定一棵根树。允许从某棵完美二叉树中删除非目标节点，并把它的儿子直接接到其父亲上。求能够收缩得到目标树的完美二叉树的最小深度。",
+    "constraints": "1 <= t <= 10^5，1 <= n <= 10^6，所有测试的 n 之和不超过 10^6；每个 i>1 的父亲 p_i<i。递归 DFS 可能达到 10^6 层，应利用编号拓扑顺序逆序 DP或使用显式栈。",
+    "core_idea": "设 dp[u] 为能够收缩得到 u 的目标子树的最小完美二叉树深度。叶子只需一个节点，dp[u]=0。若 u 只有一个儿子 v，儿子根必须严格位于 u 下方，因此 dp[u]=dp[v]+1。若有至少两个儿子，深度为 d_v 的儿子子树在最终深度为 D 的完美二叉树中需要占用 2^d_v 个互不重叠的底层叶槽；这些儿子根形成祖先无关的节点集合。因此必要且充分条件为 sum(2^d_v)<=2^D，得到 dp[u]=ceil(log2(sum 2^d_v))。各项都是二次幂，可以排序后规格化计算、用小根堆贪心合并两个最小深度，或直接用二进制计数与进位，均不必真正存储指数级整数。",
+    "complexity": "官方排序和小根堆方案总计 O(n log n) 时间、O(n) 空间；二进制进位变体的总进位次数为 O(n)，可做到 O(n) 摊还时间、O(n) 空间。",
+    "tricks": [
+      "逆向理解删除操作：把每个目标儿子子树放入更大的完美二叉树叶槽块中。",
+      "将深度 d 的子树转换成容量 2^d，树结构转化为二次幂装箱问题。",
+      "儿子数量为 1 时必须单独加 1，不能直接套用 ceil(log2(sum 2^d))。",
+      "小根堆每次合并两个最小深度 x、y，新深度为 max(x,y)+1。",
+      "二进制计数中加入一个 2^d 并向高位进位；总进位次数可用当前置位数的势能摊还。",
+      "利用 p_i<i，按节点编号从 n 到 1 处理，避免深链递归栈溢出。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "官方题解和官方 Accepted 源码确认容量公式及排序实现。",
+      "Luogu 题解通过小根堆合并给出独立实现。",
+      "另一份 Accepted 源码和博客确认了摊还 O(n) 的二进制进位变体。",
+      "50000 个随机儿子深度多重集上，小根堆答案与精确容量公式全部一致。"
+    ],
+    "uncertainty_points": [
+      "没有剩余的核心正确性疑点。",
+      "O(n) 变体虽然有 Accepted 源码和摊还证明，但实现比 O(n log n) 主方案更容易因时间戳、最高位或单儿子特判出错。",
+      "prefix-code tag 仅描述与 Kraft 型叶槽约束的结构对应，不表示题目本身是编码构造题，因此只标为 secondary。",
+      "没有提出新 tag；使用的路径均已存在于当前 taxonomy。"
+    ],
+    "proof_risks": [
+      "题目要求源树是 perfect binary tree，而不仅是每个节点儿子数为 0 或 2 的 full binary tree；所有叶子必须位于同一深度。",
+      "只有一个儿子时 sum(2^d)=2^d 会错误给出原深度，但儿子根至少比 u 深一层，所以必须返回 d+1。",
+      "至少两个儿子时，容量和严格大于最大的单项，公式会自动保证父深度大于每个儿子深度。",
+      "容量条件的充分性依赖所有需求都是二次幂：按大小分配对齐叶槽块才能保证对应儿子根互不为祖先。",
+      "小根堆必须合并当前两个最小深度；任意合并可能产生额外的二次幂向上取整损失。",
+      "不能直接使用普通整数计算 sum(2^d)，因为 d 可达 O(n)；必须采用规格化、堆合并或稀疏二进制位。",
+      "摊还 O(n) 进位需要避免为每个节点清空长度 O(n) 的数组，可使用时间戳或只记录本节点触及的位。",
+      "若使用递归 DFS，长度接近 10^6 的链可能栈溢出；父编号约束允许直接逆序迭代。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-capacity-tree-dp",
+      "summary": "逆序处理节点。对至少两个儿子的节点，把各儿子深度视为二次幂容量；排序后维护规格化的系数与指数，并求容量和的最小二次幂上界。",
+      "complexity": "O(sum(deg(u) log deg(u))) <= O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "min-heap-smallest-depth-merge",
+      "summary": "把每个儿子视为一棵所需深度已知的完美子树。用小根堆反复取出两个最小深度 x、y，将它们放在一个新二叉父节点下并压回 max(x,y)+1，直到只剩一个深度。",
+      "complexity": "O(sum(deg(u) log deg(u))) <= O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "amortized-binary-carry-tree-dp",
+      "summary": "把每个儿子的贡献作为二进制数中的一个 2^dp[v]。按位计数并执行进位，最后根据最高置位及是否还有其他置位决定向上取整后的指数；以置位数为势能可证明每个节点的总进位次数线性于儿子数。",
+      "complexity": "O(n) amortized time and O(n) memory over one test.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "每个节点的最小源树深度只由其儿子子树的最小深度多重集决定，并按父子拓扑顺序自底向上递推。",
+      "solution_variant": "sorted-capacity-tree-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "小根堆变体反复合并当前两个最小深度，以最小化每次把容量向更高二次幂舍入造成的浪费，最终得到全局最小深度。",
+      "solution_variant": "min-heap-smallest-depth-merge"
+    },
+    {
+      "tag": "trick/binary-carry",
+      "importance": "primary",
+      "evidence": "线性变体把各儿子子树表示为单个二进制位，并通过摊还进位直接计算容量和向上取整后的最高指数。",
+      "solution_variant": "amortized-binary-carry-tree-dp"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "小根堆用于动态维护儿子深度多重集，并在每轮 O(log deg) 时间取出和合并两个最小值。",
+      "solution_variant": "min-heap-smallest-depth-merge"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "状态依赖目标根树的父子结构，且 p_i<i 提供了可直接利用的树上拓扑顺序。",
+      "solution_variant": "sorted-capacity-tree-dp"
+    },
+    {
+      "tag": "math/combinatorics/coding-theory/prefix-code",
+      "importance": "secondary",
+      "evidence": "儿子根形成祖先无关集合，每个深度 d_v 的子树占用 2^d_v 个底层叶槽；sum(2^d_v)<=2^D 是一个与 Kraft 约束等价的完美二叉树容量条件。",
+      "solution_variant": "sorted-capacity-tree-dp"
+    }
+  ]
+}
