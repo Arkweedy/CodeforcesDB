@@ -1,0 +1,96 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "D",
+    "title": "Kevin and Numbers",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/D",
+      "notes": "Statement and constraints; each forward operation merges x,y with |x-y|<=1 into x+y, and sequence equality is multiset equality."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138620",
+      "notes": "Official hints explicitly point to reconstructing the two operands of a merged value and processing the operations in reverse."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4etp0ti6",
+      "notes": "Confirms reverse splitting with a max-heap, target frequencies, and the fragment-count bound that prevents excessive splitting."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/unigravity/p/18783705",
+      "notes": "Cross-checks that a merged value uniquely determines its two nearly equal operands and that largest-first multiset processing runs in O(n log n)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/D",
+      "notes": "Proved the largest-first decisions are forced and exhaustively compared the greedy test with all forward-reachable multisets for n<=5 and a_i<=4."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/302134060",
+      "notes": "Codeforces status confirms an accepted implementation; the source page was blocked by a browser challenge, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide whether multiset a can be transformed into multiset b by repeatedly merging two values differing by at most one.",
+    "constraints": "Up to 1e4 test cases; 1 <= m <= n <= 2e5, sum of n <= 2e5, and 1 <= a_i,b_i <= 1e9. Total sums require 64-bit arithmetic.",
+    "core_idea": "Reverse the process. For a merged value x, the only unordered pair with sum x and difference at most one is {floor(x/2),ceil(x/2)}, so every reverse split is deterministic. First require sum(a)=sum(b). Keep unmatched a values in descending order (or a frequency map) and current fragments from b in a max-heap. Compare the maxima x from the heap and y from a: if x=y, matching them is forced because splitting only decreases values and no smaller fragment can later create y; if x<y, y can never be produced; if x>y, x matches no remaining target and must be split into floor(x/2) and ceil(x/2). A fragment 1 cannot be split. If the number of current fragments exceeds the number of unmatched targets, reject; splits only increase that count. These forced choices are both necessary and sufficient, and the count bound limits the process to at most n-m splits.",
+    "complexity": "O(n log n) time and O(n) memory per test case; O(sum n log(sum n)) across the input.",
+    "tricks": [
+      "Reverse a many-choice merge process into a unique split process.",
+      "A value x has the unique valid reverse children floor(x/2) and ceil(x/2).",
+      "Always resolve the largest current fragment because future splits can only decrease values.",
+      "Stop when the current fragment count exceeds the number of unmatched target leaves.",
+      "Check the preserved total sum with 64-bit arithmetic."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "largest-first-reverse-splitting",
+      "summary": "Sort or count the target multiset a, place b in a max-heap, greedily match equal maxima, and uniquely split every oversized maximum until all targets are consumed or a forced impossibility is found.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/reverse-process",
+      "importance": "primary",
+      "evidence": "The forward merge has many choices, while reversing a value x produces the unique pair floor(x/2),ceil(x/2); the entire feasibility test is built on this reversal.",
+      "solution_variant": "largest-first-reverse-splitting"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "At every step the largest fragment has a forced action: match an equal largest target, split if it is larger, or reject if it is smaller. Splitting cannot create a larger value later.",
+      "solution_variant": "largest-first-reverse-splitting"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "A max-heap repeatedly extracts the current largest fragment and inserts its two reverse children while keeping each operation logarithmic.",
+      "solution_variant": "largest-first-reverse-splitting"
+    }
+  ]
+}
+

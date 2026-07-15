@@ -1,0 +1,131 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "E2",
+    "title": "The Game (Hard Version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "games",
+      "graphs",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2062/problem/E2",
+      "notes": "Read the same game rules and constraints as E1, with the hard-version requirement to output every winning first node."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "Official editorial checked; the embedded hard-version code confirms a descending-weight sweep over Euler positions with an ordered set and Fenwick-maintained constraints."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/programmingysx/p/18903104",
+      "notes": "Used to cross-check the necessary-and-sufficient condition via g(v), the LCA of strictly higher nodes outside subtree(v), and ancestor-union constraints."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/wshcl/p/18666959",
+      "notes": "Used to verify the O(n log n) implementation: two Fenwick trees, Euler-order extrema from a set, and +1 at v and g(v) minus 1 at LCA(v,g(v))."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2062/problem/E2",
+      "notes": "Re-derived the characterization, matched it against recursive optimal play on 90,000 random small trees, and separately validated the LCA/Fenwick constraint sweep on 95,000 random trees."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2062E2",
+      "notes": "Candidate Luogu solution index; not needed after the official code and two detailed independent writeups were checked."
+    }
+  ],
+  "annotation": {
+    "summary": "Output all first nodes u for which Cirno wins the increasing-weight subtree-deletion game under optimal play, rather than only one witness as in E1.",
+    "constraints": "n <= 4e5 per test case, total n <= 4e5, and 1 <= w_i <= n. Enumerating a fresh residual game for every u is impossible; all candidates must be certified together in O(n log n).",
+    "core_idea": "A candidate u must first have a strictly higher node outside subtree(u), otherwise the opponent has no move and wins. For every legal opponent reply v outside subtree(u) with w_v > w_u, Cirno wins exactly when every node x with w_x > w_v lies in subtree(u) or subtree(v). If this fails, choosing the maximum-weight violating v is a winning reply for the opponent by the same extremal argument as E1. Let H_v be the strictly higher nodes outside subtree(v), and when H_v is nonempty let g(v)=LCA(H_v). Then each higher v imposes the condition that u is an ancestor of v or an ancestor of g(v). Sweep equal-weight buckets in descending order. An ordered set of Euler positions finds the extreme members of H_v, whose LCA is g(v). For one constraint (v,g), its satisfaction indicator over candidate subtrees is represented by point contributions +1 at v, +1 at g, and -1 at LCA(v,g); a Fenwick subtree sum therefore counts how many active constraints a candidate satisfies. A node is an answer iff it has a higher node outside its subtree and its constraint count equals the number of active constraints. Query and update each equal-weight bucket before inserting it, because inequalities are strict.",
+    "complexity": "O(n log n) time and O(n log n) memory per test case for Euler DFS, binary-lifting LCA, ordered-set operations, and Fenwick queries/updates.",
+    "tricks": [
+      "turn every possible larger reply into a necessary-and-sufficient ancestor-union constraint",
+      "batch equal weights so the active set contains strictly greater values only",
+      "obtain the LCA of a dynamic set from its minimum and maximum Euler positions",
+      "encode ancestor(v) OR ancestor(g(v)) by +1 at v, +1 at g(v), and -1 at LCA(v,g(v))",
+      "use a separate higher-node count to reject openings that leave the opponent no legal reply"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "descending-weight-lca-two-fenwick",
+      "summary": "Precompute Euler intervals and binary-lifting LCA. Sweep weights downward in equal-value buckets. One Fenwick tree counts already active higher nodes, an ordered set finds the Euler extrema outside each subtree and hence g(v), and a second signed Fenwick tree maintains how many constraints each candidate subtree satisfies via +v,+g,-LCA(v,g). Query candidates before adding the current bucket.",
+      "complexity": "O(n log n) time and O(n log n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "euler-interval-disjunction-sweep",
+      "summary": "The official implementation avoids explicit LCA constraints. For each processed v it takes the minimum and maximum higher Euler positions outside subtree(v); every lower candidate interval must contain v or both extrema. It maintains the accumulated disjunctions with global interval bounds and a prefix-maximum Fenwick tree while sweeping weights downward.",
+      "complexity": "O(n log n) time and O(n) memory beyond the tree and ordered set.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "The solution first proves exactly when every opponent reply is losing and uses a maximum violating reply to prove necessity.",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "All nodes are processed by descending weight in equal-value batches, turning every condition over strictly higher values into incremental state.",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "primary",
+      "evidence": "For each v, g(v) is the LCA of all higher nodes outside subtree(v), and LCA(v,g(v)) is required by the signed constraint update.",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "Fenwick subtree sums maintain both the count of active higher nodes and the number of ancestor-union constraints satisfied by each candidate.",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "graph/euler-tour",
+      "importance": "primary",
+      "evidence": "Euler intervals make ancestor tests and subtree Fenwick sums contiguous and allow H_v to be summarized by outside interval extrema.",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "An ordered set of active Euler positions supplies the minimum and maximum strictly higher nodes outside a queried subtree in O(log n).",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    },
+    {
+      "tag": "algorithm/binary-lifting",
+      "importance": "secondary",
+      "evidence": "Binary lifting answers the LCA queries used to build g(v) and the inclusion-exclusion update in O(log n).",
+      "solution_variant": "descending-weight-lca-two-fenwick"
+    }
+  ]
+}
+

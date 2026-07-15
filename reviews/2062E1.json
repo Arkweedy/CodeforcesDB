@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "E1",
+    "title": "The Game (Easy Version)",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dfs and similar",
+      "games",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2062/problem/E1",
+      "notes": "Read the rooted-subtree deletion rules, the unusual rule that the player unable to move wins, and the constraints sum(n) <= 4e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "Official contest editorial checked; its embedded implementations confirm the Euler-tour complement-maximum solution, while the discussion records the descending-weight LCA alternative."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/tl679v3r",
+      "notes": "Cross-checked the criterion that a larger value must exist outside the chosen subtree and the DFS-order complement query."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/programmingysx/p/18903104",
+      "notes": "Cross-checked the extremal game argument: choosing the maximum-weight qualifying node forces every reply to be terminal for the next player."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2062/problem/E1",
+      "notes": "Re-derived the winning criterion and compared it with a recursive optimal-play solver on 90,000 random rooted trees with n <= 9."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2062E1",
+      "notes": "Luogu solution index; the consulted substantive Luogu article is listed in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "Find any first node Cirno can choose in a rooted weighted-tree game so that she wins under optimal play; moves must use strictly increasing weights, delete rooted subtrees, and being unable to move is winning.",
+    "constraints": "Up to 1e5 test cases, n <= 4e5 per case, 1 <= w_i <= n, and total n <= 4e5, so the intended solution is linear or O(n log n) over all nodes.",
+    "core_idea": "Call u exposed if some node of value greater than w_u lies outside subtree(u). If no exposed node exists, every opening leaves the opponent with no move, so the opponent wins. Otherwise choose an exposed node u of maximum weight. Every legal reply v is outside subtree(u) and has w_v > w_u. If any still larger node lay outside subtree(v), then v itself would be exposed with larger weight than u, contradicting maximality. Thus after any reply v all nodes with value greater than w_v have been deleted by subtree(v), Cirno has no move, and Cirno wins. Euler order makes subtree(u) one interval, so the maximum outside it is the maximum of one prefix and one suffix.",
+    "complexity": "O(n) time and O(n) memory per test case, with O(sum n) total work.",
+    "tricks": [
+      "respect the reversed terminal rule: leaving the opponent no move makes the opponent win",
+      "choose the maximum-weight node among those whose subtree misses a larger value",
+      "flatten each subtree to an Euler interval and query its complement with prefix/suffix maxima"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "euler-complement-maximum-greedy",
+      "summary": "Run DFS to obtain tin/tout and Euler order, build prefix and suffix maxima of node weights in that order, and compute maxOutside(u). Among nodes with maxOutside(u) > w_u, return one with maximum w_u; return 0 if none exists.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "descending-weight-lca",
+      "summary": "Process equal-weight buckets from high to low while maintaining the LCA of all strictly higher nodes. A current node u is exposed exactly when that aggregate LCA is not in subtree(u); the first weight bucket containing such a node supplies a valid answer.",
+      "complexity": "O(n log n) time and O(n log n) memory with binary-lifting LCA.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "Correctness depends on characterizing losing positions under optimal play with the reversed no-move-wins terminal rule.",
+      "solution_variant": "euler-complement-maximum-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The decisive choice is the maximum-weight exposed node; maximality proves every opponent reply has no larger node outside its own subtree.",
+      "solution_variant": "euler-complement-maximum-greedy"
+    },
+    {
+      "tag": "graph/euler-tour",
+      "importance": "primary",
+      "evidence": "DFS order turns each rooted subtree into [tin(u), tout(u)], so its complement consists of two array ranges.",
+      "solution_variant": "euler-complement-maximum-greedy"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "Prefix and suffix maxima answer the maximum weight outside every subtree interval in O(1).",
+      "solution_variant": "euler-complement-maximum-greedy"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "secondary",
+      "evidence": "The alternative sweep aggregates all strictly higher nodes by their LCA to test whether they all lie inside a candidate subtree.",
+      "solution_variant": "descending-weight-lca"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "The alternative processes nodes in equal-weight batches from high to low so the maintained set contains exactly the strictly larger values.",
+      "solution_variant": "descending-weight-lca"
+    }
+  ]
+}
+

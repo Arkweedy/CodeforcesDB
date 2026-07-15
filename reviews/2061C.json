@@ -1,0 +1,90 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "C",
+    "title": "Kevin and Puzzle",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "2-sat",
+      "combinatorics",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/C",
+      "notes": "Statement and constraints; liars may make either true or false claims, but two liars may not be adjacent."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138620",
+      "notes": "Official hints identify the no-adjacent-liars restriction as the key to reducing the quadratic counting DP; the tutorial body was lazy-loaded in the consulted page."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/7omckf21",
+      "notes": "Confirms the one-dimensional recurrence over prefixes ending at an honest person: compare a_i with a_{i-1} or a_{i-2}+1."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Tendou-Eous/articles/18683138",
+      "notes": "Cross-checks the equivalent honest/liar two-state DP, initialization, and final sum of both ending states."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/C",
+      "notes": "Re-derived the recurrence from exact liar-prefix counts and exhaustively matched it against all assignments and claim arrays through n=5."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/302332273",
+      "notes": "Codeforces status confirms an accepted implementation; the source page was blocked by a browser challenge, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Count honesty/liar assignments in a line, with no adjacent liars, such that every honest person's claimed number of liars to their left is exact.",
+    "constraints": "Up to 1e4 test cases; 1 <= n <= 2e5, sum of n <= 2e5, and 0 <= a_i <= n. Counts are taken modulo 998244353, so a linear solution is required.",
+    "core_idea": "Let f_i count valid prefixes in which person i is honest. Use an artificial honest position 0 with f_0=1 and a_0=0, and set f_1=[a_1=0]. If i and i-1 are both honest, their liar-prefix counts are equal, giving the transition [a_i=a_{i-1}]f_{i-1}. If i is honest and i-1 is a liar, then i-2 is honest and exactly that intervening liar is added, giving [a_i=a_{i-2}+1]f_{i-2}. Thus for i>=2, f_i=[a_i=a_{i-1}]f_{i-1}+[a_i=a_{i-2}+1]f_{i-2}. A configuration ending with liar i must have honest i-1 and imposes no condition on a_i, so the answer is f_n+f_{n-1}. This is equivalently a two-state DP H_i,L_i with L_i=H_{i-1}.",
+    "complexity": "O(n) time and O(1) extra memory per test case with rolling states; O(sum n) time overall.",
+    "tricks": [
+      "A liar's numerical claim is unconstrained even when it happens to be true.",
+      "No adjacent liars makes the previous honest claim at most two positions away.",
+      "Compare neighboring honest claims instead of storing the total liar count as a DP dimension.",
+      "Use an artificial honest position 0 to cover the case where person 1 is a liar and person 2 is honest."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-honest-endpoint-counting-dp",
+      "summary": "Maintain f_i for prefixes ending with honest i, apply the two locally checkable transitions from honest i-1 or liar i-1, and add f_n+f_{n-1}. An equivalent implementation keeps explicit honest/liar ending states.",
+      "complexity": "O(n) time and O(1) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The DP values count valid honesty/liar configurations modulo 998244353, and the final answer sums the two possible ending statuses.",
+      "solution_variant": "linear-honest-endpoint-counting-dp"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "After using the no-adjacent-liars rule, the prefix needs only the last honesty status, equivalently the two rolling counts H_i and L_i, with transitions decided by local comparisons of a_i.",
+      "solution_variant": "linear-honest-endpoint-counting-dp"
+    }
+  ]
+}
+

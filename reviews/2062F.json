@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "F",
+    "title": "Traveling Salescat",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dp",
+      "geometry",
+      "graphs",
+      "greedy",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2062/F",
+      "notes": "Statement and constraints checked: t <= 1500, n <= 3000, sum n^2 <= 9e6, and 0 <= a_i,b_i <= 1e9; one minimum simple-path cost is required for every cardinality 2..n."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "Official editorial page checked. Its prose remained lazy-loaded, but both reference implementations were readable and confirm sorting by a_i-b_i (or the reverse orientation) followed by a constant-state exact-cardinality DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/g495xq47",
+      "notes": "Cross-checked the max-to-absolute-value transform, the fixed-endpoint line-walk formula, the four ordered critical roles, and an O(n^2) DP. The displayed B_i definition has an apparent subscript typo; its formula and code use a_i-b_i."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Exotic-sum/p/18725116",
+      "notes": "Cross-checked the equivalent b_i+b_j+max(c_i,c_j) rewrite and the three-phase DP transitions after sorting c_i=a_i-b_i."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/programmingysx/p/18903104",
+      "notes": "Cross-checked the endpoint/extrema derivation: fixed selected set and endpoints reduce the absolute-difference contribution to 2(max q-min q)-abs(q_s-q_t)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2062/F",
+      "notes": "Independently derived the line-metric formula and role contributions, then matched a rolling role-DP implementation against brute-force enumeration on 515 random cases with n=2..7, including tied q_i values."
+    }
+  ],
+  "annotation": {
+    "summary": "For each k from 2 to n, choose k cities and order them as a simple path minimizing the sum of max(a_i+b_j,b_i+a_j) over adjacent pairs.",
+    "constraints": "t <= 1500; 2 <= n <= 3000; sum n^2 <= 9e6; 0 <= a_i,b_i <= 1e9. Quadratic time per test is intended, linear rolling memory is possible, and all costs require 64-bit integers.",
+    "core_idea": "Set p_i=a_i+b_i and q_i=a_i-b_i, so twice an edge cost is p_i+p_j+abs(q_i-q_j). For a selected set S with endpoints s,t, reverse the path if needed so q_s<=q_t. If m is the minimum selected q and M is the maximum selected q, the minimum total absolute-difference part is 2(M-m)-(q_t-q_s): go from s down to m, visit all remaining cities in nondecreasing q order up to M, then go down to t. Hence 2C=2*sum_{v in S}p_v-p_s-p_t+2(M-m)-(q_t-q_s). The only nonuniform roles are therefore ordered as m <= s <= t <= M. Sort by q and run an exact-cardinality selection DP: every selected city has base contribution 2p, while assigning the min, start, end, and max roles adds -2q, -p+q, -p-q, and +2q respectively. A constant phase records how many of min/start/end have been assigned; the max role is applied when an answer is finalized. The min may equal the start and the end may equal the max, which handles boundary cases such as k=2.",
+    "complexity": "O(n^2) time and O(n) extra memory per test after O(n log n) sorting; O(sum n^2) total time under the input bound.",
+    "tricks": [
+      "rewrite max of two cross-sums as a linear term plus one absolute difference",
+      "reverse the undirected path so the start coordinate is at most the end coordinate",
+      "replace arbitrary path permutations on a line by a span-and-endpoints formula",
+      "encode min, start, end, and max as four ordered roles that may coalesce only at min=start and end=max",
+      "keep doubled costs throughout the DP to avoid fractions"
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The official editorial prose was not exposed by the page renderer; only its reference code was readable, so the proof was reconstructed from independent sources and self-derivation.",
+      "The implementation is sensitive to sorting by q_i=a_i-b_i rather than p_i, and to allowing min=start and end=max while still selecting distinct start/end cities; equal-q ties require careful but otherwise arbitrary ordering.",
+      "The role-transition signs were brute-force checked on small random instances, but the main agent should still re-check those signs and 64-bit bounds before applying the draft."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-four-role-cardinality-dp",
+      "summary": "Sort cities by q_i. In doubled costs, treat 2p_i as the ordinary contribution of a selected city and assign the ordered min/start/end/max adjustments with a three-phase rolling DP over the selected count. Initialize both min-only and min=start states; selecting later cities either leaves the phase unchanged, assigns start, assigns end, or finalizes max, so all answers for k=2..n are obtained in one quadratic scan. The common three-state b_i+max(c_i,c_j) formulation is algebraically the same algorithm, not a materially distinct variant.",
+      "complexity": "O(n^2) time and O(n) extra memory after sorting.",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/line-metric",
+      "display_name": "Line metric",
+      "importance": "primary",
+      "description": "Optimize walks over scalar coordinates using total variation and span identities, especially endpoint-to-endpoint paths that must visit every selected point on a line.",
+      "parent": "math/geometry",
+      "created_reason": "Existing geometry and Manhattan-transform tags capture the coordinate rewrite but not the reusable identity that a fixed-endpoint walk visiting scalar points costs 2(max-min)-endpoint_distance. This distinction improves retrieval for one-dimensional route-optimization problems. Candidate for main-agent taxonomy review.",
+      "status": "candidate",
+      "aliases": [
+        "one-dimensional metric",
+        "1d line metric",
+        "line travel"
+      ],
+      "main_agent_review_required": true,
+      "evidence": "After the coordinate transform, the decisive optimization is the line-metric identity 2(M-m)-abs(q_s-q_t), which removes the path permutation and leaves only extrema and endpoint roles.",
+      "solution_variant": "sorted-four-role-cardinality-dp"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "The O(n^2) algorithm selects each sorted city or skips it while a constant phase records whether min, start, and end roles have been assigned; selected count supplies every requested k.",
+      "solution_variant": "sorted-four-role-cardinality-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Sorting by q_i=a_i-b_i turns the required order min <= start <= end <= max into a forward scan, making the finite-state cardinality DP possible.",
+      "solution_variant": "sorted-four-role-cardinality-dp"
+    },
+    {
+      "tag": "math/geometry/manhattan-transform",
+      "importance": "secondary",
+      "evidence": "The diagonal coordinates p_i=a_i+b_i and q_i=a_i-b_i convert max(a_i+b_j,b_i+a_j) into (p_i+p_j+abs(q_i-q_j))/2.",
+      "solution_variant": "sorted-four-role-cardinality-dp"
+    }
+  ]
+}
+

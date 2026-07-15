@@ -1,0 +1,105 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "E",
+    "title": "Kevin and And",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "dp",
+      "greedy",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/E",
+      "notes": "Read the operation, all examples, and constraints; repeated use of one magic type is idempotent."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138620",
+      "notes": "Official editorial supplies the highest-differing-bit exchange proof of discrete convexity and the global top-k reduction."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4dbo0ia1",
+      "notes": "Cross-checked the full subset-by-popcount implementation, marginal-difference construction, and sorting approach."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Independent write-up confirms subset-mask preprocessing, decreasing marginal gains, and the optional nth_element optimization."
+    }
+  ],
+  "annotation": {
+    "summary": "Apply at most k operations of the form a_i <- a_i & b_j and minimize the final sum of a.",
+    "constraints": "There are at most 10000 test cases, sum(n) <= 100000, 1 <= m <= 10, 0 <= k <= nm, and all values are below 2^30. Enumerating 2^m magic subsets per a_i is feasible; the sum and answer require 64-bit integers.",
+    "core_idea": "For a fixed value x, repeated magic types are useless, so enumerate subsets S of the m types. Let f_x(S) be x AND all b_j in S, and let g_x(c)=min_{|S|=c} f_x(S). The sequence g_x is discretely convex. To prove it, take optimal subsets S and T of sizes c-1 and c+1 and let w be the highest bit where f_x(S) and f_x(T) differ. That bit is 1 in f_x(S) and 0 in f_x(T), so some y in T\\S clears it. For U=S union {y}, f_x(S)-f_x(U) >= 2^w, while f_x(U) and f_x(T) agree through bit w and therefore f_x(U)-f_x(T) < 2^w. Since g_x(c) <= f_x(U), this gives 2g_x(c) <= g_x(c-1)+g_x(c+1). Hence the reductions d_x(c)=g_x(c-1)-g_x(c) are non-increasing. Compute every g_{a_i}(c) by grouping subset masks by popcount, collect all nm marginal reductions, and take the k largest. The decreasing order within each element means any chosen later reduction can be exchanged for an unchosen earlier one, so a prefix-closed and therefore realizable selection always exists.",
+    "complexity": "O(m*2^m + n*2^m + nm*log(nm)) time and O(2^m + nm) memory with sorting; nth_element reduces the final selection to expected O(nm) time.",
+    "tricks": [
+      "Replace an operation sequence on one element by a subset because bitwise AND is commutative and idempotent.",
+      "Group all magic subsets by popcount to obtain the best residual value for every exact operation count.",
+      "Prove diminishing marginal reductions with a highest-differing-bit exchange.",
+      "Merge all decreasing marginal-gain chains by globally selecting the k largest gains."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "subset-cardinality-convex-greedy",
+      "summary": "Precompute the AND of every magic subset, enumerate those masks for each a_i to obtain minimum residuals by subset size, difference the resulting convex sequence into non-increasing reductions, and select the globally largest k reductions using sorting or nth_element.",
+      "complexity": "O(m*2^m + n*2^m + nm*log(nm)) time and O(2^m + nm) memory with full sorting",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "Every subset of the at most ten magic types is encoded by a mask, and its popcount and cumulative AND determine one candidate for g_i(c).",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "After proving each element's marginal reductions are non-increasing, the optimum is obtained by greedily selecting the k largest reductions globally.",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "The highest-differing-bit lemma proves discrete convexity of g_i(c), equivalently that successive reductions g_i(c-1)-g_i(c) are non-increasing.",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    },
+    {
+      "tag": "trick/difference-transform",
+      "importance": "secondary",
+      "evidence": "Differencing the best exact-count values converts each element's allocation choices into a chain of marginal gains that can be merged globally.",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The small bound m <= 10 permits exhaustive enumeration of all 2^m magic subsets for every a_i.",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "A standard implementation sorts the nm marginal reductions and subtracts the largest k from the initial sum; nth_element is an equivalent optimization.",
+      "solution_variant": "subset-cardinality-convex-greedy"
+    }
+  ]
+}
+

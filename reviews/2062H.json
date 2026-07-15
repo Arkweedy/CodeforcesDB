@@ -1,0 +1,166 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "H",
+    "title": "Galaxy Generator",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2062/H",
+      "notes": "Read the full operation, examples, and constraints: n <= 14 and the sum of 2^n over tests is at most 2^14."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "The official tutorial page exposes the accepted reference code. It confirms four-boundary inclusion-exclusion, exact-box one-galaxy counts, an interval-plus-column-mask decomposition DP, and a final weighted component-count DP."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19035350",
+      "notes": "Detailed independent write-up and code used to cross-check the bounding-rectangle merge theorem and the alternative f/g/h rectangle-decomposition DP."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://luogu.store/a/ji6hh2pj",
+      "notes": "Independent Chinese study note confirming that terminal components have disjoint row and column projections and outlining the same generating-rectangle f/g/h recurrence."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2062/H",
+      "notes": "Re-proved both directions of the rectangle-merging characterization. Exhaustive legal-operation search matched it for every star set through 4x4; a direct translation of the official recurrence matched brute subset sums for every matrix through n=3 and 50 random sparse n=4 matrices, including sample 4."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2062H",
+      "notes": "Luogu solution-index candidate; usable article content was not exposed during this review, so it was not promoted to sources."
+    }
+  ],
+  "annotation": {
+    "summary": "For every nonempty subset of the 1-cells of an n x n grid, repeatedly add any star that would have at least three direct row/column neighbors, take the minimum attainable number of connected galaxies, and sum these values modulo 1e9+7.",
+    "constraints": "t <= 100, 1 <= n <= 14, and sum(2^n) <= 2^14. A chosen input subset ranges over as many as n^2 available stars, so enumerating subsets of stars is impossible; the exponential dimension must be only one grid axis.",
+    "core_idea": "Represent every current galaxy by the axis-aligned bounding rectangle of its stars. Along a connected galaxy, the projections of its direct-edge segments cover its full x- and y-intervals. In any legal insertion, among at least three directional neighbors there is an opposite pair; those two stars were already directly connected before insertion, while the third neighbor's component shares the insertion coordinate, so the insertion only merges components whose bounding rectangles overlap in x or in y. Conversely, if two distinct components overlap in x, an extremal x-coordinate of one lies strictly inside the other's x-span; projection coverage gives a horizontal direct edge of the latter crossing that vertical line, and inserting at the crossing has two horizontal neighbors plus a vertical neighbor from the former component. Thus it is legal and merges them; the y case is symmetric. Therefore the value is exactly the number of rectangles left after repeatedly merging any pair with an overlapping x- or y-projection, and distinct terminal rectangles are disjoint in both projections. Let one[l][r][u][v] count selected subsets that end as one galaxy with exact bounding box [l,r) x [u,v). First count all nonempty subsets with that exact box by inclusion-exclusion over its four boundary sides. Process row spans by length and use a column mask DP to count and subtract exact-box selections that split into at least two terminal rectangles: append the last rectangle in row order only when its contiguous column interval is disjoint from the previous mask. Finally scan rows with ways[x][mask] and sum[x][mask]; append any one-galaxy box starting at x whose column interval is unused, and update sum by (sum + ways) times one because every appended box contributes one galaxy.",
+    "complexity": "O(n^4 * 2^n) time and O(n^2 * 2^n + n^4) memory per test case. The zero-run interval enumerations total O(n * 2^n) over all masks, rather than O(n^2 * 2^n).",
+    "tricks": [
+      "compress the insertion closure to repeated unions of axis-aligned component bounding boxes",
+      "prove terminal component rectangles are disjoint on both coordinate axes",
+      "count subsets with an exact bounding box by inclusion-exclusion over four sides",
+      "order components by row interval and store used column projections as an n-bit mask",
+      "carry both the number of constructions and the sum of component counts in the final DP",
+      "enumerate contiguous intervals contained in zero-runs of a mask with O(n * 2^n) aggregate cost"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "main_agent_review_notes": [
+      "Algorithm and recurrence are high-confidence after official-code, independent-write-up, exhaustive closure, and brute-sum cross-checks. The official tutorial prose was lazy-loaded, so the official source contribution was its reference implementation rather than a prose proof.",
+      "Taxonomy review requested for proposed candidate math/geometry/bounding-box. If rejected, replace that tag with existing math/geometry; no other new tag is proposed."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "official-exact-box-interval-mask-dp",
+      "summary": "Use 16-term boundary inclusion-exclusion to count selections with each exact box. In increasing row-span order, derive one-galaxy counts by subtracting canonical multi-rectangle decompositions maintained by a used-column bitmask. A second row scan appends disjoint one-galaxy rectangles and maintains both the number of selected subsets and their total galaxy count.",
+      "complexity": "O(n^4 * 2^n) time and O(n^2 * 2^n + n^4) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "explicit-f-g-h-rectangle-decomposition",
+      "summary": "Let f be the number of one-galaxy selections with a fixed exact rectangle. Compute it from all nonempty selections in that rectangle by subtracting selections with a canonically first proper component; a g[l][r][mask] DP counts legal collections of later component rectangles in remaining rows and disjoint columns. Run the same scan with h storing the total component count, and return h on the full grid.",
+      "complexity": "O(n^8 + n^4 * 2^n) time and O(n^4 + n^2 * 2^n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/bounding-box",
+      "display_name": "Axis-aligned bounding box",
+      "description": "Reduce a planar point set or connected component to its minimum axis-aligned bounding rectangle and reason from its four extrema or coordinate projections; use when this rectangle preserves the relevant merge, feasibility, or objective information.",
+      "parent": "math/geometry",
+      "created_reason": "Generic geometry does not expose the decisive and reusable bounding-box closure invariant: galaxies merge exactly through overlap of one coordinate projection, and the full operation history can be discarded after taking rectangle unions.",
+      "status": "candidate",
+      "aliases": [
+        "math/geometry/axis-aligned-bounding-box",
+        "geometry/bounding-box",
+        "axis-aligned-bounding-box"
+      ],
+      "main_agent_review": true,
+      "importance": "primary",
+      "evidence": "The central proof replaces each galaxy by its minimum axis-aligned rectangle and proves that a legal insertion is equivalent to merging two such rectangles whose x- or y-projections overlap.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "primary",
+      "evidence": "The value of each selected subset is a minimum connected-component count, and the decisive theorem characterizes exactly which current components can be merged by future insertions.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "dp/bitmask-dp",
+      "importance": "primary",
+      "evidence": "Both the one-galaxy subtraction DP and the final weighted DP use an n-bit mask for the union of column intervals already occupied by row-ordered terminal rectangles.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The states count selected star subsets, and the final paired states maintain both their multiplicity and the sum of their numbers of terminal galaxies.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "trick/non-overlap",
+      "importance": "primary",
+      "evidence": "After all possible merges, two distinct component rectangles overlap in neither axis; this permits row ordering and requires each appended column interval to lie wholly in a zero-run of the used mask.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "dp/interval-dp",
+      "importance": "secondary",
+      "evidence": "The helper DP processes row intervals [l,r) by increasing length and stores exact column intervals [u,v) for each candidate one-galaxy bounding box.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "A 16-term inclusion-exclusion over deleting any subset of the four boundary sides converts 2^{count}-1 inside a rectangle into the number of nonempty selections with that exact bounding box.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "The requested answer aggregates a structural weight over every nonempty subset of up to n^2 available stars, and the DP groups these subsets by terminal rectangle decomposition.",
+      "solution_variant": "official-exact-box-interval-mask-dp"
+    }
+  ],
+  "proposed_new_tags": [
+    {
+      "tag": "math/geometry/bounding-box",
+      "display_name": "Axis-aligned bounding box",
+      "description": "Reduce a planar point set or connected component to its minimum axis-aligned bounding rectangle and reason from its four extrema or coordinate projections; use when this rectangle preserves the relevant merge, feasibility, or objective information.",
+      "parent": "math/geometry",
+      "created_reason": "This classic representation is substantially more searchable than generic geometry and is the indispensable closure reduction in CF2062H; it is also reusable in extremal-coordinate and component-merging problems.",
+      "status": "candidate",
+      "aliases": [
+        "math/geometry/axis-aligned-bounding-box",
+        "geometry/bounding-box",
+        "axis-aligned-bounding-box"
+      ],
+      "main_agent_review": true
+    }
+  ]
+}
+

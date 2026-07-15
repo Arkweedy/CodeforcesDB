@@ -1,0 +1,143 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "G",
+    "title": "Permutation Factory",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "flows",
+      "geometry",
+      "graph matchings",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2062/problem/G",
+      "notes": "Read the full statement, output requirement, and constraints: n <= 100, sum of n^3 <= 10^6, and at most n^2 swaps may be output."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "Official tutorial and C++ code. Confirmed the Manhattan perfect-matching lower bound, the two coordinate-uncrossing phases, the existence condition a_i <= x_j < x_i <= a_j, the O(n^4) min-cost-flow implementation, and the optional O(n^3) KM optimization."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2062G",
+      "notes": "Consulted the first full Luogu solution and implementation; it independently presents the point model, minimum-cost perfect matching, and horizontal-then-vertical constructive realization."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/programmingysx/p/18903104",
+      "notes": "Used as an independent proof cross-check, especially the pigeonhole argument guaranteeing a partner whose current and target coordinates straddle the selected point."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2062/problem/G",
+      "notes": "Re-derived the factor-1/2 lower bound and both uncrossing phases. A brute-force checker tested 1,200 random pairs of permutations for 2 <= n <= 7 against all target matchings; final permutation, cost equality, partner existence, and the n^2 operation bound all held."
+    }
+  ],
+  "annotation": {
+    "summary": "Given permutations p and q, output a sequence of swaps changing p into q with minimum total cost, where swapping positions i and j costs min(|i-j|, |p_i-p_j|).",
+    "constraints": "There are up to 10^4 tests, 2 <= n <= 100, and the sum of n^3 over tests is at most 10^6. The construction must output at most n^2 swaps, so polynomial assignment plus an explicit uncrossing sequence is intended.",
+    "core_idea": "Regard each current element as a labeled point (i,p_i). A physical swap can be interpreted either as swapping the two labels' x-coordinates for cost |i-j| or as swapping their y-coordinates for cost |p_i-p_j|; choosing the cheaper interpretation gives exactly the original cost. Relax the requirement that two labels move together. If initial point i is assigned to target point (a_i,q_{a_i}), independent movement costs one half of its Manhattan distance, so every valid swap sequence is bounded below by one half of the minimum perfect-matching cost sum_i(|i-a_i|+|p_i-q_{a_i}|). For any minimum matching this bound is attainable. First fix all x-coordinates. Among mismatched labels choose i with minimum target a_i; necessarily a_i < x_i. A pigeonhole count guarantees a label j with a_i <= x_j < x_i <= a_j. Swapping x_i and x_j moves both labels toward their targets, decreases total x-distance by 2|x_i-x_j|, and is charged |x_i-x_j|. Repeat, then apply the identical argument to y_i versus target q_{a_i}. These coordinate swaps are actual swaps of the entries at the labels' current x-positions. Their charged total equals half the matching objective; actual swap cost is no larger, while the matching relaxation is a lower bound, so equality and optimality follow.",
+    "complexity": "Official variant: O(n^4) time and O(n^2) memory, with O(n^2) output swaps. Hungarian/Kuhn-Munkres plus an O(n)-per-swap reconstruction gives O(n^3) time and O(n^2) memory.",
+    "tricks": [
+      "Interpret the same permutation swap as exchanging either x-coordinates or y-coordinates of labeled planar points.",
+      "Temporarily relax paired coordinate exchanges into independent point movement, producing a Manhattan assignment lower bound divided by two.",
+      "Choose the smallest unmatched target coordinate; a pigeonhole argument forces a crossing partner that lets both labels move monotonically toward their targets.",
+      "The flow or Hungarian edge weights may use the undivided Manhattan distance because the common factor 1/2 does not change the chosen matching."
+    ],
+    "review_risks": [
+      "The factor of two is easy to state incorrectly: the raw perfect-matching objective is twice the optimal swap cost, although implementations need not divide edge weights because only the matching is used.",
+      "The y-phase targets are q[a_i], not q[i], and swaps must be output using the labels' current x-coordinates after the x-phase.",
+      "The official tutorial only sketches the O(n^3) KM/reconstruction optimization; that alternative's exact data-structure bookkeeping was not cross-checked against a separate accepted implementation."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "min-cost-flow-coordinate-uncrossing",
+      "summary": "Build a complete bipartite unit-capacity network from initial points (i,p_i) to target points (j,q_j), with edge cost |i-j|+|p_i-q_j|, and recover a minimum perfect matching by min-cost max-flow. Track each matched label's current and target coordinates; repeatedly scan for a straddling pair to fix all x-coordinates and then all y-coordinates, outputting the corresponding swaps.",
+      "complexity": "O(n^4) time, O(n^2) memory, and O(n^2) output operations.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "hungarian-optimized-uncrossing",
+      "summary": "Solve the same complete minimum-cost assignment with the Hungarian/Kuhn-Munkres algorithm in O(n^3). In each coordinate phase maintain or find the mismatched label with smallest target and scan O(n) labels for a straddling partner; since each swap strictly decreases the integral L1 potential and there are O(n^2) swaps, reconstruction is O(n^3). The official tutorial states this optimization but does not spell out all bookkeeping details.",
+      "complexity": "O(n^3) time, O(n^2) memory, and O(n^2) output operations.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/matching/min-cost-perfect-matching",
+      "importance": "primary",
+      "description": "Find a perfect matching minimizing the sum of edge costs, usually in a weighted bipartite assignment graph, via min-cost flow or the Hungarian/Kuhn-Munkres algorithm.",
+      "parent": "graph/matching",
+      "created_reason": "The existing graph/matching tag does not distinguish weighted minimum-cost assignment from cardinality matching; here the minimum-cost perfect matching is the entire optimization core. Main-agent taxonomy review is required before accepting this candidate.",
+      "status": "candidate",
+      "aliases": [
+        "assignment-problem",
+        "minimum-cost-perfect-matching",
+        "weighted-bipartite-matching"
+      ],
+      "evidence": "The optimal value is one half of the minimum total Manhattan cost of a perfect matching from the n initial points (i,p_i) to the n target points (j,q_j).",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "graph/flow/min-cost-flow",
+      "importance": "primary",
+      "description": "Send a required amount of flow through a capacitated network while minimizing total edge cost; includes min-cost max-flow used for weighted assignment and transportation models.",
+      "parent": "graph/flow",
+      "created_reason": "The existing graph/flow tag does not distinguish ordinary maximum flow from cost-optimizing flow. The official primary implementation uses min-cost flow to compute the weighted perfect matching. Main-agent taxonomy review is required before accepting this candidate.",
+      "status": "candidate",
+      "aliases": [
+        "min-cost-max-flow",
+        "mcmf"
+      ],
+      "evidence": "The official implementation sends n unit flows through a source-initial-target-sink network whose initial-to-target edge cost is the Manhattan assignment cost.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "primary",
+      "evidence": "The decisive reduction embeds permutation entries as planar points (i,p_i) and expresses the relaxed movement objective as Manhattan distance between initial and target points.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "trick/constraint-relaxation",
+      "importance": "primary",
+      "evidence": "The solution drops the requirement that two points move simultaneously, solves the independent-movement assignment relaxation, and then proves by coordinate uncrossing that its lower bound is attainable by legal swaps.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "A numeric optimum is insufficient: the algorithm must explicitly realize the chosen matching as legal swaps, first fixing x-coordinates and then y-coordinates without exceeding the matching bound.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Each reconstruction phase greedily selects the mismatched label with smallest target coordinate and swaps it with a straddling partner so both distances decrease monotonically.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "The assignment network is bipartite between initial permutation points and target permutation points, with every cross edge carrying a Manhattan cost.",
+      "solution_variant": "min-cost-flow-coordinate-uncrossing"
+    }
+  ]
+}
+

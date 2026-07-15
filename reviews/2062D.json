@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2062,
+    "title": "Ethflow Round 1 (Codeforces Round 1001, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2062,
+    "index": "D",
+    "title": "Balanced Tree",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2062/problem/D",
+      "notes": "Statement and constraints; each operation increments a subtree after choosing the root for that operation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138866",
+      "notes": "The official implementation confirms the postorder recurrence that clamps the maximum child summary to the node interval and adds positive child deficits."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/t2t5e5tt",
+      "notes": "Cross-checks the edge-cut interpretation of operations and the greedy choice near the maximum child value."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/programmingysx/p/18903104",
+      "notes": "Provides the fixed-assignment positive-edge-difference formula and an exchange argument for the interval-clamped choice."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Choose one initial value in each node's interval, then repeatedly increment operation-defined subtrees until all values are equal; minimize the final common value.",
+    "constraints": "Up to 1e5 test cases, n <= 2e5 per test, sum of n <= 2e5, and 0 <= l_i <= r_i <= 1e9. A linear traversal is required and the answer needs 64-bit arithmetic.",
+    "core_idea": "Root the tree arbitrarily at node 1. A non-global operation increments exactly one component obtained by deleting an edge, so for fixed initial values a, every edge difference is corrected independently and the minimum final value is a_1 + sum over children v of max(0, a_v - a_parent(v)). For interval choices, define G_u(z) as the minimum contribution of the parent edge and all edges inside subtree u when the parent value is z. Inductively G_u(z) = c_u + max(0, b_u - z). In postorder, let M_u = max({l_u} union {b_v : v is a child of u}), set b_u = min(r_u, M_u), and set c_u = sum over children v of (c_v + max(0, b_v - b_u)). Raising b_u toward the largest child summary cannot hurt: the parent-edge term grows by at most one per unit while at least one child deficit falls by one. Therefore the answer is b_1 + c_1.",
+    "complexity": "O(n) time and O(n) memory per test case; O(sum n) over all test cases.",
+    "tricks": [
+      "View every non-global operation as incrementing one side of a single edge cut.",
+      "For fixed node values, express the final level as the root value plus all positive child-to-parent edge differences.",
+      "Compress each subtree objective to one hinge-function breakpoint b_u and an unavoidable cost c_u.",
+      "Clamp the largest child breakpoint into [l_u, r_u] and accumulate only the remaining positive deficits."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "postorder-clamped-breakpoint-dp",
+      "summary": "Build an arbitrary rooted parent order and process it in reverse. Each node stores b_u, its interval-clamped maximum child breakpoint, and c_u, the sum of child costs plus max(0, b_v - b_u) over children. Output b_root + c_root.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The solution represents every rooted subtree by the DP summary (b_u, c_u), equivalently the cost function G_u(z) = c_u + max(0, b_u - z), and combines child summaries in postorder.",
+      "solution_variant": "postorder-clamped-breakpoint-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "At node u, choosing b_u as the interval-clamped maximum child summary is justified by a local exchange: each unit raised toward that maximum increases the parent contribution by at most one and decreases at least one child deficit by one.",
+      "solution_variant": "postorder-clamped-breakpoint-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "The objective is decomposed into the root baseline and one positive-difference contribution per oriented edge, which the postorder traversal accumulates exactly once.",
+      "solution_variant": "postorder-clamped-breakpoint-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The operation reduction relies on each deleted tree edge splitting the vertices into exactly two components, and the optimization is organized by rooted subtrees.",
+      "solution_variant": "postorder-clamped-breakpoint-dp"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "A DFS or equivalent parent-order traversal supplies the postorder in which all child summaries are known before processing their parent.",
+      "solution_variant": "postorder-clamped-breakpoint-dp"
+    }
+  ]
+}
+
