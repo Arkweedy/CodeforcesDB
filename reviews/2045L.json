@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "L",
+    "title": "Buggy DFS",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/L",
+      "notes": "Read the complete BDFS pseudocode, K range, and graph size and simplicity constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/problem_analysis.pdf",
+      "notes": "Official Jakarta analysis; confirms root-merge additivity, the impossible odd values, the x(x+3)-2 sparse gadget, and greedy residual reduction."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://ayazdz.me/blog/problems-2024/",
+      "notes": "Problem author's derivation; confirms the descending-neighbor recursive-DFS equivalence and the ancestor-neighbor times degree formula."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/3bgtbdzs",
+      "notes": "Read the independent single-chain construction and published code; cross-checked the staged chord increments 5,7,9,... and the value-5/value-2 residual patches."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/L",
+      "notes": "Independently proved the odd lower bound 11, derived the fan-gadget contribution, and checked the alternative construction against the DFS-tree formula."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given K, construct a bounded undirected simple graph whose buggy stack-based DFS scans adjacency entries exactly K times, or prove that no such graph exists.",
+    "constraints": "1 <= K <= 1e9; the output must have 1 <= N <= 32768 and 1 <= M <= 65536, with no loops or parallel edges. The construction must encode a value far larger than its output size.",
+    "core_idea": "Restrict attention to the component of root r=1. Because neighbors are pushed in ascending order onto a LIFO stack, first-pop behavior is exactly recursive DFS with neighbors examined in descending label order. Let T be this ordered DFS tree and let a(v) be the number of ancestors of nonroot v adjacent to v. Every such ancestor pushes v before its first pop, and no vertex can be pushed after its first pop, so v is popped exactly a(v) times. Hence k(G)=deg(r)+sum_{v!=r}a(v)deg(v)=2m+sum_{v!=r}(a(v)-1)deg(v). If two graphs have only their roots identified, DFS finishes one root branch at a time and all nonroot degrees and ancestor counts stay local, so their k-values add. A single edge has value 2. If k(G) is odd, the overhead formula contains an odd term: some v has odd deg(v)>=3 and a(v)>=2. Two ancestor neighbors plus a third incident edge force at least four edges, so k(G)>=2*4+3=11. This is attained by a triangle r-a-b-r with one pendant edge at a and labels forcing DFS r->b->a->leaf. Therefore exactly 1,3,5,7,9 are impossible, while every even value and every odd value at least 11 is representable. For a compact construction, define G_x using x local vertices a_1,...,a_x: force the DFS-tree chain r->a_x->...->a_1 by increasing labels, then connect leaf/hub a_1 to every ancestor except its parent. It has 2x-1 edges and value f(x)=x^2+3x-2: the hub contributes x^2, a_2 contributes 2, each a_i for i>=3 contributes 3, and the root contributes 2, with G_1 interpreted as one edge. For remaining target d>=13, greedily attach the largest G_x satisfying f(x)<=d-11. Since f(x+1)-f(x)=2x+4, the new residual is O(sqrt(d)); repeated square-root shrinkage makes the total number of added vertices O(sqrt(K)). Finish residual 11 with the fixed odd gadget and any even residual with value-2 edge gadgets. Every G_x uses fewer than two edges per new vertex, and the official bound keeps N<=32768 and M<=65536 for K<=1e9.",
+    "complexity": "O(sqrt(K)) construction time and output space for the official greedy gadget decomposition; the emitted graph satisfies N <= 32768 and M <= 65536.",
+    "tricks": [
+      "replace duplicate stack pops by degree-weighted contributions",
+      "identify the ordered DFS tree induced by ascending pushes and a LIFO stack",
+      "merge roots so independently traversed gadgets add their k-values",
+      "encode a quadratic value with a DFS-chain fan using only linear vertices and edges",
+      "greedily reduce the residual from d to O(sqrt(d))",
+      "derive the smallest odd value from 2m plus duplicate-pop overhead"
+    ],
+    "review_risks": [
+      "The local labels must force the chain r,a_x,...,a_1; arbitrary relabeling can change the ordered DFS tree and its value.",
+      "Root composition identifies only the starting vertices; all nonroot gadget vertices must remain disjoint.",
+      "G_1 is a one-edge special case, avoiding a duplicated root-hub edge in the general edge recipe."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "additive-quadratic-fan-gadgets",
+      "summary": "Official construction. Express K as a sum of root-glued gadget values f(x)=x^2+3x-2 by repeatedly taking the largest value that leaves at least 11, then finish with the fixed value-11 gadget and value-2 edges. Each fan forces a chain DFS tree whose leaf is adjacent to all ancestors, making both its pop multiplicity and degree equal x.",
+      "complexity": "O(sqrt(K)) time and output size",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "single-backbone-staged-chords",
+      "summary": "Independent construction. Start from one descending-label DFS chain with base value 2N-2. For a fresh deep hub, add chords to successive higher-label ancestors while preserving the chain; its j-th chord raises the value by 2j+3, so q chords add q(q+4). Repeat on fresh hubs to shrink the residual, use the chord (1,N-1) for a value-5 parity correction, and attach root leaves worth 2 each.",
+      "complexity": "O(N+M) construction time with N <= 32768 and M <= 65536",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dfs-order",
+      "importance": "primary",
+      "evidence": "The decisive structure is the exact descending-label recursive DFS tree induced by the buggy ascending-push stack; both constructions force this tree to be a chain so ancestor edges control repeated pops.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The solution depends on k(G)=deg(1)+sum a(v)deg(v), where a(v) counts adjacent DFS ancestors; this invariant proves feasibility, root-merge additivity, and every gadget value.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires an explicit simple graph, and the main solution emits root-glued fan, odd-base, and edge gadgets whose proven contributions sum to K.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Choosing the largest f(x) that leaves at least 11 reduces each residual to O(sqrt(d)) and keeps the graph within the strict vertex bound.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "secondary",
+      "evidence": "The target is repeatedly decomposed into one quadratic gadget and a much smaller residual, with all pieces joined at the common root while preserving additivity.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "The 2m-plus-overhead formula forces any odd value to be at least 11; fan and edge gadgets are even, while one value-11 gadget handles every feasible odd target.",
+      "solution_variant": "additive-quadratic-fan-gadgets"
+    }
+  ]
+}

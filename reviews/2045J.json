@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "J",
+    "title": "Xorderable Array",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/J",
+      "notes": "Canonical Codeforces statement and constraints; the current page also confirms the official 2600 rating and official tags."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Official Jakarta jury problem analysis; proves the pairwise p xor q threshold, gives sorting by A_i xor (p & q) as a simultaneous witness order, reduces the threshold to the minimum adjacent XOR after sorting A, and describes the binary-trie count."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/rizynvu/p/18619949",
+      "notes": "Independent solution actually consulted; derives legality by high-to-low equivalence-class refinement, implements the resulting 0-1-trie path query, and separately confirms the simplified threshold t <= min_i(sorted_A_i xor sorted_A_{i+1})."
+    }
+  ],
+  "annotation": {
+    "summary": "Count index pairs 1 <= u < v <= M for which A can be permuted so that every earlier-later pair satisfies both cross-XOR inequalities with p = X_u and q = X_v.",
+    "constraints": "2 <= N,M <= 200000 and every A_i,X_i is a 30-bit nonnegative integer. Quadratic pair checks are impossible, and the answer can be as large as M(M-1)/2, so it needs 64-bit storage.",
+    "core_idea": "For two values a,b, put d = p xor q and e = a xor b and compare d,e from the most significant bit. If the first unequal bit has d=1,e=0, then p and q differ there while a and b agree, so one required inequality has 1 on the left and 0 on the right under either orientation; the pair is impossible. If it has d=0,e=1, then p and q agree while a and b differ, and orienting the pair by increasing a xor (p & q) makes both inequalities true at that deciding bit. Higher bits were equal in both comparisons; if d=e exactly, both cross comparisons are equal. Hence a pair is orientable iff d <= e. For the whole array, necessity gives d <= K where K=min_{i<j}(A_i xor A_j), and sufficiency follows because sorting all elements by A_i xor (p & q) simultaneously chooses the valid orientation for every pair. After sorting A numerically, K is the minimum XOR of adjacent elements: if x<z<y, at the highest bit where x,y differ, either x xor z or z xor y loses that highest set bit and is smaller than x xor y. The answer is therefore the number of pairs X_u xor X_v <= K. Scan X left to right with a 30-level binary trie of prior values. While comparing x xor y with K, a 0-bit of K forces the equal-XOR branch; a 1-bit lets the XOR-0 branch contribute its whole subtree and continues through the XOR-1 branch. Include the final equality path, then insert x.",
+    "complexity": "O(N log N + M B) time and O(M B) memory, where B=30.",
+    "tricks": [
+      "Collapse the two cross-XOR inequalities for a pair to the single condition p xor q <= a xor b.",
+      "Use sorting by a xor (p & q) as one global witness order once every pair passes the threshold.",
+      "The minimum pairwise XOR is attained by adjacent values after ordinary numeric sorting.",
+      "Decompose x xor y <= K into complete binary-trie subtrees while scanning K from high bit to low bit."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "min-xor-threshold-binary-trie",
+      "summary": "Prove that (p,q)-xorderability is equivalent to p xor q <= K for the fixed threshold K=min_{i<j}(A_i xor A_j). Compute K from adjacent pairs of sorted A, then stream X through a binary trie and count prior y with x xor y <= K.",
+      "complexity": "O(N log N + M B) time and O(M B) memory for B=30",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask/xor-pair-counting",
+      "importance": "primary",
+      "evidence": "The structural proof reduces every requested pair exactly to the XOR-difference threshold X_u xor X_v <= K, so the remaining task is to count unordered index pairs by their XOR value under an upper bound.",
+      "solution_variant": "min-xor-threshold-binary-trie"
+    },
+    {
+      "tag": "data-structure/trie",
+      "importance": "primary",
+      "evidence": "A 30-level 0-1 trie stores prior X values with subtree sizes and answers each XOR-threshold counting query in O(30).",
+      "solution_variant": "min-xor-threshold-binary-trie"
+    },
+    {
+      "tag": "trick/xor-interval-decomposition",
+      "importance": "primary",
+      "evidence": "At every 1-bit of K, the branch producing XOR bit 0 is wholly valid and contributes an entire trie subtree, while the branch producing XOR bit 1 remains on the equality path; this is the decisive decomposition of x xor y <= K.",
+      "solution_variant": "min-xor-threshold-binary-trie"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting A makes the minimum pairwise XOR appear among adjacent values, and sorting by A_i xor (p & q) supplies the proof's global valid permutation.",
+      "solution_variant": "min-xor-threshold-binary-trie"
+    }
+  ]
+}

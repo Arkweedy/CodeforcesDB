@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "B",
+    "title": "ICPC Square",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/B",
+      "notes": "Read the full statement and constraints: N<=10^12; a move x->y requires x|y and y-x<=D; maximize the reachable floor from S."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis. It normalizes by S, proves the upper bound min(N',2D'), tests the top candidate through a divisor predecessor, and falls back to the preceding even floor in O(sqrt(N))."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2045B",
+      "notes": "Opened and read the first published solution and code. It handles direct reachability, caps the normalized target at 2d, checks divisors for an odd top candidate, and otherwise outputs the preceding even candidate."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/B",
+      "notes": "Independently proved the predecessor bound and exhaustively compared the formula with explicit reachability for every 2<=N<=80, 1<=D<N, and 1<=S<=N."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Starting at floor S, repeatedly move to a multiple of the current floor with increment at most D, and find the highest reachable floor not exceeding N.",
+    "constraints": "2<=N<=10^12, 1<=D<=N-1, and 1<=S<=N, so iterating floors is impossible but O(sqrt(N)) divisor enumeration is safe.",
+    "core_idea": "Every reachable floor is a multiple of S. Normalize to n=floor(N/S), d=floor(D/S), start at 1, and multiply the final answer by S. If d=0, no move is possible. Every x<=d+1 is directly reachable. For any larger reachable y, its predecessor p is a proper divisor, hence p<=y/2, while y-p<=d; therefore y<=2d. Let Y=min(n,2d). If Y<=d+1 it is directly reachable; otherwise test whether Y has a proper divisor p with Y-p<=d. Such a p is itself at most Y/2<=d and is directly reachable, so the condition is sufficient as well as necessary. Enumerate divisor pairs in O(sqrt(Y)); even Y always works via p=Y/2. If Y fails, Y-1 is even and reachable through (Y-1)/2, so the optimum is exactly Y-1.",
+    "complexity": "O(sqrt(N/S)) time and O(1) auxiliary memory.",
+    "tricks": [
+      "Normalize all floors and the move limit by the invariant factor S.",
+      "Use the fact that every proper divisor of y is at most y/2 to cap the answer at 2d.",
+      "Only the top candidate Y needs a divisor check; on failure, Y-1 is even and automatically reachable."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "normalized-bound-and-divisor-check",
+      "summary": "Divide by S, cap the normalized answer at min(n,2d), test that one candidate by enumerating divisor predecessors, and use the guaranteed even fallback Y-1 if necessary.",
+      "complexity": "O(sqrt(N/S)) time and O(1) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "A floor y is reachable on its final move exactly through a divisor predecessor p with p|y and y-p<=d; this divisibility characterization drives both the upper bound and feasibility test.",
+      "solution_variant": "normalized-bound-and-divisor-check"
+    },
+    {
+      "tag": "math/number-theory/divisor-enumeration",
+      "importance": "primary",
+      "evidence": "The only nontrivial candidate Y is checked by enumerating its divisor pairs up to sqrt(Y) and testing whether a proper divisor lies in [Y-d,Y).",
+      "solution_variant": "normalized-bound-and-divisor-check"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Starting from S and moving only to multiples preserves divisibility by S, allowing the exact normalization N'=floor(N/S), D'=floor(D/S).",
+      "solution_variant": "normalized-bound-and-divisor-check"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The proof separates d=0, direct reachability, the automatically reachable even candidate, the odd divisor-check case, and the even fallback.",
+      "solution_variant": "normalized-bound-and-divisor-check"
+    }
+  ]
+}

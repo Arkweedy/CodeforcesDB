@@ -1,0 +1,142 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "D",
+    "title": "Aquatic Dragon",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/D",
+      "notes": "Read the corrected full statement, examples, and limits; shrine activation is immediate and mandatory on the first visit."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/136654",
+      "notes": "Organizer notice confirming that mandatory shrine activation is the intended semantics and that the statement was fixed after the contest."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Official Jakarta problem analysis used for the walking-segment normalization, three step types, R/S pivot DP, dominance lemma, and O(N log N) segment-tree sweep."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6un3wda0",
+      "notes": "Actually read as a cross-check; it gives a materially different forward DP over the two post-flight stamina states and one lazy segment tree."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/D",
+      "notes": "Reconciled both DP formulations and differentially tested the forward recurrence against exhaustive Dijkstra on the three official samples, the Luogu edge case, and 1000 random instances with N<=5."
+    }
+  ],
+  "annotation": {
+    "summary": "Move both the traveler and dragon from island 1 to island N on a line. A first human visit to island i immediately adds P_i stamina to the dragon, swimming spends D stamina, flying requires positive stamina and resets it to zero, and each directed walking tunnel may be used at most once; minimize total time.",
+    "constraints": "2 <= N <= 200000; 1 <= D, T_s, T_f, T_w, P_i <= 200000. Prefix stamina potentials and the answer require signed 64-bit integers. Quadratic transitions over pairs of islands are impossible under the 3-second limit.",
+    "core_idea": "If T_f <= T_s, fly on every edge for answer (N-1)T_f: after each landing the mandatory shrine activation makes stamina positive again. Assume T_f > T_s. Normalize an optimum so the dragon only progresses right and each walking excursion is one forward interval immediately retraced; once-only directed tunnels make these intervals edge-disjoint, although consecutive intervals may touch. A step from x to y is then one of three forms: (1) walk to y-1 and back, then swim through to y; (2) walk to y-1 and back, swim to y-1, then fly to y, so shrine y activates on landing and the post-flight stamina is P_y; or (3) walk to y and back, swim to y-1, then fly to y, so shrine y was preactivated and the post-flight stamina is 0. Let Q_i=sum_{k<=i}P_k, R_i=Q_{i-1}-D(i-1), and S_i=Q_i-D(i-1). After a flight into x, all relevant history compresses to a pivot A: A=R_x after type 2 and A=S_x after type 3. A swim-ending step to y is feasible exactly when R_y>=A; a next flight ending at y has new pivot B=R_y or S_y and is feasible exactly when B>A-D. If B>=A, replacing that final flight by a swim is cheaper because T_f>T_s and preserves the no-larger old pivot A, so an optimal flight transition satisfies A-D<B<A. For fixed x,y and A, every intermediate island i with x<i<y and R_i>=A can be made a separate type-1 step, each saving 2T_w; with c such islands, transition cost to type e' is T_s(y-1-x)+T_f+2T_w(y-1-x-c+e')+dp[y][e']. Sort all 2N post-flight states by pivot and sweep A upward. Two segment trees indexed by destination y hold adjusted dp[y][e'] values for the active pivot window (A-D,A); query y>x, insert newly computed states, and expire B<=A-D. Whenever the sweep passes an R_i, island i stops being a free intermediate endpoint, so add 2T_w to every stored destination y>i with a suffix range update. Lazy range-add/range-min trees make every event logarithmic; equal pivots must be grouped to enforce B<A. Separately initialize the no-more-flight terminal choice, including the case of prewalking through island N when S_N>=A.",
+    "complexity": "O(N log N) time and O(N) memory; the T_f <= T_s case is O(N) including input.",
+    "tricks": [
+      "use the corrected mandatory-shrine semantics; the original optional wording defines a different problem",
+      "normalize once-only tunnel walks into non-overlapping out-and-back intervals",
+      "reduce every step to exactly three swim/fly endpoint types",
+      "compress arbitrary stamina history after a flight to one of two states and one prefix-sum pivot",
+      "discard nondecreasing-pivot flights by a dominance exchange",
+      "sweep the strict pivot window and turn lost intermediate endpoints into suffix cost updates",
+      "group equal pivot events and distinguish strict flight feasibility from non-strict swim feasibility",
+      "handle the terminal S_N previsit case separately"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "The current Codeforces statement says a shrine immediately activates on first visit, matching the organizer correction and the official analysis.",
+      "The two state conventions were reconciled: official type 2 leaves P_i and uses pivot R_i, while type 3 leaves 0 and uses pivot S_i; the Luogu forward formulation stores exactly t_i in {P_i,0}.",
+      "The official and forward formulations agree on the strict positive-stamina test for flying and the non-strict at-least-D test for swimming.",
+      "A direct O(N log N)-recurrence translation matched exhaustive shortest-path search over full position, stamina, visited-shrine, and directed-tunnel states on the three samples, the Luogu edge case, and 1000 random cases with N<=5."
+    ],
+    "main_agent_review_notes": [
+      "All proposed tags already exist in the live taxonomy; no new tag or translation is needed.",
+      "Do not reuse analysis written for the original optional-shrine statement.",
+      "The official variant is source-confirmed. The alternative was source-read, algebraically reconciled, and differentially tested against exhaustive small-state search; no accepted submission source was inspected because Codeforces exposed only the verdict page."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "official-pivot-sweep-range-add-min-dp",
+      "summary": "Use the official backward DP on the two possible types of the most recent flight. Prefix potentials R_i and S_i reduce stamina feasibility to comparisons between scalar pivots. The dominance exchange restricts each next-flight transition to a strict width-D pivot window. Sweep states by pivot while two segment trees over destination index maintain adjusted future DP costs, suffix range additions for newly ineligible swim-step endpoints, suffix minima for y>x, insertion, and expiration; terminal all-swim cases are seeded separately.",
+      "complexity": "O(N log N) time and O(N) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "forward-special-state-baseline-dp",
+      "summary": "Maintain only post-flight states (j,t_j) with t_j in {0,P_j} and transformed key K_j=Q_j-t_j-jD. Start from K_1=-D and use the algebraic baseline (N-1)(2T_w+T_s). At island i, prefix-min queries over K_j create a type-3 state t_i=0 when K_j<=Q_i-D(i-1)-1 and a type-2 state t_i=P_i when K_j<=Q_{i-1}-D(i-1)-1, adding T_f-T_s. Insert them at keys Q_i-iD and Q_{i-1}-iD. States with K_j<=Q_{i-1}-iD can swim edge i-1 to i without the baseline round-trip walk, so a prefix range add of -2T_w rebates that cost. A final feasible prefix minimum plus the baseline yields the answer.",
+      "complexity": "O(N log N) time and O(N) memory after coordinate-compressing the 2N keys.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The main solution defines minimum remaining time for each island and last-flight type, then optimizes transitions to the next flight endpoint; the forward variant is an equivalent shortest-cost DP over post-flight states.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "After any flight, the unbounded stamina and full visit history collapse to only two possibilities, post-flight stamina P_i or 0, equivalently the scalar pivots R_i or S_i.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "trick/state-dominance",
+      "importance": "primary",
+      "evidence": "For T_f>T_s, any flight whose new pivot B is at least the old pivot A is dominated by swimming the final edge, which is cheaper and leaves a no-worse smaller pivot; this removes all such transitions.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The O(N log N) optimization sorts all R_i/S_i pivot events and sweeps them, maintaining exactly the candidate DP states with A-D<B<A and updating walking penalties when each R_i threshold is crossed.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree/range-add-min",
+      "importance": "primary",
+      "evidence": "Two lazy segment trees support suffix additions of 2T_w to all destinations beyond a crossed island, range minima over y>x, point insertion, and expiration of states outside the pivot window.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "DP states and threshold events are reordered by transformed stamina pivot rather than processed online in island order.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "As A increases past R_i, island i's 2T_w saving disappears from every transition ending to its right, and this contribution change is maintained by one suffix update.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    },
+    {
+      "tag": "dp/prefix-max-optimization",
+      "importance": "secondary",
+      "evidence": "The forward variant creates each post-flight state from the minimum adjusted DP value among all earlier transformed keys K_j below a feasibility threshold.",
+      "solution_variant": "forward-special-state-baseline-dp"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Q_i and the derived R_i/S_i potentials turn every accumulated stamina feasibility condition over an interval into a constant-time scalar comparison.",
+      "solution_variant": "official-pivot-sweep-range-add-min-dp"
+    }
+  ]
+}

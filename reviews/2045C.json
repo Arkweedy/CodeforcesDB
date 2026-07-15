@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "C",
+    "title": "Saraga",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/C",
+      "notes": "Read the full statement and constraints: |S|,|T|<=200000; find a shortest abbreviation admitting at least two nonempty prefix/suffix splits."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis. It represents two splits as nonempty P,Q,R, proves Q can be shortened to one character without changing the abbreviation, and minimizes over 26 characters in linear time."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2045C",
+      "notes": "Opened and read the published solutions. They independently use the one-character overlap reduction, the earliest valid occurrence in S, and the latest valid occurrence in T to construct a shortest answer."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/C",
+      "notes": "Exhaustively compared the one-character-overlap construction with all abbreviations for every binary S,T of lengths up to 5, checking both optimal length and two-split validity."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Construct the shortest string that can be split in at least two distinct positions into a prefix of S followed by a suffix of T, or report impossibility.",
+    "constraints": "1<=|S|,|T|<=200000 over lowercase English letters; a linear scan with constant-size character tables is required.",
+    "core_idea": "Two distinct split positions give a representation Z=P+Q+R with P,Q,R all nonempty, P+Q a prefix of S, and Q+R a suffix of T. If |Q|>1, remove the last character of Q and prepend it to R; Z is unchanged and both prefix/suffix conditions remain true. Repeating yields an equally short witness with |Q|=1. For overlap character c, choose an index i in S with 1<=i<|S| and S[i]=c, and j in T with 0<=j<|T|-1 and T[j]=c. The candidate is S[0:i]+T[j:|T|], of length i+|T|-j. For each c, the earliest valid i and latest valid j minimize this independently; choose the best of the 26 candidates.",
+    "complexity": "O(|S|+|T|+26) time and O(26) auxiliary memory, excluding the output string.",
+    "tricks": [
+      "Turn two split points into three nonempty pieces P,Q,R sharing the middle overlap.",
+      "Shift characters from Q into R until the shared overlap has length one without changing the abbreviation.",
+      "For each overlap letter, combine its earliest eligible occurrence in S with its latest eligible occurrence in T."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "single-character-overlap-greedy",
+      "summary": "Reduce every feasible two-split abbreviation to a one-character overlap, store the earliest eligible S occurrence and latest eligible T occurrence for each letter, and output the minimum-length combination.",
+      "complexity": "O(|S|+|T|) time and O(26) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/segmentation",
+      "importance": "primary",
+      "evidence": "The decisive model is the three-part decomposition Z=P+Q+R induced by two valid split positions, with P+Q constrained as a prefix and Q+R as a suffix.",
+      "solution_variant": "single-character-overlap-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "After reducing Q to one character c, choosing the earliest eligible c in S and latest eligible c in T independently minimizes i+|T|-j for that c; taking the best character is globally optimal.",
+      "solution_variant": "single-character-overlap-greedy"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "For each fixed overlap letter, the optimum pushes its S occurrence as far left and its T occurrence as far right as eligibility permits.",
+      "solution_variant": "single-character-overlap-greedy"
+    }
+  ]
+}

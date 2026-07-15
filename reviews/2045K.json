@@ -1,0 +1,113 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "K",
+    "title": "GCDDCG",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/K",
+      "notes": "Read the complete statement and constraints; the two decks are ordered, non-empty, disjoint subsets of card indices."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Official Jakarta Problem Analysis; derives the two-dimensional Mobius count, the LCM overlap term, and the O(N log^3 N) coprime divisor-chain enumeration."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/w41zosjk",
+      "notes": "Actually read; independently confirms the formula and gives an exact-LCM convolution implemented by divisor zeta transform and inversion in O(N log^2 N)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/K",
+      "notes": "Re-derived the non-empty correction and LCM-convolution identity; checked the formula against brute-force three-way card assignments on all samples and 1,187 small arrays."
+    }
+  ],
+  "annotation": {
+    "summary": "For every g from 1 to N, count ordered pairs of disjoint non-empty card subsets whose two value-GCDs both equal g, multiply that count by g, and sum modulo 998244353.",
+    "constraints": "2 <= N <= 200000, 1 <= A_i <= N, modulus 998244353, with a 1 second time limit; quadratic enumeration of divisor pairs for every g is impossible.",
+    "core_idea": "Let c[d] be the number of cards whose values are divisible by d. For a fixed target gcd g, apply Mobius inversion independently to the two decks. For x,y <= floor(N/g), put L=lcm(x,y). Cards divisible by gL have three choices (deck 1, deck 2, unused), cards divisible by exactly one of gx or gy have two choices, and all other cards are forced unused. After excluding either empty deck, the summand is mu(x)mu(y)(3^{c[gL]}2^{c[gx]+c[gy]-2c[gL]}-2^{c[gx]}-2^{c[gy]}+1). Start instead from the factorized overlap-allowed baseline (sum_x mu(x)(2^{c[gx]}-1))^2. Its difference from the disjoint count is zero when L>floor(N/g). For the remaining pairs define a[x]=mu(x)2^{c[gx]} and h[L]=sum_{lcm(x,y)=L}a[x]a[y]. If z[L]=sum_{d|L}a[d], then z[L]^2=sum_{D|L}h[D], so one divisor-zeta pass, pointwise squaring, and divisor Mobius inversion recover every h[L]. Add h[L]((3/4)^{c[gL]}-1) to the baseline and finally sum g times the result over all g.",
+    "complexity": "O(N log^2 N) time and O(N) memory for the divisor-zeta LCM-convolution implementation; the official direct divisor-chain variant is O(N log^3 N) time and O(N) memory.",
+    "tricks": [
+      "Apply Mobius inversion in both deck dimensions to turn divisible-GCD conditions into exact GCDs.",
+      "Classify cards divisible by both thresholds through lcm(x,y), giving three choices instead of four independent choices.",
+      "Use the independently chosen non-empty subsets as a factorized baseline; disjointness only needs correction when the exact LCM is within range.",
+      "Compute exact-LCM pair sums by divisor zeta transform, pointwise squaring, and divisor inversion.",
+      "Subtract the two one-empty-deck cases and add back the both-empty case."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "mobius-lcm-zeta-convolution",
+      "summary": "For each target gcd g, square the one-deck Mobius sum as an overlap-allowed baseline, then compute the disjointness correction grouped by exact lcm using divisor zeta transform, pointwise square, and divisor inversion.",
+      "complexity": "O(N log^2 N) time and O(N) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "official-coprime-divisor-chain-enumeration",
+      "summary": "Use the same two-dimensional Mobius formula and baseline, but enumerate every correction pair directly as x=Gp, y=Gq with gcd(p,q)=1 and L=Gpq. Equivalently enumerate chains w1|w2|w3 with w1=G, w2=Gp=x, w3=L, recover y=w1*w3/w2, and skip zero Mobius coefficients.",
+      "complexity": "O(N log^3 N) time and O(N) memory; the official analysis estimates about 2*10^7 surviving iterations after coprimality and nonzero-Mobius filters.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/mobius-inversion",
+      "importance": "primary",
+      "evidence": "For each target g, exact gcd g in each deck is enforced by an independent divisor-lattice inversion, producing the essential coefficient mu(x)mu(y).",
+      "solution_variant": "mobius-lcm-zeta-convolution"
+    },
+    {
+      "tag": "math/number-theory/lcm-convolution",
+      "importance": "primary",
+      "evidence": "The optimized variant must aggregate a[x]a[y] by exact L=lcm(x,y); divisor zeta transform turns all pairs with lcm dividing L into z[L]^2, and inversion recovers the exact-LCM buckets.",
+      "solution_variant": "mobius-lcm-zeta-convolution",
+      "description": "Convolution on the divisibility lattice that groups pair products by their exact least common multiple, usually computed with divisor zeta transform, pointwise multiplication, and divisor Mobius inversion.",
+      "parent": "math/number-theory/lcm",
+      "created_reason": "The existing gcd-convolution tag is directionally different; exact-LCM aggregation is the reusable central optimization in CF2045K and merits symmetric retrieval.",
+      "status": "candidate",
+      "aliases": [
+        "lcm convolution",
+        "least common multiple convolution"
+      ]
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "Every Mobius summand is obtained by counting per-card assignments to ordered deck 1, deck 2, or unused, with powers of 2 and 3 and explicit exclusion of empty decks.",
+      "solution_variant": "mobius-lcm-zeta-convolution"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "secondary",
+      "evidence": "The algorithm first computes c[d] by summing frequencies over multiples and then performs divisor-zeta and divisor-inversion passes for every scaled range floor(N/g).",
+      "solution_variant": "mobius-lcm-zeta-convolution"
+    },
+    {
+      "tag": "math/number-theory/lcm",
+      "importance": "secondary",
+      "evidence": "Disjointness couples the two deck-divisibility thresholds exactly on cards divisible by g*lcm(x,y), and the official alternative parameterizes all relevant pairs through that LCM.",
+      "solution_variant": "official-coprime-divisor-chain-enumeration"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "Mobius coefficients perform divisor inclusion-exclusion, while the per-pair count separately subtracts configurations with either deck empty and restores the both-empty case.",
+      "solution_variant": "mobius-lcm-zeta-convolution"
+    }
+  ]
+}

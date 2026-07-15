@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "E",
+    "title": "Narrower Passageway",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/E",
+      "notes": "Read the full statement and constraints: one 2 by N grid, independent 50 percent fog per column, maximal clear runs, the unequal-row-max strength rule, N up to 100000, powers up to 200000, and modulus 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Official Jakarta problem analysis, pages 6-7. Used for the per-cell contribution reduction, ascending value sweep, active contiguous ranges maintained by DSU or sets, opposite-row nearest-strictly-greater boundaries, equal-value tie handling, geometric endpoint sums, and O(N log N) bound."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1ybhsc42",
+      "notes": "Read the complete solution article and displayed implementation. It provides the materially different threshold-layer decomposition with inclusion-exclusion, DSU maintenance of weighted subinterval totals, and a separate correction for intervals whose two row maxima are equal."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/E",
+      "notes": "Re-derived the maximal-run probability, the rightmost-maximum tie convention, and both counting identities. Brute-force checks on 21000 random small arrays for the cell-contribution boundaries and 9000 random small arrays for the threshold inclusion-exclusion matched direct interval enumeration; both samples also matched."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Each column independently survives with probability one half. Every maximal surviving run contributes the smaller of its two row maxima unless those maxima are equal, in which case it contributes zero. Compute the expected sum over all such runs modulo 998244353.",
+    "constraints": "1 <= N <= 100000 and 1 <= P[r,c] <= 200000; there is one test case, a 1 second time limit, and 1024 MB memory. Enumerating fog patterns or O(N^2) intervals is impossible; O(N log N) or value-bounded near-linear processing is required.",
+    "core_idea": "By linearity of expectation, handle every interval [u,v] independently. It is a maximal clear run in 2^(max(0,u-2)+max(0,N-v-1)) of the 2^N fog patterns. Charge a nonzero interval to the uniquely chosen occurrence of its smaller row maximum. In the primary solution, sweep all cells by increasing power x; within one row and one equal-value group process columns from left to right, making c the rightmost occurrence of that row maximum. After activating (r,c), a DSU component gives the maximal endpoint range [L,R] in which c remains that representative. Remove the whole value-x group from an ordered set for the other row so that the set contains exactly positions with power greater than x; its predecessor and successor around c delimit the possibly empty subrange [A,B] where the other row stays at most x. Thus the intervals charged to (r,c) are all u in [L,c], v in [c,R], except those wholly inside [A,B]. Their unnormalized probability weight factorizes using left(u)=2^max(0,u-2) and right(v)=2^max(0,N-v-1), so prefix and suffix sums evaluate total-minus-excluded in O(1). Add x times that weight for every cell and finally multiply by 2^(-N).",
+    "complexity": "O(N log N) time and O(N) memory for the primary value-sweep solution.",
+    "tricks": [
+      "Count fog assignments rather than probabilities until the final multiplication by 2^(-N).",
+      "Charge each unequal pair of row maxima to the smaller maximum, so every nonzero interval contributes exactly once.",
+      "Break equal values by choosing the rightmost occurrence of a row maximum; activate equal-valued columns left to right.",
+      "Remove an entire equal-value group before opposite-row predecessor and successor queries, because the required comparison is strictly greater.",
+      "For intervals containing a fixed cell, the maximal-run assignment count separates into an independent left-endpoint factor and right-endpoint factor.",
+      "Treat u=1 and v=N explicitly through max(0,...) exponents, since an outer fog boundary does not exist there."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cell-contribution-value-sweep-dsu",
+      "summary": "Sort or bucket the 2N cells by power. For each value, first remove all equal-valued positions from the per-row sets of positions whose power is still greater. Then, for each row, activate equal-valued columns from left to right in a DSU over positions of that row. The component of c supplies the legal endpoint range for which c is the rightmost row maximum; nearest greater positions in the other row supply the subrange with no qualifying larger opposite-row value. Evaluate the weighted rectangle of endpoint pairs minus that subrectangle with precomputed geometric prefix and suffix sums.",
+      "complexity": "O(N log N) time and O(N) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "threshold-layer-inclusion-exclusion-dsu",
+      "summary": "Use min(m1,m2)=sum_x [m1>=x and m2>=x]. For each threshold x, the weighted number of intervals satisfying both inequalities is All - Count(m1<x) - Count(m2<x) + Count(m1<x and m2<x). Three activation DSUs maintain these terms as sums of all weighted subintervals of maximal allowed components, with an O(1) closed form for a component [L,R]. Separately sweep x with components whose two entries are at most x; inside each such component, inclusion-exclude gaps avoiding row-1 occurrences of x or row-2 occurrences of x to count exactly m1=m2=x, and subtract x times that weight. Divide the final weighted total by 2^N.",
+      "complexity": "O((N+V) alpha(N)) time and O(N+V) memory with value buckets, where V=max P[r,c] <= 200000.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "primary",
+      "evidence": "The expected total is rewritten as a sum over fixed intervals, or equivalently uniquely charged cells, using the probability that each interval is exactly one maximal clear run.",
+      "solution_variant": "cell-contribution-value-sweep-dsu"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "Every interval with unequal row maxima is assigned exactly once to the rightmost occurrence of its smaller row maximum, reducing the answer to one efficiently counted contribution per cell.",
+      "solution_variant": "cell-contribution-value-sweep-dsu"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "As cells activate by nondecreasing power, DSU components in each row are exactly the maximal contiguous ranges in which the current cell can represent the row maximum.",
+      "solution_variant": "cell-contribution-value-sweep-dsu"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "The jury solution processes grouped power events in ascending order while maintaining active row components and the opposite row's still-strictly-greater positions.",
+      "solution_variant": "cell-contribution-value-sweep-dsu"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Geometric prefix and suffix sums turn each Cartesian product of legal left and right endpoints into an O(1) weighted count.",
+      "solution_variant": "cell-contribution-value-sweep-dsu"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "secondary",
+      "evidence": "The independent variant expands min(m1,m2) into one indicator layer for every power threshold and maintains each layer incrementally.",
+      "solution_variant": "threshold-layer-inclusion-exclusion-dsu"
+    },
+    {
+      "tag": "math/inclusion-exclusion/minmax",
+      "importance": "secondary",
+      "evidence": "At each threshold the alternate solution counts both maxima at least x as All-A-B+A-intersect-B, then inclusion-excludes occurrence-free gaps to remove exactly the intervals with equal maxima x.",
+      "solution_variant": "threshold-layer-inclusion-exclusion-dsu"
+    }
+  ]
+}

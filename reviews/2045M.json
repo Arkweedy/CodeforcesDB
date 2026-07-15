@@ -1,0 +1,115 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "M",
+    "title": "Mirror Maze",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dfs and similar",
+      "graphs",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/M",
+      "notes": "Read the full statement and constraints: 1<=R,C<=200, at least one mirror, and all 2(R+C) boundary laser entries must be classified."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis. It splits every cell into four side nodes, connects the two side pairs determined by the cell plus touching sides of adjacent cells, traverses components while tracking mirrors, and obtains O(RC)."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2045M",
+      "notes": "Opened and read the first published DFS implementation. It simulates every boundary entry, marks mirror cells hit by the deterministic ray, and explains via direction states why a boundary-started path cannot enter a closed cycle."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/M",
+      "notes": "Re-derived the undirected port-component model, including distinct mirror-cell counting, and matched it against direct simulation on 1000 random grids for every size 1x1 through 4x4."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every laser entry on the boundary of a mirror grid, determine whether its reflected path hits every mirror and output all valid entries.",
+    "constraints": "1<=R,C<=200, cells are empty or one of two diagonal mirror types, and there is at least one mirror. The port graph has exactly 4RC vertices and O(RC) edges.",
+    "core_idea": "Represent each cell by four side-port vertices. Inside an empty cell connect north-south and west-east; inside each mirror connect the two reflected side pairs. Also connect touching ports of adjacent cells. Every vertex then has degree at most two, so each connected component is a path or a cycle and exactly describes one undirected light trajectory. Traverse each component once, collecting its boundary ports and the distinct mirror cells represented by any of its ports. A boundary entry is valid exactly when its component's mirror set contains every mirror; closed cycle components have no boundary entry. This processes all possible starts simultaneously. A simpler accepted variant simulates the deterministic ray from each boundary entry and checks its hit set.",
+    "complexity": "O(RC) time and O(RC) memory for the port-component solution; O(RC(R+C)) time and O(RC) memory for per-entry simulation.",
+    "tricks": [
+      "Augment each cell into four side states so reflection becomes an ordinary graph edge.",
+      "Exploit reversibility: the port graph has maximum degree two and decomposes into boundary-to-boundary paths and internal cycles.",
+      "Count distinct mirror cells per component because the two reflected passages through one mirror may belong to different components."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "port-graph-components",
+      "summary": "Build the four-ports-per-cell undirected graph, traverse every path/cycle component once, and output all boundary ports of components whose distinct mirror set covers the whole grid.",
+      "complexity": "O(RC) time and O(RC) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "per-entry-ray-simulation",
+      "summary": "Enumerate all 2(R+C) boundary starts, follow the deterministic reflected ray, mark hit mirrors, and retain starts whose hit set contains every mirror.",
+      "complexity": "O(RC(R+C)) time and O(RC) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "Splitting each cell into north/south/east/west port states turns direction-dependent reflection into fixed local edges and makes a whole ray a graph component.",
+      "solution_variant": "port-graph-components"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "primary",
+      "evidence": "All boundary entries in one port-graph connected component trace the same physical trajectory, so component membership and its distinct mirror coverage exactly characterize validity.",
+      "solution_variant": "port-graph-components"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "The full grid is partitioned into independent trajectory components, allowing every possible laser start to be classified in one linear traversal.",
+      "solution_variant": "port-graph-components"
+    },
+    {
+      "tag": "graph/pseudoforest",
+      "importance": "secondary",
+      "evidence": "Every port vertex has degree at most two, hence each component is a path or a single cycle; only path components can contain boundary entries.",
+      "solution_variant": "port-graph-components"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "DFS or BFS over each port component accumulates its boundary endpoints and distinct mirror cells in O(component size).",
+      "solution_variant": "port-graph-components"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The simpler accepted variant enumerates every one of the 2(R+C) starts and traces its entire deterministic path independently.",
+      "solution_variant": "per-entry-ray-simulation"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The simulation variant requires a correct four-direction reflection table, boundary labeling, and per-start mirror marking.",
+      "solution_variant": "per-entry-ray-simulation"
+    }
+  ]
+}

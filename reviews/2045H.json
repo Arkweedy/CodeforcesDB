@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "H",
+    "title": "Missing Separators",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "sortings",
+      "string suffix structures",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/H",
+      "notes": "Read the full statement, reconstruction requirement, samples, and |S| <= 5000 constraint."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis for H on pages 9-10; confirmed interval DP, all-pairs suffix LCP DP, threshold transitions, suffix maxima, and backtracking."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2045H",
+      "notes": "Read the top F1raC0de solution and code; confirmed the reverse interval DP and a suffix-array plus LCP-RMQ alternative for substring comparison."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/H",
+      "notes": "Re-derived the exact minimum feasible next endpoint, including suffix exhaustion, and matched the quadratic DP against exhaustive partitions on random strings through length 8."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Split an uppercase string into the maximum number of contiguous nonempty words that are strictly increasing lexicographically, and reconstruct one optimal split.",
+    "constraints": "1 <= |S| <= 5000. The special judge requires an actual optimal partition; cubic enumeration of consecutive word endpoints is too slow, while quadratic time and memory fit the 1024 MB limit.",
+    "core_idea": "Because sorted distinct words are exactly a strictly increasing sequence, let dp[l][r] be the maximum number of words in S[l..n-1] when its first word is A=S[l..r]. Precompute LCP values for every suffix pair by lcp[i][j]=(S[i]==S[j] ? 1+lcp[i+1][j+1] : 0). For the next word starting at q=r+1, compare A with that suffix. If the suffix ends while still matching a proper prefix of A, no next word can be larger. If all |A| characters match, A is a prefix and the shortest strictly larger next word has length |A|+1, so its minimum endpoint is z=q+|A|. Otherwise the first mismatch must satisfy S[q+c]>S[l+c], and z=q+c. Once S[q..z] is larger, every extension S[q..k] for k>=z is also larger. Therefore dp[l][r]=1+max_{k>=z}dp[q][k]; a suffix-maximum table over k makes each transition O(1) and stores the chosen endpoint for reconstruction. Process l from right to left, use dp[l][n-1]=1, and choose the best dp[0][r].",
+    "complexity": "O(|S|^2) time and O(|S|^2) memory; reconstruction is O(|S|). The suffix-array LCP alternative has the same overall quadratic bounds.",
+    "tricks": [
+      "turn sorted and distinct into strict lexicographic increase",
+      "precompute all suffix-pair LCP values with a diagonal DP",
+      "reduce all feasible next endpoints to one monotone suffix range",
+      "store suffix maxima with argmax endpoints for O(1) transitions and reconstruction"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-lcp-partition-dp",
+      "summary": "Use an O(n^2) diagonal LCP table to compare each current word with the next suffix, derive the first feasible next endpoint, and combine interval DP states through suffix maxima while retaining parent endpoints for reconstruction.",
+      "complexity": "O(n^2) time and O(n^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "suffix-array-lcp-partition-dp",
+      "summary": "Build a suffix array, adjacent LCP array, and RMQ to obtain LCP(i,j), then run the same reverse interval-partition DP and suffix-maximum transitions. This replaces the quadratic LCP preprocessing table but not the quadratic outer DP.",
+      "complexity": "O(n^2) time and O(n^2) memory overall, with O(n log n) suffix-array preprocessing.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "Each state fixes the first block of a suffix and transitions by choosing the next consecutive block, maximizing the number of blocks in a complete partition.",
+      "solution_variant": "quadratic-lcp-partition-dp"
+    },
+    {
+      "tag": "string/segmentation",
+      "importance": "primary",
+      "evidence": "The required output is an optimal segmentation of all of S into contiguous words under a pairwise lexicographic predicate.",
+      "solution_variant": "quadratic-lcp-partition-dp"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "LCP plus the first mismatch or proper-prefix case determines whether one adjacent word is strictly smaller and identifies the minimum feasible endpoint for the next word.",
+      "solution_variant": "quadratic-lcp-partition-dp"
+    },
+    {
+      "tag": "dp/interval-dp",
+      "importance": "secondary",
+      "evidence": "The DP state is indexed by the interval [l,r] occupied by the current word, with later states beginning at r+1.",
+      "solution_variant": "quadratic-lcp-partition-dp"
+    },
+    {
+      "tag": "string/suffix-array",
+      "importance": "secondary",
+      "evidence": "The Luogu alternative builds a suffix array, LCP array, and RMQ to answer the suffix-LCP comparisons used by every interval transition.",
+      "solution_variant": "suffix-array-lcp-partition-dp"
+    }
+  ]
+}

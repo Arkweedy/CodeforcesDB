@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "F",
+    "title": "Grid Game 3-angle",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "games",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/F",
+      "notes": "Read the complete move rules, examples, and limits: T <= 100, N <= 1e9, M,K <= 2e5, A_i <= 1e9, and sum M <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Official Jakarta problem analysis; confirmed the row-residue Nim signatures, both P/N transitions, the two-cell XOR repair lemma, and the ordered-map complexity."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/ntbw9fyg",
+      "notes": "Actually read; cross-checked the bottom-up Nim interpretation, grouping rows modulo K+1, and the timestamp-array O(M) implementation. The embedded code was not independently verified as accepted."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/F",
+      "notes": "Filled in the board-boundary and termination arguments. Exhaustive game search matched the criterion on all 729 states for N=3,K=1 and all 27 states for N=2,K=2 with initial cell counts in [0,2]."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Decide the winner of a finite impartial game on a triangular grid. A move removes 1..K stones from one occupied cell and may independently add 0..K stones to every cell of the downward triangular region in the next at most K rows.",
+    "constraints": "T <= 100, N <= 1e9, 1 <= M,K <= 2e5, A_i <= 1e9, initial cells are distinct, and sum M <= 2e5. The 1-second limit and enormous implicit grid rule out state simulation; the solution must scan only the M initially occupied cells.",
+    "core_idea": "Let q=K+1. For each row residue h in [0,K], define X_h as the XOR of (stone_count mod q) over all cells whose row is congruent to h modulo q. The all-zero vector X is exactly the set of losing positions. From an all-zero vector, removing d in [1,K] changes the chosen pile modulo q, while every addable row is r+1 through r+K and therefore none has the chosen row's residue; hence the corresponding X_h necessarily becomes nonzero. Conversely, for each nonzero X_h, standard Nim gives a cell c_h whose residue can be decreased by 1..K to make X_h zero. Choose among these cells a pivot C=(r,c) of minimum row and perform its Nim reduction. For every other nonzero class h, let t in [1,K] satisfy r+t congruent to h modulo q. Its chosen c_h lies below C, so r+t <= row(c_h) <= N and that target row exists. The triangular move region contains exactly t+1 consecutive cells on row r+t, hence at least two independently controllable cells. Adding a value in [0,K] can set either cell's residue to any desired value in [0,K]. If Y is the XOR of all unchanged residues in that class and 2^b is the highest power of two not exceeding K, set one controlled residue to 2^b when bit b of Y is set (otherwise 0), and set the other to Y XOR the first; both values are at most K and the class XOR becomes zero. Leave already-zero classes unchanged. Thus every nonzero signature has a move to zero. The game is finite because moves only transfer influence to strictly larger row numbers (equivalently, the vector of row totals decreases lexicographically from top to bottom), so the two transition properties prove the P/N characterization. Implementation only XORs A_i mod q into the bucket R_i mod q; N and C_i are proof-only inputs.",
+    "complexity": "With a timestamped array of K+1 residue buckets, O(M) time per test case and O(K_max) memory, with O(sum M) total update work. An ordered-map implementation is O(M log M) time and O(M) memory.",
+    "tricks": [
+      "bounded subtraction gives the single-pile Grundy value A mod (K+1)",
+      "group rows modulo K+1 so the chosen class is untouched by all additions",
+      "choose the minimum-row Nim reducer so every required residue row still exists before the board boundary",
+      "use the triangular width t+1 to obtain two independently controllable residues for arbitrary XOR repair",
+      "discard N and column coordinates after the proof and aggregate only sparse initial cells"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "row-residue-nim-kernel",
+      "summary": "Characterize losing positions by the zero vector of per-row-residue Nim sums. Prove zero cannot move to zero and construct a move from every nonzero vector to zero using a minimum-row pivot plus two controllable cells in each affected lower residue row; then compute the initial signature with timestamped XOR buckets.",
+      "complexity": "O(M) time per test case and O(K_max) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory/p-position-characterization",
+      "importance": "primary",
+      "evidence": "The decisive proof identifies exactly the P-positions as those with every row-class Nim sum zero, proves no legal move stays inside this set, and constructs a move into it from every outside position.",
+      "solution_variant": "row-residue-nim-kernel",
+      "description": "Impartial normal-play games solved by explicitly characterizing losing (P) positions and proving that every move from a P-position leaves the set while every non-P position has a move into it; use when full Grundy values are unnecessary.",
+      "parent": "math/game-theory",
+      "created_reason": "The overall game is not a disjoint Nim sum: its result is whether a vector of row-class Nim sums is zero. Existing Sprague-Grundy and minimax tags do not precisely capture this reusable P-position kernel proof.",
+      "status": "candidate",
+      "aliases": [
+        "p-position",
+        "p-n-position-characterization",
+        "losing-position-characterization"
+      ]
+    },
+    {
+      "tag": "math/game-theory/sprague-grundy",
+      "importance": "primary",
+      "evidence": "Inside each row residue class, a pile has bounded-subtraction Grundy value A mod (K+1), the class is summarized by their Nim XOR, and the standard Nim reduction selects the pivot pile.",
+      "solution_variant": "row-residue-nim-kernel"
+    },
+    {
+      "tag": "trick/residue-class-decomposition",
+      "importance": "primary",
+      "evidence": "Rows are partitioned modulo K+1: a move changes its own residue class by removal and reaches each of the other K row residues exactly once among depths 1..K, which makes the P/N proof possible.",
+      "solution_variant": "row-residue-nim-kernel"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "The winner of an enormous evolving triangular grid is compressed to at most K+1 XOR signatures computed from the M sparse initial cells.",
+      "solution_variant": "row-residue-nim-kernel"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "Stone counts matter only modulo K+1, and adding any value in [0,K] permits setting a controlled cell to an arbitrary residue modulo K+1.",
+      "solution_variant": "row-residue-nim-kernel"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "After the proof, code only maintains timestamped XOR buckets indexed by R_i mod (K+1); N and C_i are not used in the computation.",
+      "solution_variant": "row-residue-nim-kernel"
+    }
+  ]
+}

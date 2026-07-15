@@ -1,0 +1,82 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "I",
+    "title": "Microwavable Subsequence",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/I",
+      "notes": "Read the full definition, samples, and N,M <= 300000 constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis for I on page 10; confirmed the filtered-run interpretation and Fenwick sweep over active last occurrences."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zghj5f5w",
+      "notes": "Read the Ling Cha Shan Ai Fu solution; confirmed the cleaner per-occurrence formula: M-1 for a first occurrence and a last-position range count for every repeat."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/I",
+      "notes": "Re-derived the contribution bijection and matched the sweep against explicit f(x,y) computation on random arrays through length 9 and M through 6."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Sum, over every value pair 1 <= x < y <= M, the maximum length of a subsequence using only x and y with unequal adjacent elements.",
+    "constraints": "1 <= N,M <= 300000 and 1 <= A_i <= M. Enumerating O(M^2) value pairs is impossible; the answer and accumulated contributions require 64-bit integers.",
+    "core_idea": "For fixed x,y, filter A to those two values. The longest valid subsequence takes one element from each maximal equal-value run, so f(x,y) is exactly the number of runs in the filtered sequence. Count all such runs by sweeping A. Keep last[v] and a Fenwick tree with a 1 only at the latest position of each value seen so far. At the first occurrence of x, add M-1: for every y!=x this occurrence supplies either the first run, the transition after an earlier y, or the sole run when y never occurs. At a repeated x at position i with previous position p=last[x], it starts one new run for pair (x,y) exactly when y occurs between p and i; this is equivalent to the latest occurrence of y lying in [p+1,i-1]. Query that interval in the Fenwick tree, remove the marker at p, add one at i, and update last[x].",
+    "complexity": "O(M + N log N) time and O(M + N) memory.",
+    "tricks": [
+      "replace each longest alternating two-value subsequence by the run count of its filtered sequence",
+      "charge the total answer to individual occurrences",
+      "represent every seen value by only its latest position",
+      "turn distinct values in a range into a Fenwick range sum over active last occurrences"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "last-occurrence-contribution-fenwick",
+      "summary": "Sweep left to right. Charge M-1 for each value's first occurrence; for a repeat, count active latest occurrences strictly after its previous copy with a Fenwick tree, then move that value's active marker to the current index.",
+      "complexity": "O(M + N log N) time and O(M + N) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "primary",
+      "evidence": "The O(M^2) sum is inverted into per-occurrence contributions: M-1 at first appearances and one contribution for each active value whose latest occurrence lies after the previous equal element.",
+      "solution_variant": "last-occurrence-contribution-fenwick"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "A Fenwick tree maintains one marker at each value's latest position and answers the decisive count of distinct active values in (last[x],i) in O(log N).",
+      "solution_variant": "last-occurrence-contribution-fenwick"
+    },
+    {
+      "tag": "trick/nearest-occurrence",
+      "importance": "secondary",
+      "evidence": "Whether the current x extends the alternating sequence for pair (x,y) depends only on whether y's latest occurrence is newer than the previous x; older occurrences are irrelevant.",
+      "solution_variant": "last-occurrence-contribution-fenwick"
+    }
+  ]
+}

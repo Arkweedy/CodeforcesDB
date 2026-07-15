@@ -1,0 +1,77 @@
+{
+  "contest": {
+    "contest_id": 2045,
+    "title": "2024-2025 ICPC Asia Jakarta Regional Contest (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2045,
+    "index": "A",
+    "title": "Scrambled Scrabble",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2045/problem/A",
+      "notes": "Read the full statement and constraints: |S|<=5000; letters may be deleted and rearranged; Y is flexible, and NG consumes two letters while acting as one consonant."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://competition.binus.ac.id/icpc2024/raRzKDJLPHcUnqTcwvGznwEdKiDWjEkd.pdf",
+      "notes": "Read the official Jakarta analysis. It groups letters into fixed vowels, ordinary consonants, Y, N, and G, enumerates the numbers of NG units and vowel-Y assignments, and evaluates 3s+min(2s,p) in O(n^2)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2045/problem/A",
+      "notes": "Re-derived the resource formula and exhaustively checked it against direct syllable-resource feasibility for all five category counts from 0 through 4."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Delete and rearrange letters to maximize the total character length of a word made of consonant-vowel-consonant syllables, where Y is flexible and NG may occupy one consonant slot using two characters.",
+    "constraints": "1<=|S|<=5000, one uppercase string. The quadratic enumeration over two bounded count choices fits the 1-second limit.",
+    "core_idea": "Count fixed vowels v0, ordinary consonants c0 excluding N/G/Y, and counts nN, nG, nY. Enumerate p, the number of N-G pairs treated as two-letter consonant units, and q, the number of Y letters assigned as vowels. Then V=v0+q and C=c0+nN+nG-p+(nY-q), because each NG pair replaces two single consonant units by one. The number of syllables is s=min(V,floor(C/2)). Among the 2s consonant slots, use NG units before one-letter consonants because each used NG adds one character, giving length 3s+min(p,2s). Maximize this expression over all p and q; zero remains the answer when no syllable is feasible.",
+    "complexity": "O(n^2) time and O(1) auxiliary memory.",
+    "tricks": [
+      "Reduce an arbitrary rearrangement to five frequency categories.",
+      "Enumerate the two flexible choices: how many NG units to form and how many Y letters become vowels.",
+      "For a fixed syllable count, prioritize NG units in consonant slots because each contributes one extra output character."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "frequency-enumeration",
+      "summary": "Enumerate the chosen number of NG consonant units and the vowel/consonant split of Y, compute the feasible syllable count from aggregate resources, and greedily fill consonant slots with NG first.",
+      "complexity": "O(n^2) time and O(1) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The accepted official solution explicitly enumerates every feasible pair (p,q) of NG-unit count and vowel-Y count, then evaluates each state in O(1).",
+      "solution_variant": "frequency-enumeration"
+    },
+    {
+      "tag": "trick/frequency-feasibility",
+      "importance": "primary",
+      "evidence": "Deletion and arbitrary rearrangement eliminate positional information; feasibility and value depend only on the five category counts and the equations V=v0+q, C=c0+nN+nG-p+nY-q.",
+      "solution_variant": "frequency-enumeration"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "After fixing p, q, and s, placing as many NG units as possible into the 2s used consonant slots is always optimal because each replaces a one-letter consonant unit and adds one character.",
+      "solution_variant": "frequency-enumeration"
+    }
+  ]
+}
