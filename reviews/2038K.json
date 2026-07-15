@@ -1,0 +1,98 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "K",
+    "title": "Grid Walk",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp",
+      "greedy",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/K",
+      "notes": "读完当前英文题面、代价定义、全部样例和约束。与官方 PDF 对照后未发现影响算法的修订。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 Grid Walk 全文，确认路径包含起点和终点代价，且只能向右或向下。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 Grid Walk 部分，确认可加下界、最后互质行列、末尾至多 26*26 的 DP 区域以及 O(n log n) 复杂度。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/vqf2jb4u",
+      "notes": "读完完整题解和实现，交叉确认寻找不超过 n 的最大互质坐标、计算前缀下界并仅在右下角小区域运行网格 DP。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/K",
+      "notes": "独立证明前缀下界及其在互质边界上的可达性；对 2<=n<=30、1<=a,b<=30 穷举完整网格 DP，与压缩算法的答案全部一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382505693",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；未能读取源代码，故只列为候选。"
+    }
+  ],
+  "annotation": {
+    "summary": "在 n*n 网格中从 (1,1) 仅向右或向下走到 (n,n)，格点代价为 gcd(i,a)+gcd(j,b)，求最小路径代价。",
+    "constraints": "2 <= n <= 10^6，1 <= a,b <= 10^6；单个实例。",
+    "core_idea": "记 u_i=gcd(i,a)、v_j=gcd(j,b)。任意从 (1,1) 到 (x,y) 的路径都至少访问每一行和每一列一次；其余 y-1 次行贡献和 x-1 次列贡献均至少为 1，因此代价至少为 sum_{i=1}^x u_i+sum_{j=1}^y v_j+(x-1)+(y-1)。若 gcd(x,a)=1，可先沿第一列下行再沿第 x 行右行达到该下界；若 gcd(y,b)=1，也可先沿第一行再沿第 y 列下行。取不超过 n 的最大 x、y，分别满足 gcd(x,a)=1、gcd(y,b)=1。可将任意最优路径进入右下尾部区域前的前缀替换成经过 (x,y) 的紧下界路径而不增大代价。因此先用公式计算到 (x,y) 的精确最优代价，再只在 [x,n]*[y,n] 上做普通最短路式网格 DP。官方使用的约束特定 Jacobsthal 界保证 n-x<=25、n-y<=25。",
+    "complexity": "O(n log max(a,b) + 26^2) time and O(26^2) memory; conventionally reported as O(n log n).",
+    "tricks": [
+      "格点权值可拆成只依赖行和只依赖列的两部分。",
+      "互质行或互质列能让路径的额外重复贡献全部等于 1，从而达到通用下界。",
+      "最后一个与 a 或 b 互质的位置距离 n 至多 25，因此百万级网格只剩常数大小尾部。",
+      "尾部 DP 的起点 (x,y) 已计入前缀代价，转移时不能重复加该格。",
+      "答案规模需要 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "tight-prefix-plus-small-tail-grid-dp",
+      "summary": "用最大互质行列构造达到通用下界的长前缀，将剩余不规则部分限制在至多 26*26 的右下角并运行网格 DP。",
+      "complexity": "O(n log max(a,b) + 26^2) time and O(26^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "primary",
+      "evidence": "格点代价由两个 gcd 序列组成，且最大互质行、列决定了可达到理论下界的前缀终点和尾部大小。",
+      "solution_variant": "tight-prefix-plus-small-tail-grid-dp"
+    },
+    {
+      "tag": "dp/grid-dp",
+      "importance": "primary",
+      "evidence": "在压缩后的右下角区域使用 dp[i][j]=cost(i,j)+min(dp[i-1][j],dp[i][j-1]) 计算剩余路径的精确最小代价。",
+      "solution_variant": "tight-prefix-plus-small-tail-grid-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "通过互质边界和紧下界证明，把原本最多 10^6*10^6 的网格状态压缩为至多 26*26 个不可规则化的尾部状态。",
+      "solution_variant": "tight-prefix-plus-small-tail-grid-dp"
+    }
+  ]
+}

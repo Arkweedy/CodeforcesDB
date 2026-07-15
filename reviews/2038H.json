@@ -1,0 +1,197 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "H",
+    "title": "Galactic Council",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "flows"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/H",
+      "notes": "读完当前英文题面、全部三个样例和约束。当前 HTML 已把输出 c_j 的范围修正为 1..n，并标明题面近期有改动。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 中 H 的第 12 至 13 页并核对三个样例。PDF 仍保留 c_j<=m 的旧笔误，且没有单独的样例解释；应以当前网页的 c_j<=n 为准。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 中 H 的最后一组幻灯片。确认执政党权力值的递推、各党派每日上下界、按 party-day 建时间展开费用流、负无穷费用模拟下界，以及 O(n^2*m^3) 的保守复杂度。"
+    },
+    {
+      "source_type": "contest",
+      "url": "https://contest.sgu.ru/history/acm-icpc/standings2024.html",
+      "notes": "读取赛事官网的 2024 官方 standings archive，确认原区域赛来源和 jury/team 结果入口；该页面不提供题解或源代码，因此只用于赛事来源核对。"
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/contest/2038/status/H",
+      "notes": "读取 H 的 Codeforces runs/status 页面，页面明确显示多份 Accepted 记录，包括 peiwenjun 的 305134301 和 MQMH 的 315150114。提交源代码页触发浏览器检查，因此此来源只用于确认 verdict，未用于推断算法。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4sm3m4eg",
+      "notes": "读完完整题解和实现。它独立确认最大权力递推、party-day 时间线、执政党边的强制流量、其他党派的上界，以及用大负费用边模拟下界并恢复每日选择。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/peiwenjun/p/18706798",
+      "notes": "读完完整证明和代码。它交叉确认三种 p_j 与 p_{j-1} 的关系、精确上下界公式，以及使用超级源汇处理有源汇上下界最大费用可行流。文中 O(n^2*m) 的复杂度声明缺少充分推导，本 review 不采用该界。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/H",
+      "notes": "独立证明最大权力递推、流量与累计支持次数的一一对应以及旧执政党禁选条件可由边界自动推出。穷举 n=2..4、m=2..5 的 1186244 组 (p,c) 比较直接游戏模拟与上下界判定，结果全部一致；另穷举确认三个样例的可行性和前两个样例输出的最优分数。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/305134301",
+      "notes": "H 状态页明确显示为 peiwenjun 的 Accepted 提交；直接源代码页被浏览器检查拦截，本次未读取代码，保留给具有可用 Codeforces 会话的主 agent。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/315150114",
+      "notes": "H 状态页明确显示为 MQMH 的 Accepted 提交；直接源代码页被浏览器检查拦截，本次未读取代码，保留为候选交叉验证入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "初始所有党派权力为 0。每轮必须给当前执政党以外的一个党派增加 1 点权力，并要求选举后执政党恰为给定的 p_j；在所有合法方案中最大化支持收益并输出每日选择，无解输出 -1。",
+    "constraints": "2 <= n,m <= 50，1 <= p_j <= n，1 <= a_{i,j} <= 100000；单个实例，时间限制 3 秒，内存限制 512 MB。最大真实总收益不超过 5*10^6，但模拟下界的大费用会使总费用达到 10^12 量级，必须使用 64 位整数。",
+    "core_idea": "令 x_{i,j} 为第 j 轮结束后党派 i 的权力，M_j=x_{p_j,j} 为当日最大权力，并设 p_0=0、M_0=0。所有可行历史都满足 M_j=M_{j-1}+[p_j>p_{j-1}]：若新执政党编号更小，它从 M_{j-1}-1 增至 M_{j-1} 并依靠较小编号赢得平票；若编号更大，它必须从 M_{j-1} 增至 M_{j-1}+1；若执政党不变，由于不能支持它，最大值不变。已知 M_j 后，p_j 为最左最大值等价于 L_{i,j}<=x_{i,j}<=U_{i,j}，其中 L_{i,j}=M_j 当 i=p_j，否则为 0；U_{i,j}=M_j-[i<p_j]。建立时间展开网络：源点到每日节点容量 1；每日节点到该日每个 party-day 节点容量 1、费用 -a_{i,j}；party-day 节点沿同一党派时间线连到下一日，最后一日连汇点，该边流量就是 x_{i,j}，上下界取 L_{i,j},U_{i,j}。官方实现把 [L,U] 拆为容量 L、费用 -BIG 的强制部分和容量 U-L、费用 0 的可选部分，取 BIG>m*max(a)。跑最小费用最大流：最大流不足 m，或强制部分没有全部满流时无解；否则负大费用首先保证所有下界，随后 -a 费用最大化真实得分。每日节点唯一满流的选择边给出 c_j。",
+    "complexity": "网络有 O(nm) 个点和 O(nm) 条边，总流量为 m。按官方幻灯片采用无势能的逐次最短增广路，并以 Bellman-Ford/SPFA 的 O(VE) 最坏界计，每次增广受每日容量 1 限制，共 m 次，故时间复杂度 O(n^2*m^3)，空间复杂度 O(nm)。n,m<=50 时足够；势能或标准上下界流实现可进一步优化，但不是本题必要条件。",
+    "tricks": [
+      "先由相邻执政党编号的大小关系唯一恢复每日最大权力 M_j，而不是把最大值也放进状态。",
+      "最小编号平票规则导致左侧党派上界是 M_j-1，右侧党派上界是 M_j。",
+      "把一次支持产生的单位流沿该党派后续所有日期传递，使时间线边流量自然等于累计权力。",
+      "概念上的非零下界可用标准需求平衡处理，也可按官方方案用绝对值足够大的费用拆边并检查强制边是否全部满流。",
+      "不显式删除支持旧执政党的选择边也正确：三种 p_j 与 p_{j-1} 的关系下，这种选择都会违反当日某条上界或执政党的精确流量。",
+      "最大流必须恰为 m；这样源点到每个每日节点的容量 1 边都会满流，确保每天恰好支持一个党派。",
+      "从每日选择边的最终正向流量恢复答案，而不是依据最短路前驱或最后一次增广路径。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "sample_checks": [
+      {
+        "sample": 1,
+        "verification": "输出 2,1,2 依次产生权力 (0,1)、(1,1)、(1,2)，执政党为 2,1,2；方案被切换要求完全强制，得分 4+2+6=12，穷举确认最优且唯一。"
+      },
+      {
+        "sample": 2,
+        "verification": "输出 1,3,2,2,1 依次产生 (1,0,0)、(1,0,1)、(1,1,1)、(1,2,1)、(2,2,1)，执政党为 1,1,1,2,1；得分为 27。穷举发现共有两个可行序列，该输出得分最高。"
+      },
+      {
+        "sample": 3,
+        "verification": "第一轮后党派 1 权力为 1，之后它始终执政且不能再被支持。其余两个党派各最多增至 1，因此只能容纳两次支持，但还剩四轮，故无解。题面没有额外的 Note 样例解释。"
+      }
+    ],
+    "uncertainty_points": [
+      "核心正确性没有未解决疑点：官方 slides、两篇独立完整题解和小规模穷举均一致。",
+      "未能直接读取 Accepted submission 的源代码，只能从 Codeforces status 确认 verdict；因此 Accepted 页面未移入 sources，而保留在 reference_candidates。",
+      "独立博客给出的 O(n^2*m) 实现复杂度缺少严格推导；为避免过度声明，采用官方 slides 的 O(n^2*m^3) 保守界。",
+      "没有提出新 taxonomy tag；现有 graph/flow/lower-bound-flow、graph/flow/min-cost-flow 和 graph/layered-graph 已覆盖可复用结构。"
+    ],
+    "proof_risks": [
+      "p_0=0 只是用于让 M_1=M_0+[p_1>p_0]=1 的哨兵，不能把 0 当作真实党派。",
+      "只有 i<p_j 的党派必须严格小于 M_j；i>p_j 可以与 p_j 平票。把两侧都设为 M_j-1 会误判合法方案。",
+      "时间线边表示第 j 轮操作完成后的权力；若把容量放到操作前的边上，所有约束会错开一天。",
+      "执政党对应时间线边必须满足下界和上界都等于 M_j，仅设置上界不能保证它确实达到最大值。",
+      "若保留所有每日选择边，必须证明支持旧执政党会自动违反上下界；否则应显式删去 j>1 时指向 p_{j-1} 的边。",
+      "使用费用模拟下界时，BIG 必须严格大于任意两种真实总收益的差，并在结束后显式检查所有强制容量均已使用，不能只看总费用符号。",
+      "负费用强制边的总贡献可达 O(m^2*BIG)，费用、距离和答案都应使用 64 位整数。",
+      "需要同时检查最大流量为 m 和下界全部满足；缺少任一检查都可能把部分日期未选择或下界不可行的流误当成答案。",
+      "恢复答案时要读取原始每日选择边的净正向流，注意残量网络中的反向边和边编号偏移。",
+      "官方 statement PDF 的输出范围 c_j<=m 是已公告修正的笔误；正确范围是 1<=c_j<=n。"
+    ],
+    "retrieval_blockers": [
+      "该场没有在问题页链接普通 Codeforces blog editorial；官方解法入口是 contest attachment 中的 solution slides。",
+      "赛事官网公开的 2024 archive 可找到 standings，但本次检索未发现可直接下载的 jury source 或完整 runs package。",
+      "Codeforces 的 H status 表可以读取 Accepted verdict，但点击具体 submission 时触发浏览器检查，无法可靠读取源代码。",
+      "官方 PDF 是逐步叠加式幻灯片，文本提取对 flow 等词存在乱码；最终 H 页面仍足以确认完整建模和复杂度。"
+    ],
+    "reusable_source_entrypoints": [
+      {
+        "name": "current_statement",
+        "url": "https://codeforces.com/contest/2038/problem/H",
+        "notes": "当前修正版题面、官方 rating、official tag 和 contest materials 总入口。"
+      },
+      {
+        "name": "official_statement_pdf",
+        "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+        "notes": "整场官方英文 statement；H 位于 PDF 第 12 至 13 页。"
+      },
+      {
+        "name": "official_solution_slides",
+        "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+        "notes": "官方英文题解；H 位于最后一组幻灯片。"
+      },
+      {
+        "name": "accepted_runs",
+        "url": "https://codeforces.com/contest/2038/status/H",
+        "notes": "H 的公开 runs/status 入口，可继续在已通过浏览器检查的会话中打开具体 Accepted submission。"
+      },
+      {
+        "name": "regional_archive",
+        "url": "https://contest.sgu.ru/history/acm-icpc/standings2024.html",
+        "notes": "Saratov State University 官方 2024 区域赛历史 standings。"
+      },
+      {
+        "name": "full_luogu_solution",
+        "url": "https://www.luogu.com.cn/article/4sm3m4eg",
+        "notes": "包含大费用模拟下界的完整中文推导和实现。"
+      },
+      {
+        "name": "standard_lower_bound_flow_solution",
+        "url": "https://www.cnblogs.com/peiwenjun/p/18706798",
+        "notes": "包含标准超级源汇上下界可行流转换、证明和恢复代码。"
+      }
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "time-expanded-penalized-lower-bound-min-cost-flow",
+      "summary": "由 p 的相邻比较求出所有 M_j，在 party-day 时间展开图上让每个日期注入一个带选择收益的单位流，并用时间线边限制每个党派每日累计权力。把下界部分拆成带 -BIG 费用的容量，运行最小费用最大流，验证总流量与全部强制容量后恢复每日选择。",
+      "complexity": "O(n^2*m^3) worst-case time with the official SPFA/Bellman-Ford successive-shortest-path implementation, and O(nm) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/flow/lower-bound-flow",
+      "importance": "primary",
+      "evidence": "每条 party-day 时间线边都有由最左最大值条件导出的区间 [L_{i,j},U_{i,j}]，其中执政党边必须强制流过恰好 M_j。判定这些非零下界是否可同时满足是可行性的核心。",
+      "solution_variant": "time-expanded-penalized-lower-bound-min-cost-flow"
+    },
+    {
+      "tag": "graph/flow/min-cost-flow",
+      "importance": "primary",
+      "evidence": "每日选择边费用为 -a_{i,j}，在满足所有累计权力上下界的 m 单位流中求最小费用，恰好等价于最大化总得分并能从整流解恢复选择序列。",
+      "solution_variant": "time-expanded-penalized-lower-bound-min-cost-flow"
+    },
+    {
+      "tag": "graph/layered-graph",
+      "importance": "secondary",
+      "evidence": "每个党派按日期复制为一条时间线；第 j 日注入的单位流沿同党派的后续层传播，使跨日累计权力成为相邻层之间的流量。",
+      "solution_variant": "time-expanded-penalized-lower-bound-min-cost-flow"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "所有可行操作历史共享同一个最大权力序列 M_j=M_{j-1}+[p_j>p_{j-1}]，这一与收益和具体支持选择无关的结构事实使后续流量边界完全确定。",
+      "solution_variant": "time-expanded-penalized-lower-bound-min-cost-flow"
+    }
+  ]
+}

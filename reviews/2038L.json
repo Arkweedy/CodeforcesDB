@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "L",
+    "title": "Bridge Renovation",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "dp",
+      "greedy",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/L",
+      "notes": "读完当前英文题面、全部样例和约束。需要分别得到 n 根长度 18、21、25 的木板，原料长度均为 60；与官方 PDF 对照后无实质差异。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 Bridge Renovation 全文并核对三个样例。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 Bridge Renovation 部分，确认答案 n+ceil(n/6)、奇偶构造和加权下界。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/webiw7fg",
+      "notes": "读完题解，交叉确认 25+25、21+21+18、奇数时 25+21，以及剩余 18 三根一组的构造。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/L",
+      "notes": "独立构造加权下界；使用三维精确装箱 DP 检查 n=1..14，最优值均为 n+ceil(n/6)。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382782825",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；提交代码未读取，因此仅作为参考候选。"
+    }
+  ],
+  "annotation": {
+    "summary": "每种长度 18、21、25 的木板各需要 n 根。每块原料长度为 60，可以切割但不能拼接，求最少原料数。",
+    "constraints": "1 <= n <= 1000；单个实例。",
+    "core_idea": "构造方面，使用 floor(n/2) 块原料切成 25+25，使用 floor(n/2) 块切成 21+21+18；若 n 为奇数，再用一块切成 25+21。这样恰好用 n 块覆盖全部 25 和 21，并覆盖 floor(n/2) 根 18。剩余 ceil(n/2) 根 18 每块原料可放三根，需要 ceil(ceil(n/2)/3)=ceil(n/6) 块，总计 n+ceil(n/6)。下界方面，给每根 25 赋权 1/2，给每根 21 和 18 赋权 1/3。任意长度 60 的原料所容纳部件总权重至多 1：包含两根 25 时权重为 1；只含一根 25 时至多再放一根其他部件；不含 25 时至多放三个部件。全部需求总权重为 7n/6，因此至少需要 ceil(7n/6)=n+ceil(n/6) 块，构造达到下界。",
+    "complexity": "O(1) time and O(1) memory.",
+    "tricks": [
+      "单纯按总长度得到的下界不足以证明最优，需要针对可装组合设计权重。",
+      "奇数 n 时用一块 25+21 同时处理两种剩余部件。",
+      "剩余 18 的数量是 ceil(n/2)，三根一组产生 ceil(n/6) 的附加项。",
+      "答案可直接计算为 n+(n+5)/6，无需 DP 或枚举切割方案。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "weighted-lower-bound-and-greedy-packing",
+      "summary": "用固定切割模式构造 n+ceil(n/6) 块原料，并用部件权重证明任何原料承载权重不超过 1，从而得到匹配下界。",
+      "complexity": "O(1) time and O(1) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定使用 25+25、21+21+18、必要时 25+21，再把剩余 18 三根一组，即可达到理论最小值。",
+      "solution_variant": "weighted-lower-bound-and-greedy-packing"
+    },
+    {
+      "tag": "trick/weighted-lower-bound",
+      "display_name": "Weighted lower bound",
+      "importance": "primary",
+      "evidence": "给 25 赋权 1/2、给 21 和 18 赋权 1/3 后，每块原料权重至多 1，总需求权重 7n/6，得到与构造相等的严格下界。",
+      "solution_variant": "weighted-lower-bound-and-greedy-packing",
+      "description": "为待装入、覆盖或选择的对象赋非负权重，证明每个容器或操作最多承载固定总权重，再用全部对象的总权重给出最优值下界。仅在该加权证书是最优性证明核心时使用。",
+      "parent": "trick",
+      "created_reason": "CF2038L 的最优性不能由总长度直接证明，必须设计 1/2 与 1/3 的权重证书；宽泛的 math 标签无法检索这类可复用的装箱下界证明。",
+      "status": "candidate",
+      "aliases": [
+        "weighting lower bound",
+        "dual fitting lower bound"
+      ]
+    }
+  ]
+}

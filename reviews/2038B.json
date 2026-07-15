@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "B",
+    "title": "Make It Equal",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/B",
+      "notes": "读完当前英文题面、操作定义、全部样例和约束。题面只要求最终数组非负；与官方 PDF 对照后未发现实质修订。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 Make It Equal 全文，操作方向、最终非负条件和约束与当前网页一致。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 Make It Equal 部分，确认对最终值二分，并通过批量执行不可避免的操作进行可行性检查。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/ksa14gf9",
+      "notes": "读完题解，交叉确认循环传递时批量折半、二分最大可达公共值以及由总和差计算操作数。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/B",
+      "notes": "独立证明可行目标值的单调性和批量操作的强制性；对 n=2..4、1<=a_i<=5 的所有数组和候选目标做精确枚举，结果与贪心检查完全一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382503767",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；未读取源代码，保留给主 agent 后续交叉验证。"
+    }
+  ],
+  "annotation": {
+    "summary": "一次操作把 a_i 减 2 并把下一个循环位置加 1。要求最终所有元素为相同的非负整数，并最小化操作次数。",
+    "constraints": "1 <= t <= 10^4，2 <= n <= 2*10^5，1 <= a_i <= 10^9，所有测试的 n 之和不超过 2*10^5。",
+    "core_idea": "每次操作使数组总和恰好减少 1。若最终公共值为 x，则操作数必为 S-n*x，因此应寻找最大的可达 x，且 0<=x<=floor(S/n)。若 x>0 可达，在全为 x 的状态对每个位置各操作一次即可得到全为 x-1，所以可行性关于 x 单调。检查固定 x 时复制数组 b 并循环扫描位置；若 b_i>x，则至少需要 q=ceil((b_i-x)/2) 次位置 i 的操作，因为只有该操作能降低 b_i，未来流入只会增大它。批量执行这 q 次并同步减少当前总和。当总和不再大于 n*x 时停止，只有所有 b_i 都等于 x 才可行；若已经低于目标总和则无法恢复。二分最大可行 x 后输出 S-n*x；若连 x=0 都不可行则输出 -1。",
+    "complexity": "A feasibility check takes O(n+log A) batched scan steps, where A=max(a_i); binary search gives O((n+log A)*log A) time and O(n) memory per test case.",
+    "tricks": [
+      "只检查总和或整除条件并不足以判断环形操作可达性。",
+      "把连续的相同位置操作合并为 ceil((b_i-x)/2) 次，避免逐次模拟。",
+      "可行目标值构成从 0 开始的前缀，因此二分的是最大可达公共值。",
+      "题目只要求最终非负，批量模拟中的临时负数不违反操作定义。",
+      "总和、目标总和和答案必须使用 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "binary-search-with-batched-forced-operations",
+      "summary": "二分最终公共值；对每个候选值循环扫描数组，把当前位置高于目标所强制需要的操作一次性执行，最后检查是否恰好得到目标数组。",
+      "complexity": "O((n+log A)*log A) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "目标值 x 越大越难达到，且任意可达的正目标可通过对所有位置各操作一次降为 x-1，因此可行集合单调，可二分最大 x。",
+      "solution_variant": "binary-search-with-batched-forced-operations"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "当当前值 b_i>x 时，至少 ceil((b_i-x)/2) 次位置 i 的操作在任何可行方案中都不可避免，立即批量执行这些操作不会排除解。",
+      "solution_variant": "binary-search-with-batched-forced-operations"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "secondary",
+      "evidence": "将可能多达 10^9 次的单点操作压缩成一个按差值计算的批次，超额量沿环传播时快速折半。",
+      "solution_variant": "binary-search-with-batched-forced-operations"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "每次操作使总和恰好减 1，所以固定最终值后的操作数恒为 S-n*x，并可在模拟中用总和判断是否已经越过目标。",
+      "solution_variant": "binary-search-with-batched-forced-operations"
+    }
+  ]
+}

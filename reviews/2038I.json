@@ -1,0 +1,148 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "I",
+    "title": "Polyathlon",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "hashing",
+      "string suffix structures",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2038/I",
+      "notes": "Read the complete current English statement, example, and limits: 2 <= n,m <= 10^6, n <= 2^m, nm <= 2*10^6, pairwise distinct binary rows, 3 seconds, 512 MB. For every cyclic starting sport, skilled survivors replace unskilled survivors whenever at least one skilled participant remains."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "Read problem I in the official ICPC mirror statement booklet (PDF page 14 of 19), including the elimination rule, cyclic order, and distinct-row guarantee."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "Read the complete official I solution section (PDF pages 63-74). It proves the winner is the lexicographically maximum cyclic row, maintains the full decreasing order from start x+1 to x by stably moving bit-1 rows to the front, uses radix sort, performs one warm-up cycle and one answer cycle, and states O(nm)."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1eft5zwl",
+      "notes": "Actually opened and read the full article and code. It independently identifies each winner as the maximum cyclic binary string, builds the first exact order by LSD radix sorting, then moves each next last column to the front with a stable binary pass; the implementation is O(nm)."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/hyt5bsv7",
+      "notes": "Actually opened and read the complete short article. It gives a distinct alternative: double every row, compare length-m cyclic substrings by rolling hash plus binary-search LCP, and find each lexicographic maximum in O(nm log m). The article has no code or collision discussion, so this variant is recorded with medium confidence."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/292391375",
+      "notes": "The submission page visibly showed Accepted (921 ms, 7432 KB), and the complete source was read. It first lexicographically sorts the rows, then performs stable per-column sorts while moving the cyclic start backward, independently validating the order recurrence with an O(nm log n) comparison-sort implementation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/I",
+      "notes": "Independently proved the elimination-to-lexicographic equivalence, the stable-partition recurrence, and the one-cycle warm-up invariant. In-memory exhaustive checks over every tested set of distinct rows with m <= 5 and n <= 4 compared direct elimination, direct cyclic lexicographic maxima, and the two-cycle radix process; all winners agreed."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given n pairwise distinct binary skill rows of length m, determine the unique surviving participant for every cyclic choice of the first sport under the rule that a column keeps all 1-rows if any survivor has 1, otherwise keeps everyone.",
+    "constraints": "Single test case; 2 <= n,m <= 1000000; n <= 2^m; nm <= 2000000; all n binary rows are pairwise distinct; time limit 3 seconds; memory limit 512 MB.",
+    "core_idea": "For start x, define K_x(i)=s_i[x..m] followed by s_i[1..x-1]. The elimination process chooses the lexicographically maximum K_x under 1>0: at the first column where survivors differ, exactly the 1-rows remain, while an all-zero survivor column changes nothing. Distinct rows make the maximum unique. If the rows are already ordered by K_{x+1}, then K_x is obtained by a stable binary partition on column x, placing 1 before 0; within either group the leading bit is equal and the old order supplies all remaining key bits. Starting from any row order, process columns m,m-1,...,1 once to obtain the exact K_1 order. Record its first row, then process columns m,m-1,...,2 again, recording the first row after each pass for starts m,m-1,...,2.",
+    "complexity": "O(nm) time. Input storage is O(nm); the ordering, temporary buffer, and answers use O(n+m) auxiliary memory. Under nm <= 2*10^6 this meets the limits.",
+    "tricks": [
+      "View each cyclic competition as lexicographic maximization of a cyclic binary row.",
+      "Move from start x+1 to x by making the old last key bit the new first key bit.",
+      "Use a stable 1-before-0 partition; stability preserves all lower-priority key bits.",
+      "Warm up from an arbitrary permutation for one complete column cycle before recording cyclic winners.",
+      "Keep original participant indices in the permutation while reordering rows."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The rolling-hash alternative is described in a complete but very short Luogu article without code, exact hash parameters, or a collision proof. Its deterministic reduction is sound, but its implementation confidence is medium unless double hashing or exact LCP support is specified.",
+      "The accepted submission uses general stable comparison sorting, not linear binary partitioning; it corroborates the recurrence but has a weaker O(nm log n) worst-case bound.",
+      "The official tags mention suffix structures, but neither the official optimal solution nor the two independently read alternatives require a suffix array or suffix automaton, so no suffix-structure tag is assigned.",
+      "A new candidate tag algorithm/sorting/radix-sort is proposed because stability across fixed-alphabet digit passes is the proof-critical reusable technique and no existing tag names it."
+    ],
+    "proof_risks": [
+      "The lexicographic alphabet order is 1 before 0 for a maximum. Reversing the binary buckets returns the loser.",
+      "The partition must be stable. An unstable partition destroys the already established order of all lower-priority cyclic positions.",
+      "An all-zero column among current survivors eliminates nobody; this matches a tied lexicographic digit and must not terminate or clear the survivor set.",
+      "One pass from an arbitrary permutation establishes only the processed suffix of the key. A complete warm-up cycle is required before any order is guaranteed exact.",
+      "The column-processing direction and answer index must match: after the K_1 warm-up, processing m,m-1,...,2 yields K_m,K_{m-1},...,K_2.",
+      "The front element is the winner only if the maintained order is descending with 1 first; ascending implementations must take the back instead.",
+      "Rows are distinct globally, which guarantees a unique winner after all m sports, but partial radix keys may tie and are exactly why stability matters.",
+      "For the hash variant, compare only length-m substrings of doubled rows, handle LCP=m as equality, and use collision-resistant double hashing or another exact comparison mechanism."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "two-cycle-binary-radix",
+      "summary": "Maintain participant indices in decreasing cyclic-string order. Use stable 1-before-0 bucket passes over m columns to build one exact order from arbitrary input, then continue the same backward cyclic passes and record the first index for every starting column.",
+      "complexity": "O(nm) time, O(nm) input storage, and O(n+m) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "initial-lex-sort-then-stable-columns",
+      "summary": "First sort complete rows into the exact order for start 1, then repeatedly use a stable comparison sort keyed only by the column moved from the end to the front, recording the extreme row after each pass. This is simpler but loses the linear binary-pass bound.",
+      "complexity": "O(nm log n) worst-case time including row comparisons and stable per-column sorts; O(nm) storage.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "rolling-hash-lcp-cyclic-comparison",
+      "summary": "Double each row, and for each start x scan all rows while maintaining the best length-m substring. Compare two candidates by binary-searching their LCP with rolling hashes and then inspecting the first differing bit.",
+      "complexity": "O(nm log m) time and O(nm) hash/string storage.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting/radix-sort",
+      "importance": "primary",
+      "evidence": "The optimal algorithm repeatedly performs a stable binary digit pass, from lower-priority cyclic bits toward the new leading bit, so each O(n) pass preserves all earlier key decisions and yields every cyclic lexicographic order in O(nm).",
+      "solution_variant": "two-cycle-binary-radix",
+      "status": "candidate",
+      "parent": "algorithm/sorting",
+      "description": "Stable digit-by-digit sorting over a fixed small alphabet, processing lower-priority digits before higher-priority digits; use when stability across passes is essential to reconstruct full key order.",
+      "created_reason": "CF2038I's optimal solution is a textbook LSD radix process over binary columns, and stability is the central invariant. The existing broad algorithm/sorting tag cannot retrieve this reusable technique, while no existing tag names radix sort."
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "The entire elimination game is exactly lexicographic maximization of each cyclic row: the first sport where candidates differ keeps the rows with bit 1 and decides the same prefix order as lexicographic comparison.",
+      "solution_variant": "two-cycle-binary-radix"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "Orders are updated for cyclic starts in backward column order; moving from x+1 to x turns the previous last key bit into the new leading key bit and permits one stable pass.",
+      "solution_variant": "two-cycle-binary-radix"
+    },
+    {
+      "tag": "algorithm/hashing/rolling-hash",
+      "importance": "secondary",
+      "evidence": "The alternative solution preprocesses hashes of doubled rows so equality of any candidate prefix can be tested while comparing cyclic substrings.",
+      "solution_variant": "rolling-hash-lcp-cyclic-comparison"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Each pairwise cyclic-substring comparison in the hash variant binary-searches the longest common prefix length before examining the first differing bit.",
+      "solution_variant": "rolling-hash-lcp-cyclic-comparison"
+    }
+  ]
+}

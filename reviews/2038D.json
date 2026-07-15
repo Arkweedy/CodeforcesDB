@@ -1,0 +1,145 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "D",
+    "title": "Divide OR Conquer",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "bitmasks",
+      "data structures",
+      "dp",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/D",
+      "notes": "Read the complete current English statement, all examples, and limits: n <= 200000, 0 <= a_i <= 10^9, 3 seconds, 512 MB, answer modulo 998244353. The required sequence of segment OR values is numerically nondecreasing and equality is allowed."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "Read problem D in the official ICPC mirror statement booklet (PDF page 5 of 19), including the formal partition definition and examples."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "Read the complete official D solution section (PDF pages 75-91). It gives the sparse dp[i][x] state, O(log 10^9) distinct OR values for fixed boundaries, right-endpoint breakpoint lists, delayed range additions by sweep line, two-pointer merging, and the stated O(n log n log log n) complexity."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18597309",
+      "notes": "Read the full 2038D section and code. It independently derives an offline ordering by segment OR and endpoint, queries cut-position intervals with a Fenwick tree, and gives O(n log V log n) time. One prose sentence says XOR, but every formula, transition, and code operation uses OR."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/374190473",
+      "notes": "The submission page visibly showed Accepted (1546 ms, 64 KB), and the complete source was read. It implements the same partition recurrence with maps for completed last-OR states and waiting pairs, corroborating the base state and transition semantics; its live-state bound was not reconstructed tightly enough to promote it as a reviewed variant."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/D",
+      "notes": "Independently proved the partition recurrence, the O(31) OR-breakpoint bound, the sweep event invariant, and the offline Fenwick ordering. In-memory exhaustive checks compared direct enumeration of all cuts with the accepted online-state recurrence for every array over {0,1,2,3} with 1 <= n <= 6 (5460 arrays); all answers agreed."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count partitions of a length-n nonnegative integer array into nonempty contiguous segments such that the numerical bitwise-OR values of consecutive segments form a nondecreasing sequence, modulo 998244353.",
+    "constraints": "Single test case; 1 <= n <= 200000; 0 <= a_i <= 10^9; time limit 3 seconds; memory limit 512 MB; modulus 998244353.",
+    "core_idea": "Let dp[i][x] be the number of valid partitions of the prefix ending at i whose last segment OR is exactly x, with dp[0][0]=1. If the next segment starts at i+1 and has OR y, its contribution is P_i(y)=sum_{x<=y}dp[i][x]. For any fixed boundary, extending a segment changes its OR at most 30 times because every strict change sets a previously zero bit, so both dp[i] and the candidate y values are sparse. For each start i+1, represent the endpoints by intervals [L,R) on which OR(i+1..q)=y is constant, and range-add P_i(y) to state (q,y) over that interval. A forward sweep schedules +P_i(y) at L and -P_i(y) at R; at each q, aggregated events form the sparse dp[q] list. Sort/merge the OR keys and use two pointers to obtain all needed prefix sums P_q(y), then schedule the next intervals.",
+    "complexity": "The official sweep-line solution states O(n log n log log n) time. There are O(nB) sparse OR states/events and O(nB) memory with B <= 31 for values up to 10^9. The independent offline Fenwick variant is O(nB log(nB) + nB log n) time and O(nB) memory.",
+    "tricks": [
+      "Compress all segment OR values for a fixed left or right boundary; a strict change must introduce a new set bit.",
+      "Query a numerical prefix x <= y, not the bit-submask relation x submask y.",
+      "Turn every constant-OR endpoint interval into two delayed sweep events.",
+      "Merge sparse OR lists with two pointers to evaluate all prefix sums together.",
+      "In the offline variant, sweep states by (OR value, endpoint) and use cut-position ranges in a Fenwick tree."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The official slides specify the high-level event-list and two-pointer implementation and state O(n log n log log n), but do not spell out the exact low-level container; the payload records their stated bound rather than inventing a sharper one.",
+      "The independent blog has one isolated XOR typo in prose. Its equations and C++ code use bitwise OR throughout, so it does not create a correctness ambiguity.",
+      "The accepted map implementation is useful corroboration but is not a separate reviewed solution variant because the consulted source does not provide a tight worst-case bound on all live map states.",
+      "No new taxonomy tag is proposed; the existing partition-DP, state-compression, sweep-line, bitmask, offline, and Fenwick tags cover both reviewed approaches."
+    ],
+    "proof_risks": [
+      "The transition condition is the ordinary integer comparison previous_OR <= current_OR; replacing it by a subset-of-bits test rejects valid partitions.",
+      "Equality is valid. Using a strict prefix sum x < y loses partitions with equal neighboring OR values.",
+      "dp[0][0]=1 is a sentinel for the empty prefix; it must allow the first segment even when its OR is zero.",
+      "For a fixed boundary, duplicate OR values must be merged so each maximal endpoint or cut interval is represented exactly once.",
+      "Sweep intervals are half-open: add at L and subtract at R. Reversing event order at an endpoint creates off-by-one contributions.",
+      "When constructing breakpoint lists from a neighboring boundary, preserve the minimum endpoint for every distinct OR before sorting by OR value.",
+      "In the offline Fenwick variant, sort equal-OR objects by increasing endpoint so states dp[j][v] are inserted before a later segment query that may legally follow them.",
+      "Fenwick ranges are over previous prefix endpoints l-1, so a left-endpoint interval [L,R] maps to [L-1,R-1].",
+      "All event additions and subtractions must be normalized modulo 998244353."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "sparse-or-dp-sweep-events",
+      "summary": "Use dp[i][last_or], compress all possible OR values into O(31)-sized lists, convert each next-segment constant-OR endpoint interval into add/remove events, and sweep endpoints while merging sparse lists to compute the required numerical OR-prefix sums.",
+      "complexity": "Officially stated O(n log n log log n) time; O(n log 10^9) sparse states/events and memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "offline-or-interval-fenwick",
+      "summary": "For every right endpoint, enumerate each distinct suffix OR y and the contiguous interval of segment left endpoints producing it. Sort these objects by (y,right endpoint). A Fenwick tree over previous prefix endpoints stores all dp states whose last OR is at most the current y; a range query over the corresponding cut interval yields dp[right][y], which is then inserted at that endpoint.",
+      "complexity": "O(nB log(nB) + nB log n) time and O(nB) memory, where B <= 31.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "The answer is built by cutting a prefix and appending one final segment; dp[i][x] records the last segment OR, and every transition sums exactly the earlier states x <= y.",
+      "solution_variant": "sparse-or-dp-sweep-events"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "Although x ranges up to about 2^30, for any fixed segment boundary only O(31) distinct OR values occur, reducing each DP layer and each transition target list to sparse breakpoint states.",
+      "solution_variant": "sparse-or-dp-sweep-events"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "A transition contributes the same value to every endpoint in a constant-OR interval, so the official algorithm schedules an addition at the interval start and its negation at the interval end and sweeps positions forward.",
+      "solution_variant": "sparse-or-dp-sweep-events"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The logarithmic state bound relies specifically on monotonic bitwise OR: every strict extension change turns on at least one previously absent bit and no bit ever turns off.",
+      "solution_variant": "sparse-or-dp-sweep-events"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "At each sweep position, sorted sparse dp OR keys and sorted candidate next OR keys are merged once to compute all prefix sums sum_{x<=y}dp[i][x].",
+      "solution_variant": "sparse-or-dp-sweep-events"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "The alternative solution globally orders all compressed segment states by target OR and endpoint so that the nondecreasing-OR condition becomes an insertion/query order.",
+      "solution_variant": "offline-or-interval-fenwick"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "After ordering by OR, each candidate state needs a sum over a contiguous range of previous cut positions and then a point insertion at its endpoint, exactly the Fenwick range-sum/point-add pattern.",
+      "solution_variant": "offline-or-interval-fenwick"
+    }
+  ]
+}

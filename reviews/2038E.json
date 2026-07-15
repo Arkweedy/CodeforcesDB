@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "E",
+    "title": "Barrels",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "Read the official English mirror statement, including pages 6-7 for E. Confirmed n <= 2e5, initial equilibrium, and that a pipe remains open at clay height h but seals immediately on the next unit."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "Read the official English E slides. They prescribe processing barrels from right to left, adding h[i-1] clay before rebalancing, sealing with one further unit, maintaining communicating-vessel segments, and obtaining O(n) total complexity."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/292198619",
+      "notes": "Read the source and verified the during-contest Accepted verdict. It implements the official strategy with a deque of (total column volume, barrel count), long-double averages, front expansion/merging, and back deletion."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/368190052",
+      "notes": "Read the source and verified the Accepted verdict. It independently implements the same linear greedy through a decreasing pipe-height stack, previous-higher jumps, and aggregated water blocks."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com/article/311facbk",
+      "notes": "Read the CF2038E section. It independently confirms right-to-left filling, equal-surface connected components, left expansion versus component merging, and an amortized O(n) implementation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2038E",
+      "notes": "Candidate collection page; its contents could not be retrieved during this review, so it was not used as evidence."
+    },
+    {
+      "source_type": "contest_archive",
+      "url": "https://nerc.icpc.global/archive/2024.html",
+      "notes": "Reusable official NERC 2024 archive entry. The Southern and Volga subsection currently exposes qualification standings but no problem-specific jury or runs package."
+    }
+  ],
+  "annotation": {
+    "summary": "Add integer units of clay to a line of communicating barrels so as to move as much water as possible into barrel 1 before pipes are irreversibly sealed.",
+    "constraints": "2 <= n <= 2e5; 0 <= v_i <= 1e6; 1 <= h_i <= 1e6. Initial water heights are already in equilibrium. A pipe at height h is open while the adjacent clay column is at most h and seals immediately when that column becomes h+1.",
+    "core_idea": "There is an optimal normal form that seals the suffix from right to left. Before the pipe between i-1 and i is sealed, every operation in barrels i..n that can benefit barrel 1 must already have happened; after it is sealed, that suffix can never affect barrel 1 again. Thus process i=n-1 down to 1: put exactly h_i units of clay into barrel i+1 while the pipe is still open, wait for equilibrium, then add one further unit to seal it. Raising the right endpoint to h_i maximally displaces water into the surviving prefix, while the final unit has no water effect and can be omitted from the numerical simulation because both the system total and the removed barrel gain that same unit. To simulate all equilibria in linear time, compress consecutive communicating barrels with one surface level into a segment (V,k), where V is their total top-column volume, including the clay currently inserted in the active rightmost barrel, and V/k is their common surface height. Store segments from left to right in a deque. New displaced volume reaches the leftmost not-yet-full segment. As its average rises, the next event is either reaching the next pipe on the left, in which case cap it at that pipe height, pass the excess into the newly exposed barrel, and prepend that barrel; or reaching the level of the next segment on the right, in which case merge the two segments. After equilibrium, the active rightmost barrel belongs to the deque back; subtract one segment average and decrement its count to remove the barrel after sealing. When only barrel 1 remains, its segment volume is the answer.",
+    "complexity": "O(n) time and O(n) memory. Every barrel is exposed once, every segment is merged or removed once, and all deque operations are O(1).",
+    "tricks": [
+      "Normalize irreversible sealing operations into right-to-left suffix removal.",
+      "Track total top-column volume rather than water alone while the current barrel contains clay.",
+      "Treat reaching a left pipe and catching the next filled segment as the only two equilibrium events.",
+      "The h_i+1 sealing unit need not be inserted into the simulation because it is immediately isolated with the removed barrel.",
+      "At equal event heights either processing order is equivalent, but comparisons must consistently preserve zero-excess transitions."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "right-to-left-deque-segments",
+      "summary": "Apply the right-to-left sealing normal form and maintain equal-level communicating segments in a deque. Add displaced volume at the front, repeatedly expand left or merge right according to the next reached height, then remove one barrel from the back.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "decreasing-pipe-stack-jumps",
+      "summary": "Precompute previous strictly higher pipes and aggregate blocks hidden by lower or equal barriers with a decreasing monotonic stack. During the same right-to-left greedy, absorb and jump across complete blocks once their stored volume exceeds the corresponding barrier capacity.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The decisive structural step is proving that an optimum may seal pipes from right to left and fully raise each removed barrel to its left-pipe height before the final sealing unit.",
+      "solution_variant": "right-to-left-deque-segments"
+    },
+    {
+      "tag": "data-structure/deque",
+      "importance": "primary",
+      "evidence": "The linear implementation must update the currently filling segment at the front while deleting the newly sealed rightmost barrel from the back.",
+      "solution_variant": "right-to-left-deque-segments"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "Each barrel is exposed once and each compressed segment is merged or removed at most once, turning the repeated equilibrium simulation into O(n) total work.",
+      "solution_variant": "right-to-left-deque-segments"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "secondary",
+      "evidence": "The alternative Accepted implementation maintains decreasing pipe heights to compute previous-higher barriers and jump over whole dominated blocks.",
+      "solution_variant": "decreasing-pipe-stack-jumps"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "A correct implementation must distinguish total column volume from water, remove the rightmost segment average, handle simultaneous-height events consistently, and use sufficient floating-point precision.",
+      "solution_variant": "right-to-left-deque-segments"
+    }
+  ]
+}

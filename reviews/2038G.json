@@ -1,0 +1,95 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "G",
+    "title": "Guess One Character",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "implementation",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/G",
+      "notes": "读完当前英文交互题面、查询定义、交互协议、查询上限和全部样例。每个测试最多三次子串计数查询，回答字符不计查询。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 Guess One Character 全文。PDF 使用 Interaction Protocol 标题，当前网页使用 Interaction，协议语义没有变化。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 Guess One Character 部分，确认询问 1、11、10 三个字符串并由计数恒等式恢复最后一位。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/136199",
+      "notes": "读完官方赛事公告及与 G 有关的讨论，交叉确认官方 slides 入口和 q(11)+q(10) 对所有非末尾 1 的计数解释。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/G",
+      "notes": "独立证明计数恒等式；穷举长度 2..10 的全部二进制串，三次查询均能正确确定最后一位。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382781256",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；提交代码未读取，保留为候选实现入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "交互器持有长度 n 的二进制串。至多询问三次任意模式串的连续出现次数，并正确给出至少一个位置的字符。",
+    "constraints": "1 <= t <= 1000，2 <= n <= 50；每个测试最多三次查询，模式串长度必须在 1..n。",
+    "core_idea": "分别询问字符串 1、11、10 的出现次数，记为 q1、q11、q10。每个不是末位的字符 1 都恰好拥有一个后继，该后继要么为 1、要么为 0，因此 q11+q10 等于非末位 1 的数量。于是 q1-(q11+q10) 恰好为末位字符 s_n：若两者相等则回答 s_n=0，否则回答 s_n=1。三个查询互不依赖，始终满足限制。",
+    "complexity": "Exactly 3 queries per test case, O(1) local time and O(1) memory.",
+    "tricks": [
+      "询问长度 1 和长度 2 的三个固定模式即可，不需要自适应重建整个字符串。",
+      "q(11)+q(10) 按后继字符划分所有非末位的 1。",
+      "每次输出后必须 flush；收到 -1 后应立即终止。",
+      "提交答案后仍需读取交互器返回的 1 或 -1。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-substring-count-queries",
+      "summary": "查询 1、11、10 的出现次数，用 q(1)-q(11)-q(10) 直接得到最后一个字符。",
+      "complexity": "3 queries, O(1) local time and O(1) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "必须按照交互协议提交三次子串计数查询、刷新输出、读取响应并提交一个位置的字符。",
+      "solution_variant": "three-substring-count-queries"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "恒等式 q(1)-q(11)-q(10)=[s_n=1] 对任意二进制串成立，直接隔离出末位字符。",
+      "solution_variant": "three-substring-count-queries"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "解法构造了一个与 n 和查询结果无关的固定三查询集合，并保证至少恢复一个字符。",
+      "solution_variant": "three-substring-count-queries"
+    }
+  ]
+}

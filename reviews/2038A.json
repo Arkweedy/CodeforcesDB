@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "A",
+    "title": "Bonus Project",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "games",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/A",
+      "notes": "读完当前英文题面、全部样例和约束。页面标记题面近期有改动；与官方 PDF 对照后，未发现影响本题语义、约束或输出的差异。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 Bonus Project 全文并核对样例。零收益时仍愿意工作的规则与当前网页一致。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 Bonus Project 部分，确认从最后一名工程师向前进行逆序贪心，以及总可接受工作量不足时全员输出 0。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Kounjicat/p/18566605",
+      "notes": "读完对应题解与实现，交叉确认每人的最大非负收益工作量 floor(a_i/b_i) 和逆序填充构造。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/A",
+      "notes": "独立按子博弈完美理性进行逆向归纳，并手工复核三个样例、容量边界和零收益平局规则。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382744062",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；本次未能读取提交源代码，因此仅保留为候选入口。"
+    }
+  ],
+  "annotation": {
+    "summary": "工程师依次承诺工作量，每个人都预知后续工程师的理性选择，并以自己的奖金减劳动成本为收益。求唯一的子博弈完美结果。",
+    "constraints": "1 <= n <= 1000，1 <= k <= 10^6，1 <= a_i <= 10^9，1 <= b_i <= 1000；单个实例。",
+    "core_idea": "工程师 i 在项目能够完成时最多愿意承担 h_i=floor(a_i/b_i) 单位工作，其中承担 h_i 时收益可以为 0，仍会接受。若 sum(h_i)<k，则任何人都无法通过自己的选择保证项目完成，逆向归纳得到所有 c_i=0。否则令剩余需求 r=k，从 i=n 到 1 设置 c_i=min(h_i,r)，并令 r-=c_i。它等价于：第 i 人假设后缀工程师最多承担各自容量，只补足仍不可由后缀覆盖的部分。逆序构造恰好完成 k 单位工作，并由每一步的最小自付工作量保证唯一性。",
+    "complexity": "O(n) time and O(n) memory for the output.",
+    "tricks": [
+      "零收益仍愿意工作，因此容量是 floor(a_i/b_i)，而不是严格小于该值。",
+      "需要从最后一名工程师逆序填充，因为先行动者会把尽可能多的工作留给后续工程师。",
+      "总容量不足时不能输出局部工作量；项目注定失败会使每个人都选择 0。",
+      "容量和总和应使用 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "backward-induction-reverse-fill",
+      "summary": "计算每人的非负收益容量，先判定总容量是否覆盖 k；可行时从后向前尽量使用后缀容量，得到唯一承诺序列。",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/game-theory",
+      "importance": "primary",
+      "evidence": "答案由顺序行动者的最优反应和逆向归纳唯一确定；总容量不足时全员归零、可行时先行动者只补后缀缺口，都是子博弈分析的直接结论。",
+      "solution_variant": "backward-induction-reverse-fill"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "可行时从 n 到 1 令 c_i=min(floor(a_i/b_i),r)，每次最大化后行动者承担的工作并最小化当前行动者成本，该局部选择与逆向归纳完全一致。",
+      "solution_variant": "backward-induction-reverse-fill"
+    }
+  ]
+}

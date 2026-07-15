@@ -1,0 +1,138 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "F",
+    "title": "Alternative Platforms",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "fft",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2038/F",
+      "notes": "Read the complete current English statement, examples, and limits: n <= 200000, 0 <= v_i,r_i <= 10^6, 2 seconds, 512 MB. For every k, avg_k is the average over all k-subsets of max(min v_i,min r_i), modulo 998244353."
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "Read problem F in the official ICPC mirror statement booklet (PDF page 8 of 19), including the modular-fraction output definition."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "Read the complete official F solution section (PDF pages 120-140). It uses the integer tail-sum identity, inclusion-exclusion on the two threshold events, m_i=min(v_i,r_i), a k-independent coefficient sequence, and one FFT/NTT binomial transform for O(n log n)."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/fzdp7w5j",
+      "notes": "Actually opened and read the full Luogu article. It independently derives F(k)=sum_e(C(A_e,k)+C(B_e,k)-C(C_e,k)) for threshold counts A_e,B_e,C_e and evaluates the binomial transforms with NTT in O(V+n log n)."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18597309",
+      "notes": "Read the full 2038F section and code. It derives E(S)=min_S v+min_S r-min_S min(v_i,r_i), independently sorts the three arrays, applies sum_{i>=k}x_i C(i-1,k-1) for subset minima, and uses one NTT in O(n log n). No accepted verdict was inferred from the blog."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/292404816",
+      "notes": "The submission page visibly showed Accepted (1062 ms, 34412 KB), and the complete source was read. It implements threshold counts for v, r, and min(v,r), three NTT-based binomial transforms, and division by C(n,k), cross-checking the official threshold formulation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/F",
+      "notes": "Independently proved both the sorted-minima and threshold formulations, their equivalence, and the normalization by C(n,k). In-memory exhaustive checks covered all 66429 arrays of 1 <= n <= 5 ordered pairs (v_i,r_i) in {0,1,2}^2 and every k; direct subset enumeration always matched the threshold formula."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every subset size k, compute modulo 998244353 the average over all k-subsets S of E(S)=max(min_{i in S}v_i,min_{i in S}r_i).",
+    "constraints": "Single test case; 1 <= n <= 200000; 0 <= v_i,r_i <= 1000000; output n modular averages under modulus 998244353; time limit 2 seconds; memory limit 512 MB.",
+    "core_idea": "For a subset S, let A=min_S v, B=min_S r, and m_i=min(v_i,r_i). Then E(S)=max(A,B)=A+B-min(A,B)=min_S v+min_S r-min_S m. Sort v, r, and m independently in nonincreasing order. For any sorted array x_1>=...>=x_n, the total minimum over all k-subsets is sum_{i=k}^n x_i C(i-1,k-1), because choosing x_i as the minimum means selecting the other k-1 indices among 1..i-1. Therefore, with d_i=v_i^down+r_i^down-m_i^down, F(k)=sum_{|S|=k}E(S)=sum_{i=k}^n d_i C(i-1,k-1). Rewrite C(i-1,k-1)=(i-1)!/((k-1)!(i-k)!), reverse one coefficient array, and convolve d_i(i-1)! with inverse factorials by NTT. Finally output F(k)/C(n,k).",
+    "complexity": "O(n log n) time for three sorts and one NTT convolution, O(n) auxiliary memory. The threshold-count variant uses O(V+n log n) time and O(V+n) memory for V=max(v_i,r_i)<=10^6.",
+    "tricks": [
+      "Replace max of two subset minima by their sum minus the minimum of the pointwise minima.",
+      "Sort v, r, and min(v_i,r_i) independently; pairing is needed only before forming the third array.",
+      "Count a sorted value x_i as the subset minimum in exactly C(i-1,k-1) subsets.",
+      "Recognize the all-k factorial sum as a reversed convolution over modulus 998244353.",
+      "Divide the total over k-subsets by C(n,k) only after the transform."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The official slides present the same transform through threshold-difference coefficients f_i, while the primary variant here uses the equivalent direct sorted-minima identity because its indexing is easier to audit.",
+      "The accepted submission uses three threshold-count transforms rather than the one-convolution sorted formulation; both were proved equivalent and retained as separate solution variants.",
+      "No floating-point FFT is needed: modulus 998244353 supports an exact NTT. The existing repository tag math/transform/fft is reused according to current taxonomy convention.",
+      "No new taxonomy tag is proposed; existing minmax inclusion-exclusion, convolution, FFT, subset-counting, and sorting tags are sufficient."
+    ],
+    "proof_risks": [
+      "min(min_S v,min_S r) equals min_{i in S}min(v_i,r_i); this equality is what permits the third independently sorted array.",
+      "The three arrays must be sorted independently. Sorting pairs once and reusing that order for all three minima is incorrect.",
+      "For descending order, x_i is the minimum only when index i is included and the other k-1 choices come from earlier indices, giving C(i-1,k-1), not C(i,k).",
+      "The factorial factor outside the convolution is 1/(k-1)! in the direct-minima formula; the threshold formulation using C(t,k) instead has 1/k!.",
+      "The reversed inverse-factorial array and convolution index must be checked carefully; a one-position shift swaps k with k-1.",
+      "In the threshold variant, C_e counts bloggers satisfying both v_i>=e and r_i>=e, equivalently min(v_i,r_i)>=e. It is not min(A_e,B_e).",
+      "The integer tail sum starts at e=1. Zero values contribute no threshold layer and require no special positive term.",
+      "The NTT length must cover the full convolution, and all negative coefficients from subtracting the min-array contribution must be normalized modulo 998244353.",
+      "The final answer is F(k)*C(n,k)^{-1}; omitting this normalization returns the sum, not the average."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-minima-one-ntt",
+      "summary": "Use max(A,B)=A+B-min(A,B), form the three arrays v, r, and min(v_i,r_i), sort each descending, combine their order statistics into d_i, and evaluate all sums sum_i d_i C(i-1,k-1) with one factorial convolution.",
+      "complexity": "O(n log n) time and O(n) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "threshold-count-binomial-transforms",
+      "summary": "Use E=sum_{e>=1}[E>=e]. For every threshold e, count A_e=#{v_i>=e}, B_e=#{r_i>=e}, and C_e=#{min(v_i,r_i)>=e}; then F(k)=sum_e(C(A_e,k)+C(B_e,k)-C(C_e,k)). Bucket equal counts and evaluate the resulting binomial transforms by NTT.",
+      "complexity": "O(V+n log n) time and O(V+n) memory, where V=max(v_i,r_i)<=10^6.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/inclusion-exclusion/minmax",
+      "importance": "primary",
+      "evidence": "The central reduction is max(min_S v,min_S r)=min_S v+min_S r-min_S min(v_i,r_i), equivalently inclusion-exclusion of the two threshold events E>=e.",
+      "solution_variant": "sorted-minima-one-ntt"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "primary",
+      "evidence": "After extracting factorials, all n values F(k) are coefficients of one convolution between reversed d_i(i-1)! terms and inverse factorials; this removes the quadratic all-k summation.",
+      "solution_variant": "sorted-minima-one-ntt"
+    },
+    {
+      "tag": "math/transform/fft",
+      "importance": "primary",
+      "evidence": "The required convolution is evaluated by an NTT modulo 998244353, which is the decisive O(n log n) acceleration and follows the repository's existing FFT/NTT tag convention.",
+      "solution_variant": "sorted-minima-one-ntt"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "For descending x, exactly C(i-1,k-1) size-k subsets have x_i as their minimum, and C(n,k) is also the denominator of the requested average.",
+      "solution_variant": "sorted-minima-one-ntt"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Sorting v, r, and min(v_i,r_i) independently converts arbitrary subset minima into order-statistic contributions indexed only by i.",
+      "solution_variant": "sorted-minima-one-ntt"
+    }
+  ]
+}

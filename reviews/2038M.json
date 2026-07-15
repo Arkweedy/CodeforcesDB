@@ -1,0 +1,123 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "M",
+    "title": "Royal Flush",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "Read the complete official English statement on page 18. Confirmed n <= 4, 13 cards per suit, a five-card hand, the exact event order, possible loss when the deck empties, and that the initial draw and terminal turn are not counted."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "Read the official English M slides. They reduce cards to n Royal-Flush suit types plus one junk type, track deck and hand counts and whether suits remain completable, use expectation on draws and minimization over discards, and permit local precomputation."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/292200578",
+      "notes": "Read the source and verified the during-contest Accepted verdict. The submitted path prints four precomputed constants, while the same source retains the full memoized n+1-type Bellman generator after an early return."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/x2clfzv9",
+      "notes": "Read the analysis and code. It uses remaining-deck size plus sorted progress counts of live suits, enumerates retained-suit subsets, and applies multivariate hypergeometric probabilities. It also gives a counterexample to retaining only a prefix of the sorted suits."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "contest_archive",
+      "url": "https://nerc.icpc.global/archive/2024.html",
+      "notes": "Reusable official NERC 2024 archive entry; no Southern and Volga jury-solution or all-runs package was exposed there during this review."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose optimal discards from a five-card hand so that a Royal Flush is obtained with certainty in the minimum expected number of counted turns.",
+    "constraints": "1 <= n <= 4 and the deck has 13n <= 52 cards. Each suit has five relevant ranks and eight irrelevant ranks. The initial draw costs zero turns; each nonterminal discard-and-refill action costs one; winning is checked before the empty-deck loss check.",
+    "core_idea": "Card identities collapse to n+1 exchangeable types: for each suit, its five Royal-Flush cards form one type, and all 8n non-Royal cards form a junk type. A state records every type's remaining deck count and hand count. If the hand has fewer than five cards, draw one random type: with D cards left, type t is selected with probability d_t/D, so the state value is the corresponding weighted sum. With five cards, return 0 if one suit contributes all five cards; otherwise enumerate every nonempty discard-count vector x bounded by the hand counts and take 1 plus the minimum successor value. A nonwinning state with an empty deck has value infinity, because any positive-probability losing branch is inadmissible when minimizing turns required to win. No separate dead-suit flag is necessary in this explicit state: after discarding a required card, deck_count+hand_count for that suit is below five forever. The recursion is acyclic because refilling strictly decreases the remaining deck. Start with the full deck and an empty hand, so the first refill contributes no turn. Since n has only four possible values, run this Bellman DP locally and submit the four sufficiently precise constants. A smaller alternative sorts the progress counts of still-live suits, chooses any subset of suits to retain, treats abandoned suits as junk, and draws the whole refill through a multivariate hypergeometric transition.",
+    "complexity": "For the explicit typed-card DP, O(32S) time and O(S) memory, where S <= 6^n(8n+1) * C(n+6,5) and therefore S <= 10777536 for n=4; each full hand has at most 31 nonempty discard-count vectors and each draw has at most 5 outcomes. The submitted precomputed lookup is O(1) time and memory. The symmetry-compressed variant uses O(S_sym * 2^n * C(n+5,5)) time and O(S_sym) memory.",
+    "tricks": [
+      "Aggregate the five useful ranks of each suit by count; their exact identities do not affect future probabilities.",
+      "Aggregate all non-Royal cards into one junk type.",
+      "A discarded Royal card permanently kills that suit; in the smaller state, discard all remaining cards of an abandoned suit as junk.",
+      "The initial five-card draw is free, while every later discard decision contributes exactly one turn.",
+      "Losing states must have infinite value rather than zero or a finite terminal cost.",
+      "Retaining only the suits with the largest current counts is not always optimal; all retained-suit subsets must be considered.",
+      "The four input answers may be generated offline and printed as constants with enough precision."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "typed-card-bellman-precompute",
+      "summary": "Memoize deck and hand counts for n Royal suit types plus junk. Random draws are expectation transitions, full nonwinning hands enumerate all nonempty discard vectors, and losing states are infinite. Precompute the four final answers locally.",
+      "complexity": "O(32S) precomputation time and O(S) memory; O(1) submitted lookup",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "sorted-live-suits-hypergeometric",
+      "summary": "Store remaining deck size and the sorted held counts of only still-completable suits. Enumerate every subset of suits to retain and batch the refill using multivariate hypergeometric probabilities; abandoned suits and non-Royal cards become junk.",
+      "complexity": "O(S_sym * 2^n * C(n+5,5)) time and O(S_sym) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "The answer is the Bellman value of a random finite process: draw states take probability-weighted successor values, while full-hand states minimize expected cost over discard actions.",
+      "solution_variant": "typed-card-bellman-precompute"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The intractable ordered deck and individual card identities are replaced by counts of n Royal suit types and one junk type, making exhaustive optimal-control DP finite.",
+      "solution_variant": "typed-card-bellman-precompute"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "secondary",
+      "evidence": "Because n <= 4 and every type has a small bounded count, all reachable deck/hand configurations can be memoized and solved exactly.",
+      "solution_variant": "typed-card-bellman-precompute"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "secondary",
+      "evidence": "A one-card refill chooses type t with probability d_t/D, and the symmetry-compressed variant uses exact multivariate hypergeometric draw probabilities.",
+      "solution_variant": "typed-card-bellman-precompute"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "At each five-card hand the optimal policy is found by exhaustively enumerating at most 31 nonempty discard-count vectors; pruning to a single greedy retention rule is invalid.",
+      "solution_variant": "typed-card-bellman-precompute"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The sorted-live-suits variant computes batch-refill probabilities with products of binomial coefficients divided by the total number of possible draws.",
+      "solution_variant": "sorted-live-suits-hypergeometric"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "The accepted submission precomputes the only four possible outputs; direct implementations must also preserve infinity on losing branches and print enough floating-point precision.",
+      "solution_variant": "typed-card-bellman-precompute"
+    }
+  ]
+}

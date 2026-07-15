@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2038,
+    "title": "2024-2025 ICPC, NERC, Southern and Volga Russian Regional Contest (Unrated, Online Mirror, ICPC Rules, Preferably Teams)"
+  },
+  "problem": {
+    "contest_id": 2038,
+    "index": "C",
+    "title": "DIY",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "geometry",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2038/problem/C",
+      "notes": "读完当前英文题面、全部样例和约束。当前网页明确允许面积为 0 的退化矩形，并限制每个整数只能按出现次数使用。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28389/southern-volga-russia-2024-mirror.pdf",
+      "notes": "读完官方 statement PDF 的 DIY 全文。退化矩形和元素重数规则在旧 PDF 中已经存在，与当前网页没有实质差异。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/contest/2038/attachments/download/28397/presentation_eng.pdf",
+      "notes": "读完官方英文 solution slides 的 DIY 部分，确认把每两个相同元素压成一个可用坐标 token，再从排序后的 token 中选择两小两大并交叉配对。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2038/problem/C",
+      "notes": "独立证明四个已选 token 的最优交叉配对和全局极值选择；对值域 -2..2、每个频率 0..4 的全部小多重集穷举，结果与构造一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2038/submission/382490107",
+      "notes": "Codeforces API 确认该提交 verdict 为 Accepted；本次未读取源代码，因此不作为算法来源。"
+    }
+  ],
+  "annotation": {
+    "summary": "从给定多重集中取八个数作为四个轴对齐矩形顶点的坐标，在允许退化的前提下最大化面积。",
+    "constraints": "1 <= t <= 25000，8 <= n <= 2*10^5，-10^9 <= a_i <= 10^9，所有测试的 n 之和不超过 2*10^5。",
+    "core_idea": "一个坐标值作为某条轴的端点时必须出现两次。对每个不同值 v，向数组 b 加入 floor(freq(v)/2) 个 v，每个 token 代表可供一个轴端点使用的一对相同数。若 |b|<4 则无解。将 b 排序并取 p=b_1、q=b_2、r=b_{m-1}、s=b_m，令 x 端点为 p,r，y 端点为 q,s，输出四个笛卡尔积顶点。对任意已选的 p<=q<=r<=s，三种分组中交叉分组面积 (r-p)(s-q) 最大，因为它与另一种跨分组之差为 (q-p)(s-r)>=0；随后把两个左端点尽量减小、两个右端点尽量增大，得到全局的两小两大选择。",
+    "complexity": "O(n log n) time and O(n) memory per test case.",
+    "tricks": [
+      "每两个相同值只压成一个 token；同一个值出现四次时可以同时承担两个坐标端点。",
+      "四个极值 token 应交叉配对为 (最小,次大) 和 (次小,最大)，不能简单把最外层两数配成一组。",
+      "退化矩形合法，因此端点相同无需额外排除。",
+      "若实现中显式比较面积，最大面积可达 4*10^18，应使用有符号 64 位整数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "pair-compression-and-crossed-extremes",
+      "summary": "按频率把相同元素两两压缩为坐标 token，排序后取两小两大，并将它们交叉分配给横纵坐标端点。",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "压缩后的坐标 token 排序后，只需读取最小、次小、次大和最大四个值即可得到全局最优矩形。",
+      "solution_variant": "pair-compression-and-crossed-extremes"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "最优解必取可用 token 的两个最小值和两个最大值，并按 (最小,次大)、(次小,最大) 交叉配对；交换不等式证明该极值选择不会变差。",
+      "solution_variant": "pair-compression-and-crossed-extremes"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "目标被化为轴对齐矩形的两个坐标跨度乘积，并需要比较四个端点的三种轴分配方式。",
+      "solution_variant": "pair-compression-and-crossed-extremes"
+    },
+    {
+      "tag": "trick/frequency-feasibility",
+      "importance": "secondary",
+      "evidence": "矩形四个坐标端点各消耗一对相同值，floor(freq(v)/2) 精确描述值 v 可提供的端点 token 数量。",
+      "solution_variant": "pair-compression-and-crossed-extremes"
+    }
+  ]
+}
