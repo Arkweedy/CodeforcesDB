@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2044,
+    "title": "Codeforces Round 993 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2044,
+    "index": "G2",
+    "title": "Medium Demon Problem (hard version)",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "graphs",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2044/problem/G2",
+      "notes": "Read the full hard-version process and limits: a spider with one or more plushies passes exactly one per year, keeps any extras, no collision discarding occurs, and sum n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137306",
+      "notes": "Confirmed cycle contraction, the one-plushie-per-year bottleneck, additive reverse-subtree sizes, Kahn accumulation, and stable-year offset."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2044G2",
+      "notes": "Actually read a substantive solution that explicitly contrasts G1's dp[u]=max(dp[v])+1 with G2's dp[u]=sum(dp[v])+1 and implements the latter by topological peeling."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2044/problem/G2",
+      "notes": "Re-derived the subtree-flow invariant and exhaustively simulated every valid functional graph through n=7 with one plushie sent per occupied spider per year; all matched maximum noncycle subtree size plus 2."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "In the same functional graph as G1, each spider starts with one plushie and sends exactly one plushie along its outgoing edge per year when nonempty, but now collisions accumulate and extra plushies remain; find the first stable year.",
+    "constraints": "There are up to 1e4 test cases, r[i]!=i, and total n is at most 2e5. Counts may accumulate, so the G1 occupied-set simulation and maximum-depth measure are no longer valid.",
+    "core_idea": "Decompose each functional-graph component into its directed cycle and reverse in-trees. For a noncycle vertex u, its reverse subtree initially contains sz[u] plushies and has only the edge u->r[u] through which plushies can leave. Since u sends at most one per year and child flow keeps it supplied, exactly sz[u] yearly sends are needed to drain that subtree. Compute sz[u]=1+sum sz[child] while Kahn-peeling leaves toward the cycle. Let S be the maximum sz[u] over peeled vertices, or 0 if all vertices lie on cycles. After S exchanges no external plushie enters a cycle; thereafter every cycle vertex sends and receives one cycle plushie while retaining any backlog, so the state repeats. The first stable year is S+2. This is precisely the hard-version change from G1's maximum depth to an additive subtree-size DP.",
+    "complexity": "O(n) time and O(n) memory per test case, O(sum n) overall.",
+    "tricks": [
+      "interpret each reverse subtree as a fixed amount of plushie flow through one outgoing bottleneck",
+      "accumulate subtree sizes in Kahn order from leaves toward cycles",
+      "distinguish sending one plushie from moving an entire accumulated pile",
+      "use sum in G2 where collision discarding made G1 use max",
+      "add two for the statement's before-year stability convention"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "kahn-additive-subtree-flow",
+      "summary": "Initialize sz[u]=1. Kahn-peel every noncycle vertex u, add sz[u] into sz[r[u]], and track the largest sz[u] among peeled vertices. Output that maximum plus 2. The sum recurrence counts every retained plushie that must cross the subtree root's outgoing edge, unlike G1's collision-merged maximum depth.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/functional-graph",
+      "importance": "primary",
+      "evidence": "The graph's outdegree-one structure yields exactly one cycle per component with reverse trees whose flow can be analyzed independently before entering that cycle.",
+      "solution_variant": "kahn-additive-subtree-flow"
+    },
+    {
+      "tag": "graph/dag/topological-sort",
+      "importance": "primary",
+      "evidence": "Kahn peeling orders every noncycle vertex after all of its reverse-tree descendants, allowing subtree plushie totals to be accumulated toward the cycle in linear time.",
+      "solution_variant": "kahn-additive-subtree-flow"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The hard version's decisive recurrence is sz[u]=1+sum sz[child] on each reverse in-tree; this additive subtree DP measures how many one-per-year transfers must cross u's outgoing edge.",
+      "solution_variant": "kahn-additive-subtree-flow"
+    }
+  ]
+}

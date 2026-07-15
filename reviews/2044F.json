@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2044,
+    "title": "Codeforces Round 993 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2044,
+    "index": "F",
+    "title": "Easy Demon Problem",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2044/problem/F",
+      "notes": "Read the full matrix operation, independent queries, and aggregate limits: sum n,m <= 2e5, sum q <= 5e4, and every nonzero query has |x| <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137306",
+      "notes": "Confirmed the residual-sum product identity and signed divisor-pair lookup; also noted the official warning about adversarial hashing."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2044F",
+      "notes": "Actually read the first substantive solution, which independently derives the same factorization and checks both signs and factor orders against stored residual sums."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2044/problem/F",
+      "notes": "Re-derived the inclusion-exclusion identity and exhaustively compared divisor lookup with direct row-column deletion on small signed arrays."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For each independent query x, decide whether zeroing one row and one column of the outer-product matrix M[i][j]=a[i]*b[j] can leave total beauty exactly x.",
+    "constraints": "Across a test file, sum n and sum m are at most 2e5, sum q is at most 5e4, array values may be negative or zero, and 1 <= |x| <= 2e5. Enumerating row-column pairs is impossible, while O(sqrt(|x|)) work per query is small enough.",
+    "core_idea": "Let SA=sum(a) and SB=sum(b). After choosing row r and column c, exactly the products with i!=r and j!=c remain, so the beauty is (SA-a[r])*(SB-b[c]). Store the two sets of residual sums. For each positive divisor d of |x|, let e=|x|/d and test p in {d,-d,e,-e}; the query succeeds exactly when p belongs to the first residual set and x/p belongs to the second.",
+    "complexity": "O(n+m+q*sqrt(X)) expected time and O(n+m) memory with hash sets, where X=max |x|<=2e5; sorted residual arrays give an additional logarithmic membership factor deterministically.",
+    "tricks": [
+      "factor the post-deletion matrix sum into one residual sum from each array",
+      "enumerate divisors of |x| rather than row-column choices",
+      "check both factor orders and signs because the residual sets are asymmetric and may contain negatives",
+      "use 64-bit integers for sums and products"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "residual-sums-divisor-enumeration",
+      "summary": "Build sets A'={SA-a[i]} and B'={SB-b[j]}. For every divisor pair d,e of |x|, test p in {d,-d,e,-e} and accept exactly when p is in A' and x/p is in B'.",
+      "complexity": "O(n+m+q*sqrt(X)) expected time and O(n+m) memory with hash sets.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The decisive reduction is the exact identity beauty(r,c)=(SA-a[r])*(SB-b[c]), which collapses an n by m matrix operation into a product of two one-dimensional choices.",
+      "solution_variant": "residual-sums-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisor-enumeration",
+      "importance": "primary",
+      "evidence": "Each nonzero target x is tested by enumerating all divisor pairs of |x| in O(sqrt(|x|)) and checking the corresponding signed ordered factors.",
+      "solution_variant": "residual-sums-divisor-enumeration"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "After factorization, the remaining candidate space is small enough to exhaustively scan all O(sqrt(|x|)) divisor candidates for every query.",
+      "solution_variant": "residual-sums-divisor-enumeration"
+    }
+  ]
+}

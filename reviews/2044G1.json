@@ -1,0 +1,86 @@
+{
+  "contest": {
+    "contest_id": 2044,
+    "title": "Codeforces Round 993 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2044,
+    "index": "G1",
+    "title": "Medium Demon Problem (easy version)",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "graph matchings",
+      "graphs",
+      "implementation",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2044/problem/G1",
+      "notes": "Read the full yearly process and limits: each spider initially has one plushie, collisions are discarded down to one, r[i]!=i, and sum n <= 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137306",
+      "notes": "Confirmed the functional-graph decomposition, leaf-layer peeling, maximum distance to a cycle, and stable-year offset."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2044G1",
+      "notes": "Actually read a substantive solution using Kahn peeling and a max-depth recurrence on the reverse in-trees, including its output offset."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2044/problem/G1",
+      "notes": "Modeled each state as the occupied vertex set and exhaustively simulated every valid functional graph through n=7; all matched maximum peeled depth plus 2."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Starting with one plushie at every vertex of a no-self-loop functional graph, each occupied spider sends its plushie along its outgoing edge each year and collisions are merged to one; find the first year whose pre-exchange state equals the preceding year's.",
+    "constraints": "There are up to 1e4 test cases, r[i]!=i, and total n is at most 2e5, requiring linear work per functional graph rather than year-by-year simulation.",
+    "core_idea": "Because collisions discard duplicates, only occupancy matters and one exchange replaces the occupied set by its image under r. Every component is a directed cycle with reverse in-trees. Kahn peeling removes zero-indegree tree vertices layer by layer; after D layers, where D is the maximum edge distance of any vertex to its cycle, only cycle vertices remain occupied forever. The cycle-only state first appears before year D+1 and is first equal to the preceding state before year D+2, so the answer is D+2, or 2 for a union of cycles. This is the easy-version max-depth recurrence; G2 instead keeps all colliding plushies and needs additive subtree sizes.",
+    "complexity": "O(n) time and O(n) memory per test case, O(sum n) overall.",
+    "tricks": [
+      "view the mapping as cycles with directed in-trees",
+      "replace process simulation by Kahn leaf-layer peeling",
+      "propagate maximum reverse-tree depth because collisions merge occupancy",
+      "add two for the statement's before-year stability convention"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "kahn-maximum-depth",
+      "summary": "Compute indegrees, peel all noncycle vertices with Kahn's algorithm, and propagate depth[parent]=max(depth[parent],depth[child]+1). If D is the maximum depth among peeled vertices, or zero when none exist, output D+2. The maximum, rather than G2's sum, reflects discarding all but one plushie after a collision.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/functional-graph",
+      "importance": "primary",
+      "evidence": "The proof depends on every vertex having exactly one outgoing edge, so each component decomposes into one directed cycle and reverse trees feeding it.",
+      "solution_variant": "kahn-maximum-depth"
+    },
+    {
+      "tag": "graph/dag/topological-sort",
+      "importance": "primary",
+      "evidence": "Kahn's indegree-zero peeling topologically removes all noncycle vertices and directly counts the number of disappearing tree layers.",
+      "solution_variant": "kahn-maximum-depth"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "On the reverse in-trees, the easy version propagates a maximum child depth to the parent; collision merging makes sibling contributions combine by max, not sum.",
+      "solution_variant": "kahn-maximum-depth"
+    }
+  ]
+}

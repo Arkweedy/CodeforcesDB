@@ -1,0 +1,80 @@
+{
+  "contest": {
+    "contest_id": 2044,
+    "title": "Codeforces Round 993 (Div. 4)"
+  },
+  "problem": {
+    "contest_id": 2044,
+    "index": "H",
+    "title": "Hard Demon Problem",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "dp",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2044/problem/H",
+      "notes": "Read the full row-major submatrix query and limits: positive matrix entries up to 1e6, sum n <= 2000, and sum q <= 1e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137306",
+      "notes": "Confirmed the affine local-index expansion and use of three two-dimensional prefix sums for M[i][j], i*M[i][j], and j*M[i][j]."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2044H",
+      "notes": "Actually read the first substantive solution, which independently derives the row and column weight decomposition and answers each rectangle from three prefix matrices."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2044/problem/H",
+      "notes": "Re-derived the formula from the flattened local index and checked the three-rectangle-sum result against direct flattening on exhaustive small matrices and larger spot cases."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For each submatrix, flatten its entries in row-major order and return the sum of each value multiplied by its one-based position in that local flattened array.",
+    "constraints": "Across test cases, sum n is at most 2000 and sum q is at most 1e6, with n up to 2000 and positive entries up to 1e6. O(area) per query is impossible; O(n^2) preprocessing and O(1) queries are required, with 64-bit arithmetic.",
+    "core_idea": "For a query (x1,y1)-(x2,y2) of width w, the one-based local position of global cell (i,j) is (i-x1)*w+(j-y1)+1 = w*i+j+(1-w*x1-y1). Therefore the answer is w*R(i*M)+R(j*M)+(1-w*x1-y1)*R(M), where R denotes a rectangle sum. Precompute independent two-dimensional prefix sums of M[i][j], i*M[i][j], and j*M[i][j], then evaluate all three rectangle sums in O(1).",
+    "complexity": "O(n^2+q) time and O(n^2) memory per test case; O(sum n^2 + sum q) over the input.",
+    "tricks": [
+      "express a query-local row-major index as an affine function of global row and column",
+      "split the weighted answer into three reusable rectangular aggregates",
+      "build three two-dimensional prefix-sum tables",
+      "use 64-bit integers for weighted sums"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-2d-prefix-sums",
+      "summary": "Precompute 2D prefix sums for M, row_index*M, and column_index*M. Expand each local flattened position into w*row+column+constant and combine the three O(1) rectangle sums with the query-dependent coefficients.",
+      "complexity": "O(n^2+q) time and O(n^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "Three two-dimensional prefix-sum tables are the data structure that turns each weighted submatrix query from O(area) into O(1).",
+      "solution_variant": "three-2d-prefix-sums"
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The central identity rewrites the local row-major weight as w*i+j+(1-w*x1-y1), separating every answer into row-weighted, column-weighted, and unweighted rectangle sums.",
+      "solution_variant": "three-2d-prefix-sums"
+    }
+  ]
+}
