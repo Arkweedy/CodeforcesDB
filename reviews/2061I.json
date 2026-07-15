@@ -1,0 +1,177 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "I",
+    "title": "Kevin and Nivek",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "divide and conquer",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2061/I",
+      "notes": "Read the full statement, examples, and limits. Confirmed that a Type 2 match compares the first i-1 results, with a tie favoring Kevin; sum(n) <= 3e5, a_i is -1 or in [0,1e9], and answers are required for every at-least-k target."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139246",
+      "notes": "Official editorial confirms the quadratic DP, the stable-outcome extreme-score bands, convex prefix-cost bulk transitions, the O(n sqrt(n log n)) block decomposition, and the recursive O(n log^2 n) refinement."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/t0tm2qfq",
+      "notes": "Concise Luogu article independently identifies the same min-plus transition, decision monotonicity, block solution, and recursive divide-and-conquer solution; used only as a cross-check because its proof is terse."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19439817",
+      "notes": "Detailed independent write-up and exact-state map implementation used to cross-check the lead thresholds, deletion of fully bulked states, O(segment length) unresolved-state invariant, and O(n log^2 n) recurrence."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/302197242",
+      "notes": "Inspected accepted C++23 submission 302197242 (1218 ms, 36492 KB). It implements a suffix-closed at-least-wins vector DP, convex-kernel divide-and-conquer row minima, and recursive interval transforms; used to verify implementable index and envelope invariants."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2061/I",
+      "notes": "Re-proved the score-band invariant, the Monge inequality, recursion coverage, and state-width bound. Differential testing matched literal match simulation on all 21,844 arrays of lengths 1..7 over {-1,0,1,3}; 5,000 random convex-kernel divide-and-conquer convolutions also matched quadratic minima."
+    }
+  ],
+  "annotation": {
+    "summary": "Each paid match may be won for cost a_i or lost for free, while each automatic match is won exactly when Kevin is not behind before it. For every k from 0 to n, compute the minimum total paid cost that guarantees at least k wins.",
+    "constraints": "t <= 10^4, 1 <= n <= 3e5 per test, sum(n) <= 3e5, and -1 <= a_i <= 1e9. Quadratic DP is impossible, all costs and answers require 64-bit integers (the maximum useful sum is at most 3e14), and the 4-second limit favors the dense-vector implementation over ordered maps.",
+    "core_idea": "After l matches and j Kevin wins, write the lead as D=2j-l. A match changes D by exactly +1 or -1, and an automatic match chooses +1 iff D>=0. For an interval (l,r] of length L, use the conservative extreme bands D>L and D<-L: even the worst possible L changes cannot reach the opposite sign, so every automatic match in the interval is respectively a Kevin win or loss. If the interval has c automatic matches and m paid matches, let G(q) be the sum of its q smallest paid costs. An extreme high state j reaches j+c+q wins for cost f[j]+G(q), and an extreme low state reaches j+q; positions no longer matter because automatic outcomes are fixed. The increments of G are the sorted costs and are nondecreasing, so G is discrete convex. Therefore C(x,j)=f[j]+G(x-shift-j) is Monge: C(x,j)+C(x+1,j+1)<=C(x,j+1)+C(x+1,j), giving monotone row argmins and an O((states+L) log L) divide-and-conquer min-plus transition. The unresolved states satisfy -L<=D<=L and form one contiguous band of O(L) win counts. Remove all bulked states, split at m=(l+r)/2, and compose Trans(l,m) then Trans(m,r) on only that band. The width remains O(L), hence T(L)=2T(L/2)+O(L log L)=O(L log^2 L). Convert exact-win costs to at-least-k answers by suffix minima; the accepted dense implementation equivalently suffix-closes every returned at-least-wins envelope.",
+    "complexity": "O(n log^2 n) time and O(n) peak auxiliary memory for the inspected dense-vector recursive implementation.",
+    "tricks": [
+      "encode the historical score by D=2*wins-processed, with ties D=0 going to Kevin",
+      "bulk an interval only for score bands whose sign cannot change anywhere inside it",
+      "once automatic outcomes are fixed, winning q paid matches means taking the q cheapest costs regardless of positions",
+      "view the bulk transition as min-plus convolution with a discrete-convex kernel",
+      "derive Monge row-minimum monotonicity directly; no convexity of the original DP row is required",
+      "delete bulked states and recurse only on the contiguous O(interval length) middle band",
+      "suffix-minimize exact final costs, or maintain a suffix-closed at-least-wins envelope consistently",
+      "use int64 and a safely larger INF; zero paid costs preserve convexity but create argmin ties"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "For D>L, before every possible automatic match the lead stays nonnegative even if all preceding matches are losses; for D<-L it stays negative even if all preceding matches are wins. Thus the bulk transition does not depend on paid-match positions.",
+      "The Monge inequality follows from 2G(q)<=G(q-1)+G(q+1), so choosing a consistent leftmost minimizer makes the divide-and-conquer candidate ranges valid even when costs tie.",
+      "Every non-extreme state is passed through the left transform and then the right transform, while every extreme state is fully enumerated by q at its highest applicable interval and may be deleted; these cases are exhaustive and do not lose a strategy.",
+      "For the accepted at-least envelope, a low-band transition may conservatively count zero automatic wins; if a minimizing realization actually has more wins, the same realization also appears at the corresponding higher state, and suffix closure propagates its stronger result. Mixing this invariant with an exact-state transition is unsafe."
+    ],
+    "main_agent_review_notes": [
+      "Main recursive solution is high-confidence after official/editorial agreement, two independent write-ups, an inspected accepted implementation, full proof reconstruction, and exhaustive small-case differential testing.",
+      "The highest implementation risk is endpoint convention. This draft uses state after l games and interval (l,r], so L=r-l and the conservative bulk tests are D>L and D<-L. Sources using [l,r] from f[l-1] write shifted >=L or <=-L formulas; do not mix those formulas.",
+      "Choose one DP meaning throughout: exact wins with one final suffix minimum, or the accepted suffix-closed at-least envelope. The latter needs closure after every returned transform and only guaranteed-win lower-bound transitions.",
+      "Candidate tag dp/min-plus-convolution needs explicit taxonomy approval and a WebUI translation if accepted. If rejected, remove only that tag; existing dp/decision-monotonicity still captures the optimization."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "recursive-extreme-band-min-plus-dp",
+      "summary": "Conceptually maintain exact-win DP states at interval boundaries (or the equivalent suffix-closed at-least envelope from the accepted code). At each recursive interval, bulk all states whose score-difference sign is immutable using convex min-plus convolution and divide-and-conquer row minima, delete them, then compose the two half-interval transforms for the O(L)-wide middle band.",
+      "complexity": "O(n log^2 n) time and O(n) peak auxiliary memory in the dense-vector implementation.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "sqrt-block-extreme-band-dp",
+      "summary": "Partition the timeline into blocks of length B. In each block, process all globally far-ahead/far-behind states with the same convex min-plus bulk transition and simulate the O(B) middle states through the O(B) matches directly. The total is O(n^2 log n / B + nB); choosing B=Theta(sqrt(n log n)) gives the stated bound.",
+      "complexity": "O(n sqrt(n log n)) time and O(n) auxiliary memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The problem is formulated as minimum cost by processed prefix and achieved win count; the whole solution accelerates compositions of these DP transitions rather than replacing the state model.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "primary",
+      "evidence": "After bulk-removing extreme states, the unresolved interval transform is recursively composed through its midpoint; divide-and-conquer is also used to evaluate each Monge row-minimum batch.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "dp/decision-monotonicity",
+      "importance": "primary",
+      "evidence": "Discrete convexity of G makes the transition matrix f[j]+G(x-shift-j) Monge, so optimal predecessor indices are monotone in x and each bulk transition can be evaluated by divide-and-conquer row minima.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "primary",
+      "evidence": "States are split by the score-difference thresholds D>L, D<-L, and |D|<=L; only this decomposition makes automatic outcomes uniform in the two extreme bands and bounds the recursive middle band by O(L).",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "dp/min-plus-convolution",
+      "display_name": "Min-plus convolution",
+      "description": "Dynamic-programming transitions of the form h[x]=min_j(f[j]+g[x-j]) over the min-plus semiring; use when recognizing or optimizing this convolution is a central reusable step, not merely whenever a transition takes a minimum.",
+      "parent": "dp",
+      "created_reason": "The live taxonomy has decision-monotonicity but no tag for the underlying reusable min-plus convolution. Here both extreme score bands are exactly shifted min-plus convolutions, and recognizing that algebraic form is what exposes the convex Monge optimization.",
+      "status": "candidate",
+      "aliases": [
+        "minplus-convolution",
+        "tropical-convolution"
+      ],
+      "main_agent_review": true,
+      "importance": "primary",
+      "evidence": "For fixed automatic-win shift s, every bulk output is h[x]=min_j(f[j]+G(x-s-j)) over feasible q=x-s-j, exactly a min-plus convolution with the prefix-cost kernel G.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Once the automatic outcomes of an extreme state are fixed, the cheapest way to win exactly q paid matches in the interval is to choose its q smallest costs.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Each bulk interval sorts its paid costs; their prefix sums form G and their nondecreasing order is the discrete-convexity proof behind monotone minima.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    },
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "secondary",
+      "evidence": "The materially distinct block variant balances O(n^2 log n / B) bulk work against O(nB) direct middle-band work at B=Theta(sqrt(n log n)).",
+      "solution_variant": "sqrt-block-extreme-band-dp"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "incidental",
+      "evidence": "After sorting an interval's paid costs, prefix sums answer G(q), the cost of its q cheapest paid wins, in O(1) per transition candidate.",
+      "solution_variant": "recursive-extreme-band-min-plus-dp"
+    }
+  ],
+  "proposed_new_tags": [
+    {
+      "tag": "dp/min-plus-convolution",
+      "display_name": "Min-plus convolution",
+      "description": "Dynamic-programming transitions of the form h[x]=min_j(f[j]+g[x-j]) over the min-plus semiring; use when recognizing or optimizing this convolution is a central reusable step, not merely whenever a transition takes a minimum.",
+      "parent": "dp",
+      "created_reason": "The live taxonomy has decision-monotonicity but no tag for the underlying reusable min-plus convolution. Here both extreme score bands are exactly shifted min-plus convolutions, and recognizing that algebraic form is what exposes the convex Monge optimization.",
+      "status": "candidate",
+      "aliases": [
+        "minplus-convolution",
+        "tropical-convolution"
+      ],
+      "main_agent_review": true
+    }
+  ]
+}
+

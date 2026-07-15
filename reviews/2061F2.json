@@ -1,0 +1,114 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "F2",
+    "title": "Kevin and Binary String (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/F2",
+      "notes": "Checked the operation, wildcard target semantics, examples, and total source-length bound of 4e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/139246/en5",
+      "notes": "The official editorial confirms the immovable-block partition, dp(i)=min(dp(j)+(i-j-1)/2), the one-sided bounds j>=L_i and i<=R_j, and segment-tree optimization."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/138620?#comment-1239623",
+      "notes": "Used the detailed derivation of the unique no-fixed-block arrangement, the even-gap requirement, and the separation of wildcard compatibility into two independent prefix/suffix conditions."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/06/02/0930",
+      "notes": "Cross-checked oversized sentinels, the transformed value 2*dp(j)-j, parity-separated segment trees, candidate expiration, and O(n log n) implementation structure."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/F2",
+      "notes": "Independently proved the anchor recurrence and one-sided validity inequalities. Exhaustively compared them with BFS for every binary source and every 0/1/? target through length 7."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the minimum adjacent-run swaps needed to make s compatible with a wildcard binary target t; unlike F1, wildcard positions make the optimal set of surviving source runs a global choice.",
+    "constraints": "Up to 1e4 test cases and total length at most 4e5; s is binary while t contains 0, 1, and ?. The quadratic anchor DP must be optimized to O(n log n).",
+    "core_idea": "Run-length encode s and append exact opposite-color sentinel runs longer than n at both ends, forcing boundary anchors. A surviving anchor is an original run that is never selected and therefore still covers its original interval. Between consecutive anchors j<i, their colors must differ and the i-j-1 internal runs are even in number. Since same-color source runs never overtake one another, if no internal run survives then the gap has one possible final form: all internal characters matching anchor j followed by all internal characters matching anchor i. It costs exactly (i-j-1)/2 swaps. An anchor itself is usable only if its original interval contains no target position forced to the opposite bit. Let A be the number of anchor-j characters in the gap and B the number of anchor-i characters. The canonical gap is compatible exactly when A fits into the consecutive target positions after j before the nearest forced anchor-i bit, and B fits into the consecutive positions before i after the nearest forced anchor-j bit. Prefix counts and nearest forced occurrences turn these into monotone bounds j>=L_i and i<=R_j. Therefore dp[i]=min(dp[j]+(i-j-1)/2) over opposite-parity j in [L_i,i) with R_j>=i. Rewrite this as dp[i]=(i-1+min(2*dp[j]-j))/2. Sweep i, keep 2*dp[j]-j in parity-separated range-min segment trees, erase j at R_j+1, and query [L_i,i). The answer is the state of the right sentinel.",
+    "complexity": "O(n log n) time and O(n) memory per test.",
+    "tricks": [
+      "Use oversized opposite-color sentinel runs to force the first and last anchors.",
+      "A gap without an internal anchor has a unique canonical two-run output and costs half its internal run count.",
+      "Factor wildcard compatibility into a suffix capacity of i and a prefix capacity of j.",
+      "Convert those capacities into a lower transition bound L_i and an expiration bound R_j.",
+      "Rewrite the transition as a range minimum of 2*dp[j]-j and maintain only opposite-parity active states.",
+      "Expire state j precisely when the sweep reaches R_j+1."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "active-anchor-partition-dp-segment-tree",
+      "summary": "Precompute every run's anchor compatibility and monotone bounds L_i,R_i. Sweep the run indices, querying the opposite-parity segment tree for the minimum transformed active DP state in [L_i,i), while scheduled point deletions remove states whose right-validity bound has expired.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "The source is compressed into maximal runs, which are exactly the anchor candidates and the units counted by every transition.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "dp/partition-dp",
+      "importance": "primary",
+      "evidence": "Choosing consecutive surviving anchors partitions the run sequence into independent canonical gaps, and each transition appends one such gap to an optimal prefix.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The hard bound is met by range-min queries over transformed DP values 2*dp[j]-j together with point insertion and expiration.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The unique gap form and the entire anchor reduction depend on the invariant that same-bit source runs retain their relative order and merged runs cannot split.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "Run indices are processed from left to right while the segment trees maintain exactly the predecessor states whose R_j bounds still cover the current index.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "trick/nearest-occurrence",
+      "importance": "secondary",
+      "evidence": "The nearest forced opposite target character on each side determines how much canonical same-bit material can fit next to an anchor.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "As a predecessor moves left or a successor moves right, the relevant same-bit count only increases, so pair feasibility is represented by the thresholds L_i and R_j.",
+      "solution_variant": "active-anchor-partition-dp-segment-tree"
+    }
+  ]
+}
+

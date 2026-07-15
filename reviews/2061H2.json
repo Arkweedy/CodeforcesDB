@@ -1,0 +1,140 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "H2",
+    "title": "Kevin and Stones (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "flows",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/H2",
+      "notes": "Statement and constraints checked. H2 has the same reachability problem as H1 but must output a collision-free sequence containing at most 2n operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139246",
+      "notes": "The official H1/H2 section was consulted but still contains only \"Tutorial is loading...\" under a WIP notice, so no formal construction or collision proof was available there."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19265720",
+      "notes": "Checked the full decision conditions, endpoint matchings in the double cover, alternating-cycle removal, spanning-forest reduction, deepest-edge/nearest-opposite pairing, parallel scheduling, and the 2n bound."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/350474629",
+      "notes": "Inspected the accepted construction. It uses two Kuhn matchings, fixes alternating cycles, extends mandatory edges to a forest with DSU, precomputes tree distances, and writes routes from the two ends of a timeline of length 2n-p."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/348822287",
+      "notes": "Used the accepted H1 implementation to independently confirm the double-cover component-balance criterion and global parity selection used before construction."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/H2",
+      "notes": "Independently reimplemented the accepted forest scheduler and verified every output row for distinct vertices, legal edges, correct endpoints, parity, and the 2n limit on 16654 cases: exhaustive through n <= 4 plus 12000 random cases through n=10, including 5602 nontrivial feasible constructions. Remaining risk is the full formal collision lemma, since the official page has no written proof and the community proof is terse."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine reachability as in H1 and, when reachable, output at most 2n synchronized configurations that move every stone along an edge at every step without collisions.",
+    "constraints": "t <= 1000; n <= 2000 and m <= min(n(n-1)/2, 10000) per test; sum n <= 2000 and sum m <= 10000; the configurations have equal stone counts; output length must be at most 2n.",
+    "core_idea": "Run the H1 criterion and obtain a feasible global parity p plus saturating endpoint matchings. Work in the bipartite double cover D: initial stones occupy layer 0, target stones occupy layer p, and every matching edge is a private two-step buffer on which its stone can bounce while waiting. Let M0 and M1 be the initial and target endpoint matchings. Their union has maximum degree two. On every alternating cycle, replace one matching's edges by the complementary half of the cycle, preserving saturation while collapsing the cycle; then add arbitrary double-cover edges with DSU until every component becomes a tree containing both matchings. Component balance guarantees equally many M0 and M1 edges in each tree. Root the forest and repeatedly choose the remaining endpoint-matching edge with the deepest endpoint, pair it with the nearest remaining edge of the opposite matching, and use the unique tree path between their occupied endpoints. If the deepest edge belongs to the target matching, place this route starting at the current left boundary; if it belongs to the initial matching, place the reversed route ending at the current right boundary. Outside its route, the stone alternates on its private initial or target matching edge. Move the corresponding boundary inward by two after every pair. The proof-sensitive invariant is that deepest-edge peeling leaves no unpaired endpoint edge farther outward, while nearest-opposite pairing and the two-step offset prevent a traveling stone from meeting another route or waiting buffer; a collision would expose a deeper unpeeled edge or a nearer opposite edge. Use K=2n-p operations, whose parity is p and which never exceeds 2n, then project both cover layers back to original vertices.",
+    "complexity": "O(nm + n^2) time and O(n^2 + m) memory with Kuhn matching, all-pairs forest distances, and explicit O(n^2)-size output.",
+    "tricks": [
+      "Reuse the complete H1 feasibility criterion before attempting construction.",
+      "Treat endpoint matching edges as private legal two-step waiting buffers.",
+      "Flip one half of every alternating matching cycle so all mandatory edges can lie in a forest.",
+      "Extend mandatory matching edges to a spanning forest and route on unique tree paths.",
+      "Pair a deepest remaining edge with the nearest edge of the opposite matching.",
+      "Write routes from opposite ends of the global timeline and advance each boundary by two.",
+      "Choose K=2n-p so the final layer has the required global parity."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "double-cover-matching-forest-schedule",
+      "summary": "Find endpoint matchings and a feasible parity in the bipartite double cover, remove alternating cycles, extend the mandatory edges to a forest, and pair deepest endpoint edges with nearest opposite edges. Route each pair on its unique tree path while padding with private matching-edge bounces on a two-ended timeline of length 2n-p.",
+      "complexity": "O(nm + n^2) time and O(n^2 + m) memory, including output storage.",
+      "confidence": "medium",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bipartite-double-cover",
+      "display_name": "Bipartite double cover",
+      "importance": "primary",
+      "description": "Duplicate every graph vertex into two parity layers and replace each original edge by cross-layer copies, using the resulting bipartite cover to encode even/odd walks and parity-sensitive connectivity.",
+      "parents": [
+        "graph/layered-graph",
+        "graph/bipartite-graph"
+      ],
+      "created_reason": "The existing layered-graph and bipartite-graph tags do not identify the canonical parity double cover that is the decisive reachability and construction model in both versions. Main-agent taxonomy review is required before accepting this candidate; add a WebUI translation if accepted.",
+      "status": "candidate",
+      "aliases": [
+        "bipartite-double-cover",
+        "canonical-double-cover",
+        "kronecker-double-cover",
+        "parity-double-cover"
+      ],
+      "evidence": "The entire construction takes place in the two-layer cover, where global time parity becomes the current layer and tree paths project to legal original-graph moves.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "Two matchings saturating the initial and target occupied sets are required both for feasibility and as disjoint private edges on which stones wait during the constructed schedule.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "After alternating cycles are removed, mandatory matching edges are extended to a forest; unique tree paths and deepest-edge peeling are the core of the hard-version routing construction.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Unlike H1, H2 must explicitly assign stones to target vertices and output every collision-free intermediate configuration within the 2n bound.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "The selected double-cover target layer fixes the common operation-count parity, and the construction outputs exactly K=2n-p operations.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "secondary",
+      "evidence": "Initial and target matching-edge counts must balance inside every double-cover component before that component can be extended into one construction tree.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "secondary",
+      "evidence": "DSU adds unused double-cover edges without creating cycles, extending the two endpoint matchings into a spanning forest that preserves all mandatory edges.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "Endpoint saturation can be formulated as unit-capacity flow, but the reviewed construction uses direct bipartite matching and forest routing rather than a general flow network.",
+      "solution_variant": "double-cover-matching-forest-schedule"
+    }
+  ]
+}
+

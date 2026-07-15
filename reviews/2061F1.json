@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "F1",
+    "title": "Kevin and Binary String (Easy Version)",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "greedy",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/F1",
+      "notes": "Checked the adjacent-maximal-block swap operation, the fully specified binary target, examples, and the total length bound of 4e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/139246/en5",
+      "notes": "The official editorial confirms the immovable-block viewpoint, the canonical two-run form between consecutive immovable blocks, the x/2 operation count, and a linear greedy for the easy version."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/138620?#comment-1239623",
+      "notes": "Used the detailed proof that same-character source blocks preserve their relative order and that a block-free gap has a unique deranged arrangement; also cross-checked the forced-frontier greedy."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Cross-checked the merge behavior after swapping adjacent runs and the equivalent strategy of pulling the nearest whole run of the required bit to the current target frontier."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/F1",
+      "notes": "Proved that every frontier choice is forced, then exhaustively compared the greedy result with BFS shortest paths for every ordered pair of binary strings through length 8."
+    }
+  ],
+  "annotation": {
+    "summary": "Given binary strings s and t, transform s exactly into t by swapping adjacent maximal equal-character runs, minimizing the number of swaps or reporting impossibility.",
+    "constraints": "Up to 1e4 test cases, equal string lengths, and total length at most 4e5; t contains only 0 and 1, so a linear solution is required.",
+    "core_idea": "Run-length encode the current source and process the target from left to right. Swaps never change the relative order of the original 0-runs among themselves or of the original 1-runs among themselves, and merged runs can never split. If the first current run has the next target bit, every feasible solution must leave that entire run at the frontier; verify that the corresponding target segment is constant and remove it. Otherwise, only the second current run can supply the required bit. Swap it left once, verify its entire length against the target prefix, remove it, and merge the old first and third runs when the third exists. A failed segment check or missing second run proves impossibility. Every mismatch requires at least this one swap, while the greedy performs exactly one, so the forced process is optimal.",
+    "complexity": "O(n) time and O(n) memory per test, or O(number of runs) working memory after storing the input.",
+    "tricks": [
+      "Label the original runs conceptually: runs of the same bit never overtake one another.",
+      "Validate a whole run against the target at once because a maximal block cannot be split.",
+      "After moving the second run to the frontier, contract the old first and third runs into one run.",
+      "Each local decision is forced, which supplies both feasibility and optimality."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "forced-frontier-rle-greedy",
+      "summary": "Maintain the remaining run-length encoding and a target pointer. Keep the first run when its bit is required; otherwise move the second run left once, delete the finalized prefix run, and contract its equal-bit neighbors.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "The operation is defined on maximal runs, and the algorithm stores, removes, swaps, and merges only run-length encoded blocks.",
+      "solution_variant": "forced-frontier-rle-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "At every target frontier the next action is forced: retain the first run if its bit matches, otherwise move the second run to the front exactly once.",
+      "solution_variant": "forced-frontier-rle-greedy"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The correctness proof relies on the invariant that original runs carrying the same bit preserve their relative order and that merged runs never split.",
+      "solution_variant": "forced-frontier-rle-greedy"
+    }
+  ]
+}
+

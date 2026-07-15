@@ -1,0 +1,142 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "G",
+    "title": "Kevin and Teams",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "graphs",
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2061/G?locale=en",
+      "notes": "Original interactive statement, adaptive-interactor model, n-query limit, and manual hack format checked."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/topic/139246/en6",
+      "notes": "Official editorial revision with the full solution; confirmed the exact bound and the monochromatic-chain plus mixed-color-triplet construction."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/CF2061G",
+      "notes": "Chinese statement cross-check for the team condition, adaptive interaction, constraints, and hack encoding."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/-cchen-/p/18683280",
+      "notes": "Cross-checked the all-residue upper-bound coloring and the chain/triplet feasibility argument."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/peiwenjun/p/18686882",
+      "notes": "Cross-checked the mixed-triplet interpretation, stack implementation, edge orientation, and exact-output-size pitfall."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/302167352",
+      "notes": "Accepted C++20 submission inspected; confirms storing certified pairs for both colors, extending/popping the stack, and choosing a color with at least k pairs."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2061/G?locale=en",
+      "notes": "Independently proved the extremal coloring and partition invariant; exhaustively checked every adaptive response branch for 2 <= n <= 14."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "In a two-colored complete graph revealed by an adaptive edge oracle, determine the largest guaranteed monochromatic matching and construct one within n queries.",
+    "constraints": "Original interaction: 1 <= t <= 1e4, 2 <= n <= 1e5, sum n <= 1e5, and at most n edge queries per test; the interactor is adaptive. The manual hack format provides all n(n-1)/2 edge bits and bounds their total by 1e7. This review preserves the original oracle strategy.",
+    "core_idea": "Let K=floor((n+1)/3). Tightness follows by taking a blue clique A of size 2K, except size 2K+1 when n mod 3=1, and coloring every other edge red: the blue matching number is K, while every red edge meets B=V minus A and |B|<=K. For the lower bound and query strategy, process vertices once while maintaining a stack p_1,...,p_s whose consecutive queried edges all have one color c, plus disjoint removed triples. With at least two stack vertices, query the edge from the stack tail to the new vertex. The same color extends the chain; the opposite color removes the last two stack vertices and, together with the new vertex, creates a mixed triple containing one known edge of each color. A one-vertex stack starts a fresh chain with one query. At the end, if there are T triples and s stack vertices, every triple supplies one edge in either chosen color and the final chain supplies floor(s/2) disjoint c-edges. Since n=3T+s, T+floor(s/2) >= T+floor((s+1)/3)=K. Thus output any K certified pairs of color c, or either color when s<2. All decisions depend only on queried edges, so the proof remains valid against an adaptive interactor.",
+    "complexity": "O(n) strategy time, O(n) memory, and at most n-1 oracle queries per test. A manual-hack implementation additionally spends Theta(n^2) time reading the supplied adjacency string and typically Theta(n^2) input storage.",
+    "tricks": [
+      "recognize the exact two-color Ramsey threshold for a matching",
+      "maintain a monochromatic path as a stack",
+      "turn every color mismatch into a flexible three-vertex gadget containing one edge of each color",
+      "partition processed vertices into disjoint mixed triples and one live chain",
+      "derive the count from n=3T+s",
+      "use only certified queried edges so an adaptive interactor cannot invalidate the answer"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The proposed Ramsey-theory tag is new and requires main-agent taxonomy and WebUI-translation review before application.",
+      "When the final stack has fewer than two vertices, no chain edge should be read and either triple color may be selected; when pairing a longer stack, iterate only while the next vertex exists and output exactly K pairs.",
+      "The stated O(n) bound is for the original interactive strategy; the current manual hack wrapper necessarily pays for reading the quadratic adjacency encoding."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "monochromatic-chain-and-mixed-triples",
+      "summary": "Maintain a stack path with one edge color. A matching-color query appends the new vertex; a mismatch pops the last two vertices and records the old chain edge under color c and the new tail-to-vertex edge under color 1-c. At termination, append disjoint consecutive stack edges to the vector for the final chain color, choose a color vector containing at least K=floor((n+1)/3) pairs, and output its first K pairs. The extremal clique-versus-vertex-cover coloring proves that K+1 cannot be guaranteed.",
+      "complexity": "O(n) time, O(n) memory, and at most n-1 queries in the original interactive model.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/ramsey-theory",
+      "display_name": "Ramsey theory",
+      "importance": "primary",
+      "description": "Use unavoidable monochromatic substructures in every finite coloring, usually by proving matching lower and upper constructions for a Ramsey-type threshold.",
+      "parent": "math/combinatorics",
+      "created_reason": "Existing graph/matching and trick/worst-case-guarantee tags do not identify the reusable two-color extremal principle; this problem determines the exact Ramsey threshold for monochromatic matchings. Candidate requires main-agent taxonomy review.",
+      "status": "candidate",
+      "aliases": [
+        "ramsey",
+        "ramsey number",
+        "ramsey theory"
+      ],
+      "main_agent_review_required": true,
+      "evidence": "The answer K=floor((n+1)/3) is exactly an unavoidable-monochromatic-matching threshold in every red/blue coloring of K_n, with both a universal construction and a tight adversarial coloring.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "The required teams are a matching, and both the tight upper bound and the output construction reason directly about monochromatic matching size.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution explicitly constructs K vertex-disjoint same-color edges from a one-pass chain/triple decomposition.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "The original task requires an adaptive query strategy whose at most n-1 answers certify every output edge against an adaptive interactor.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "After every insertion, processed vertices are partitioned into disjoint mixed-color triples and one stack whose consecutive edges all share a color; this invariant proves correctness and the query bound.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "secondary",
+      "evidence": "The extremal coloring proves no larger answer is always possible, while the certified-edge invariant succeeds for every adaptive sequence of oracle replies.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    },
+    {
+      "tag": "trick/maximum-count-bound",
+      "importance": "secondary",
+      "evidence": "A clique of one color and a small vertex cover for the other gives the tight upper bound K, which the construction then meets.",
+      "solution_variant": "monochromatic-chain-and-mixed-triples"
+    }
+  ]
+}
+

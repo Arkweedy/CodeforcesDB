@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2061,
+    "title": "IAEPC Preliminary Contest (Codeforces Round 999, Div. 1 + Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2061,
+    "index": "H1",
+    "title": "Kevin and Stones (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "flows",
+      "graph matchings",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2061/problem/H1",
+      "notes": "Statement and constraints checked. Every operation moves every stone to a distinct neighboring vertex; H1 asks only whether the target configuration is reachable."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139246",
+      "notes": "The published editorial was consulted, but the H1/H2 section still displays \"Tutorial is loading...\" and the post says hints and code are WIP, so it supplied no usable proof."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/348822287",
+      "notes": "Inspected maspy's accepted H1 source. It special-cases equal states, finds saturating neighbor matchings for both endpoints, builds the bipartite double cover with DSU, and checks both possible target-layer parities."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Scarab/p/19265720",
+      "notes": "Used the H2 analysis to cross-check the equivalent component-count and bipartite-color conditions and the constructive sufficiency argument."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2061/submission/350474629",
+      "notes": "Inspected the accepted H2 construction that turns the H1 conditions into an explicit schedule, thereby confirming sufficiency rather than only necessity."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2061/problem/H1",
+      "notes": "Independently proved the matching and double-cover invariants. Exhaustive enumeration of every simple graph with n <= 5 and every equal-cardinality endpoint pair matched exact configuration-graph reachability in all 262702 cases."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an undirected graph and equally many stones in initial and target vertex sets, decide whether synchronized collision-free moves, where every stone must move to a neighbor each step, can transform the initial set into the target set.",
+    "constraints": "t <= 1000; n <= 2000 and m <= min(n(n-1)/2, 10000) per test; sum n <= 2000 and sum m <= 10000; the two configurations contain the same number of stones.",
+    "core_idea": "If the two configurations are identical, zero operations are valid and no mobility condition is needed. Otherwise, the first operation requires a matching that assigns every initially occupied vertex a distinct neighbor, and reversing the final operation gives the same requirement for the target set. Build the bipartite double cover D with vertices (v,0),(v,1) and cross-layer copies of every original edge. A walk of length k starting in layer 0 ends in layer p=k mod 2, and no stone can leave its connected component of D. Therefore, for one global p in {0,1}, every component of D must contain equally many initial stones in layer 0 and target stones in layer p. These conditions are also sufficient: the two endpoint matchings can be lifted into D, their alternating cycles removed, and their union extended to a forest on which the H2 construction routes all stones. Equivalently, a non-bipartite original component gives one double-cover component, while a bipartite component splits into two and enforces either preserved or swapped color-class counts; all bipartite components must agree on the same time parity.",
+    "complexity": "O(m sqrt(n) + (n + m) alpha(n)) time and O(n + m) memory per test case using Hopcroft-Karp and DSU.",
+    "tricks": [
+      "Accept identical configurations immediately because a zero-length sequence is legal.",
+      "Characterize whether a configuration can make one step by a matching saturating all occupied vertices.",
+      "Lift the graph into two parity layers so walk parity becomes ordinary connectivity.",
+      "Use one global operation-count parity across all connected components.",
+      "Interpret split versus connected double-cover components as the bipartite versus non-bipartite cases."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bipartite-double-cover-matching-criterion",
+      "summary": "After special-casing equal states, find saturating neighbor matchings for the initial and target occupied sets. Build the two-layer double cover, then accept iff for p=0 or p=1 every double-cover component has equal initial-layer-0 and target-layer-p stone counts.",
+      "complexity": "O(m sqrt(n) + (n + m) alpha(n)) time and O(n + m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/bipartite-double-cover",
+      "display_name": "Bipartite double cover",
+      "importance": "primary",
+      "description": "Duplicate every graph vertex into two parity layers and replace each original edge by cross-layer copies, using the resulting bipartite cover to encode even/odd walks and parity-sensitive connectivity.",
+      "parents": [
+        "graph/layered-graph",
+        "graph/bipartite-graph"
+      ],
+      "created_reason": "The existing layered-graph and bipartite-graph tags do not identify the canonical parity double cover that is the decisive reachability model in both versions. Main-agent taxonomy review is required before accepting this candidate; add a WebUI translation if accepted.",
+      "status": "candidate",
+      "aliases": [
+        "bipartite-double-cover",
+        "canonical-double-cover",
+        "kronecker-double-cover",
+        "parity-double-cover"
+      ],
+      "evidence": "Reachability is characterized by connected-component balances between initial layer 0 and target layer p in the bipartite double cover.",
+      "solution_variant": "bipartite-double-cover-matching-criterion"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "For every nonzero solution, both endpoint configurations must admit an injective assignment from occupied vertices to distinct neighbors; two saturating bipartite matchings test exactly this condition.",
+      "solution_variant": "bipartite-double-cover-matching-criterion"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "All stones take the same number of steps, so one global parity p determines which double-cover layer contains every target vertex.",
+      "solution_variant": "bipartite-double-cover-matching-criterion"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "primary",
+      "evidence": "Stone counts are conserved independently inside every connected component of the double cover, and equality of these component balances is the central reachability test.",
+      "solution_variant": "bipartite-double-cover-matching-criterion"
+    },
+    {
+      "tag": "graph/flow",
+      "importance": "incidental",
+      "evidence": "The two saturation checks can be expressed as unit-capacity max-flow instances, explaining the official flow tag, but the reviewed implementation uses bipartite matching directly.",
+      "solution_variant": "bipartite-double-cover-matching-criterion"
+    }
+  ]
+}
+
