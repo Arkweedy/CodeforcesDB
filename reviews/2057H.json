@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "H",
+    "title": "Coffee Break",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2057/H",
+      "notes": "阅读完整题面、样例与约束。操作相当于保留当前位置人数的奇偶性，并把每一对学生分别向左右移动一人。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "官方 H 部分的文字教程仍显示 Tutorial is loading，仅提供线性栈实现；用于核对正反两遍扫描、空位栈转移和最终合并公式。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/degpb7fy",
+      "notes": "独立题解把原操作拆成每次从一个位置取走 2，并向左右各加 1；详细解释了稳定 0/1 状态中最近空位的移动、消失及栈维护。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/68gstrzs",
+      "notes": "第二篇独立题解交叉确认前缀向右传递量、反转后处理另一方向，以及无空位时按长度整块跳过的线性实现。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2057/H",
+      "notes": "将过程建模为路径上阈值为 2 的 chip-firing，并用阿贝尔稳定化解释操作顺序无关。对 n<=5、每个 a_i 属于 [0,3] 的全部 1364 个数组进行状态图穷举，所有目标位置的最大值均与线性算法一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "一条路径上每个位置有若干学生。操作一个位置会保留至多一人，并把其余学生成对平分到相邻位置。对每个位置分别求经过任意次操作后能够聚集的最大人数。",
+    "constraints": "t<=10000，n<=10^6，所有测试的 sum(n)<=10^6，0<=a_i<=10^9。答案可能达到 10^15，必须使用 64 位整数，并要求整体线性复杂度。",
+    "core_idea": "把一次对 x 人的操作拆成 floor(x/2) 次基本 firing：当前位置减 2，左右邻居各加 1。固定目标 k 后，存在最优方案不 firing k；把 k 当作吸收边界，左右两侧可以独立稳定化，最后答案是 a_k 加两侧流入量。有限路径上的基本 firing 会终止且彼此交换，因此完全稳定后的 0/1 状态和流入边界的数量与操作顺序无关。在线计算一个方向的所有前缀流量：处理位置 i 时，先把前一前缀流出的学生并入 a_i，并把此前稳定状态中值为 0 的位置按升序存入栈。若最近空位为 j，则每加入一个学生都会让该空位向右移动一步，同时向右边界流出一人；i-j+1 个学生会让这个空位被填满并从栈中删除，其中 i-j 人流出。若当前没有空位，则每 i+1 个学生形成一个完整周期：i 人向右流出、一人从左边界损失，状态重新全为 1；不足一个周期的余数可直接确定新空位。正向扫描得到每个前缀向右的最大流量，反转数组再扫描得到后缀向左的流量，两者与原值相加即为每个位置的答案。",
+    "complexity": "O(n) time and O(n) memory per test case; O(sum(n)) overall.",
+    "tricks": [
+      "把一次批量操作拆成可交换的减 2、左右各加 1 的基本 firing。",
+      "固定目标后不操作目标，把它作为吸收边界，从而分离左右两侧贡献。",
+      "完全稳定后的每个非边界位置只可能是 0 或 1，只需维护所有 0 的位置。",
+      "最近空位每右移一步就产生一个向目标方向的流量；到达当前末端后再用一个学生填满并删除。",
+      "没有空位时按前缀长度加一为周期批量跳过，避免逐个处理最多 10^9 个学生。",
+      "对反转数组运行同一算法，复用单向扫描计算另一侧贡献。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "abelian-sandpile-zero-stack-scan",
+      "summary": "把目标当作吸收点，将两侧分别稳定化。单向扫描时用栈维护稳定 0/1 前缀中的空位；批量模拟新加入学生引起的空位右移、填满和无空位周期。正反各扫描一次后合并贡献。",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/chip-firing",
+      "display_name": "Chip firing",
+      "description": "把顶点上的若干筹码按固定规则分发给邻居，并利用合法 firing 的交换性、终止性或唯一稳定态分析结果；仅在该模型是证明或算法核心时使用。",
+      "parent": "math",
+      "created_reason": "现有 taxonomy 没有 chip-firing 或 Abelian sandpile 标签，而本题的顺序无关性、0/1 稳定态和边界流量都直接来自这一经典模型，普通 greedy 或 simulation 标签无法表达该核心。",
+      "status": "candidate",
+      "aliases": [
+        "chip-firing",
+        "chip-firing-game",
+        "abelian-sandpile",
+        "sandpile"
+      ],
+      "importance": "primary",
+      "evidence": "原操作完全等价于若干次顶点减 2、两个邻点各加 1 的 firing；阿贝尔稳定化性质使两侧最终流入量与 firing 顺序无关。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "primary",
+      "evidence": "线性扫描用栈保存稳定状态中所有空位，并只访问最近空位；空位被填满时从栈顶删除，未填满时直接移动栈顶位置。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    },
+    {
+      "tag": "trick/batch-simulation",
+      "importance": "primary",
+      "evidence": "a_i 可达 10^9，必须一次处理空位到末端的整段移动，以及无空位时长度 i+1 的完整周期，不能逐个模拟学生或 firing。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定目标后选择不操作目标，并把其他位置持续 firing 到稳定；这同时最大化两个独立方向能够流入目标的数量。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "每个新位置至多引入常数个空位记录，空位一旦被填满只会弹出一次，因此所有 while 循环的栈操作总数为 O(n)。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "每轮前缀处理后维护所有已处理位置均为 0/1，栈恰好按位置记录其中的 0；所有批量转移都保持这一表示。",
+      "solution_variant": "abelian-sandpile-zero-stack-scan"
+    }
+  ]
+}

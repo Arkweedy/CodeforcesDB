@@ -1,0 +1,137 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "G",
+    "title": "Secret Message",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2057/problem/G",
+      "notes": "Read the canonical statement and constraints. The free cells may be disconnected or have holes; perimeter counts every side adjacent to a non-free or out-of-board cell. Confirmed t <= 80000 and total grid area <= 2e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Inspected the official reference implementation. It colors the integer lattice by (x+2y) mod 5, adds each free cell to its own-color candidate and once per boundary edge to the outside endpoint's color candidate, then outputs the shortest candidate."
+    },
+    {
+      "source_type": "accepted_submission",
+      "url": "https://codeforces.com/contest/2057/submission/299642485",
+      "notes": "Inspected jiangly submission 299642485, accepted in C++23. It uses the equivalent color (2x+y) mod 5, starts from one residue class, greedily adds every still-undominated free cell, and accepts a candidate when 5*cnt <= s+p. This independently confirms the charging invariant."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/k8ub9yyp",
+      "notes": "Cross-checked the five-center, total-weight s+p, and pigeonhole proof, including boundary-edge multiplicity and a componentwise choice of residue. Its recursive DFS implementation has stack-depth risk at 2e6 cells and should not be copied verbatim."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.luogu.com.cn/article/nc3nukmo",
+      "notes": "Independent concise write-up confirms the (x+2y) mod 5 coloring and selecting the minimum area-plus-perimeter residue class."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2057/problem/G",
+      "notes": "Re-proved the closed-neighborhood residue invariant and exhaustively checked both the direct boundary construction and accepted greedy-completion construction on all 74954 grid masks with 1 <= n,m <= 4, including empty grids, holes, and out-of-board boundary edges."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Given an arbitrary set A of free cells in a rectangular grid, output a dominating set S of the induced 4-neighbor grid graph whose size is at most (s+p)/5, where s is the number of free cells and p is their geometric perimeter.",
+    "constraints": "1 <= t <= 80000, 1 <= n,m <= 2e6, and the sum of n*m over all tests is at most 2e6. The required complexity is linear in the input and output size. Perimeter sides against both '.' cells and the exterior of the rectangle must be counted.",
+    "core_idea": "Color every cell of the infinite integer lattice by c(x,y)=(x+2y) mod 5. For any cell x, its closed 4-neighborhood has colors c(x), c(x)+/-1, and c(x)+/-2, hence contains each residue exactly once. For residue r define candidate S_r as follows: include every free r-colored cell; additionally, for every boundary edge x-z with x free, z non-free, and c(z)=r, include x. For a fixed x these cases cannot duplicate it because its five closed-neighborhood colors are distinct. Every free x is dominated: its unique r-colored closed neighbor is either a free cell already selected, or is the non-free endpoint of a boundary edge and then x itself is selected. Across all five candidates, each free cell contributes once and each boundary edge contributes once, so sum_r |S_r|=s+p. The pigeonhole principle gives some |S_r| <= (s+p)/5. A linear implementation first counts the five candidate sizes, chooses the minimum residue, and in a second scan marks exactly the corresponding free cells.",
+    "complexity": "O(nm) time per test case and O(1) auxiliary counters beyond the stored O(nm) grid/output; O(sum(nm)) over all tests.",
+    "tricks": [
+      "Use a perfect radius-1 five-coloring of the square lattice: every closed 4-neighborhood contains all five residues exactly once.",
+      "Double-count five candidate sizes so their sum is exactly s+p, then take the minimum by pigeonhole.",
+      "Count boundary edges with multiplicity; merging them by distinct exterior cell would invalidate both the s+p identity and the domination construction.",
+      "Treat out-of-board coordinates as ordinary non-free lattice cells and normalize negative residues in languages where negative modulo stays negative.",
+      "In the accepted greedy variant, every added undominated cell charges to its own unique edge toward the missing r-colored exterior neighbor."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "global-five-residue-boundary-charging",
+      "summary": "Count C_r as the number of free cells of color r plus the number of boundary edges whose non-free endpoint has color r. Choose a minimum r, then mark a free cell x iff x has color r or an incident boundary edge to an r-colored non-free neighbor. The closed-neighborhood coloring proves domination and sum_r C_r=s+p proves the size bound.",
+      "complexity": "O(nm) time and O(1) auxiliary space beyond the grid/output.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "greedy-completion-from-one-residue",
+      "summary": "For each residue r, initially select all free cells of color r, scan the remaining free cells, and select any cell not yet dominated. Such a cell's unique r-colored closed neighbor must be outside A, so the addition injectively charges to that cell's boundary edge toward the missing neighbor. Thus this candidate is no larger than C_r; try all five residues and output one satisfying 5*|S| <= s+p. This is the inspected accepted-code variant.",
+      "complexity": "O(5nm)=O(nm) time and O(nm) working space for a candidate grid.",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "componentwise-residue-selection",
+      "summary": "Flood-fill each 4-connected free component and apply the same five candidate counts to that component and its boundary, allowing a different minimum residue per component. Perimeters and areas add across components, so the union keeps the global bound and may be smaller. The proof is sound, but an iterative stack/queue is required because the linked recursive DFS can overflow at the maximum area.",
+      "complexity": "O(nm) time and O(nm) component-label/traversal space.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dominating-set",
+      "display_name": "Dominating set",
+      "importance": "primary",
+      "evidence": "The required output is exactly a dominating set of the 4-neighbor graph induced by free cells, and the five-residue construction proves every free vertex is selected or adjacent to a selected vertex.",
+      "solution_variant": "global-five-residue-boundary-charging",
+      "description": "Select a vertex subset D such that every graph vertex belongs to D or has a neighbor in D. Use for vertex-domination problems, not vertex cover or edge cover.",
+      "parent": "graph",
+      "created_reason": "The output object is canonically a dominating set, while the current taxonomy has no domination tag. Main-agent taxonomy review is explicitly required before accepting this candidate; add a WebUI translation if accepted.",
+      "status": "candidate",
+      "aliases": [
+        "dominating set",
+        "vertex domination",
+        "graph domination"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task asks for any bounded dominating set, and the solution explicitly constructs one by choosing one of five lattice residue patterns.",
+      "solution_variant": "global-five-residue-boundary-charging"
+    },
+    {
+      "tag": "trick/grid-coloring",
+      "importance": "primary",
+      "evidence": "The decisive structure is the modular five-coloring c(x,y)=(x+2y) mod 5, whose five closed-neighborhood cells have pairwise distinct colors.",
+      "solution_variant": "global-five-residue-boundary-charging"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "primary",
+      "evidence": "After double-counting proves that the five valid candidate sizes sum to s+p, pigeonhole guarantees one candidate has size at most (s+p)/5.",
+      "solution_variant": "global-five-residue-boundary-charging"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "The perfect local coloring invariant follows from the congruence changes 0,+/-1,+/-2 modulo 5 across a cell and its four side-neighbors.",
+      "solution_variant": "global-five-residue-boundary-charging"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "incidental",
+      "evidence": "A componentwise refinement may flood-fill free components before choosing residues independently; DFS is not needed by the simpler global construction.",
+      "solution_variant": "componentwise-residue-selection"
+    }
+  ]
+}

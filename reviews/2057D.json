@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "D",
+    "title": "Gifts Order",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "greedy",
+      "implementation",
+      "math",
+      "matrices"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2057/D",
+      "notes": "Read the full statement and constraints: n,q<=2*10^5 per test, total n and total q <=2*10^5, point assignments, and an answer before updates and after every update."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Official implementation confirms the segment-tree state over a_i-i and a_i+i and the two oriented cross-child merge formulas."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/m9oqtuff",
+      "notes": "Cross-checked the endpoint-extrema reduction and algebraic transformation into two ordered pair-difference maxima."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://drken1215.hatenablog.com/entry/2025/01/06/121520",
+      "notes": "Reliable independent writeup used to verify the associative segment-tree monoid storing min, max, and the best right-minus-left ordered difference."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2057/D",
+      "notes": "Independently proved interval shrinking and both merge recurrences; compared the monoid answer with brute force on 2,700 random arrays."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2057D",
+      "notes": "Additional Luogu solution index; the listed article in sources was the consulted solution."
+    }
+  ],
+  "annotation": {
+    "summary": "Maintain an array under point assignments and report max over all subsegments of max(a_l..a_r)-min(a_l..a_r)-(r-l), initially and after every update.",
+    "constraints": "n,q<=2*10^5 per test and total n,total q<=2*10^5; O(n^2) endpoint enumeration is impossible, while O(log n) per update is intended.",
+    "core_idea": "For any chosen interval, shrink its ends to positions attaining its maximum and minimum. The value range stays unchanged and the length penalty cannot increase, so some optimum has its extrema at the two endpoints. Thus the answer is max over i<j of |a_i-a_j|-(j-i). With x_i=a_i-i and y_i=a_i+i, the two orientations become x_j-x_i and y_i-y_j. A segment-tree node stores min/max x, min/max y, bestX=max_{i<j}(x_j-x_i), and bestY=max_{i<j}(y_i-y_j). Merging ordered children L,R adds cross candidates R.maxX-L.minX and L.maxY-R.minY; a point assignment only rebuilds one root path.",
+    "complexity": "O(n+q log n) time and O(n) memory per test case.",
+    "tricks": [
+      "Shrink an interval to the positions of its minimum and maximum.",
+      "Absorb the distance penalty into a_i-i and a_i+i.",
+      "Keep both endpoint orientations because the larger array value may lie on either side.",
+      "Encode ordered pair maxima as an associative segment-tree monoid."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "oriented-pair-segment-tree",
+      "summary": "Build one segment tree whose node combines the two transformed sequences. Each node stores four extrema and two best ordered differences; answer the whole array from the root and handle each assignment with a point update.",
+      "complexity": "O(n+q log n) time, O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The required online point assignments and global ordered-pair maxima are maintained by an associative segment-tree node and O(log n) root-path rebuilds.",
+      "solution_variant": "oriented-pair-segment-tree"
+    },
+    {
+      "tag": "trick/endpoint-reduction",
+      "importance": "primary",
+      "evidence": "Shrinking any interval to positions of its maximum and minimum preserves the range and reduces the penalty, reducing all subsegments to endpoint pairs.",
+      "solution_variant": "oriented-pair-segment-tree"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "secondary",
+      "evidence": "The root answer is reported after each point assignment while preserving update order; no query reordering is needed.",
+      "solution_variant": "oriented-pair-segment-tree"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "The distance penalty is algebraically separated into x_i=a_i-i and y_i=a_i+i, yielding two oriented difference objectives.",
+      "solution_variant": "oriented-pair-segment-tree"
+    }
+  ]
+}

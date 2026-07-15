@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "C",
+    "title": "Trip to the Olympiad",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "constructive algorithms",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2057/C",
+      "notes": "Read the full statement and constraints: 0 <= l,r < 2^30 and r-l>1; three distinct values in [l,r] must maximize the sum of their three pairwise XORs."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Official Hello 2025 editorial implementation; confirms the highest-differing-bit boundary construction a=l|((1<<k)-1), b=a+1, and a distinct endpoint as c."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/kqve3ez1",
+      "notes": "Consulted for the per-bit contribution argument and a materially different construction that fixes l and r and greedily builds the third number bit by bit."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2057/C",
+      "notes": "Independently proved the per-bit upper bound and boundary-pair optimality; exhaustively checked both constructions on all 1,953 intervals 0<=l<r<64 with r-l>1."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2057C",
+      "notes": "Additional Luogu solution index; not needed beyond the consulted article."
+    }
+  ],
+  "annotation": {
+    "summary": "For each interval [l,r], output three pairwise distinct integers that maximize (a xor b)+(b xor c)+(a xor c).",
+    "constraints": "Up to 10^4 tests; 0<=l,r<2^30 and r-l>1, so a fixed 30-bit construction is required.",
+    "core_idea": "Let k be the most significant set bit of l xor r. Every value in [l,r] has the same prefix above k, so those bits can never contribute. At each bit i<=k, the three pairwise XORs contribute either 0 (all three bits equal) or exactly 2*2^i (both bit values occur), giving the upper bound 2^(k+2)-2. Set a=l|((1<<k)-1), the largest interval value with bit k=0, and b=a+1, the smallest with bit k=1. Then a and b are complementary on every bit 0..k, so every relevant bit reaches its upper bound regardless of the third value. Choose c=l if a!=l, otherwise c=r; r-l>1 guarantees distinctness.",
+    "complexity": "O(log C) time per test to locate the highest differing bit (O(1) for the fixed 30-bit domain), O(1) memory.",
+    "tricks": [
+      "Decompose the objective independently by bit.",
+      "Use the highest bit where l and r differ to identify the only contributing suffix.",
+      "Choose the adjacent numbers on opposite sides of that binary boundary; their suffixes are complements.",
+      "Once two numbers differ at every relevant bit, any valid distinct third number preserves the optimum."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "boundary-complement-pair",
+      "summary": "Official construction: find k=msb(l xor r), choose the largest value a with the common prefix and bit k=0, choose b=a+1, then use a distinct endpoint as c. The pair a,b alone forces maximum contribution at every possible bit.",
+      "complexity": "O(log C) time, O(1) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "fixed-endpoints-bit-greedy",
+      "summary": "Fix two team members as l and r. For every low bit where l and r agree, force the third number's bit to the opposite value; for bits where they differ, greedily choose bits while maintaining l<c<r. This also makes every bit up to msb(l xor r) nonconstant.",
+      "complexity": "O(log C) time, O(1) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/highest-differing-bit",
+      "importance": "primary",
+      "evidence": "k=msb(l xor r) determines the common immutable prefix and the full suffix whose per-bit upper bounds can be saturated.",
+      "solution_variant": "boundary-complement-pair"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly constructing the optimal boundary pair and a guaranteed distinct third value, with no search over triples.",
+      "solution_variant": "boundary-complement-pair"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The proof and construction operate on binary bits, using l xor r, suffix masks, and complementary bit patterns.",
+      "solution_variant": "boundary-complement-pair"
+    },
+    {
+      "tag": "algorithm/bitmask/bitwise-greedy",
+      "importance": "secondary",
+      "evidence": "The alternative construction fixes l,r and chooses the third number's bits from high to low while preserving its interval bounds.",
+      "solution_variant": "fixed-endpoints-bit-greedy"
+    },
+    {
+      "tag": "math",
+      "importance": "secondary",
+      "evidence": "A per-bit counting argument proves the global upper bound 2^(k+2)-2 and certifies that the construction attains it.",
+      "solution_variant": "boundary-complement-pair"
+    }
+  ]
+}

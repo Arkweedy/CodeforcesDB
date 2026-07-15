@@ -1,0 +1,133 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "E1",
+    "title": "Another Exercise on Graphs (Easy Version)",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "dp",
+      "dsu",
+      "graphs",
+      "shortest paths",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2057/E1",
+      "notes": "Read the full easy-version statement and constraints: n<=400, m<=min(400,n(n-1)/2), sums of n and m <=400, sum q<=3*10^5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Official E1 implementation sorts all m edges, starts from unweighted all-pairs distances, applies an O(n^2) APSP relaxation for every edge changed from cost 1 to 0, stores every state, and binary-searches queries."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2057/submission/301679582",
+      "notes": "Inspected accepted E1 code: groups equal weights, applies endpoint Floyd relaxations for every edge in the group, stores one APSP matrix per distinct threshold, and binary-searches the first distance <=k-1."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Independent E1/E2 explanation cross-checking the threshold-to-0/1-shortest-path equivalence and O(m n^2) easy preprocessing."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Hstry/articles/18758874",
+      "notes": "Independent writeup confirms f[threshold][a][b], monotone binary search, and the transition from E1's all-edge sweep to E2's DSU compression."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2057/E1",
+      "notes": "Independently proved the threshold equivalence and one-edge APSP recurrence; brute-checked kth-largest path answers and incremental matrices on 480 random connected graphs."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2057E1",
+      "notes": "Additional Luogu solution index; not used because the consulted editorial, accepted code, and independent blogs were sufficient."
+    }
+  ],
+  "annotation": {
+    "summary": "Easy version: for each (a,b,k), minimize the kth-largest edge weight over all a-b paths; the sparse bound is m<=400 and total m<=400.",
+    "constraints": "n<=400, m<=min(400,n(n-1)/2), q<=3*10^5; sums of n and m are <=400 and sum q<=3*10^5. This permits O(m n^2) preprocessing and O(log m) queries.",
+    "core_idea": "For a candidate threshold X, give each edge cost 0 if w<=X and 1 otherwise. A path's new cost is exactly its number of edges heavier than X, so its kth-largest edge is <=X iff that cost is at most k-1. Therefore the query answer is the smallest X with d_X(a,b)<k. Initially all edges cost 1, so compute unweighted APSP by Floyd-Warshall. Sort edges by weight and turn them to cost 0. After inserting zero edge (u,v), any new shortest path uses it at most once, hence d'(i,j)=min(d(i,j),d(i,u)+d(v,j),d(i,v)+d(u,j)) in O(n^2). Store a matrix after each edge or equal-weight group. Distances are nonincreasing with X, so binary-search the first stored state with distance <k.",
+    "complexity": "O(n^3+m n^2+m log m+q log m) time and O((m+1)n^2+m) memory.",
+    "tricks": [
+      "Convert kth-largest-on-a-path into counting edges above a threshold.",
+      "Represent the thresholded graph with 0/1 edge costs.",
+      "Update all-pairs distances in O(n^2) after one edge changes from 1 to 0.",
+      "Exploit monotonicity in the sorted threshold states for every query.",
+      "The easy-specific m<=400 bound allows retaining all m APSP snapshots."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "easy-all-edge-apsp-snapshots",
+      "summary": "Easy-only preprocessing: sort all edges, perform an O(n^2) incremental Floyd relaxation for every edge (or weight group), retain all threshold distance matrices, and binary-search each query's first feasible threshold.",
+      "complexity": "O(n^3+m n^2+m log m+q log m) time, O((m+1)n^2) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "Each query is reduced to the all-pairs shortest number of above-threshold edges in a 0/1 weighted graph.",
+      "solution_variant": "easy-all-edge-apsp-snapshots"
+    },
+    {
+      "tag": "graph/shortest-path/floyd-warshall",
+      "importance": "primary",
+      "evidence": "The solution computes initial APSP with Floyd-Warshall and uses its O(n^2) one-edge insertion recurrence for every threshold state.",
+      "solution_variant": "easy-all-edge-apsp-snapshots",
+      "description": "Use Floyd-Warshall all-pairs shortest paths, including Floyd-style O(n^2) relaxations after inserting one nonnegative edge, as the central engine on a small graph.",
+      "parent": "graph/shortest-path",
+      "created_reason": "The existing graph/shortest-path tag is too broad to retrieve small-n APSP and incremental-Floyd problems such as both CF2057E versions. Main-agent taxonomy review is required before creating this candidate.",
+      "status": "candidate",
+      "aliases": [
+        "floyd",
+        "floyd-warshall",
+        "incremental floyd-warshall"
+      ],
+      "main_agent_review": "required"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "As X increases, more edges become zero and every d_X(a,b) is nonincreasing, making the first state with d_X<k well-defined and searchable.",
+      "solution_variant": "easy-all-edge-apsp-snapshots"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "Each of up to 3*10^5 queries binary-searches the monotone sequence of stored threshold distances.",
+      "solution_variant": "easy-all-edge-apsp-snapshots"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Edges are processed in nondecreasing weight so each stored state corresponds to a candidate answer threshold.",
+      "solution_variant": "easy-all-edge-apsp-snapshots"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "All threshold states are precomputed once from sorted edges before the large query batch is answered.",
+      "solution_variant": "easy-all-edge-apsp-snapshots"
+    }
+  ]
+}

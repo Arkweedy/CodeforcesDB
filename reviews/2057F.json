@@ -1,0 +1,153 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "F",
+    "title": "Formation",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://mirror.codeforces.com/problemset/problem/2057/F?locale=en",
+      "notes": "Read the full statement, the initially comfortable condition 2*a_i >= a_{i+1}, all bounds, and the per-query at-most-k objective."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Official Hello 2025 editorial. Its prose was not rendered, but both included accepted-style implementations were inspected: the primary budget-event sweep with one multiset per propagation depth, and the alternative target-interval envelope with parallel binary search."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18702724",
+      "notes": "Cross-checked the piecewise minimum-cost function, the O(log V) propagated suffix, budget-axis breakpoints, heap/multiset sweep, and O(n log V log n + q log^2 V) implementation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Sktn0089/p/18662891",
+      "notes": "Cross-checked the alternative derivation by fixed affected length: each endpoint supplies a target-height interval and suffix-sum weight, then sorted midpoint queries scan the piecewise maxima in parallel."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2057/submission/380017162",
+      "notes": "Accepted C++23 submission by NanguX inspected directly (1640 ms, 147588 KB). It independently confirms 31 propagation levels, prefix/suffix sums, sorted queries, per-depth multisets, and the half-open endpoint K_m+1 that avoids breakpoint tie errors."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://mirror.codeforces.com/problemset/problem/2057/F?locale=en",
+      "notes": "Independently proved the minimal propagated-suffix construction and monotone budget breakpoints. A local read-only randomized checker compared the event-sweep predicate with direct min_i sum_d max(0, ceil(x/2^d)-a_{i-d}) on 50,000 random comfortable arrays/query thresholds; every case matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2057F",
+      "notes": "Candidate requested by the workflow, but the solution page returned an internal error during this review and was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "For each pizza budget k, maximize the final array maximum after only increasing entries while preserving 2*b_i >= b_{i+1}.",
+    "constraints": "1 <= t <= 10^4; 1 <= n,q <= 5*10^4 per test; sums of n and q are each at most 5*10^4; 1 <= a_i,k <= 10^9; the input array already satisfies 2*a_i >= a_{i+1}. Any answer is at most max(a)+k <= 2*10^9, so only 31 halving levels matter.",
+    "core_idea": "Fix a threshold x and a position r that will reach x. The cheapest valid construction leaves everything to the right unchanged and, moving left, sets b_{r-d}=max(a_{r-d},ceil(x/2^d)); raising unrelated positions cannot help. Initial comfort implies the positive deficits form one contiguous suffix ending at r. If its active length is m, define H_m(x)=sum_{d=0}^{m-1} ceil(x/2^d) and S_{r,m}=sum_{p=r-m+1}^{r} a_p, so its cost is H_m(x)-S_{r,m}. In the inverse view for a fixed budget, endpoint r uses length m between consecutive breakpoints. With K_{r,0}=0 and, when r-m exists, K_{r,m}=H_m(2^m*a_{r-m})-S_{r,m}=(2^(m+1)-2)*a_{r-m}-S_{r,m}, length m is active for K_{r,m-1} <= k <= K_{r,m}; the last breakpoint is infinity. Moreover K_{r,m}-K_{r,m-1}=(2^m-1)*(2*a_{r-m}-a_{r-m+1}) >= 0, so these are ordered intervals. Sweep all interval endpoints and query budgets in increasing k. For every m maintain the maximum active S_{r,m}. At a query k, threshold x is feasible exactly when some m satisfies H_m(x)-maxS_m(k) <= k. This predicate is monotone in x, so binary-search the answer.",
+    "complexity": "Let L=31=O(log V). The primary solution uses O(n*L*log(n*L) + n*L*log n + q*L*log V) time, conventionally written O(n log V log n + q log^2 V), and O(n log V) memory.",
+    "tricks": [
+      "invert the query: characterize the affected suffix length by budget breakpoints rather than by the binary-searched height",
+      "separate each cost into the universal H_m(x) minus an endpoint-dependent suffix sum",
+      "use initial comfort to prove both contiguous deficit propagation and monotone breakpoints",
+      "at an equal breakpoint, either process insertion before query before deletion for closed intervals or use a half-open end K_m+1 consistently",
+      "use signed 64-bit arithmetic for geometric coefficients, suffix sums, costs, and infinity sentinels"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The official editorial prose rendered only as 'Tutorial is loading'; correctness was reconstructed from both official implementations, then cross-checked against two independent explanations, an accepted submission, an algebraic proof, and 50,000 randomized predicate comparisons.",
+      "The main implementation risk is an off-by-one at K_m. Mixing the official closed-interval event order with the accepted code's half-open K_m+1 convention produces one-budget errors.",
+      "Implementations must keep the propagation-depth convention consistent: m is a count of affected positions, while several sources store it zero-based. Using 31 levels and 1LL shifts is the conservative choice for the 2*10^9 answer bound.",
+      "The Codeforces official tag dp was not retained: the reviewed solutions use a closed-form propagated-suffix cost plus offline envelopes, not a dynamic-programming state transition.",
+      "The proposed algorithm/search/parallel-binary-search tag is new and requires main-agent taxonomy approval plus WebUI translation review before application."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "budget-sweep-per-query-binary-search",
+      "summary": "For every endpoint r and active length m, emit the budget interval between consecutive propagation breakpoints with weight S_{r,m}. Sweep these events together with all query budgets, maintaining a maximum multiset of active suffix sums for each m. At each query, binary-search x and test min_m(H_m(x)-maxS_m)<=k in O(L).",
+      "complexity": "O(n log V log n + q log^2 V) time and O(n log V) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "target-envelope-parallel-binary-search",
+      "summary": "For each length m, derive every endpoint's target-height interval on which its m-term formula is valid, sweep interval endpoints to build the piecewise maximum suffix sum maxS_m(x), and run all query answer searches in synchronized rounds. Sorting current midpoints lets one pointer per m scan the precomputed change lists and evaluate every feasibility check without an extra logarithmic lookup.",
+      "complexity": "O(n log V log n + (n+q) log^2 V + q log V log q) time in the official implementation and O(n log V) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "For each budget k, feasibility of reaching threshold x is monotone because every H_m(x) is nondecreasing; the primary solution binary-searches the largest feasible x.",
+      "solution_variant": "budget-sweep-per-query-binary-search"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "All O(n log V) budget-interval starts and ends are sorted with query budgets, and the active maximum suffix sum for each propagation length is maintained during one ordered sweep.",
+      "solution_variant": "budget-sweep-per-query-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "Initial comfort makes deficits a contiguous left-propagating suffix and gives K_m-K_{m-1}=(2^m-1)(2a_{r-m}-a_{r-m+1})>=0, which is what turns each endpoint/length into one budget interval.",
+      "solution_variant": "budget-sweep-per-query-binary-search"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "Queries are reordered by budget and answered while sharing the same preprocessed event sweep; no online per-query rebuild is performed.",
+      "solution_variant": "budget-sweep-per-query-binary-search"
+    },
+    {
+      "tag": "data-structure/ordered-multiset",
+      "importance": "secondary",
+      "evidence": "The primary implementation needs duplicate-safe insertion/deletion of active suffix sums and retrieval of the current maximum independently for each propagation length.",
+      "solution_variant": "budget-sweep-per-query-binary-search"
+    },
+    {
+      "tag": "algorithm/search/parallel-binary-search",
+      "display_name": "Parallel binary search",
+      "importance": "secondary",
+      "description": "Run many monotone binary searches in synchronized rounds, ordering their current midpoints so shared offline state or monotone scans can answer all feasibility checks in a batch; use when this batching, not merely independent binary search, removes a logarithmic factor.",
+      "parent": "algorithm/search/binary-search-on-answer",
+      "created_reason": "The existing binary-search-on-answer tag covers independent threshold searches but does not identify the reusable synchronized multi-query technique. The official alternative for CF2057F explicitly uses parallel binary search to share scans of the target-height envelopes and reduce an extra logarithmic factor. Candidate requires main-agent taxonomy and WebUI-translation review.",
+      "status": "candidate",
+      "aliases": [
+        "parallel binary search",
+        "parallel bs",
+        "pbs",
+        "offline binary search"
+      ],
+      "main_agent_review_required": true,
+      "evidence": "The alternative advances all q answer searches round by round, orders the current midpoints, and evaluates them together against shared piecewise max-suffix-sum envelopes.",
+      "solution_variant": "target-envelope-parallel-binary-search"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "Within each parallel-binary-search round, current midpoints are processed in sorted order while one monotone pointer per propagation length advances through its envelope breakpoints.",
+      "solution_variant": "target-envelope-parallel-binary-search"
+    }
+  ]
+}

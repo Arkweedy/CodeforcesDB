@@ -1,0 +1,168 @@
+{
+  "contest": {
+    "contest_id": 2057,
+    "title": "Hello 2025"
+  },
+  "problem": {
+    "contest_id": 2057,
+    "index": "E2",
+    "title": "Another Exercise on Graphs (hard version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "graphs",
+      "shortest paths",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2057/E2",
+      "notes": "Read the full hard-version statement and constraints: n<=400, dense m up to n(n-1)/2, sum n<=400, and sum q<=3*10^5; unlike E1 there is no m<=400 sum bound."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138119",
+      "notes": "Official E2 implementation confirms the hard optimization: process sorted edges with DSU, retain only component-merging edges, apply at most n-1 O(n^2) APSP transitions, and binary-search stored states."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/wd75eqcb",
+      "notes": "Consulted for the direct proof that an edge whose endpoints already have zero distance cannot change APSP, so only n-1 component-merging updates execute, and for direct answer-table materialization."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Independent E1/E2 explanation cross-checking threshold 0/1 modeling and the at-most-n useful-update argument for the hard version."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Hstry/articles/18758874",
+      "notes": "Independent writeup explicitly identifies the useful zero-edge insertions as the n-1 DSU changes after contracting current zero components."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2057/submission/301730095",
+      "notes": "Inspected accepted E2 snapshot implementation: skips already zero-connected edges, stores only useful APSP states and their weights, then binary-searches queries."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2057/submission/301732253",
+      "notes": "Inspected materially distinct accepted E2 implementation: tests G[u][v]==0 instead of an explicit DSU and writes ans[a][b][new_distance+1]=w whenever a useful edge decreases a pair distance, giving O(1) queries."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2057/E2",
+      "notes": "Independently proved threshold equivalence, the one-edge recurrence, and zero-component skipping; compared full and DSU-skipped incremental APSP against recomputation on 480 random connected graphs."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2057E2",
+      "notes": "Additional Luogu solution index; the concrete consulted article is listed in sources."
+    }
+  ],
+  "annotation": {
+    "summary": "Hard version: answer the same minimum kth-largest-edge path queries as E1, but m may be dense; only sum n<=400 remains small.",
+    "constraints": "n<=400, n-1<=m<=n(n-1)/2, q<=3*10^5; sum n<=400 and sum q<=3*10^5, with no E1-style bound on total m. O(m n^2) is therefore too slow.",
+    "core_idea": "Use E1's threshold model: at threshold X, edges w<=X cost 0 and heavier edges cost 1, and the answer is the first X with d_X(a,b)<k. The hard step is to avoid updating APSP for every edge. Sweep edges by weight with DSU over the current zero-cost edges. If u and v are already in the same zero component, a new zero edge (u,v) cannot improve any shortest path: replace every use of it by the existing zero-cost u-v path. Only an edge joining two zero components can matter; there are at most n-1 such edges, exactly the edges selected by a Kruskal sweep. For each useful edge apply d'(i,j)=min(d(i,j),d(i,u)+d(v,j),d(i,v)+d(u,j)) in O(n^2). Store the at most n APSP states and binary-search queries, or record the threshold directly whenever a pair distance drops.",
+    "complexity": "O(n^3+m log m+q log n) time and O(n^3+m) memory for snapshots; the direct answer-table variant gives O(n^3+m log m+q) time with the same asymptotic memory.",
+    "tricks": [
+      "Use the same kth-largest to thresholded 0/1 shortest-path reduction as E1.",
+      "A zero edge internal to a zero-connected component is distance-redundant for every vertex pair.",
+      "The only useful insertions are Kruskal/DSU merges, hence at most n-1.",
+      "Apply an O(n^2) incremental all-pairs relaxation only on useful edges.",
+      "Either store useful snapshots for binary search or materialize each (a,b,k) answer when its distance crosses k."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "hard-kruskal-apsp-snapshots",
+      "summary": "Official hard solution: sort edges, use DSU to keep only Kruskal merge edges, store the APSP matrix after each of at most n-1 useful zero-edge insertions, and binary-search each query.",
+      "complexity": "O(n^3+m log m+q log n) time, O(n^3+m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "hard-distance-drop-answer-table",
+      "summary": "Use the current condition d(u,v)==0 as the zero-component test. For every useful edge, update each pair; a changed distance falls by exactly one because one existing cost-1 edge became cost 0, so write answer[a][b][new_distance+1]=w immediately. Queries are then O(1).",
+      "complexity": "O(n^3+m log m+q) time, O(n^3+m) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path",
+      "importance": "primary",
+      "evidence": "The kth-order path objective is answered through all-pairs shortest counts of edges above each threshold in a 0/1 graph.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "graph/shortest-path/floyd-warshall",
+      "importance": "primary",
+      "evidence": "Initial APSP and each of the at most n-1 useful one-edge APSP updates use Floyd-Warshall-style min-plus relaxations.",
+      "solution_variant": "hard-kruskal-apsp-snapshots",
+      "description": "Use Floyd-Warshall all-pairs shortest paths, including Floyd-style O(n^2) relaxations after inserting one nonnegative edge, as the central engine on a small graph.",
+      "parent": "graph/shortest-path",
+      "created_reason": "The existing graph/shortest-path tag is too broad to retrieve small-n APSP and incremental-Floyd problems such as both CF2057E versions. Main-agent taxonomy review is required before creating this candidate.",
+      "status": "candidate",
+      "aliases": [
+        "floyd",
+        "floyd-warshall",
+        "incremental floyd-warshall"
+      ],
+      "main_agent_review": "required"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "DSU detects whether a threshold edge merges two zero components; only those at most n-1 merges trigger the expensive O(n^2) update.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "graph/mst",
+      "importance": "primary",
+      "evidence": "The hard optimization is a Kruskal sweep: the retained component-merging edges form a minimum spanning tree and preserve every threshold's zero-component partition.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "secondary",
+      "evidence": "The proof for skipping a processed edge depends exactly on whether its endpoints already have a zero-cost connecting path.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "Threshold distances only decrease, enabling first-feasible-state search and one-time answer materialization when a distance crosses k.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "The official snapshot variant binary-searches at most n monotone useful states for each query.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Edges must be swept in nondecreasing weight so DSU merges and stored thresholds follow candidate answer order.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "The graph is preprocessed across all sorted weight thresholds before answering the large query batch.",
+      "solution_variant": "hard-kruskal-apsp-snapshots"
+    }
+  ]
+}
