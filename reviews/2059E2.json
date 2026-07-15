@@ -1,0 +1,140 @@
+{
+  "contest": {
+    "contest_id": 2059,
+    "title": "Codeforces Round 1002 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2059,
+    "index": "E2",
+    "title": "Stop Gaming (Hard Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "data structures",
+      "hashing",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2059/problem/E2",
+      "notes": "Read the same matrix operation and constraints as E1, plus the hard requirement to output an optimal sequence of (row,value) operations."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139094",
+      "notes": "Official implementation confirms the E1 prefix scan and the E2 lazy segment tree over gap-readiness counters, suffix decrements, rightmost-zero selection, and reverse-within-gap output order; the prose tutorial widget was unavailable."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/06/11/0930",
+      "notes": "Independent E2 explanation and implementation cross-check the row-end insertion condition, per-gap waiting times, and range-update/min-query scheduler."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2059/submission/304252441",
+      "notes": "Accepted C++17 submission (44 tests); source inspected through the open-r1 mirror. It supplies the materially different backward free-slot/order-statistics construction."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2059/submission/305102228",
+      "notes": "Accepted C++17 submission (44 tests); source inspected through the open-r1 mirror to cross-check the forward rightmost-ready range-add/min construction."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2059E2",
+      "notes": "The page returned an authentication/redirect loop during this review, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Solve the same minimum-operation transformation as E1, but additionally output every optimal operation. The hard extension is constructing an order for all missing target elements while respecting the moments at which each insertion boundary is available.",
+    "constraints": "1 <= t <= 10000; 1 <= n,m <= 300000; sum(n*m) <= 300000. Values lie in [1,2*n*m] and are pairwise distinct within A and within B. Every output operation must use a row in [1,n] and a value in [1,2*n*m].",
+    "core_idea": "First run the E1 scan to obtain the largest preservable prefix A[1..p], its target positions q_i, and each missing-target gap g_i after anchor i (i=0 means before A_1, and i=p includes the tail). For every nonempty gap i, let need_i=(-i mod m): the number of earlier insertions still needed before A_i is at a row end. Executing one operation from gap h shifts every later anchor, so it decrements need_j for all j>h. E1 feasibility guarantees that an active zero exists until all N-p gap elements are emitted. Repeatedly choose the rightmost active gap with need=0, output its still-unplaced rightmost target value at row 1 for i=0 or row ceil(i/m)+1 otherwise, decrement all later needs, and disable the gap when empty. Rightmost-zero priority prevents an already-ready gap from being shifted below zero; values are emitted right-to-left because repeated front insertions at one boundary reverse chronological order. A lazy range-add/min segment tree finds the rightmost zero and applies each suffix decrement in O(log N). The sequence has exactly N-p operations, matching E1's lower bound.",
+    "complexity": "O(N log N) time and O(N) memory, where N=n*m.",
+    "tricks": [
+      "Hard extension over E1: recover an actual topological schedule of gap insertions instead of only proving that the maximum surviving prefix is feasible.",
+      "Represent each nonempty gap by a readiness counter; one insertion from gap i applies -1 to the suffix of counters for anchors j>i.",
+      "Always take the rightmost zero counter so a ready pending gap is never decremented past zero by an operation to its left.",
+      "Emit each target gap from right to left, since multiple insertions at the same row start appear in reverse chronological order in the final sequence."
+    ],
+    "confidence": "medium",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "rightmost-ready-gap-scheduler",
+      "summary": "Official-style construction. Build all gaps around the maximum surviving prefix, maintain each gap anchor's distance to a row end, and use a lazy segment tree to repeatedly select the rightmost ready gap and decrement all later readiness counters.",
+      "complexity": "O(N log N) time and O(N) memory",
+      "confidence": "medium",
+      "is_primary": true
+    },
+    {
+      "name": "backward-free-slot-placement",
+      "summary": "Accepted alternative. After determining the optimal retained prefix and K=N-p operation times, process target rows/anchors backward and place each missing target value into the required k-th still-free operation slot. A Fenwick tree or segment tree over a dynamic 0/1 free-slot set supports select-and-erase.",
+      "complexity": "O(N log N) time and O(N) memory",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Unlike E1, E2 must explicitly construct an optimal sequence of row/value insertions, including the correct row and reverse order for every missing target gap.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "primary",
+      "evidence": "Each missing-target gap is a batch of jobs that may run only when its left anchor reaches a row end; the central hard task is scheduling all batches without passing an alignment opportunity.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The construction always selects the rightmost currently ready nonempty gap; this priority preserves every zero-readiness obligation while operations to the right cannot invalidate it.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "data-structure/segment-tree/range-add-min",
+      "importance": "primary",
+      "evidence": "Every emitted operation decrements a suffix of readiness counters, and each next step must locate the rightmost counter attaining the global minimum zero, exactly a range-add/min-position segment-tree pattern.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "data-structure/lazy-propagation",
+      "importance": "secondary",
+      "evidence": "Suffix decrements must be propagated lazily so all N-p scheduling steps remain logarithmic.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "secondary",
+      "evidence": "The construction starts from E1's maximum prefix of A that appears in increasing target positions in B; those positions define every insertion gap.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The flattening invariant that survivors are an order-preserved prefix supplies both the N-p lower bound and the fixed anchors used by the construction.",
+      "solution_variant": "rightmost-ready-gap-scheduler"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "The alternative accepted construction processes target rows and preserved anchors backward while assigning missing values to operation slots.",
+      "solution_variant": "backward-free-slot-placement"
+    },
+    {
+      "tag": "data-structure/order-statistics-tree",
+      "importance": "secondary",
+      "evidence": "The alternative maintains K free operation slots and repeatedly selects and erases the k-th free slot; this is dynamic order-statistics selection, implementable by a Fenwick tree or segment tree.",
+      "solution_variant": "backward-free-slot-placement"
+    }
+  ]
+}

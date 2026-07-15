@@ -1,0 +1,113 @@
+{
+  "contest": {
+    "contest_id": 2059,
+    "title": "Codeforces Round 1002 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2059,
+    "index": "C",
+    "title": "Customer Service",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "graph matchings",
+      "greedy",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2059/C",
+      "notes": "读取题面与完整约束：n<=300，a[i][j] 为正整数，sum(n^2)<=2e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139094?locale=en",
+      "notes": "官方参考实现统计每行末尾连续 1 的长度，再按升序贪心匹配所需值；用于交叉确认推导与实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bkqkl7fh",
+      "notes": "独立题解同样利用增量恒正，递推出答案只取决于各行末尾连续 1，并给出排序贪心实现。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "n 个初始为空的队列经历 n 轮正数增量，每轮增量后清空一个队列。选择清空顺序，使最终 n 个队列人数的 MEX 最大。",
+    "constraints": "t<=2e4，1<=n<=300，1<=a[i][j]<=1e9，所有测试的 sum(n^2)<=2e5；输入规模要求至多 O(n^2) 级处理。",
+    "core_idea": "令 s_i 为第 i 行末尾连续 1 的数量。MEX 至少为 k，当且仅当能给每个 y=1..k-1 分配一个不同队列且 s_i>=y。必要性：值 0 的队列最后一次在时刻 n 清空；归纳假设值 0..y-1 已占用时刻 n,n-1,..,n-y+1，则值 y 的队列由于每次增量至少为 1，其最后清空时刻至少为 n-y，又不能占用上述时刻，因此只能是 n-y，且之后 y 个正数之和为 y，故全为 1。充分性：把满足 s_i>=y 的队列在 n-y 时刻清空，留一个队列在 n 时刻清空得到 0，其余时刻任意清空该剩余队列。于是问题成为嵌套阈值匹配；排序 s_i 后总把当前队列匹配给最小尚未满足的 y。",
+    "complexity": "O(n^2+n log n) time, input-dominated O(n^2); O(n) auxiliary memory.",
+    "tricks": [
+      "利用所有增量严格为正，锁定实现小值 y 的唯一最后清空时刻 n-y。",
+      "把 MEX 可行性转成容量 s_i 与连续需求 1,2,... 的阈值匹配。",
+      "匹配邻域按 s_i 嵌套，因此排序后优先满足最小需求即为最优。",
+      "必须为最终值 0 保留一个队列，所以答案不超过 n。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "suffix-ones-threshold-greedy",
+      "summary": "统计并排序所有 s_i；令 need=1，依次扫描容量 c，若 c>=need 就匹配该队列并令 need++，最终答案为 min(need,n)。",
+      "complexity": "O(n^2+n log n) time, O(n) auxiliary memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "nested-threshold-bipartite-matching",
+      "summary": "建立二分图：左侧为队列，右侧为目标值 y=1..n-1，当 s_i>=y 时连边。最大匹配数 M 表示可同时实现的正整数前缀长度，答案为 M+1。该图邻域嵌套，主解法的排序贪心正是其线性化优化。",
+      "complexity": "O(n^3) with standard augmenting-path matching after O(n^2) preprocessing",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "目标 MEX>=k 被精确转化为必须同时实现最终值 0,1,...,k-1，这一连续值覆盖条件驱动整个证明。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "将末尾连续 1 长度排序后，每个容量只匹配当前最小未满足阈值；嵌套可行集合保证该选择不会损失最优匹配数。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "排序 s_i 后才能按容量从小到大完成阈值贪心；也可用 0..n 计数桶替代比较排序。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "若某队列能实现值 y，则其末尾至少 y 个 1，也能承担任何更小阈值；这种单调嵌套性使贪心成立。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "secondary",
+      "evidence": "可行性等价于把目标值 y 匹配到满足 s_i>=y 的不同队列；显式最大匹配是正确但较慢的替代解法。",
+      "solution_variant": "nested-threshold-bipartite-matching"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "充分性通过显式安排匹配到 y 的队列在时刻 n-y 清空，并在时刻 n 清空剩余队列来构造所需最终值。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "穷举清空序列仅适合小规模独立校验；n<=300 时的正式解法不依赖暴力搜索。",
+      "solution_variant": "suffix-ones-threshold-greedy"
+    }
+  ]
+}

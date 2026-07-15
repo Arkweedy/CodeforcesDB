@@ -1,0 +1,97 @@
+{
+  "contest": {
+    "contest_id": 2059,
+    "title": "Codeforces Round 1002 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2059,
+    "index": "D",
+    "title": "Graph and Graph",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "graphs",
+      "greedy",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2059/D",
+      "notes": "读取无限同步移动、目标代价及完整约束：n,m1,m2<=1000，各自跨测试总和不超过 1000，两图连通。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139094?locale=en",
+      "notes": "官方参考实现标记两图公共边的端点，并在 n^2 个位置对上运行 Dijkstra；用于确认目标状态和复杂度。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/00clfyno",
+      "notes": "交叉确认有限总费用要求最终全部操作费用为 0，以及隐式二重邻接枚举的乘积图最短路。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/06/11/0900",
+      "notes": "独立实现以 dp[u][v] 表示两个标记到达位置对的最小费用，并只在公共边端点的对角状态取答案。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "两个标记分别在两张同顶点编号的连通无向图上同步沿边移动，每步费用为到达顶点编号之差的绝对值；求无限移动的最小总费用，若必为无穷则输出 -1。",
+    "constraints": "t<=500，2<=n<=1000，m1,m2<=1000；所有测试的 sum(n)、sum(m1)、sum(m2) 均不超过 1000。距离和应使用 64 位整数。",
+    "core_idea": "每步费用是非负整数，因此无限序列总费用有限当且仅当从某一时刻起所有费用均为 0。零费用移动后两个标记必在同编号顶点；要继续零费用移动，需要当前对角状态 (x,x) 能沿一条同时存在于两图的公共边 x-y 到达 (y,y)。所以有限解等价于从起点位置对到达某个 good 对角状态 (x,x)，其中 x 是公共边端点。建立隐式同步乘积图：状态为 (u,v)，对每个 u-x 属于 G1、v-y 属于 G2 的组合转移到 (x,y)，边权 |x-y|。从 (s1,s2) 运行 Dijkstra，答案是所有 good 状态距离的最小值；即使两图存在公共边，good 状态仍可能因乘积图的连通性或奇偶性而不可达，此时输出 -1。",
+    "complexity": "O((n^2+m1*m2) log(n^2)) time because total implicit relaxations are sum(deg1[u]deg2[v])=4m1m2; O(n^2+m1+m2) memory.",
+    "tricks": [
+      "利用费用为整数：有限的无限和必然最终恒为 0。",
+      "公共边提供可无限交替的零费用二周期。",
+      "把两个同步位置组合成 n^2 个乘积状态，并按邻接表笛卡尔积隐式枚举边。",
+      "公共边存在只是必要条件之一，起始位置对还必须能到达对应对角状态。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "implicit-product-graph-dijkstra",
+      "summary": "用集合或邻接标记找出公共边端点 good[x]；Dijkstra 距离数组为 d[u][v]，弹出 (u,v) 后枚举 G1[u] 与 G2[v] 的所有邻居组合并以 |x-y| 松弛。最终取 min d[x][x] over good[x]，也可在首次弹出 good 对角状态时提前结束。",
+      "complexity": "O((n^2+m1*m2) log(n^2)) time, O(n^2+m1+m2) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "importance": "primary",
+      "evidence": "位置对构成非负加权状态图，目标正是从起始位置对到任一 good 对角状态的最短距离，需用 Dijkstra 松弛。",
+      "solution_variant": "implicit-product-graph-dijkstra"
+    },
+    {
+      "tag": "trick/state-augmentation",
+      "importance": "primary",
+      "evidence": "单独记录任一标记的位置无法描述同步选择和费用；必须把两者组合为 (u,v) 的 n^2 状态。",
+      "solution_variant": "implicit-product-graph-dijkstra"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "非负整数总费用有限推出最终费用恒为 0，从而把无限过程化为到达可维持零费用的公共边对角状态。",
+      "solution_variant": "implicit-product-graph-dijkstra"
+    },
+    {
+      "tag": "data-structure/priority-queue",
+      "importance": "secondary",
+      "evidence": "优先队列维护当前距离最小的位置对，实现乘积图上的 Dijkstra 而无需显式存储至多 4m1m2 条转移。",
+      "solution_variant": "implicit-product-graph-dijkstra"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "官方 greedy 标签主要体现在 Dijkstra 的最小距离定点性质；不存在独立于最短路算法的贪心选择。",
+      "solution_variant": "implicit-product-graph-dijkstra"
+    }
+  ]
+}

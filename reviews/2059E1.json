@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2059,
+    "title": "Codeforces Round 1002 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2059,
+    "index": "E1",
+    "title": "Stop Gaming (Easy Version)",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "hashing",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2059/problem/E1",
+      "notes": "Read the operation definition, distinctness guarantees, E1 output requirement, and the sum(n*m) <= 300000 bound."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139094",
+      "notes": "Official hints and implementation confirm maximizing the surviving prefix of A, matching it as a subsequence of B, and checking row-boundary feasibility; the prose tutorial widget was unavailable."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/wxgmjfhy/p/18697291",
+      "notes": "Independent explanation used to cross-check that survivors form a prefix and that a nonempty gap after a survivor requires that survivor to reach a row end."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2059/submission/304170919",
+      "notes": "Accepted C++17 submission (44 tests); source inspected through the open-r1 Codeforces-submissions mirror to cross-check the linear row-wise matching formulation."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2059E1",
+      "notes": "The page returned an authentication/redirect loop during this review, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Flatten the n rows into one row-major sequence. One operation inserts a value at a row-start position and deletes the last flattened element. Find the minimum number of such operations needed to transform A into B; E1 asks only for the count.",
+    "constraints": "1 <= t <= 10000; 1 <= n,m <= 300000; sum(n*m) <= 300000. Values lie in [1,2*n*m] and are pairwise distinct within A and within B.",
+    "core_idea": "Let N=n*m. Insert-and-pop operations never change the relative order of surviving original elements and only delete from the global suffix, so the survivors must be A[1..p] for some p and must occur in increasing positions q_i in B. The answer is N-p for the largest feasible p. Missing B elements form gaps g_i after each surviving anchor A_i (with anchor 0 before A_1). A positive gap after A_i can be inserted only when A_i is at a flattened row end. While scanning the prefix, maintain the number S of insertions belonging to gaps that have already become unlockable. The attainable number of shifts is a contiguous interval; anchor i is unlockable exactly when [i,i+S] contains a multiple of m. If the preceding anchor is not unlockable but the next gap is nonempty, extension is impossible. Otherwise add that gap length to S, test the new anchor residue, and remember the last feasible p.",
+    "complexity": "O(N) time and O(N) memory with a direct value-to-position array, where N=n*m; the official ordered-map implementation is O(N log N).",
+    "tricks": [
+      "View the matrix operation as insertion at positions congruent to 1 modulo m in one flattened sequence, followed by deleting the final element.",
+      "Every original element that remains belongs to one prefix of A, and that prefix must be a subsequence of B.",
+      "Model missing target blocks as insertion buckets unlocked when their left anchor can be aligned to a row end; reachable shift counts form a contiguous interval whose residue modulo m is enough for E1."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "gap-reachability-prefix-scan",
+      "summary": "Map every target value to its position in B, scan A's prefix in order, turn skipped B positions into gaps, and maintain whether each gap anchor can be brought to a row end using insertions from previously unlocked gaps. Return N minus the last feasible prefix length.",
+      "complexity": "O(N) time and O(N) memory with direct indexing",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The decisive invariant is that flattened operations preserve the relative order of surviving original elements and remove originals only from a suffix, forcing all survivors to be one prefix of A.",
+      "solution_variant": "gap-reachability-prefix-scan"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "primary",
+      "evidence": "After fixing a surviving prefix A[1..p], its distinct values must appear at strictly increasing positions in B; these positions and their intervening gaps drive the entire feasibility scan.",
+      "solution_variant": "gap-reachability-prefix-scan"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The algorithm greedily extends the preserved prefix while the next gap can be unlocked, maintaining the full contiguous interval of attainable prior-insertion counts so the first failed required gap cannot be repaired later.",
+      "solution_variant": "gap-reachability-prefix-scan"
+    },
+    {
+      "tag": "trick/scheduling",
+      "importance": "secondary",
+      "evidence": "Feasibility is equivalent to scheduling gap insertions only after their surviving anchor is aligned at a row boundary; E1 compresses this schedule to a reachability count.",
+      "solution_variant": "gap-reachability-prefix-scan"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "Although E1 outputs only the minimum, the feasibility proof is constructive: every admitted gap can be inserted at an unlocked row boundary, which is made explicit in E2.",
+      "solution_variant": "gap-reachability-prefix-scan"
+    }
+  ]
+}
