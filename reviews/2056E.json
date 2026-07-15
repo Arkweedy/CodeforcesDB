@@ -1,0 +1,99 @@
+{
+  "contest": {
+    "contest_id": 2056,
+    "title": "Codeforces Round 997 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2056,
+    "index": "E",
+    "title": "Nested Segments",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "dsu",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2056/problem/E",
+      "notes": "读取 good 集合的层叠/不交条件、最大补全方案计数目标及 sum(n),sum(m)<=2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138487",
+      "notes": "官方题解确认最大集合恒有 2n-1 个区间，并把每个已有区间的直接孩子视作有序叶子，贡献 Catalan(c_v-1)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/h575h8hx",
+      "notes": "Luogu 独立题解同样把必选单点、根区间和原区间组织成树，并用有序集合自底向上计算各节点 Catalan 贡献。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2056E",
+      "notes": "Luogu 题解集合，可供后续补充不同实现。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定一族两两不交或互相包含的整数区间，向其中加入尽可能多的新区间，并统计达到最大规模的不同补全集合数量。",
+    "constraints": "t<=1e4，1<=n<=2e5，0<=m<=2e5，sum(n)<=2e5，sum(m)<=2e5；输入保证区间互异且构成层叠族，答案模 998244353。",
+    "core_idea": "先加入必然兼容的根区间 [1,n] 和全部单点 [i,i]。按最小严格包含关系建树后，叶子恰为 n 个单点，孩子按坐标从左到右排列。若某节点有 k>2 个直接孩子，可以加入覆盖任意相邻孩子块的区间并继续细分；最大补全因此要求每个内部节点最终恰有两个孩子，即得到具有 n 个叶子的有序满二叉树，最大规模恒为 2n-1。对原树中一个有 k 个直接孩子的节点，其内部新增区间只是在不改变这些孩子内部结构的前提下，把 k 个有序块合并成一棵有序满二叉树，方案数为 Catalan(k-1)。不同原节点的补全区间位于互不干扰的层级，选择相互独立，所以答案为所有非叶节点 Catalan(c_v-1) 的乘积。实现可将增广区间按 l 升序、r 降序排序，用栈恢复直接父子关系并统计 c_v。",
+    "complexity": "O(K log K) time and O(K) memory per batch after factorial/Catalan preprocessing, where K<=n+m+1 is the number of distinct augmented intervals; sorting dominates and the containment-stack scan is O(K).",
+    "tricks": [
+      "根区间和所有单点与任意层叠区间族兼容，可以无条件加入并固定树的根与 n 个叶子。",
+      "最大性等价于把每个多叉节点继续二叉化；满二叉树叶数恒定后总节点数固定为 2n-1。",
+      "把一个节点的直接孩子收缩为有序原子块，其局部补全正好由 Catalan 数计数。",
+      "层叠区间按左端点升序、右端点降序排序后，可用栈线性恢复包含树。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "laminar-tree-catalan-product",
+      "summary": "补齐 [1,n] 与全部单点，排序后用包含栈建立层叠树并统计每个节点的直接孩子数 c_v；预处理 Catalan 数，输出乘积 product Catalan(c_v-1)。",
+      "complexity": "O(K log K) time, O(K) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "输入区间两两嵌套或不交，最小严格包含关系形成有序树；这一层叠结构是分解计数和建树实现的基础。",
+      "solution_variant": "laminar-tree-catalan-product"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "增广后的区间集合被显式表示为以 [1,n] 为根、单点为叶的包含树，答案按树节点的直接孩子数分解。",
+      "solution_variant": "laminar-tree-catalan-product"
+    },
+    {
+      "tag": "math/combinatorics/catalan",
+      "importance": "primary",
+      "evidence": "每个含 k 个已有直接孩子的节点有 Catalan(k-1) 种有序满二叉树补全，最终答案是这些局部 Catalan 贡献的乘积。",
+      "solution_variant": "laminar-tree-catalan-product"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "最大规模 2n-1 的证明通过反复合并相邻孩子显式构造二叉化补全，并说明任何多叉节点都还能继续加入区间。",
+      "solution_variant": "laminar-tree-catalan-product"
+    },
+    {
+      "tag": "data-structure/stack",
+      "importance": "secondary",
+      "evidence": "对排序后的层叠区间维护当前祖先栈，可在线确定最短包含父节点并统计直接孩子数。",
+      "solution_variant": "laminar-tree-catalan-product"
+    }
+  ]
+}

@@ -409,6 +409,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "sprague-grundy": "Sprague-Grundy",
   "state-augmentation": "状态增强",
   "state-compression": "状态压缩",
+  "stirling-number": "Stirling 数",
   "string": "字符串",
   "submask-supermask": "子掩码/超掩码",
   "sum-xor-identity": "和异或恒等式",

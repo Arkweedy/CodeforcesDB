@@ -183,6 +183,7 @@
   "math/combinatorics/prufer-sequence": "Prüfer 序列",
   "math/combinatorics/reflection-principle": "反射原理",
   "math/combinatorics/run-counting": "段数计数",
+  "math/combinatorics/stirling-number": "Stirling 数",
   "math/combinatorics/subset-counting": "子集计数",
   "math/game-theory": "博弈论",
   "math/game-theory/minimax": "Minimax",

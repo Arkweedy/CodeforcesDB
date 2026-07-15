@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2056,
+    "title": "Codeforces Round 997 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2056,
+    "index": "F1",
+    "title": "Xor of Median (Easy Version)",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2056/F1",
+      "notes": "阅读题面、好序列的频次单调条件、中位数定义及 easy version 约束：k<=200、m<=500、sum(k)<=200。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138487",
+      "notes": "官方题解及 F1 参考实现确认：按频次数组分组，使用 Lucas 定理筛选奇数多项式系数，并用第二类 Stirling 数统计二进制位划分。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/sif8ccye",
+      "notes": "独立题解交叉确认多项式系数奇偶性、n 的二进制拆分、最大频次必然覆盖中位数，以及 S(popcount(n),p)C(x,p-1) 的计数公式。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2056/F1",
+      "notes": "独立推导完整公式；穷举核验 n<=7、m<=4 的 28 组完整序列空间，并核验 b<=200 时第二类 Stirling 数奇偶性闭式与递推结果一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2056F1",
+      "notes": "Luogu 题解集合页；本次实际使用的具体文章已经列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "对所有长度为 n、元素位于 [0,m) 且非零频次随元素值单调不降的好序列，求其中位数的按位异或。n 以最长 200 位的二进制串给出。",
+    "constraints": "t<=50，1<=k<=200，1<=m<=500，sum(k)<=200。n 本身可能极大，算法只能依赖其二进制结构，不能按 n 枚举。",
+    "core_idea": "按频次数组 cnt 对序列分组。固定 cnt 对应的排列数是多项式系数 n!/prod(cnt_i!)；在异或中，只有该数量为奇数的 cnt 会保留贡献。由模 2 Lucas 定理，多项式系数为奇数当且仅当各 cnt_i 的二进制位互不相交，且恰好划分 n 的所有置位。设 b=popcount(n)，有 p 个非零频次时，其二进制位分组共有第二类 Stirling 数 S(b,p) 种。不同非空位集合的数值必不相同，因此按频次递增排序后可唯一分配给选中的 p 个元素值。包含 n 最高置位的频次严格大于 n/2，且一定是最大频次，所以对应的最大被选元素 x 必为中位数。固定 p 和 x，另外 p-1 个元素可从 [0,x) 中选择，共 C(x,p-1) 种。因此 x 出现奇数次当且仅当 sum_p S(b,p)C(x,p-1) 为奇数。枚举 p 和 x，使用 S(b,p) 的奇偶性公式以及 Lucas 判定 C(x,p-1) 为奇数，即可决定是否把 x 异或进答案。",
+    "complexity": "O(k*m) time and O(1) auxiliary memory with the Stirling-parity closed form; reading the binary representation costs O(k).",
+    "tricks": [
+      "先按频次数组聚合；异或会消去对应排列数为偶数的整个等价类。",
+      "多项式系数模 2 为奇数等价于加法无进位，即非零频次是 n 的置位集合划分。",
+      "包含 n 最高置位的频次严格大于 n/2，因此不用额外计算中位数，它必然对应最大出现值。",
+      "把置位集合划分计数识别为第二类 Stirling 数 S(b,p)。",
+      "利用 Lucas 定理将 C(x,p-1) 的奇偶性化为 (x & (p-1)) == p-1。",
+      "可用 S(b,p) 为奇数当且仅当 ((b-p) & ((p-1)/2)) == 0 的闭式避免完整 DP。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "stirling-parity-enumeration",
+      "summary": "计算 b=popcount(n)，枚举非零频次数 p 和候选中位数 x。使用第二类 Stirling 数奇偶性闭式判断 S(b,p)，再用 Lucas 子掩码条件判断 C(x,p-1)，累计每个 x 的贡献奇偶性。",
+      "complexity": "O(k*m) time, O(1) auxiliary memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "stirling-mod2-dp",
+      "summary": "在模 2 下使用 S(i,p)=S(i-1,p-1)+p*S(i-1,p) 预处理第二类 Stirling 数，再按相同公式枚举 p 和 x；easy version 的约束允许这一实现。",
+      "complexity": "O(k^2+k*m) time, O(k) memory with rolling arrays",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/stirling-number",
+      "importance": "primary",
+      "evidence": "把 n 的 b 个置位划分给 p 个非零频次的无标号非空分组数恰为第二类 Stirling 数 S(b,p)，它直接决定每个中位数的贡献奇偶性。",
+      "solution_variant": "stirling-parity-enumeration",
+      "description": "Use Stirling numbers as a central counting object, including set-partition interpretations, recurrences, closed forms, or parity properties; use this tag when the named Stirling-number structure is essential rather than generic partition counting.",
+      "parent": "math/combinatorics",
+      "created_reason": "The taxonomy has no tag for problems whose decisive count is a Stirling number; CF2056F1/F2 explicitly use second-kind Stirling numbers and their parity theorem.",
+      "status": "candidate",
+      "aliases": [
+        "stirling-number",
+        "stirling-numbers",
+        "stirling number",
+        "stirling numbers",
+        "stirling number of the second kind",
+        "second-kind stirling number",
+        "第二类斯特林数"
+      ]
+    },
+    {
+      "tag": "math/combinatorics/binomial-parity",
+      "importance": "primary",
+      "evidence": "Lucas 定理既用于判定多项式系数何时为奇数，也用于把 C(x,p-1) 的奇偶性转成子掩码条件；这是异或计数能够被压缩的核心。",
+      "solution_variant": "stirling-parity-enumeration"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "答案是所有中位数的异或，因此每类频次数组及每个候选中位数只需保留出现次数模 2 的结果，偶数贡献全部抵消。",
+      "solution_variant": "stirling-parity-enumeration"
+    },
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "secondary",
+      "evidence": "固定频次数组 cnt 后对应的原序列数量是 n!/prod(cnt_i!)，对该多项式系数取模 2 是后续二进制位划分转化的起点。",
+      "solution_variant": "stirling-parity-enumeration"
+    },
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "secondary",
+      "evidence": "Lucas 定理给出 C(x,p-1) 为奇数当且仅当 p-1 是 x 的子掩码；非零频次也被解释为 n 的置位集合划分。",
+      "solution_variant": "stirling-parity-enumeration"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "secondary",
+      "evidence": "easy version 可以通过第二类 Stirling 数的模 2 递推预处理所有 S(b,p)，再统计每个中位数的贡献。",
+      "solution_variant": "stirling-mod2-dp"
+    }
+  ]
+}

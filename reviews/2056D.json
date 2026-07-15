@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2056,
+    "title": "Codeforces Round 997 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2056,
+    "index": "D",
+    "title": "Unique Median",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "combinatorics",
+      "data structures",
+      "divide and conquer",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2056/problem/D",
+      "notes": "读取好子数组的双中位数定义与完整约束：n 总和不超过 1e5，且值域仅为 1..10。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138487",
+      "notes": "官方题解确认枚举较小中位数 x、将 <=x 与 >x 映射为 -1/+1，并统计包含 x 的零和子数组。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/yuyc/p/19047763",
+      "notes": "独立题解从二值数组出发推导等量计数，再推广到值域 1..10，用于交叉确认前缀和计数思路。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2056D",
+      "notes": "Luogu 题解集合候选；本次未将其作为主要证据。"
+    }
+  ],
+  "annotation": {
+    "summary": "统计数组中两个中位数相等的子数组数量；奇数长度子数组天然满足条件，偶数长度子数组需要判断中间两个次序统计量是否相同。",
+    "constraints": "t<=1e4，1<=n<=1e5，sum(n)<=1e5，1<=a_i<=10；答案需使用 64 位整数。",
+    "core_idea": "改为统计坏子数组。任意坏的偶长子数组有唯一的较小中位数 x：其中恰有一半元素 <=x、一半元素 >x，并且区间内出现 x。固定 x 后令 b_i=-1 当 a_i<=x，否则 b_i=+1，则该类坏区间恰好是和为 0 且包含至少一个 x 的子数组。用前缀和 p 计数相等前缀对；扫描右端点 r 时，只把起点前缀 p_{l-1} 中 l 不晚于最近一次 x 的那些加入频次数组，于是查询 cnt[p_r] 正好统计以 r 结尾且包含 x 的零和区间。枚举 x=1..10 后，从全部 n(n+1)/2 个子数组中减去坏区间数。包含 x 的限制排除了阈值落在两个中位数之间但数组中未出现该值的重复计数。",
+    "complexity": "O(A*n) time and O(n) memory per test case, where A=10.",
+    "tricks": [
+      "把双中位数不相等转成较小中位数阈值两侧数量恰好平衡。",
+      "用 -1/+1 映射把数量平衡变成零和子数组。",
+      "扫描右端点时按最近一次 x 延迟激活左端前缀，从而强制区间内至少出现 x。",
+      "坏区间按其唯一的较小中位数分类，因此十次阈值计数不会重叠。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "median-threshold-prefix-buckets",
+      "summary": "枚举 x，把数组阈值化为 -1/+1；维护前缀和频次和一个随 x 出现位置推进的激活指针，在线统计包含 x 的零和子数组，最终用总子数组数减去所有坏区间。",
+      "complexity": "O(10*n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/median-threshold",
+      "importance": "primary",
+      "evidence": "核心等价是固定坏区间的较小中位数 x，并把 <=x 与 >x 转成 -1/+1 平衡条件。",
+      "solution_variant": "median-threshold-prefix-buckets"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "primary",
+      "evidence": "每个固定阈值下，坏区间通过相等前缀和对计数；频次桶与延迟激活是线性算法主体。",
+      "solution_variant": "median-threshold-prefix-buckets"
+    },
+    {
+      "tag": "trick/threshold-decomposition",
+      "importance": "secondary",
+      "evidence": "全部坏区间按唯一较小中位数 x=1..10 分解成互不重叠的十类。",
+      "solution_variant": "median-threshold-prefix-buckets"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "值域上界只有 10，允许完整枚举每个可能的中位数阈值并各做一次线性扫描。",
+      "solution_variant": "median-threshold-prefix-buckets"
+    },
+    {
+      "tag": "math/order-statistics",
+      "importance": "secondary",
+      "evidence": "好坏的充分必要条件由偶长区间的两个中央次序统计量是否相等决定。",
+      "solution_variant": "median-threshold-prefix-buckets"
+    }
+  ]
+}

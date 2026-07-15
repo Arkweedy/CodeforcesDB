@@ -1,0 +1,159 @@
+{
+  "contest": {
+    "contest_id": 2056,
+    "title": "Codeforces Round 997 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2056,
+    "index": "F2",
+    "title": "Xor of Median (Hard Version)",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2056/F2",
+      "notes": "读取完整题面与 F2 约束：t<=10^4，二进制串长度 k<=2e5、sum(k)<=2e5，m<=1e9；相较 F1 的 k<=200、m<=500，不能枚举全部中位数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138487?locale=en",
+      "notes": "官方题解与参考代码确认多项式系数奇偶性、第二类 Stirling 数计数、第二次 Lucas 转成子集关系、SOS DP 和按低位同余类批量异或。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/n37z5ffy",
+      "notes": "交叉确认 F1 公式、Stirling 数奇偶判定、SOS 高维前缀和，以及固定低位后利用连续整数前缀 XOR 的 O(1) 聚合。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/y6gqdz95",
+      "notes": "用于确认不做 SOS DP 的替代路线：枚举非零频数个数，并按 m 的二进制前缀计算所有包含指定子掩码的中位数之 XOR。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/05/30/0930",
+      "notes": "独立实现与官方 F2 代码一致：预处理 Stirling 奇偶性，做子集 zeta XOR 变换，再按低位余数聚合同余类。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2056/F2",
+      "notes": "独立重证多项式无进位条件、最大频数即中位数和低位周期性；对 n=1..7、m=1..5 的 35 组数据穷举全部原序列，并对 20,145 组小数据比较 F1 公式与 F2 SOS 公式，均一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2056F2",
+      "notes": "Luogu 题解索引候选；本次采用的两篇具体专栏已列入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定巨大整数 n 的二进制表示和上界 m。对所有满足“出现过的值越大，其出现次数不减”的长度 n 序列，求它们中位数的按位 XOR。",
+    "constraints": "F2 中 t<=10^4，1<=k<=2e5，sum(k)<=2e5，1<=m<=1e9，n 由 k 位二进制串给出。F1 仅有 k<=200、m<=500，可用 O(popcount(n)*m)；F2 必须消除对 m 的线性枚举。",
+    "core_idea": "固定频数向量 c。具有该频数的原序列数是多项式系数 n!/prod(c_i!)；由于最终做 XOR，只保留该数为奇数的 c。Lucas/Kummer 的二进制无进位条件说明：奇数贡献恰好对应把 n 的每个置位位不重不漏地分给某个非零 c_i。含 n 最高置位的频数严格大于 n/2，因此它唯一决定中位数；又因好序列要求频数随值不减，它对应出现过的最大值 x。令 b=popcount(n)，p 为非零频数个数。把 b 个置位划分成 p 个非空块有第二类 Stirling 数 S(b,p) 种；固定中位数 x 时，其他 p-1 个出现值从 [0,x) 选取，有 C(x,p-1) 种。因此 x 的贡献奇偶为 XOR_{p=1..b} [S(b,p) mod 2]*[C(x,p-1) mod 2]。F1 直接枚举 p,x。F2 再用 Lucas 得 C(x,p-1) 为奇数当且仅当 p-1 是 x 的子掩码。设 f[s]=S(b,s+1) mod 2，取 L=bit_length(b)、B=2^L，对 f 做 XOR 版 SOS 子集 zeta 变换，得到 g[r]=XOR_{s subseteq r} f[s]；由于 s<b<B，x 是否贡献只由低 L 位 r 决定。对每个 g[r]=1 的余数，所有 x<m 且 x mod B=r 写成 qB+r，其 XOR 可拆为“出现次数为奇数时的 r”与“(0 xor ... xor Q)<<L”，后者按 Q mod 4 O(1) 求出。Stirling 奇偶用 S(b,p) 为奇数 iff ((b-p)&((p-1)>>1))==0。",
+    "complexity": "读取输入 O(k)；主解 O(B*L)=O(popcount(n) log popcount(n))，总计 O(k log k) time，O(B)=O(k) memory，其中 B=2^bit_length(popcount(n))=O(k)。",
+    "tricks": [
+      "先按频数向量分组；XOR 会消去出现偶数次的同一中位数，只需研究多项式系数的奇偶性。",
+      "把 Lucas 的无进位条件解释成对 n 的置位集合做集合划分，使答案只依赖 popcount(n)，而不依赖巨大 n 的数值。",
+      "含最高置位的频数严格超过 n/2，直接锁定中位数为出现过的最大值。",
+      "第二次 Lucas 把组合数奇偶性化成子掩码关系，再用 SOS DP 同时求所有低位模式。",
+      "同一低 L 位模式的贡献完全相同；按同余类用连续整数前缀 XOR 的四周期公式批量合并。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "实现 Stirling 奇偶公式时要注意移位和按位与的括号：((b-p)&((p-1)>>1))==0。",
+      "余数类的最后商 Q=floor((m-1-r)/B) 只在 r<m 时存在；前缀 XOR 与低位 r 的出现次数奇偶必须分别合并。",
+      "F2 的主解应标为 SOS DP，而不是仅凭官方提示把 digit DP 也误标成主解；digit DP 是独立可行的替代方案。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "stirling-parity-sos-residue-xor",
+      "summary": "官方主解。由多项式系数奇偶性得到 F1 的 Stirling*组合数公式，O(1) 判定每个 S(b,p) 的奇偶；对子掩码贡献做 XOR-SOS DP，并把 x<m 按低 L 位分组，以连续整数前缀 XOR 公式聚合每组。",
+      "complexity": "O(k + popcount(n) log popcount(n)) time, O(popcount(n)) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "enumerate-groups-required-submask-digit-dp",
+      "summary": "枚举 p=1..b，只对奇数 S(b,p) 处理 required=p-1；用二进制数位 DP 或等价的最高不同位分类，求所有 0<=x<m 且 required 是 x 子掩码的整数 XOR，再汇总到答案。它绕过 SOS DP，直接按上界 m 聚合每个 required 的可行中位数。",
+      "complexity": "O(k + popcount(n) log m) time, O(log m) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/binomial-parity",
+      "importance": "primary",
+      "evidence": "多项式系数的奇偶性把频数向量化为 n 的置位划分，第二次 Lucas 又给出 C(x,p-1) 为奇数 iff (p-1) subseteq x；两次奇偶判定共同支撑整个化简。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "math/combinatorics/stirling-number",
+      "display_name": "Stirling numbers",
+      "importance": "primary",
+      "description": "Use Stirling numbers as a central counting object, including set-partition interpretations, recurrences, closed forms, or parity properties; use this tag when the named Stirling-number structure is essential rather than generic partition counting.",
+      "parent": "math/combinatorics",
+      "created_reason": "The taxonomy has no tag for problems whose decisive count is a Stirling number; CF2056F1/F2 explicitly use second-kind Stirling numbers and their parity theorem.",
+      "status": "candidate",
+      "aliases": [
+        "stirling-number",
+        "stirling-numbers",
+        "stirling number",
+        "stirling numbers",
+        "stirling number of the second kind",
+        "second-kind stirling number",
+        "第二类斯特林数"
+      ],
+      "evidence": "把 b 个置位分成 p 个非空频数组的方案恰为第二类 Stirling 数 S(b,p)，F2 还必须使用其二进制奇偶判定公式；这不是可替换的泛化计数标签。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "dp/sos-dp",
+      "importance": "primary",
+      "evidence": "F2 消除 m 枚举的核心是对 f[s]=S(b,s+1) mod 2 做子集 zeta XOR 变换，一次得到每个低位掩码 r 的所有子掩码贡献奇偶。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "algorithm/bitmask/submask-supermask",
+      "importance": "primary",
+      "evidence": "Lucas 将 C(x,p-1) 的奇偶性精确转化为 p-1 是 x 的子掩码；后续周期性和 SOS DP 都建立在该子掩码关系上。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "secondary",
+      "evidence": "固定频数向量后，具有该向量的序列数是多项式系数；只取其奇偶性才得到置位集合划分模型。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "巨大 n 的实际位值全部消失，答案只依赖 b=popcount(n)，随后只需 O(b) 个低位掩码状态。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "algorithm/prefix-xor",
+      "importance": "secondary",
+      "evidence": "固定低位余数 r 后，需要 O(1) 求 q=0..Q 的 XOR；使用 0 xor 1 xor ... xor Q 的模 4 周期公式完成同余类聚合。",
+      "solution_variant": "stirling-parity-sos-residue-xor"
+    },
+    {
+      "tag": "dp/digit-dp",
+      "importance": "secondary",
+      "evidence": "替代解对每个 required=p-1 按 m 的二进制前缀统计并异或所有满足 required subseteq x<m 的 x，直接完成带上界的按位聚合。",
+      "solution_variant": "enumerate-groups-required-submask-digit-dp"
+    }
+  ]
+}
