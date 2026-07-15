@@ -623,8 +623,11 @@ class CfDbTests(unittest.TestCase):
                 )
                 conn.execute(
                     """
-                    INSERT INTO ingestion_queue(contest_id, status)
-                    VALUES (11, 'queued'), (16, 'failed')
+                    INSERT INTO ingestion_queue(contest_id, status, last_error)
+                    VALUES
+                        (11, 'queued', NULL),
+                        (16, 'failed', 'temporary API failure'),
+                        (17, 'skipped', 'contest 17 not found in Codeforces contest.list')
                     """
                 )
                 conn.execute(
@@ -663,7 +666,7 @@ class CfDbTests(unittest.TestCase):
                     """
                 )
 
-            rows = {row["contest_id"]: row for row in contest_status_rows(db, 10, 16)}
+            rows = {row["contest_id"]: row for row in contest_status_rows(db, 10, 17)}
             self.assertEqual(rows[10]["status"], "pending_review")
             self.assertEqual(rows[10]["tracked_problems"], 4)
             self.assertEqual(rows[10]["reviewed_problems"], 1)
@@ -674,6 +677,8 @@ class CfDbTests(unittest.TestCase):
             self.assertEqual(rows[14]["status"], "complete")
             self.assertEqual(rows[15]["status"], "needs_manual_review")
             self.assertEqual(rows[16]["status"], "failed")
+            self.assertEqual(rows[17]["status"], "not_found")
+            self.assertEqual(rows[17]["action"], "-")
 
     def test_reviewed_payload_redirects_duplicate_to_canonical(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

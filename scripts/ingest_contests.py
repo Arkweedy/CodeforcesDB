@@ -72,6 +72,28 @@ def main() -> None:
         for contest_id in iter_contest_ids(args.start, args.end):
             try:
                 meta = find_contest_meta(contests, contest_id)
+            except KeyError as exc:
+                message = str(exc).strip("'")
+                conn.execute(
+                    """
+                    UPDATE ingestion_queue
+                    SET status = 'skipped', last_error = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE contest_id = ?
+                    """,
+                    (message, contest_id),
+                )
+                print(f"{contest_id}: not found (skipped)")
+                results.append(
+                    {
+                        "contest_id": contest_id,
+                        "status": "skipped",
+                        "problems": 0,
+                        "error": message,
+                    }
+                )
+                continue
+
+            try:
                 result = ingest_contest(
                     conn,
                     client,

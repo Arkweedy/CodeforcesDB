@@ -21,7 +21,7 @@ ACTIONABLE_STATUSES = {
 
 
 def _queue_reports_missing_contest(queue: dict[str, Any]) -> bool:
-    if queue.get("queue_status") != "failed":
+    if queue.get("queue_status") not in {"failed", "skipped"}:
         return False
     return "not found in Codeforces contest.list" in str(queue.get("last_error") or "")
 
