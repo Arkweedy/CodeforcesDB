@@ -193,6 +193,7 @@
   "math/chip-firing": "Chip-firing（筹码分发）",
   "math/combinatorics": "组合数学",
   "math/combinatorics/binomial-basis": "二项式基",
+  "math/combinatorics/burnside-lemma": "Burnside 引理",
   "math/combinatorics/binomial-identity": "二项式恒等式",
   "math/combinatorics/binomial-parity": "二项式奇偶性",
   "math/combinatorics/catalan": "Catalan 数",

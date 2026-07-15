@@ -216,6 +216,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "boruvka": "Borůvka 算法",
   "bridge": "桥",
   "brute-force": "暴力",
+  "burnside-lemma": "Burnside 引理",
   "bottleneck-path": "瓶颈路径",
   "bounding-box": "轴对齐包围盒",
   "cartesian-tree": "笛卡尔树",

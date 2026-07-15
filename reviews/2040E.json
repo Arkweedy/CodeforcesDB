@@ -1,0 +1,125 @@
+{
+  "contest": {
+    "contest_id": 2040,
+    "title": "Codeforces Round 992 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2040,
+    "index": "E",
+    "title": "Control of Randomness",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy",
+      "math",
+      "probabilities",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2040/problem/E",
+      "notes": "完整阅读当前题面、随机过程、模意义输出、样例解释与约束；初始下一步固定为奇数步，偶数步才可花币控制。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137074",
+      "notes": "完整阅读动态加载的官方 Editorial 与两份实现；确认两层路径块的期望代价、花币节省 2*(deg-1)、在隔层祖先中贪心选择最大节省，以及当前约束下逐询问收集排序和离线维护路径集合两种实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4sqca02m",
+      "notes": "阅读完整概率 DP 推导和代码；交叉确认 odd/even 两类状态、不花币的自环期望化简为 parent_state+2*(deg-1)+1，以及 O(n^2) 预处理后 O(1) 回答。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2040/problem/E",
+      "notes": "独立写出 Bellman 方程并证明块节省可加；在 2100 棵 n<=8 的随机树上，对所有起点和硬币数验证 O(n^2) 概率 DP 与隔层祖先 top-p 节省公式完全一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "树根为 1。机器人从 v!=1 出发且下一步为奇数步：奇数步必向根移动；偶数步可花一枚硬币强制向根移动，否则均匀随机走向任一邻点。对每个 (v,p) 求最优策略下到达根的最小期望步数。",
+    "constraints": "1 <= t <= 10^3；每个测试 2 <= n <= 2000、1 <= q <= 2000、0 <= p <= n；所有测试的 n 之和、q 之和分别不超过 2000；模数为 998244353。O(n^2+q) 预处理/查询方案可行。",
+    "core_idea": "根化于 1。令 O[v][c] 表示在 v 且下一步为奇数步、剩 c 枚币的最优期望，E[v][c] 表示下一步为偶数步。根上的两类状态均为 0。奇数步固定向父亲，因此 O[v][c]=1+E[parent(v)][c]。在偶数状态 v，记 d=deg(v)：花币代价 P=1+O[parent(v)][c-1]；若本次不花币，概率 1/d 直接到父亲，概率 (d-1)/d 到某个孩子，而下一次奇数步又必回 v，形成回到同一 E[v][c] 的失败自环。Bellman 方程化简后，不花币直到成功的代价为 O[parent(v)][c]+2d-1，故 E[v][c]=min(P, O[parent(v)][c]+2d-1)，c=0 时只取后者。按 c 从小到大、顶点按父先子后计算全部状态，查询答案为 O[v][p]。所有分数在化简后成为整数。等价地，无币基线每跨两层经控制点 x 花费 2deg(x)，在 x 花币把该块改为 2 步，独立节省 2(deg(x)-1)，所以也可在 parent(v), parent^3(v),... 中选 p 个最大节省。",
+    "complexity": "主方案每个测试 O(n^2+q) 时间、O(n^2) 空间；在全局 sum n,sum q <= 2000 下总状态数不超过约 4*10^6。",
+    "tricks": [
+      "随机走向孩子后，下一次奇数步必回到原控制点，因此随机失败不是进入复杂子树状态，而是长度 2 的自环。",
+      "解带自环的期望方程后，不花币代价恰为 parent_state+2*deg(v)-1。",
+      "花币与不花币的最优 Bellman 方程可化成两个显式候选的最小值。",
+      "初始是奇数步，所以实际可花币的控制点是起点父亲、再上两层的祖先，不能把路径上每个祖先都作为候选。",
+      "期望值最终是整数；题目虽要求模 998244353，主公式不需要模逆元。",
+      "硬币数外层递增、顶点父先子后，保证 E[v][c] 所依赖的 O[parent][c] 与 O[parent][c-1] 都已计算。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "无未解决的概率或预处理不确定点；官方块分解、Luogu 概率 DP、Bellman 自推导和随机树互证一致。",
+      "官方逐询问实现与 O(n^2) DP 是同一公式的两种组织方式；本草稿把 O(n^2) DP 作为主变体，以匹配当前 n<=2000、q<=2000 的稳定预处理边界。"
+    ],
+    "source_blockers": [
+      "Codeforces Editorial 正文由动态 spoiler 加载，普通抓取只显示占位符；已在渲染页面中实际读取完整推导及代码，没有遗留阻塞。",
+      "官方正文经过 MathJax 文本化后兄弟数 x、度数 d 的符号较易混淆；已用官方代码、Luogu 状态转移和独立 Bellman 方程统一为完整度数 deg(v)。"
+    ],
+    "proof_risks": [
+      "随机走到孩子后应计入“随机一步 + 下一次奇数步返回”的两步失败代价，并回到相同偶数状态。",
+      "deg(v) 是无根树中的完整度数，包含父边；孩子数量为 deg(v)-1。",
+      "到达顶点 1 时过程立即终止，根的 odd/even 状态都必须设为 0。",
+      "查询从 odd 状态开始，若误用 E[v][p] 会整体错一层并选错控制祖先奇偶性。",
+      "求 min 时不能把一次随机选择错误地当作必须永远随机；Bellman 自环化简已经允许失败返回后重新执行最优决策。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "probability-dp-precompute",
+      "summary": "为每个顶点、硬币数和下一步奇偶性预处理最优期望；用 odd 的父转移和 even 的“立即花币 vs 解随机失败自环”两个候选完成 O(1) 转移，查询直接读取 odd 状态。",
+      "complexity": "O(n^2+q) 时间和 O(n^2) 空间。",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "alternating-ancestor-top-savings",
+      "summary": "先递推无币基线 B[v]=1（父为根）或 B[grandparent(v)]+2*deg(parent(v))；每个可控制的隔层祖先 x 提供独立节省 2*(deg(x)-1)，逐询问收集这些值并取最大的 p 个。",
+      "complexity": "O(n + sum_i m_i log m_i) 时间和 O(n) 额外空间，其中 m_i<=depth(v_i)/2；最坏 O(n+q*n*log n)。",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/probability-dp",
+      "importance": "primary",
+      "evidence": "主方案对 (vertex, coins, next-step parity) 的期望状态做动态规划；偶数状态的随机转移含返回自身的概率自环，解方程后得到 O(1) 转移。",
+      "solution_variant": "probability-dp-precompute"
+    },
+    {
+      "tag": "math/probability",
+      "importance": "primary",
+      "evidence": "核心必须计算随机选择邻点并反复失败返回控制点的期望到达时间，Bellman 方程给出 2*deg(v)-1 的随机通过代价。",
+      "solution_variant": "probability-dp-precompute"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "将树根化后，所有 odd/even 状态只依赖父节点同硬币层或前一硬币层状态，可按父先子后的树序递推。",
+      "solution_variant": "probability-dp-precompute"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "等价块分解中每枚硬币对一个控制点产生相互独立的节省 2*(deg-1)，最优策略就是选择隔层祖先中最大的 p 个节省。",
+      "solution_variant": "alternating-ancestor-top-savings"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "唯一父路径保证随机走向任一孩子后下一奇数步必返回原点，并把全过程分解为沿根路径的独立两层块。",
+      "solution_variant": "probability-dp-precompute"
+    }
+  ]
+}

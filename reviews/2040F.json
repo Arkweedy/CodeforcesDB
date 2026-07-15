@@ -1,0 +1,141 @@
+{
+  "contest": {
+    "contest_id": 2040,
+    "title": "Codeforces Round 992 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2040,
+    "index": "F",
+    "title": "Number of Cubes",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2040/problem/F",
+      "notes": "Read the complete current statement, cyclic-shift definition in all three directions, samples, and all constraints: t <= 100, a,b,c <= 3e6, abc <= 3e6, k <= 1e6, positive sorted color counts summing to abc, and sum k <= 1e6."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137074",
+      "notes": "Read the full 2040F section and both official accepted implementations, Solution Phi and Solution DP. They group translations by the lcm of their coordinate orders, count fixed colorings by a multinomial, and either weight divisor triples with Euler phi or aggregate exact orders with a three-layer lcm-state DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/te2v6kf0",
+      "notes": "Actually read the complete independent write-up. It derives Burnside over the three-dimensional translation group, proves the coordinate-order and Euler-phi counts, gives the fixed-coloring multinomial, and implements the divisor-triple formula."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2040/problem/F",
+      "notes": "Independently proved the orbit-length and fixed-point formula. Exact enumeration of colorings and translation orbits matched the formula on 53 two- and three-color cases with at most eight cells, including 2x2x2; a modular implementation also reproduced all six samples."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count colorings of an a by b by c toroidal grid with exact per-color multiplicities, identifying two colorings when one is a translation of the other in the three coordinate directions.",
+    "constraints": "There are t <= 100 tests; 1 <= a,b,c <= 3e6, N=abc <= 3e6, 1 <= k <= 1e6, 1 <= d_1 <= ... <= d_k <= 3e6, sum d_i=N, and sum k over tests is at most 1e6. The modulus is 998244353, so N is invertible modulo the modulus.",
+    "core_idea": "Apply Burnside to G=Z_a x Z_b x Z_c, the N translations. For a translation (x,y,z), its coordinate orders are p=a/gcd(a,x), q=b/gcd(b,y), and r=c/gcd(c,z), so the translation has order L=lcm(p,q,r). Repeatedly applying it partitions all N cells into N/L cycles, every one of length L. A fixed coloring must be constant on each cycle, hence exists exactly when L divides every d_i; then its count is (N/L)! divided by the product of (d_i/L)!. For every p dividing a, exactly phi(p) values of x have coordinate order p, and similarly for b and c. Therefore sum phi(p)phi(q)phi(r) times that multinomial over p|a, q|b, r|c with L|gcd(d_1,...,d_k), then divide by N. Group equal L values before evaluating the O(k) multinomial.",
+    "complexity": "With M=3e6 and tau(n) denoting the divisor count, O(M log M) one-time preprocessing for factorials, inverse factorials, and the displayed phi sieve. Per test, O(sqrt(a)+sqrt(b)+sqrt(c)+tau(a)tau(b)tau(c)+k tau(g)) arithmetic with hash or array grouping, where g=gcd(d_i); an ordered map adds a log tau(g) factor to the triple loop. Memory is O(M+tau(g)).",
+    "tricks": [
+      "Model the allowed operations as the finite translation group Z_a x Z_b x Z_c and use Burnside rather than dividing the total number of colorings by abc.",
+      "For one translation, distinguish its orbit length L from its number N/L of cell cycles.",
+      "The order of a three-coordinate translation is the lcm of its three coordinate orders.",
+      "Replace the condition L divides every d_i by the single check L divides gcd(d_1,...,d_k).",
+      "There are phi(p) shifts of order p in a cyclic coordinate of length a for every p dividing a.",
+      "Group divisor triples by their common L before spending O(k) time on the fixed-coloring multinomial."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness uncertainty remains for the primary Burnside-totient variant after the independent proof, source cross-checks, all-sample verification, and exhaustive small-instance verification.",
+      "The Codeforces tutorial prose widget did not render in the fetched page; the official source did expose both complete accepted reference implementations, while the full explanatory derivation was read from Luogu and independently reconstructed.",
+      "The official divisor-lcm DP alternative was verified algebraically as another way to aggregate the same Burnside weights, but it was not separately reimplemented during this review.",
+      "math/combinatorics/burnside-lemma is absent from the current registry and is proposed as a reusable candidate; applying this payload later requires taxonomy approval and a WebUI translation."
+    ],
+    "proof_risks": [
+      "L is the length of each cell orbit, not the number of orbits; the fixed multinomial uses N/L slots and d_i/L slots of color i.",
+      "Every orbit has the same length L because a translation acts regularly on the torus and the least positive power fixing one cell is exactly the group-element order.",
+      "The number of coordinate shifts with order p is phi(p), including phi(1)=1 for the zero shift; it is not the number of divisors with that order.",
+      "Colors remain labeled even when some d_i are equal, so the multinomial must not be divided by multiplicities of equal counts.",
+      "Burnside divides by the full group size abc, not by the number of distinct cycle lengths or divisor triples."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "burnside-totient-divisor-enumeration",
+      "summary": "Enumerate coordinate orders p|a, q|b, r|c, weight the resulting translation order L=lcm(p,q,r) by phi(p)phi(q)phi(r), attach the exact-multiplicity multinomial when L divides every color count, and average the fixed-point sum over all abc translations.",
+      "complexity": "After O(M log M) preprocessing, O(sqrt(a)+sqrt(b)+sqrt(c)+tau(a)tau(b)tau(c)+k tau(g)) arithmetic per test with O(tau(g)) temporary memory, aside from the O(M) tables.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "burnside-divisor-lcm-state-dp",
+      "summary": "For each dimension, recover the number of shifts of every exact coordinate order by subtracting proper-multiple divisor counts. Then run three DP layers whose state is the current lcm and whose transition appends one coordinate order; use the resulting count of translations for each L in the same Burnside multinomial sum.",
+      "complexity": "After factorial preprocessing, O(sqrt(a)+sqrt(b)+sqrt(c)+tau(a)^2+tau(b)^2+tau(c)^2+tau(g)^2+k tau(g)) time and O(tau(a)+tau(b)+tau(c)+tau(g)) temporary memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics/burnside-lemma",
+      "display_name": "Burnside's lemma",
+      "importance": "primary",
+      "evidence": "The desired equivalence classes are exactly orbits under the abc-element translation group, and the answer is obtained by averaging the exact number of colorings fixed by every translation; unequal stabilizer sizes make this orbit-counting step indispensable.",
+      "solution_variant": "burnside-totient-divisor-enumeration",
+      "description": "Count orbits of configurations under a finite group action by averaging the number of configurations fixed by each group element. Use when symmetry-equivalent objects are the target and fixed-point counts drive the solution.",
+      "parent": "math/combinatorics",
+      "created_reason": "CF2040F is a direct finite-group orbit-counting problem under Z_a x Z_b x Z_c. Existing generic combinatorics and multinomial tags do not identify symmetry counting by fixed-point averaging.",
+      "status": "candidate",
+      "aliases": [
+        "Burnside lemma",
+        "orbit-counting lemma",
+        "Cauchy-Frobenius lemma"
+      ]
+    },
+    {
+      "tag": "math/number-theory/euler-phi",
+      "importance": "primary",
+      "evidence": "For each divisor p of a, exactly phi(p) coordinate shifts x have order a/gcd(a,x)=p; the product phi(p)phi(q)phi(r) is the exact multiplicity of each divisor-order triple in Burnside's sum.",
+      "solution_variant": "burnside-totient-divisor-enumeration"
+    },
+    {
+      "tag": "math/combinatorics/multinomial",
+      "importance": "primary",
+      "evidence": "A translation of order L leaves N/L distinguishable cell cycles; assigning exactly d_i/L cycles to each labeled color gives the fixed-point count (N/L)!/product_i((d_i/L)!).",
+      "solution_variant": "burnside-totient-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/lcm",
+      "importance": "primary",
+      "evidence": "The orbit length of translation (x,y,z) is its group order L=lcm(a/gcd(a,x), b/gcd(b,y), c/gcd(c,z)); this L determines both feasibility and the multinomial fixed-point count.",
+      "solution_variant": "burnside-totient-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/divisor-enumeration",
+      "importance": "secondary",
+      "evidence": "Coordinate orders must divide a, b, and c, so enumerating those three divisor sets replaces an infeasible scan over all abc translations and supplies all Burnside groups.",
+      "solution_variant": "burnside-totient-divisor-enumeration"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "A translation order contributes iff it divides every color multiplicity, compressed to the single condition L|g for g=gcd(d_1,...,d_k); coordinate orders are also derived as n/gcd(n,shift).",
+      "solution_variant": "burnside-totient-divisor-enumeration"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "secondary",
+      "evidence": "The official alternative uses three counting-DP layers over divisor-valued lcm states, where each transition appends one coordinate order with its exact number of shifts and accumulates the number of translation triples producing every final L.",
+      "solution_variant": "burnside-divisor-lcm-state-dp"
+    }
+  ]
+}

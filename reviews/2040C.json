@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2040,
+    "title": "Codeforces Round 992 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2040,
+    "index": "C",
+    "title": "Ordered Permutations",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "combinatorics",
+      "constructive algorithms",
+      "greedy",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2040/problem/C",
+      "notes": "完整阅读当前题面、样例与约束；目标是在所有最大化 S(p) 的排列中输出字典序第 k 个，而不是按 S(p) 从大到小取第 k 个。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137074",
+      "notes": "完整阅读动态加载的官方 Editorial 段及 C++/Python 参考实现；确认从小到大把数放入首个或末个空位、共有 2^(n-1) 个最优排列，并用 k-1 的二进制完成字典序反排名。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/c0zmevwc",
+      "notes": "阅读完整题解与代码，交叉确认最优排列的两端递归结构、方案数和按剩余方案块决定左右端的构造。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2040/problem/C",
+      "notes": "独立用阈值集合连续性证明最优结构；穷举 n=1..8 的全部排列，最大值集合、数量 2^(n-1) 与字典序构造均完全吻合。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定 n、k，在所有使子数组最小值总和 S(p) 最大的 n 阶排列中，构造字典序第 k 个；不足 k 个则输出 -1。",
+    "constraints": "1 <= t <= 10^4，1 <= n <= 2*10^5，1 <= k <= 10^12，所有测试的 n 之和不超过 2*10^5；需要线性或近线性总复杂度，并对 2^(n-1) 做饱和计数以避免溢出。",
+    "core_idea": "利用恒等式 S(p)=sum_x #{最小值至少为 x 的子数组}。对固定 x，值域 {x,...,n} 的 n-x+1 个位置分成若干连续块，块内子数组数之和在它们组成一个连续段时最大；存在同时达到所有上界的排列，因此最优当且仅当每个后缀值集 {x,...,n} 的位置都连续。于是从 n 开始按 x=n-1,...,1 插入时，x 只能接在当前段左端或右端，等价于最终排列“左侧递增 + n + 右侧递减”，共有 2^(n-1) 种。按 x=1,...,n-1 决策时，放左端的整块字典序更小，块大小为 2^(n-x-1)；将 k-1 写成 n-1 位二进制，当前高位 0/1 分别表示 x 放左/右即可直接反排名。",
+    "complexity": "每个测试 O(n) 时间、O(n) 输出缓冲；总时间 O(sum n)，额外空间 O(n)。",
+    "tricks": [
+      "把最小值 m 改写成 m 个阈值指示量，从而把 S(p) 分解为各后缀值集内部的子数组计数。",
+      "固定元素数的若干连续块，其子数组数之和在合并成单块时最大。",
+      "最优排列等价于每个值 x 都从两端加入，故可由 n-1 个独立二进制选择编码。",
+      "字典序反排名时最小的尚未决策值控制下一层块顺序，因此读取 k-1 的高位而非低位。",
+      "k <= 10^12，可把 2 的幂饱和到大于 10^12；n 足够大时无需真的计算 2^(n-1)。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "无未解决的算法正确性不确定点；官方题解、Luogu 题解、独立证明和 n<=8 穷举一致。",
+      "用户提示中的“按第 k 大 S(p)”容易理解为按分数排序；当前官方题面实际要求在所有最大化 S(p) 的排列中取字典序第 k 个，本草稿按官方题面处理。"
+    ],
+    "source_blockers": [
+      "Codeforces Editorial 正文由页面动态加载，普通文本抓取只显示 Tutorial is loading；已通过渲染后的官方页面实际读取完整正文，因此没有遗留来源阻塞。",
+      "Luogu 正文中的个别 2 的幂下标排版有歧义，精确反排名顺序以其代码、官方实现和独立穷举为准。"
+    ],
+    "proof_risks": [
+      "不能只证明某一种二端构造可达到最大值；还要用每个阈值项的独立上界证明所有最优排列都具有后缀值集连续性。",
+      "k 是 1-indexed，读取二进制前必须转成 k-1。",
+      "最小值 x 的左右选择对应从高位到低位；反向读取会破坏字典序。",
+      "n=1 时只有一个排列且没有左右决策，方案数仍为 2^0=1。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "two-ended-lexicographic-unranking",
+      "summary": "证明所有最优排列恰好由 1..n-1 各自选择放在当前空段左端或右端生成；用 k-1 的二进制从小值到大值决定左右端，输出左侧递增序列、n、右侧逆序序列。",
+      "complexity": "O(n) 时间和 O(n) 空间。",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "主解法先完整刻画最大化 S(p) 的排列族，再按 k 的二进制选择直接构造目标排列，而不是搜索或优化一个已给排列。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "primary",
+      "evidence": "关键结构是对每个 x，值集 {x,...,n} 在排列中均占据连续区间；这等价于排列在 n 左侧递增、右侧递减，并使 2^(n-1) 个最优排列可被二端选择唯一编码。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    },
+    {
+      "tag": "trick/lexicographic-order",
+      "importance": "primary",
+      "evidence": "第 k 个答案通过字典序块反排名得到：对当前最小未决值，放左端的 2^(remaining) 个方案整体先于放右端的方案。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "secondary",
+      "evidence": "n-1 个值各自独立选择左右端，最优排列与 {1,...,n-1} 的一个左右划分一一对应，方案数为 2^(n-1)。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "实现把 k-1 视为 n-1 位选择掩码，以每一位直接决定对应值放在左端还是右端。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "按值从小到大处理，每步依据剩余字典序块大小不可逆地选择左端或右端。",
+      "solution_variant": "two-ended-lexicographic-unranking"
+    }
+  ]
+}

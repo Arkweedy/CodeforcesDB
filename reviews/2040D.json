@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2040,
+    "title": "Codeforces Round 992 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2040,
+    "index": "D",
+    "title": "Non Prime Tree",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "dfs and similar",
+      "greedy",
+      "number theory",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2040/D",
+      "notes": "完整阅读当前官方题面、样例和约束；要求边上两标号的绝对差不是质数，允许差为 1，并非要求两端标号之和为合数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137074",
+      "notes": "完整阅读动态加载的官方 Editorial、两种构造说明及参考实现：递增 DFS 标号只保留差 1 或偶数且非 2；另一方案按深度从偶数池两端标号并修复唯一的差 2 叶边。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/BigSmall-En/p/18596196",
+      "notes": "阅读完整归纳证明与实现；用 max(T_u) < a_u + 2*size_u - 1 证明 DFS 子树消耗的标号范围，交叉确认最终最大标号小于 2n。该文把条件口头写成“合数”，但实现实际使用了合法的差 1，判定以官方题面为准。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2040/D",
+      "notes": "独立复核边差分类和 2n 范围；对 n=2..7 的全部标号树穷举验证官方 DFS 构造，并同时验证深度奇偶构造的唯一差 2 叶边修复。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给树的 n 个顶点赋互不相同的 1..2n 内整数，使每条边 (u,v) 的 |a_u-a_v| 不是质数；构造任意合法方案。",
+    "constraints": "1 <= t <= 10^4，2 <= n <= 2*10^5，所有测试的 n 之和不超过 2*10^5；输入保证为树，目标范围固定为 1..2n。",
+    "core_idea": "根取标号 1，按 DFS 先序保持全局标号严格递增。准备进入父亲为 u 的新子树时，从上一个已用标号之后选择最小的 x，使 x=a_u+1，或 x 与 a_u 同奇偶且 x-a_u>=4。于是父子差只可能是 1 或不小于 4 的偶数，前者非质数，后者必为合数。选择过程只需在候选奇偶性错误时加 1，并在差恰为 2 时再越过两个数。官方论证可把额外跳数分摊到 DFS 序列；更直接的子树归纳为 max_label(T_u) < a_u+2*|T_u|-1，因此根子树最大标号小于 2n，所有标号均在允许范围内。",
+    "complexity": "每个测试 O(n) 时间和 O(n) 邻接表、DFS 空间；候选递增的总次数由最终标号 < 2n 保证为 O(n)。",
+    "tricks": [
+      "1 不是质数，因此父子差 1 是最便宜且合法的连接方式。",
+      "除 2 外所有正偶数都不是质数；构造只需排除偶差 2。",
+      "全局递增标号天然保证互异，剩余难点是证明跳号后仍不超过 2n。",
+      "用子树大小归纳控制每棵子树占用的数值跨度，而不是只验证局部边差。",
+      "另一官方构造只使用偶数并从低端/高端按深度交替分配，把所有潜在质数差压缩为唯一可能的 2。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "无未解决的主解法正确性不确定点；官方推导、独立子树归纳及 n<=7 全部标号树穷举一致。",
+      "用户提示称“两端和为合数”，但当前 Codeforces 官方题面与官方两份代码均明确检查 |a_u-a_v| 是否为非质数；本草稿按官方当前版本处理。"
+    ],
+    "source_blockers": [
+      "Codeforces Editorial 正文需要页面动态渲染；已实际读取完整正文和两份官方实现，没有遗留阻塞。",
+      "交叉验证博客把合法条件简写为“差为合数”，与官方允许差 1 不完全一致；仅采用其范围归纳，条件语义由官方题面校正。"
+    ],
+    "proof_risks": [
+      "不能把“非质数”误写为“合数”：差 1 在构造中会实际出现且合法。",
+      "偶数差仍必须单独排除 2。",
+      "局部总能找到下一个合法数不足以完成证明，还必须给出最终标号小于等于 2n 的全局界。",
+      "深度奇偶备选方案在修复差 2 前必须证明这种边至多一条且较深端是叶子，否则改成奇数可能破坏其他邻边。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "increasing-dfs-nonprime-differences",
+      "summary": "DFS 先序中令标号严格递增；对子节点选取大于全局末值的最小候选，使它与父标号之差为 1 或偶数且不等于 2，并用子树跨度归纳证明最大标号小于 2n。",
+      "complexity": "O(n) 时间和 O(n) 空间。",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "depth-parity-two-ended-even-labeling",
+      "summary": "以根深度 0 计，偶数深度层按 BFS 顺序取 2,4,6,...，奇数深度层取 2n,2n-2,...。所有边差均为偶数，最多一条边差为 2，且其较深端是叶子；把该叶标号改为父标号减 1 后差变为 1，奇数新标号此前未使用。",
+      "complexity": "O(n) 时间和 O(n) 空间。",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求从空白开始给任意树生成一组受范围约束的合法标号；主解法直接维护可证明的局部边差和全局数值跨度不变量。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "primary",
+      "evidence": "递增标号按 DFS 子树连续处理；父子关系决定候选合法性，子树递归结构又用于证明整个构造只消耗少于 2|T_u| 的数值跨度。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "构造的决定性数论化简是让父子差同奇偶：除 2 外的正偶数均为合数，再额外允许差 1，从而无需逐个判素数。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "每个新顶点取大于当前全局末值的最小合法标号，并依靠 DFS 分摊/子树归纳保证这些局部最小选择不会耗尽 1..2n。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    },
+    {
+      "tag": "math/number-theory",
+      "importance": "secondary",
+      "evidence": "正确性使用 1 非质数、2 是唯一偶质数这两个性质，把判定归约为差的奇偶性和是否等于 2。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "无环性提供唯一父边和独立子树，使递归标号与子树大小范围归纳成立。",
+      "solution_variant": "increasing-dfs-nonprime-differences"
+    }
+  ]
+}
