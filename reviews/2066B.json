@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "B",
+    "title": "White Magic",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "data structures", "dp", "greedy", "implementation"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/B",
+      "notes": "Statement and constraints: maximize a subsequence satisfying prefix-minimum >= suffix-MEX at every cut, with n and total n up to 2e5."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2067/problem/E",
+      "notes": "Div.2 alias for the same problem; canonical reviewed identity remains 2066B."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official contest editorial checked; the tutorial body was lazy-loaded, so the proof was cross-checked with public solutions."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066B",
+      "notes": "Consulted the solution index; public solutions reduce the optimum to all nonzero elements plus, if feasible, the leftmost zero."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8jo6vkom",
+      "notes": "Used to confirm the at-most-one-zero bound and dominance of the first zero."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Exotic-sum/p/18718754",
+      "notes": "Used to cross-check the O(n) prefix-minimum and suffix-MEX validation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/B",
+      "notes": "Re-derived the tight lower and upper bounds and why moving the retained zero left cannot hurt."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717252",
+      "notes": "Editorial-referenced submission; direct source access failed, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Find the longest subsequence whose prefix minimum is at least the suffix MEX at every cut.",
+    "constraints": "1 <= n <= 2e5, total n <= 2e5, and 0 <= a_i <= 1e9; values above the candidate length can be ignored while maintaining MEX.",
+    "core_idea": "Let k be the number of nonzero elements. Keeping all nonzeros is magical because every suffix has MEX 0, so the answer is at least k. A magical sequence cannot contain two zeros: after the first zero, the prefix minimum is 0 while a suffix containing another zero has MEX at least 1. Hence the answer is at most k+1. Attaining k+1 requires every nonzero and exactly one zero. The leftmost zero dominates later choices: cuts before it see the same selected suffix multiset, while every cut after it is automatic because the prefix minimum is 0 and the remaining suffix has no zero. Build the sequence containing all nonzeros and only the first zero, validate it using prefix minima and suffix MEX, and return its length if valid; otherwise return k.",
+    "complexity": "O(n) time and O(n) memory.",
+    "tricks": [
+      "all nonzeros give a tight lower bound",
+      "two retained zeros are impossible",
+      "test only the leftmost zero",
+      "reduce optimization to one candidate",
+      "maintain suffix MEX"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "leftmost-zero-candidate-check",
+      "summary": "Delete every zero except the first, compute prefix minima and suffix MEX, and choose between the tight bounds k and k+1.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The optimum keeps all nonzeros and selects the earliest zero; no other subsequence choices need exploration.",
+      "solution_variant": "leftmost-zero-candidate-check"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "MEX behavior proves the lower bound, excludes two zeros, and drives final validation.",
+      "solution_variant": "leftmost-zero-candidate-check"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "primary",
+      "evidence": "Among all choices of one zero, moving it to the earliest occurrence removes nontrivial cuts and cannot hurt feasibility.",
+      "solution_variant": "leftmost-zero-candidate-check"
+    },
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "secondary",
+      "evidence": "The sole candidate is checked at every cut using a running prefix minimum and suffix MEX.",
+      "solution_variant": "leftmost-zero-candidate-check"
+    }
+  ]
+}

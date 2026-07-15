@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "C",
+    "title": "Bitwise Slides",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": ["bitmasks", "combinatorics", "dp", "math"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/C",
+      "notes": "Statement and constraints: each positive a_i is XORed into exactly one of P,Q,R, the values may never be pairwise distinct, and total n is at most 2e5."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2067/problem/F",
+      "notes": "Div.2 alias for the same problem; canonical reviewed identity remains 2066C."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official contest editorial checked; the tutorial body was lazy-loaded, so the recurrence was cross-checked elsewhere."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066C",
+      "notes": "Consulted the solution index; solutions use the prefix-XOR invariant and sparse DP keyed by the repeated value."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6pi8ex6w",
+      "notes": "Used to confirm the compressed state and recurrence dp[s_{i-1}] = 3*dp[s_{i-1}] + 2*dp[s_i]."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Tomori0505/p/18712011",
+      "notes": "Used to cross-check transition multiplicities, initialization, and final summation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/C",
+      "notes": "Re-derived the transition by classifying whether the unique or one of the repeated coordinates receives a_i; brute-checked all arrays up to length 6 over values 1..4."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717279",
+      "notes": "Editorial-referenced submission; direct source access failed, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Count assignments of each a_i to P,Q,R such that at least two values remain equal after every XOR update.",
+    "constraints": "1 <= n <= 2e5, total n <= 2e5, 1 <= a_i <= 1e9, and answers are modulo 1e9+7; a sparse O(n log n) or expected O(n) DP is required.",
+    "core_idea": "Let s_i=a_1 xor ... xor a_i. After i operations, P xor Q xor R=s_i. Every valid triple therefore has multiset form {s_i,x,x}. Let dp[x] count compressed valid histories, initially dp[0]=1. Since a_i>0, s_i differs from s_{i-1}. Ordinary states carry unchanged by toggling the unique s_{i-1} coordinate. Only key s_{i-1} receives extra transitions: an all-equal old state allows any of three coordinates to be toggled, while an old state whose repeated value is s_i allows either of its two equal coordinates to be toggled into s_{i-1}. Thus update dp[s_{i-1}] = 3*dp[s_{i-1}] + 2*dp[s_i] modulo MOD and leave every other entry unchanged. Sum all dp values after the final element.",
+    "complexity": "O(n log n) time with an ordered map and O(n) memory; expected O(n) time with a hash map.",
+    "tricks": [
+      "prefix-XOR invariant",
+      "represent a triple by its repeated value",
+      "only one DP key changes per step",
+      "multiplicity three for all-equal states",
+      "multiplicity two for the equal pair"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sparse-repeated-value-dp",
+      "summary": "Maintain counts keyed by repeated value x, update only s_{i-1} using 3*dp[s_{i-1}]+2*dp[s_i], and sum the map after processing all elements.",
+      "complexity": "O(n log n) time and O(n) memory with an ordered map; expected O(n) time with a hash map.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The recurrence counts valid operation sequences over compressed states modulo 1e9+7.",
+      "solution_variant": "sparse-repeated-value-dp"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "P xor Q xor R=s_i forces every valid triple into the form {s_i,x,x}.",
+      "solution_variant": "sparse-repeated-value-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The full triple is compressed to one repeated value and the known prefix XOR.",
+      "solution_variant": "sparse-repeated-value-dp"
+    },
+    {
+      "tag": "algorithm/prefix-xor",
+      "importance": "primary",
+      "evidence": "Consecutive prefix XORs s_{i-1} and s_i are exactly the keys used in every update.",
+      "solution_variant": "sparse-repeated-value-dp"
+    },
+    {
+      "tag": "data-structure/hash-map",
+      "importance": "secondary",
+      "evidence": "Only encountered prefix-XOR values require sparse keyed storage.",
+      "solution_variant": "sparse-repeated-value-dp"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Symmetry among P,Q,R produces the transition multiplicities three and two.",
+      "solution_variant": "sparse-repeated-value-dp"
+    }
+  ]
+}

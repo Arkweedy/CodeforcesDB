@@ -1,0 +1,115 @@
+{
+  "contest": {
+    "contest_id": 2066,
+    "title": "Codeforces Round 1004 (Div. 1)"
+  },
+  "problem": {
+    "contest_id": 2066,
+    "index": "A",
+    "title": "Object Identification",
+    "rating": 1400,
+    "rating_status": "official",
+    "official_tags": ["graphs", "greedy", "implementation", "interactive"]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2066/problem/A",
+      "notes": "Original interactive statement and constraints: hidden y is fixed, all (x_i,y_i) are distinct, x_i != y_i, and at most two queries are allowed."
+    },
+    {
+      "source_type": "alias_contest",
+      "url": "https://codeforces.com/contest/2067/problem/D",
+      "notes": "Div.2 alias for the same problem; canonical reviewed identity remains 2066A."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/139415",
+      "notes": "Official contest editorial checked; the tutorial body was lazy-loaded, so the detailed proof was cross-checked with public solutions."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2066A",
+      "notes": "Consulted solution index; writeups confirm the missing-source query and the two directed queries between positions of x-values 1 and n."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/TianTianChaoFangDe/p/18732564",
+      "notes": "Used to cross-check the original interactive decision tree and the n-1 shortest-path boundary."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2066/problem/A",
+      "notes": "Re-derived the functional-graph proof that after a forward response n-1, the reverse response cannot also equal n-1."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2066/submission/305717216",
+      "notes": "Editorial-referenced submission; direct source access failed, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Interactively distinguish the directed graph with edges x_i -> y_i from the point set (x_i,y_i) using at most two queries.",
+    "constraints": "3 <= n <= 2e5, total n <= 2e5, x_i,y_i in [1,n], x_i != y_i, all pairs are distinct, y is fixed, and only two queries are allowed. This review preserves the original interactive algorithm rather than the hack-format simulation.",
+    "core_idea": "Count occurrences in x. If label k is absent, vertex k has outdegree zero in Object A, so ask(k,j)=0 for any j!=k; Object B returns positive Manhattan distance between distinct points. Otherwise x is a permutation. Let p[v] be the position whose x-coordinate is v and query d1=ask(p[1],p[n]). Point distance is at least n-1, while a graph shortest path is at most n-1, so a value unequal to n-1 classifies immediately. If d1=n-1, query the reverse direction. Point distance is symmetric. In the functional graph, the forward path visits all vertices; the endpoint's outgoing edge either returns directly to the start, giving reverse distance 1, or enters an internal vertex, making the start unreachable and giving 0. Therefore the reverse graph response cannot be n-1.",
+    "complexity": "O(n) preprocessing time, O(n) memory, and at most 2 queries.",
+    "tricks": [
+      "split on missing label versus permutation",
+      "use a zero-outdegree witness",
+      "query positions with extreme known x-coordinates",
+      "contrast symmetric and directed distances",
+      "use the structure of an n-1 path in a functional graph"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "original-two-query-interactive-decision-tree",
+      "summary": "Use one zero-response query when x omits a label; otherwise query p[1] to p[n], classify responses unequal to n-1 immediately, and use the reverse query only for equality.",
+      "complexity": "O(n) time, O(n) memory, at most 2 queries.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "Choosing and interpreting at most two online oracle queries is essential to the original problem.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "Query endpoints are selected so that a zero response or the n-1 boundary directly identifies the hidden object.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    },
+    {
+      "tag": "graph/functional-graph",
+      "importance": "secondary",
+      "evidence": "When x is a permutation, every graph vertex has exactly one outgoing edge.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    },
+    {
+      "tag": "trick/extreme-position",
+      "importance": "secondary",
+      "evidence": "Positions with x-values 1 and n force every Manhattan response to be at least n-1.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    },
+    {
+      "tag": "trick/symmetry",
+      "importance": "secondary",
+      "evidence": "Manhattan distance is symmetric, unlike directed graph distance in the remaining ambiguous case.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    },
+    {
+      "tag": "trick/pigeonhole-principle",
+      "importance": "secondary",
+      "evidence": "The n entries either omit a label or contain every label exactly once.",
+      "solution_variant": "original-two-query-interactive-decision-tree"
+    }
+  ]
+}
