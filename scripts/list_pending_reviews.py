@@ -14,11 +14,39 @@ def main() -> None:
     parser.add_argument("--db", default=str(DEFAULT_DB_PATH), help="SQLite database path.")
     parser.add_argument("--limit", type=int, default=50)
     parser.add_argument("--min-rating", type=int, default=1400)
+    parser.add_argument("--contest", type=int, help="Only list one contest id.")
+    parser.add_argument("--contest-from", type=int, help="Inclusive lower contest id bound.")
+    parser.add_argument("--contest-to", type=int, help="Inclusive upper contest id bound.")
     args = parser.parse_args()
+
+    if args.contest is not None and (args.contest_from is not None or args.contest_to is not None):
+        parser.error("--contest cannot be combined with --contest-from or --contest-to")
+    if (
+        args.contest_from is not None
+        and args.contest_to is not None
+        and args.contest_from > args.contest_to
+    ):
+        parser.error("--contest-from must not exceed --contest-to")
+
+    filters: list[str] = []
+    params: list[int] = [args.min_rating]
+    if args.contest is not None:
+        filters.append("p.contest_id = ?")
+        params.append(args.contest)
+    else:
+        if args.contest_from is not None:
+            filters.append("p.contest_id >= ?")
+            params.append(args.contest_from)
+        if args.contest_to is not None:
+            filters.append("p.contest_id <= ?")
+            params.append(args.contest_to)
+
+    contest_filter = "".join(f"\n              AND {condition}" for condition in filters)
+    params.append(args.limit)
 
     with connect(args.db) as conn:
         rows = conn.execute(
-            """
+            f"""
             SELECT
                 p.problem_uid, p.contest_id, p.problem_index, p.title, p.rating, p.rating_status,
                 c.title AS contest_title, a.review_status
@@ -31,10 +59,11 @@ def main() -> None:
               AND COALESCE(c.extraction_status, '') <> 'excluded'
               AND (p.rating IS NULL OR p.rating >= ?)
               AND (p.canonical_problem_uid IS NULL OR p.canonical_problem_uid = p.problem_uid)
+              {contest_filter}
             ORDER BY p.contest_id, p.problem_index
             LIMIT ?
             """,
-            (args.min_rating, args.limit),
+            params,
         ).fetchall()
 
     for row in rows:

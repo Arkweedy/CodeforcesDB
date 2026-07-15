@@ -68,6 +68,8 @@ npm.cmd
 
 ```powershell
 .venv\Scripts\python.exe scripts\list_pending_reviews.py --limit 20
+.venv\Scripts\python.exe scripts\list_pending_reviews.py --contest 2038 --limit 30
+.venv\Scripts\python.exe scripts\list_pending_reviews.py --contest-from 2035 --contest-to 2039 --limit 100
 ```
 
 生成 reviewed JSON 模板：
