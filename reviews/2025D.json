@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2025,
+    "title": "Educational Codeforces Round 170 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2025,
+    "index": "D",
+    "title": "Attribute Checks",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "dp",
+      "implementation",
+      "math",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2025/problem/D",
+      "notes": "完整读取题面、记录顺序、正负检查语义，以及 n<=2e6、恰有 m<=5000 个零的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135173",
+      "notes": "同场 editorial 只加载一次；在可执行脚本页面中实际提取 2025D 动态 Tutorial 与两份官方实现，确认一维 DP、检查对应的区间加、零点处下推差分及 O(n+m^2) 复杂度。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/135126",
+      "notes": "实际读取 aryanc403 的本场 hints；独立确认由已获得点数消去一个属性维度、检查形成前缀/后缀加法、差分数组主解与懒线段树备选。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2025/submission/285868260",
+      "notes": "页面显示 Accepted（C++23，452 ms），且已读取源码；实现把 dp 直接保存在差分形式，正检查单点改差分、负检查改两个端点，遇零恢复后倒序做 max 转移。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2025/problem/D",
+      "notes": "独立推导每个检查命中的 intelligence-state 区间，并以穷举全部零点分配的 oracle 对拍固定种子随机小例。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "按时间顺序获得 m 个属性点，每点分给 Intelligence 或 Strength；正数是智力阈值检查，负数是力量阈值检查，求最多通过次数。",
+    "constraints": "1<=m<=5000，m<n<=2*10^6，-m<=r_i<=m，且恰有 m 个 r_i=0；因此不能做 O(nm)，但允许只在 m 个决策事件上做 O(m) 工作。",
+    "core_idea": "处理到当前位置且已获得 P 个点时，只需令 d[I] 表示当前 Intelligence=I（于是 Strength=P-I）能取得的最大通过数。正检查 r>0 给所有 I>=r 的状态加 1；负检查 r<0 在 P-I>=-r，即 I<=P+r 时给状态加 1。两者都是 d 上的区间加，用差分数组 O(1) 延迟记录。遇到零前先用一次前缀和把所有区间加落实到 d，再倒序执行 d[I]=max(d[I],d[I-1])，分别代表新点加 Strength 或 Intelligence；最后再 flush 一次并取最大值。",
+    "complexity": "O(n+m^2) time and O(m) memory.",
+    "tricks": [
+      "用当前总点数 P 固定关系 Strength=P-Intelligence，把二维属性压成一维状态。",
+      "只有 m 个零会改变可达状态；其余最多 n-m 个检查只是区间加。",
+      "用差分数组批量积累检查贡献，只在零点决策前 materialize。",
+      "零点转移必须按 Intelligence 从大到小原地更新。"
+    ],
+    "proof_risks": [
+      "负检查 r<0 的有效区间是 I<=P+r，而不是 I<=P-r；若 P+r<0，该区间为空。",
+      "每个零前必须先 flush 之前检查的贡献，所有记录结束后也必须再 flush 一次。",
+      "d[I]=max(d[I],d[I-1]) 必须倒序，否则同一个新属性点会在一层中被重复使用。",
+      "尚不可达的 I 状态要保持负无穷；不能让区间加把它误变成可达。",
+      "题面顺序不可调整，零之前的检查不能由后来获得的点补过。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 仅显示 Tutorial is loading；改用执行脚本的浏览器后，在同一次加载中读取 D、E 两节。",
+      "公开检索没有找到可稳定访问的 2025D 洛谷具体 article；因此 D 不把洛谷题面页误记为题解来源。"
+    ],
+    "uncertainty_points": [
+      "没有提出新 tag；现有 dp、data-structure/difference-array、trick/state-compression 已能精确描述主解。",
+      "official tags 中的 two pointers、brute force、math 没有进入 reviewed tags，因为已核实主解和备选解均不以它们为检索核心。"
+    ],
+    "small_scale_verification": {
+      "method": "枚举每个零点分给哪项属性，直接模拟所有检查；与差分 DP 比较。",
+      "coverage": "固定随机种子 2025；m=1..6，每个 m 生成 400 例，n<=13，共 2400 例。",
+      "result": "2400/2400 完全一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "lazy-difference-array-dp",
+      "summary": "一维属性分配 DP；把每次检查对连续状态区间的 +1 写入差分数组，只在零点前批量恢复并做二选一 max 转移。",
+      "complexity": "O(n+m^2) time and O(m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "lazy-segment-tree-dp",
+      "summary": "仍使用同一维 DP，但以支持区间加的懒线段树处理检查；每逢零点取出全部 m 个状态完成 max 转移后重建或更新结构。",
+      "complexity": "O((n+m^2) log m) time and O(m) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "d[I] 保存处理当前前缀、智力恰为 I 时的最优通过数；每个零点通过 max(d[I],d[I-1]) 完成两种属性分配选择。",
+      "solution_variant": "lazy-difference-array-dp"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "primary",
+      "evidence": "每个检查给一段连续 DP 状态统一 +1；端点差分使每个检查 O(1)，并在至多 m 个零点处用前缀和统一下推。",
+      "solution_variant": "lazy-difference-array-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "已获得总点数 P 已知，Strength=P-Intelligence，因此无需同时保存两个属性维度。",
+      "solution_variant": "lazy-difference-array-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "备选解用线段树支持每次检查的区间加，并在零点处读取各状态完成 DP 转移。",
+      "solution_variant": "lazy-segment-tree-dp"
+    },
+    {
+      "tag": "data-structure/lazy-propagation",
+      "importance": "secondary",
+      "evidence": "备选线段树需要懒标记把整段 DP 状态的 +1 延迟下传。",
+      "solution_variant": "lazy-segment-tree-dp"
+    }
+  ]
+}
+

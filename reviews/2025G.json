@@ -1,0 +1,179 @@
+{
+  "contest": {
+    "contest_id": 2025,
+    "title": "Educational Codeforces Round 170 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2025,
+    "index": "G",
+    "title": "Variable Damage",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "flows"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2025/problem/G",
+      "notes": "完整读取战斗顺序、英雄死亡与神器失效条件，以及 Q<=3*10^5、参数<=10^9、5 秒和 512 MB 约束；确认官方 rating 为 3000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135173",
+      "notes": "静态页面只显示 Tutorial is loading；改用执行脚本的浏览器，实际提取 2025G 动态 Tutorial 和 awoo 官方代码。确认答案化为 sum(health)+max sum min(health,durability)、降序配对、正负 balance 扫描，以及按入块 balance 维护贡献函数的 O(Q sqrt(Q)) 分块。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0hgh26g9",
+      "notes": "实际阅读全文。文章独立确认总回合公式、降序配对的 exchange argument、英雄记 +1/神器记 -1 的后缀 balance 判定，以及用相对 balance 桶和块标记实现线性空间分块。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18702629",
+      "notes": "实际阅读 CF2025G 小节及完整实现。它给出等价阈值公式：先计入全部神器耐久度，再减去各伤害层 max(0,artifact_count-hero_count)，并用坐标间隔权重、块重构和懒标记做到 O(Q sqrt(Q))。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2025/submission/300640501",
+      "notes": "状态页和提交页均明确显示 Accepted（C++23，2968 ms，16508 KB），且已读取完整源码；实现离线离散化所有值，按值域分块维护带坐标间隔权重的正 deficit 总和，与独立博客公式一致。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2025/problem/G",
+      "notes": "独立证明战斗积分、min 权重的降序配对、balance 贡献条件、块函数截断和 difference-array 重构；使用精确 Fraction 战斗模拟、位压缩暴力匹配和随机前缀 oracle 交叉验证。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "不断加入英雄或防御神器；每次加入后，在每名英雄至多持有一件神器的条件下，最大化全体英雄被消灭前经历的回合数。",
+    "constraints": "1<=Q<=3*10^5；每次只插入、不删除；health,durability<=10^9。答案最大约 6*10^14，必须使用 64 位整数。O(Q log Q) 预排序加 O(Q sqrt(Q)) 动态维护可行，逐次重新排序或匹配不可行。",
+    "core_idea": "固定分配后，持有耐久度 y 的生命值 x 英雄等价于阈值为 x 和 min(x,y) 的两个单位；由于所有阈值为整数，累计伤害每跨越一个整数区间所需回合数恰为当前存活阈值数。因此答案是 sum(x)+sum(min(x,y))。对两个降序英雄 x1>=x2 和神器 y1>=y2，交换逆序分配不会降低两个 min 之和，所以最优方案是两边分别降序配对，多余神器丢弃、缺少神器补 0。把全部已加入事件按 (value,input_index) 降序排列，英雄记 +1、神器记 -1，并令 balance 为当前前缀英雄数减神器数。扫描到英雄时，若扫描前 balance<0，它与此前未匹配神器配对并贡献当前 value；扫描到神器时，若扫描前 balance>0，它贡献当前 value。离线固定所有 Q 个事件的秩并分成长度 B 的块。每块保存总 balance 变化 delta，以及从任意入块 balance s 得到的贡献函数 f(s)。块内 balance 最多变化 B，所以 |s|>B 时可截断到端点。激活一个事件只需 O(B) 重构所在块；全局从 balance=0 扫描 O(Q/B) 个块。重构时，若元素前内部 balance 为 k，则英雄额外贡献覆盖 s<=-k-1，神器贡献覆盖 s>=-k+1，可用 difference array 对这些 s 区间加权并一次前缀和恢复 f。取 B约等于sqrt(Q)。",
+    "complexity": "Primary solution: O(Q log Q + Q*(B+Q/B)) time and O(Q) memory; with B=Theta(sqrt(Q)), O(Q sqrt(Q)) time and O(Q) memory.",
+    "tricks": [
+      "把神器看作生命阈值 min(hero,artifact) 的虚拟英雄，将连续战斗转成整数阈值总和。",
+      "通过相邻逆序交换证明 min 权重匹配的最优降序配对。",
+      "将两类对象编码为 +1/-1；balance 的符号表示当前只有哪一类对象尚未匹配。",
+      "使用 (value,input_index) 形成严格固定顺序；相同 value 任意稳定顺序都给出相同权重。",
+      "块保存的是依赖入块 balance 的贡献函数，而不是单个当前答案。",
+      "块内 balance 只变化 O(B)，使无限入块状态可压到 [-B,B]。",
+      "每个元素对入块状态贡献一个前缀或后缀区间，可用差分数组 O(B) 重构整块函数。",
+      "等价 deficit 公式是 sum(artifacts)-sum_level max(0,artifact_count(level)-hero_count(level))；离散值之间必须乘坐标间隔。"
+    ],
+    "verification_notes": [
+      "动态官方 Tutorial、洛谷 ForgotMe 文章、DaiRuiChen007 博客和 Accepted 300640501 对总回合公式、balance/deficit 转化及 O(Q sqrt(Q)) 分块相互一致。",
+      "穷举英雄数、神器数均为 0..4、值域 1..4 的全部 116281 个静态状态；位压缩最大匹配、降序配对、balance 扫描、阈值 deficit 公式和精确分数战斗模拟全部一致。",
+      "固定随机种子 20252025，生成 3000 条长度 1..10、值域 1..7 的插入序列，共检查 16519 个前缀；分块传递函数结果与每个前缀的暴力匹配完全一致。",
+      "逐块同时计算朴素 f(s) 和 difference-array 阈值公式，累计比较 326957 个入块 balance 状态，零失配。",
+      "完整复现两个官方样例，输出分别为 [0,8,19] 和 [9,15,19,27,30,39,42,48,59,65]。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；剩余决策仅是 taxonomy：新候选 trick/prefix-balance 是否批准，以及对应 WebUI 中文翻译。",
+      "没有声称不存在 polylogarithmic 解法；已核验资料和 Accepted 实现均采用 O(Q sqrt(Q)) 分块。",
+      "official flows tag 只反映静态问题可表述为带 min 权重的匹配或流。核实的主解和变体都不执行最大流、最小费用流或通用图匹配，因此不保留 graph/flow 或 graph/matching reviewed tag。"
+    ],
+    "proof_risks": [
+      "总回合等于阈值总和依赖 health 和 durability 均为整数：在相邻整数累计伤害之间，存活英雄和活跃神器数不变，恰好经过该数量的回合后累计伤害增加 1，不会发生任意实数位置的提前失效。",
+      "神器的有效阈值是 min(hero_health,durability)，因为英雄先死也会立即令神器失效。",
+      "神器多于英雄时必须丢弃耐久度最小的多余神器；神器不足时补 0。不能把未分配神器计入活跃数量。",
+      "降序配对证明必须覆盖相等值；使用严格 (value,index) 顺序只是实现消歧，不改变最优值。",
+      "使用扫描前 balance 时条件是 hero: balance<0、artifact: balance>0；若使用包含当前元素的前缀和，则对应条件变成 hero<=0、artifact>=0，混用会产生边界差一。",
+      "块内元素前 balance 为 k 时，英雄区间是 s<=-k-1，神器区间是 s>=-k+1；两个阈值都含严格符号转成整数后的 1。",
+      "把入块 balance 截断到 [-B,B] 只在块长度不超过 B 时成立；最后一个块和未激活槽位也必须满足同一边界。",
+      "未激活事件不能改变 balance，也不能产生 baseline 或匹配贡献。",
+      "deficit 变体在离散秩上求和时必须乘相邻真实值之差；只数正 balance 的位置会丢失伤害层宽度。",
+      "所有贡献、坐标差乘 balance 和最终答案均需 long long。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只返回 Tutorial is loading；执行脚本后正文位于 2025G 对应的隐藏 spoiler 中。",
+      "搜索引擎主要返回洛谷题面，未直接暴露具体题解文章；从动态题解索引定位到 /article/0hgh26g9 后才能阅读全文。",
+      "Accepted 源码必须同时读取题目状态行与具体 submission 页面，避免把候选代码或无法确认 verdict 的链接误记为 accepted-code。"
+    ],
+    "small_scale_verification": {
+      "method": "静态位压缩匹配 + 精确 Fraction 战斗模拟 + balance/deficit 两种闭式 + 随机插入前缀的块传递函数对拍。",
+      "coverage": "116281 个静态穷举状态；3000 条随机序列、16519 个前缀；326957 个块函数状态；两个官方样例。",
+      "result": "全部一致，零失配。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "offline-block-transfer-functions",
+      "summary": "官方主解。将所有事件按 (value,index) 降序放入静态块，逐时间激活事件；每块维护总 balance 变化和对入块 balance 的贡献函数，用差分区间加 O(B) 重构，逐块复合得到当前答案。",
+      "complexity": "O(Q log Q + Q*(B+Q/B)) time and O(Q) memory; B=Theta(sqrt(Q)) gives O(Q sqrt(Q)).",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "weighted-deficit-range-add-blocks",
+      "summary": "利用 matched_min=sum(artifacts)-sum_level max(0,A_level-H_level)。离散化所有值并保留坐标间隔权重；每次加入对象对一段 deficit 做 +/-1，分块维护懒标记以及各相对 deficit 的权重和、加权和，从而查询全局正部。",
+      "complexity": "O(Q sqrt(Q)) time and O(Q) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sqrt-decomposition",
+      "importance": "primary",
+      "evidence": "主解将固定值序列划成长度 B 的块，每次激活只 O(B) 重构一个块，并用 O(Q/B) 次块函数复合回答当前查询；B=Theta(sqrt(Q)) 是复杂度核心。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "trick/prefix-balance",
+      "importance": "primary",
+      "evidence": "英雄编码为 +1、神器编码为 -1；扫描前 balance 的正负精确表示未匹配对象类型，并决定当前 value 是否成为某一配对的 min。",
+      "solution_variant": "offline-block-transfer-functions",
+      "description": "Encode two ordered event types as +1 and -1, then use the sign or threshold of a running prefix or suffix balance to represent unmatched supply, feasibility, or whether the current event contributes. Excludes ordinary prefix-sum aggregation where the sign has no structural meaning.",
+      "parent": "trick",
+      "created_reason": "Existing algorithm/prefix-sums and trick/convert-to-prefix are too broad to retrieve the reusable sign-of-balance matching invariant used here and in bracket, pairing, and ordered supply-demand problems.",
+      "status": "candidate"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "primary",
+      "evidence": "必须预先读取全部查询，按 (value,input_index) 固定每个未来事件的秩和所属块，之后才按原时间顺序逐个激活。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定对象集合时，最优分配由英雄和神器分别降序后一一配对得到；这一结论把一般加权匹配化为可维护的有序扫描。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "trick/exchange-argument",
+      "importance": "secondary",
+      "evidence": "对任意 x1>=x2、y1>=y2，交换逆序神器不会降低 min(x1,y1)+min(x2,y2)，反复消除逆序即可证明降序配对最优。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "块重构时，每个英雄或神器都向入块 balance 轴上的一个前缀或后缀统一加 value；差分端点更新后一次前缀和即可在 O(B) 得到全部 f(s)。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "trick/coordinate-compression",
+      "importance": "secondary",
+      "evidence": "参数最大 10^9，但行为只在 Q 个事件值处改变；将 (value,index) 排序映射到静态秩，才能建立块位置并正确处理重复值。",
+      "solution_variant": "offline-block-transfer-functions"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "deficit 变体不显式重做配对，而是维护每个伤害层的 artifact_count-hero_count 正部及其真实坐标间隔加权贡献。",
+      "solution_variant": "weighted-deficit-range-add-blocks"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "降序排序既给出固定集合的最优配对顺序，也给出离线事件扫描和分块的静态坐标顺序。",
+      "solution_variant": "offline-block-transfer-functions"
+    }
+  ]
+}
+

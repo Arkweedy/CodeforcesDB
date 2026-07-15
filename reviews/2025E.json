@@ -1,0 +1,169 @@
+{
+  "contest": {
+    "contest_id": 2025,
+    "title": "Educational Codeforces Round 170 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2025,
+    "index": "E",
+    "title": "Card Game",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "fft",
+      "greedy",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2025/problem/E",
+      "notes": "完整读取牌组、同花色严格大点数压制、花色 1 对非 1 花色的王牌规则、等分牌组与完美匹配目标，以及 n,m<=500、m 为偶数。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135173",
+      "notes": "与 D 共用一次动态 editorial 加载；实际读取 2025E Tutorial 和官方实现，确认单花色匹配等价于非负括号前缀，并以剩余王牌数做 O(nm^2) 计数 DP。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/avs61gg7",
+      "notes": "实际阅读具体 CF2025E 专栏；交叉确认 Catalan/ballot 路径模型、f(k) 闭式、按各非王牌花色消耗 k 张王牌的 DP，以及最终对花色 1 的对称计数。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/135152",
+      "notes": "实际阅读 darthrevenge 的完整推导；确认反射原理给出 w_k=C(m,(m+k)/2)-C(m,(m+k)/2+1)，并得到 O(nm^2) 的 surplus DP。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/topic/153482/en4",
+      "notes": "实际阅读卷积讨论；用于确认逐花色转移是普通 Cauchy 多项式卷积。作者明确未实现并提示可能有漏洞，因此正确性不单独依赖此来源。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2025/submission/285892958",
+      "notes": "页面显示 Accepted（C++23，500 ms），且已读取源码；实现用路径平衡 DP 计算单花色分配数，再直接做按剩余王牌数的 O(nm^2) DP，没有 FFT。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2025/submission/285967754",
+      "notes": "页面显示 Accepted（C++20，62 ms），且已读取源码；实现构造 ballot 系数多项式，调用 998244353 下 AtCoder NTT convolution，并二进制幂计算截断的 A(x)^(n-1)。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2025/problem/E",
+      "notes": "独立证明按秩贪心匹配与前缀平衡的充要性；对小牌组枚举所有等分并显式跑二分图完美匹配，对照括号 DP 和 ballot 多项式。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "把 n*m 张牌等分给两人，统计第一人能用每张自己的牌至多一次、为第二人的全部牌建立可压制完美匹配的分配数，模 998244353。",
+    "constraints": "1<=n,m<=500，m 为偶数；直接枚举分牌不可能，但 O(nm^2) 可行，且模数 998244353 支持可选 NTT。",
+    "core_idea": "固定一种花色并按秩扫描：把第一人的牌记为 +1、第二人的牌记为 -1，则能在本花色完成需要的贪心匹配，当且仅当所有前缀平衡非负。令 w_k 为长度 m、前缀非负、最终平衡 k 的序列数。花色 1 的 w_k 表示第一人内部匹配后还剩 k 张王牌；每个非王牌花色的同一个 w_k 表示第二人还剩 k 张牌必须由王牌覆盖。设 dp[i][j] 为处理前 i 种花色后尚有 j 张可用王牌的方案数，初始化 dp[1][k]=w_k，转移 dp[i+1][j-k]+=dp[i][j]*w_k，答案 dp[n][0]。w_k 可用括号 DP 求，也可由反射原理得到 C(m,(m+k)/2)-C(m,(m+k)/2+1)。",
+    "complexity": "Primary solution: O(m^2+n*m^2) time and O(m) memory with rolling arrays; modulo 998244353.",
+    "tricks": [
+      "把单花色的按秩匹配转成非负前缀括号序列。",
+      "花色 1 的剩余第一人牌与其他花色的剩余第二人牌使用同一组 ballot 系数 w_k。",
+      "m 为偶数，所以只有偶数 k 非零；可压缩成 k/2 的多项式次数。",
+      "FFT/NTT 不是主解必要部分：官方主解直接做 O(nm^2) 转移。",
+      "可选加速是模 998244353 上的普通截断多项式 Cauchy 卷积，用 NTT 做 A(x) 的二进制幂；不是 FWT、XOR/AND/OR 卷积或 subset convolution。"
+    ],
+    "proof_risks": [
+      "花色 1 的牌要先在同花色内匹配第二人的花色 1 牌；只有剩余牌能作为王牌覆盖其他花色。",
+      "非王牌花色中第一人的每张牌必须在本花色匹配掉，剩余的只能是第二人的牌；扫描方向/括号正负若反转，前缀条件也必须同步反转。",
+      "最终必须让王牌剩余量恰好等于所有非王牌花色缺口之和，因此答案是 dp[n][0]。",
+      "w_k 仅在 0<=k<=m 且 k 与 m 同奇偶时非零；二项式越界项按 0 处理。",
+      "NTT 变体把 k=2s 压成次数 s，并把所有乘积截断到 m/2 次；超过该次数的项不会回流影响答案。"
+    ],
+    "source_blockers": [
+      "Codeforces 静态 editorial 只显示 Tutorial is loading；使用执行脚本页面后一次性读取 D、E 两节。",
+      "卷积讨论文章没有实现且作者自述可能存在漏洞；因此仅作思路来源，并用已核实 Accepted 的 NTT 源码闭环。"
+    ],
+    "uncertainty_points": [
+      "主解与 ballot 公式均无未决点。唯一 taxonomy 决策是是否接受新候选 math/transform/ntt；若主 agent 认为现有 math/transform/fft 已作为 NTT 伞标签，可拒绝该候选并保留 math/transform/convolution。",
+      "official fft tag 只说明存在卷积加速解，不表示 n,m<=500 的标准 O(nm^2) 解必须使用 FFT。"
+    ],
+    "small_scale_verification": {
+      "method": "枚举所有等分牌组，按题面建二分图并跑完美匹配；分别比较官方括号 DP、反射公式与朴素多项式幂。",
+      "coverage": "穷举 (n,m)=(1,2),(1,4),(1,6),(2,2),(2,4),(3,2),(3,4),(4,2) 的全部分牌；另核对样例 (3,6),(5,4),(500,500)。",
+      "result": "所有穷举计数三者完全一致，分别为 1,2,5,2,14,3,57,4；三个样例也均一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bracket-balance-counting-dp",
+      "summary": "用长度/平衡 DP 预计算所有 w_k，再以可用王牌数为状态逐花色做计数型分组背包；这是官方主解，不需要 FFT。",
+      "complexity": "O(m^2+n*m^2) time and O(m) memory with rolling arrays",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "ballot-formula-counting-dp",
+      "summary": "用反射原理和二项式系数 O(m) 求全部 w_k，再运行相同的逐花色计数 DP。",
+      "complexity": "O(n*m^2+m) time and O(m) memory",
+      "confidence": "high",
+      "is_primary": false
+    },
+    {
+      "name": "ntt-polynomial-power",
+      "summary": "令 A_s=w_{2s}。其他 n-1 种花色的缺口分布是 A(x)^(n-1)，答案为 sum_s A_s*[x^s]A(x)^(n-1)；用 998244353 下 NTT 做截断普通多项式卷积和二进制幂。",
+      "complexity": "O(m log m log n) time and O(m) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "dp[i][j] 存储处理若干花色后剩余 j 张王牌的分牌方案数，并对每个缺口 k 累加乘法计数。",
+      "solution_variant": "bracket-balance-counting-dp"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "primary",
+      "evidence": "每个非王牌花色是一组选择：选择缺口 k 并带有 w_k 种内部方案；这些组按总王牌预算 j 合并，正是计数型分组背包。",
+      "solution_variant": "bracket-balance-counting-dp"
+    },
+    {
+      "tag": "string/bracket-sequence",
+      "importance": "primary",
+      "evidence": "单花色可匹配分配的充要条件被转化为长度 m 的非负前缀括号序列，终止平衡就是剩余或缺少牌数。",
+      "solution_variant": "bracket-balance-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics/reflection-principle",
+      "importance": "secondary",
+      "evidence": "闭式变体通过反射第一次越过边界的非法路径，得到 w_k=C(m,(m+k)/2)-C(m,(m+k)/2+1)。",
+      "solution_variant": "ballot-formula-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics/catalan",
+      "importance": "secondary",
+      "evidence": "k=0 时 w_0 为 Catalan 数，全部 w_k 是相同非负括号路径计数的 ballot 推广。",
+      "solution_variant": "ballot-formula-counting-dp"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "secondary",
+      "evidence": "NTT 变体把逐花色转移写成系数数组的普通 Cauchy 卷积，并通过多项式幂一次合并 n-1 个相同花色。",
+      "solution_variant": "ntt-polynomial-power"
+    },
+    {
+      "tag": "math/transform/ntt",
+      "importance": "secondary",
+      "evidence": "已核实 Accepted 变体在模 998244353 下调用 NTT butterfly 计算截断多项式乘法并做 A(x)^(n-1)。",
+      "solution_variant": "ntt-polynomial-power",
+      "description": "在有限域中利用原根执行 Number Theoretic Transform，以 O(L log L) 计算普通多项式卷积；用于模数和变换长度支持单位根的模卷积，不与复数 FFT 或 FWT 混用。",
+      "parent": "math/transform",
+      "created_reason": "现有 math/transform/fft 是 Codeforces 宽泛伞标签，无法精确区分本题在 998244353 下实际使用的 NTT；NTT 是大量模卷积题可复用的明确检索点。",
+      "status": "candidate"
+    }
+  ]
+}

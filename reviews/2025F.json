@@ -1,0 +1,170 @@
+{
+  "contest": {
+    "contest_id": 2025,
+    "title": "Educational Codeforces Round 170 (Rated for Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2025,
+    "index": "F",
+    "title": "Choose Your Queries",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dfs and similar",
+      "dp",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2025/problem/F",
+      "notes": "完整读取题面、三组样例和约束：n,q 均不超过 3e5；每次必须在查询给出的两个不同端点之一执行加一或减一，且每一步后所有坐标非负，目标是最小化最终总和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135173",
+      "notes": "实际执行页面脚本并展开 2025F 动态 Tutorial；完整读取官方的连通块奇偶下界、共享端点边配对、后序 DFS 配对证明、重边实现注意点和 O(n+q) 参考代码。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/7vfrnv18",
+      "notes": "实际读取具体洛谷专栏全文与代码；交叉确认另一种等价构造：把每条边分配给一个端点，DFS 令每个非根点获得偶数条边，根的奇偶等于连通块边数，再按时间对同一点交替加减。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/02/20/0900",
+      "notes": "实际读取 kmjp 的题解和完整实现；其 set 删除边的 DFS 同样持续抽取共享中点的长度二 walk，并让先出现的查询加、后出现的查询减，独立佐证官方构造。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2025/submission/285919549",
+      "notes": "提交页明确显示 _Ch1F4N_、Accepted、C++20、452 ms、41296 KB，且已完整读取源码；实现端点奇偶分配，并在每个端点按查询编号排序后令前 ceil(k/2) 次为加、后 floor(k/2) 次为减。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2025/problem/F",
+      "notes": "独立补全逐连通块奇偶下界、DFS 每条边恰处理一次、配对叠加仍逐前缀非负的证明；以内存 oracle 穷举有序多重图，对照真正的状态搜索最优值。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "把每个查询 (x_i,y_i) 看成无向多重图的一条带时间编号的边；为每条边选择一个端点和正负号，使所有点的前缀值非负，并让最终点权和最小。",
+    "constraints": "2<=n<=3e5，1<=q<=3e5，x_i!=y_i；查询对可以重复，因此实现必须按边编号处理多重边。目标复杂度必须接近线性。",
+    "core_idea": "对任一含 m 条边的连通块，块内总和每次改变正负一，所以最终非负总和与 m 同奇偶，下界为 m mod 2。用 DFS 把块内边划分成若干对，每对两条边至少共享一个端点；仅当 m 为奇数时在根处留一条。若一对边编号 i<j，就在它们的公共端点对第 i 次查询执行 +1、第 j 次执行 -1。对任意时间前缀，每一对在该端点的贡献只可能是 0 或 1，多个对叠加仍非负，且每对最终净贡献为 0；遗留边执行 +1，恰好达到逐块下界。DFS 后序在 v 收集子树返回的未配树边和恰在 v 处理的非树边，就地任意两两配对；若剩一条且 v 非根，则再与父边配对并标记父边已消耗，否则把父边上传。根最多留一条。",
+    "complexity": "官方共享端点配对方案 O(n+q) 时间、O(n+q) 空间。端点奇偶分配变体用全局时间顺序交替符号也可 O(n+q)；已核实 Accepted 实现因逐端点排序为 O(n+q log q)。",
+    "tricks": [
+      "先按最终总和的连通块奇偶性建立不可突破的下界，再做达到下界的构造。",
+      "把两次查询配到同一公共端点，并严格让较早查询加、较晚查询减，从而自动满足所有前缀非负。",
+      "DFS 只需向父亲返回一位信息：父边是否仍未被当前子树消耗。",
+      "非树边只能处理一次；官方 color 写法跳过指向灰色祖先的方向，在祖先看到已完成后代时处理另一方向。",
+      "另一视角是把边定向到被选择的端点，使除每个 DFS 根外的入度均为偶数。"
+    ],
+    "proof_risks": [
+      "下界必须逐连通块相加，不能只看全局 q mod 2；两个奇边连通块即使 q 为偶数，最优总和仍至少为 2。",
+      "一对边必须选择同一个公共端点，且正负号必须按查询编号先加后减；反序会在较早时刻产生负数。",
+      "多对操作可以交错，但证明应按每个配对贡献一个 0/1 活跃区间叠加，而不是假设每对查询相邻。",
+      "平行边合法；邻接表必须存 edge id，不能按端点对去重，也不能只靠父节点编号跳过父边。",
+      "非根节点在本地未配边数为奇数时必须消耗父边；根在奇数边连通块中应恰留一条默认执行加一。",
+      "端点奇偶变体先决定 owner，再按原查询时间为每个 owner 安排符号；若按 DFS 发现顺序直接交替，前缀非负性没有保证。",
+      "递归 DFS 深度可能达到 3e5；官方 C++ 实现通过，但移植到栈较小环境时应改迭代 DFS 或确认栈限制。"
+    ],
+    "verification_notes": [
+      "Codeforces 静态 editorial 仅显示 Tutorial is loading；本次通过可执行脚本页面读取到完整 2025F Tutorial，而不是只读参考代码。",
+      "洛谷专栏 7vfrnv18 的端点分配证明与 Accepted 285919549 的源码结构一致，但符号安排分别采用按时间交替和排序后前加后减，两者都保证前缀非负。",
+      "对 n=2、q<=7，n=3、q<=6，n=4、q<=5 的所有有序无自环多重图共 10429 个实例穷举；状态搜索最优值、逐块奇偶下界、官方边配对输出和端点奇偶输出全部一致，且两种输出每一步都非负。",
+      "本 worker 只做读取、推导与内存验证，没有写数据库、review 文件或 Git 状态。"
+    ],
+    "source_blockers": [
+      "官方 editorial 的静态抓取不含教程正文，必须执行页面动态加载后按 2025F 对应 spoiler 精确提取。",
+      "洛谷 solution 列表页直接读取返回内部错误；用精确题号检索定位到具体 article 7vfrnv18 后才能实际阅读。",
+      "Codeforces contest.status 全量 API 在本轮超时；先由公开 hack 记录定位候选提交，再在登录提交页同时核验 verdict、资源数据和完整源码。"
+    ],
+    "uncertainty_points": [
+      "算法正确性与复杂度没有未决点。",
+      "唯一待主 agent 决策的是是否接受候选 graph/edge-pairing；若认为现有 graph/line-graph、graph/dfs 与 trick/parity 已足够，可拒绝该候选而保留其余标签。",
+      "若接受新 tag，需要同步 WebUI 完整路径中文翻译并运行 check_tag_translations.py。"
+    ],
+    "small_scale_verification": {
+      "method": "对每个查询前缀维护所有可达非负数组状态，得到真正最小最终总和；同时运行官方 DFS 边配对和洛谷式端点奇偶构造，并独立计算每连通块边数奇偶之和。",
+      "coverage": "全部有序多重图：n=2,q<=7 共 7 个；n=3,q<=6 共 1092 个；n=4,q<=5 共 9330 个；总计 10429 个实例。",
+      "result": "四种结果完全一致，两个构造的每一步均保持非负。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dfs-shared-endpoint-edge-pairing",
+      "summary": "官方主解。DFS 后序把每条边放入共享端点的二元组，每个奇边连通块留一条；组内较早边在公共端点加一、较晚边减一。",
+      "complexity": "O(n+q) time and O(n+q) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "dfs-endpoint-parity-orientation",
+      "summary": "把每条边定向到负责该操作的端点。DFS 自底向上选择树边方向，使所有非根点入度为偶数，根入度奇偶等于该块边数；随后按查询时间对每个端点交替 +,-，或排序后先放 ceil(k/2) 个 + 再放其余 -。",
+      "complexity": "O(n+q) time and O(n+q) memory with chronological alternation; O(n+q log q) for the verified accepted sorting implementation",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/edge-pairing",
+      "importance": "primary",
+      "evidence": "主解的核心对象就是把每个连通块的全部边划分为共享至少一个端点的二元组，并在奇数边时仅留一条；随后每组直接对应一对可抵消操作。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing",
+      "description": "把无向图的边恰好使用一次，划分为若干共享至少一个端点的二元组，并可在每个奇数边连通块留一条；通常以 DFS 后序把至多一条未配边上传。不要用于原图顶点匹配或任意无公共端点的数值配对。",
+      "parent": "graph/line-graph",
+      "created_reason": "现有 graph/dfs 只描述遍历，graph/line-graph 只描述把边邻接显式化，graph/matching 又容易误指原图顶点匹配；本题决定性的可复用模式是线性构造这种边邻接配对，以便在公共端点抵消两次操作。",
+      "status": "candidate"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "primary",
+      "evidence": "后序 DFS 决定非树边的唯一处理端点，并让每个子树只向父亲返回父边是否仍未配这一位状态，从而在线性时间完成全图配对。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出每次查询的端点和符号；算法在证明奇偶下界后显式构造一组逐前缀合法且达到下界的操作。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "每个连通块的最终总和与其边数同奇偶，给出最优值下界；DFS 的上传状态、根是否留边以及端点分配变体也全部由奇偶决定。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    },
+    {
+      "tag": "graph/edge-orientation",
+      "importance": "secondary",
+      "evidence": "等价变体把每条无向边定向到被操作端点，并构造除根外均为偶入度、根入度具有连通块边数奇偶的定向。",
+      "solution_variant": "dfs-endpoint-parity-orientation"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "在 DFS 生成树上，每个子树只返回父边保留/消耗的二状态，父节点汇总子树余边后继续转移。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "每个顶点收集到的待配边可以任意两两配掉，无需挑选全局最优配对；正确性只依赖最终余数的奇偶。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    },
+    {
+      "tag": "graph/connectivity",
+      "importance": "secondary",
+      "evidence": "最优下界和允许遗留的单边都必须分别按连通块计算，DFS forest 对各块独立构造。",
+      "solution_variant": "dfs-shared-endpoint-edge-pairing"
+    }
+  ]
+}
+
