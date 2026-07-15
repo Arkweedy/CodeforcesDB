@@ -1,0 +1,101 @@
+{
+  "contest": {
+    "contest_id": 2036,
+    "title": "Codeforces Round 984 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2036,
+    "index": "G",
+    "title": "Library of Magic",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "divide and conquer",
+      "interactive",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2036/problem/G",
+      "notes": "完整阅读当前英文题面、交互协议、样例和hack格式；确认n<=1e18、每例最多150次区间XOR查询、三个失窃编号互异且交互器非自适应。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135849",
+      "notes": "阅读官方G教程和参考实现；确认使用对齐二进制块保证非空查询异或非零，两轮逐位重构后由全区间异或恢复第三个编号。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DEV3937/p/18520304",
+      "notes": "阅读CF2036G完整分析和代码；交叉验证总异或为0会破坏普通前缀二分，并可用最高位块分离后在约120次查询内恢复。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/yiweixxs/p/18549821",
+      "notes": "阅读题解和实现；独立确认a xor b xor c为0时必有一个数的最高位低于另外两个，幂次边界可消除三数同时异或为0的歧义。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "每个1到n的编号原有两本书，三个互异编号各被拿走一本；通过至多150次区间XOR查询重构这三个编号。",
+    "constraints": "原交互格式中1<=t<=300，3<=n<=1e18，每个测试最多150次查询，交互器非自适应，答案顺序任意；当前hack格式直接给出n,a,b,c。",
+    "core_idea": "完整的两本同编号书异或为0，因此查询[l,r]恰返回落在该区间内的失窃编号之异或。设计find函数逐位寻找尚未恢复编号中的最大值：维护已确定的高位前缀x，从n的最高二进制位p向下，查询对齐块[x OR p, min(x OR (2p-1),n)]，并把已找到且位于区间内的编号异或掉。修正后的结果非零当且仅当该块含有尚未找到的编号：含一个时该正整数非零，含两个时互异数的异或非零；第一次搜索可能含三个，但它们都共享查询块中值为1的第p位，三个该位异或后仍为1。故非零时设置x的第p位，否则保持0，最终得到最大剩余编号。运行两次find；最后查询[1,n]并异或掉前两个编号即可得到第三个。",
+    "complexity": "At most 2*(floor(log2 n)+1)+1 <= 121 oracle queries, O(log n) local time, and O(1) memory per test case.",
+    "tricks": [
+      "利用每个正常编号出现两次，使查询响应自动消去全部未失窃编号。",
+      "普通的非零前缀二分会在三个编号总异或为0时失效。",
+      "查询固定高位前缀且当前位为1的对齐块，使三个候选同时落入时该位仍保证响应非零。",
+      "找到一个编号后，仅当它位于当前查询区间内时才将其从响应中异或掉。",
+      "逐位搜索同时完成最高有效块定位和块内二分，因此只需两轮约60次查询。",
+      "交互实现必须处理-1响应并在每次输出后刷新缓冲区；hack格式不再实际调用交互器。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-pass-bitwise-oracle-reconstruction",
+      "summary": "用共享置位的二进制前缀块把区间XOR转成可靠的非空判定，逐位求出最大失窃编号；异或排除已知编号后重复一次，再由全局XOR恢复第三个编号。",
+      "complexity": "At most 121 queries, O(log n) local time, and O(1) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive/oracle-reconstruction",
+      "importance": "primary",
+      "evidence": "目标是在严格查询预算下，根据自适应区间XOR响应重构三个隐藏且互异的编号。",
+      "solution_variant": "two-pass-bitwise-oracle-reconstruction"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "前两个编号分别通过从高位到低位的二进制决策重构，每次查询决定最大剩余编号的一个二进制位。",
+      "solution_variant": "two-pass-bitwise-oracle-reconstruction"
+    },
+    {
+      "tag": "trick/oracle-design",
+      "importance": "primary",
+      "evidence": "任意区间可能因三个隐藏数异或为0而产生假空响应；选择所有候选共享一个置位的对齐块后，响应非零才成为可靠的非空判定。",
+      "solution_variant": "two-pass-bitwise-oracle-reconstruction"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "算法按位构造答案，并使用OR形成固定高位前缀和当前置位对应的查询边界。",
+      "solution_variant": "two-pass-bitwise-oracle-reconstruction"
+    },
+    {
+      "tag": "trick/dyadic-interval-decomposition",
+      "importance": "secondary",
+      "evidence": "查询区间是由当前二进制前缀确定的对齐幂次块，借此控制区间内所有候选的共享高位。",
+      "solution_variant": "two-pass-bitwise-oracle-reconstruction"
+    }
+  ]
+}

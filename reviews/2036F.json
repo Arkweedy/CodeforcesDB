@@ -1,0 +1,93 @@
+{
+  "contest": {
+    "contest_id": 2036,
+    "title": "Codeforces Round 984 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2036,
+    "index": "F",
+    "title": "XORificator 3000",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "dp",
+      "number theory",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2036/problem/F",
+      "notes": "完整阅读英文题面、样例和约束；确认目标为[l,r]内所有不合同于k模2^i的正整数的异或和。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135849",
+      "notes": "阅读官方F教程和参考实现；确认先异或掉被排除的同余类，再把该同余类拆成固定低i位k与连续商的高位。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/d52heuut",
+      "notes": "阅读完整题解和实现；交叉验证补集转换、前缀异或以及2^i步长等差序列的高低位拆分。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DEV3937/p/18520304",
+      "notes": "阅读CF2036F段落和代码；独立确认前缀异或四周期公式、同余类项数奇偶和每组O(1)实现。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "对每组l,r,i,k，求区间内所有满足x不合同于k模2^i的整数的按位异或和。",
+    "constraints": "1<=t<=1e4，1<=l<=r<=1e18，0<=i<=30，0<=k<2^i；需要64位整数。",
+    "core_idea": "令P(x)=0 xor 1 xor ... xor x，并约定x<0时P(x)=0。P(x)只由x mod 4决定。答案等于整个[l,r]的异或再异或一次被排除同余类的异或。对前缀[0,x]，若x<k则同余类为空；否则令q=floor((x-k)/2^i)，cnt=q+1。该类恰为k+2^i*y，0<=y<=q；由于k只占低i位，其异或为(P(q)<<i) xor (cnt为奇数时的k)。记此值为Bad(x)，最终答案为P(r) xor P(l-1) xor Bad(r) xor Bad(l-1)。",
+    "complexity": "O(1) time per test case, O(t) total time, and O(1) memory.",
+    "tricks": [
+      "利用XOR自逆，把难以直接描述的保留集合转成整个区间异或上被排除同余类。",
+      "连续整数前缀异或具有长度为4的周期，可常数时间计算。",
+      "x=k+2^i*y的低i位恒为k，高位恰为连续整数y。",
+      "固定低位k只有在同余类项数为奇数时才保留。",
+      "i=0时模数为1，所有整数都被排除，统一公式应返回0。",
+      "计算Bad(x)前必须处理x<k；位移和端点均应使用64位类型。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-xor-complement-residue-compression",
+      "summary": "用前缀异或表示区间全集，再将模2^i等于k的数写成k+2^i*y，分别异或连续商的高位和由项数奇偶决定的固定低位。",
+      "complexity": "O(1) time and O(1) memory per test case",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/prefix-xor",
+      "importance": "primary",
+      "evidence": "整个区间以及被排除同余类都通过两个前缀异或值组合；连续整数前缀异或的四周期公式直接给出常数复杂度。",
+      "solution_variant": "prefix-xor-complement-residue-compression"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "primary",
+      "evidence": "核心转化是把x合同于k模2^i精确参数化为x=k+2^i*y，并由端点整除计算商范围和项数。",
+      "solution_variant": "prefix-xor-complement-residue-compression"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "模数是2的幂，使每个同余类元素能无进位地拆成连续商的高位与固定的低i位。",
+      "solution_variant": "prefix-xor-complement-residue-compression"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "固定低位k被异或cnt次，偶数次完全抵消，奇数次恰保留一次。",
+      "solution_variant": "prefix-xor-complement-residue-compression"
+    }
+  ]
+}

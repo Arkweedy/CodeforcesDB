@@ -1,0 +1,92 @@
+{
+  "contest": {
+    "contest_id": 2036,
+    "title": "Codeforces Round 984 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2036,
+    "index": "E",
+    "title": "Reverse the Rivers",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "constructive algorithms",
+      "data structures",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2036/problem/E",
+      "notes": "完整阅读英文题面、样例和约束；确认要求使用严格不等号，n*k<=1e5，所有查询的要求总数不超过1e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135849",
+      "notes": "阅读官方E教程和参考实现；确认按列计算前缀OR后具有单调性，每条要求通过二分产生行号边界。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ydwl9u14",
+      "notes": "阅读完整题解和代码；交叉验证每条要求对应前缀或后缀区间，维护所有要求的可行区间交集。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "先计算每个地区沿国家编号方向的前缀按位OR；对每组严格大小约束，求满足全部约束的最小国家编号。",
+    "constraints": "1<=n,k,q<=1e5，1<=a[i][j]<=1e9，0<=c<=2e9，n*k<=1e5，所有查询中要求数量之和M<=1e5。",
+    "core_idea": "令b[i][j]=a[1][j] OR ... OR a[i][j]。固定列j时，b[i][j]关于i单调不减。条件b[i][r]<c允许的下标为[0, lower_bound(column_r,c)-1]；条件b[i][r]>c允许的下标为[upper_bound(column_r,c), n-1]。对一组查询维护全局可行区间[L,R]并与每条要求的区间求交；若L<=R，最小答案为L+1，否则为-1。",
+    "complexity": "O(n*k + M*log n) time and O(n*k) memory, where M is the total number of requirements.",
+    "tricks": [
+      "按列原地计算前缀OR，使原矩阵转化为单调数组集合。",
+      "严格小于使用lower_bound，严格大于使用upper_bound，二者不能混用。",
+      "每条要求的解集是前缀或后缀，全部要求的交集仍是一个连续区间。",
+      "c=0或c大于所有前缀OR值时，二分哨兵必须正确产生空区间或整段区间。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "prefix-or-monotone-interval-intersection",
+      "summary": "计算每列前缀OR；用lower_bound或upper_bound把每个严格约束转成行号区间，并求所有区间的交集。",
+      "complexity": "O(n*k + M*log n) time and O(n*k) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "每条要求都必须在单调的列前缀OR序列中查找第一个不小于c或第一个大于c的位置，才能在总要求数1e5下通过。",
+      "solution_variant": "prefix-or-monotone-interval-intersection"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "按位OR只会保持或增加数值，因此每列的前缀OR单调不减；这是边界二分和连续可行区间成立的根本性质。",
+      "solution_variant": "prefix-or-monotone-interval-intersection"
+    },
+    {
+      "tag": "trick/interval-feasibility",
+      "importance": "secondary",
+      "evidence": "每条约束给出一个行号前缀或后缀，查询可行性等价于这些数值区间的交集是否非空。",
+      "solution_variant": "prefix-or-monotone-interval-intersection"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "预处理的核心运算是逐列累计按位OR，并利用OR对非负整数的单调性。",
+      "solution_variant": "prefix-or-monotone-interval-intersection"
+    },
+    {
+      "tag": "trick/convert-to-prefix",
+      "importance": "secondary",
+      "evidence": "原始矩阵先被转换为列前缀OR矩阵，之后所有查询只作用于这些前缀聚合值。",
+      "solution_variant": "prefix-or-monotone-interval-intersection"
+    }
+  ]
+}
