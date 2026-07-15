@@ -1,0 +1,143 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "G",
+    "title": "Balanced Problem",
+    "rating": 3000,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/G",
+      "notes": "完整读取题面、两类操作、正权贡献定义和全部约束。确认 sum(n), sum(m) <= 2e5，V <= 2000，sum(V^2) <= 4e6。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "完整核对官方 G 部分的两种方案和内嵌实现。主方案把状态写成二维偏序最大值并使用二维 Fenwick；作者方案把绝对值转移分类后使用一维 Fenwick，复杂度 O(V^2 log V)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/f718f6dd",
+      "notes": "实际阅读 CF2029G 小节。用于交叉确认：选中高度序列 d_1,...,d_k 的最小可行目标值为 d_1+sum_{i>1}max(0,d_i-d_{i-1})，以及合并等值段后只有 O(V) 个有效状态。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/nullptr-qwq/p/18559547",
+      "notes": "实际阅读 CF2029G 小节。独立确认有效段数至多约 2V、二维状态的单调方向、更新点位于直线 y=x+a_i，以及二维 Fenwick 的 O(V^2 log^2 V) 实现。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/G",
+      "notes": "自行补全二维偏序模型的充要性、有效段数 O(V) 的严格理由和相同连续段合并证明；固定随机种子 2029，对 300 个小规模实例进行合法操作穷举与链 DP 对拍，全部一致。"
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/api/user.status?handle=bashkort&from=1&count=10000",
+      "notes": "通过 Codeforces API 确认提交 290755809 对 2029G 的 verdict 为 OK，语言为 C++20。源码页被 Cloudflare 403 阻挡，因此该提交只用于确认存在通过的 O(V^2) 方案，未作为已读源码依据。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2029/submission/290755809",
+      "notes": "Codeforces API 已确认 Accepted，且官方题解评论称其为 O(V^2) 方案；本次无法读取源码，故仅保留为候选，不将其算法细节写入 reviewed 结论。"
+    }
+  ],
+  "annotation": {
+    "summary": "先执行给定的 m 次前缀或后缀加法，得到初始数组 A。随后仍可执行任意次同类操作。对于每个 1<=v<=V，求最终值恰好等于 v 的位置权值 c_i 之和的最大值。",
+    "constraints": "1<=t<=1000；1<=n,m<=2e5；1<=V<=2000；1<=c_i<=1e9；所有测试的 sum(n), sum(m)<=2e5，sum(V^2)<=4e6。答案可能达到 2e14，必须使用 64 位整数。",
+    "core_idea": "令 A_i 为给定操作结束后的值。任意新增前缀操作在位置 i 上产生的贡献 P_i 随 i 单调不增，新增后缀操作的贡献 S_i 随 i 单调不减；反之，任意非负整数单调序列 P、S 都能通过相邻差分还原成相应操作。若选中位置 i 并要求 A_i+P_i+S_i=v，定义 x_i=S_i、y_i=v-P_i，则 x_i、y_i 都随位置单调不减，并满足 y_i-x_i=A_i、0<=x_i<=y_i<=v。反过来，任意满足这些条件的二维非降链都能令 P_i=v-y_i、S_i=x_i，并扩展为完整单调序列，从而构造出合法操作。因此，每个高度为 d=A_i 的有效位置对应对角线上的候选点 (x,x+d)，0<=x<=V-d；目标变成按原下标顺序选择最大权二维非降链。A_i>V 的位置永远无法贡献。连续且 A_i 相等的位置可合并权值，因为 c_i>0，任何可行解都能让整段采用同一个链状态。又因为 A_i=L_suffix(i)+R_prefix(i)，在 A_i<=V 可能出现的区域内，剩余 L 操作和已经经过的 R 操作各至多 V 个，所以有效段数至多 2V+1。处理每个合并段 (weight,d) 时，枚举 x，查询所有旧状态 (p,q) 满足 p<=x、q<=x+d 的最大权值，再更新点 (x,x+d)。二维 Fenwick 维护矩形前缀最大值。初始状态为 (0,0)->0，所有段处理完后，答案 ans[v] 是矩形 [0,v]×[0,v] 中的最大值。",
+    "complexity": "主方案每个测试 O(n+m+V^2 log^2 V) 时间、O(V^2) 空间。有效段数 O(V)，每段枚举 O(V) 个对角线点，每次二维 Fenwick 查询和更新为 O(log^2 V)。题目的 sum(V^2)<=4e6 保证总规模。",
+    "tricks": [
+      "把新增前缀贡献看成单调不增序列，把新增后缀贡献看成单调不减序列。",
+      "使用 x=S、y=v-P，把一增一减的两个操作维度统一成二维非降偏序。",
+      "过滤 A_i>V，并把相邻等值位置的正权贡献合并，将 n 级别序列压缩到 O(V) 个段。",
+      "每个高度 d 的所有状态位于对角线 y=x+d，只需枚举这条线上的 O(V) 个整数点。",
+      "同一段的全部查询必须先完成，再统一写入 Fenwick，避免同一合并段被重复选取。",
+      "最终查询 (v,v) 的二维前缀，而不是只查询某一个精确状态；较小坐标通过 P_i=v-y_i 自动补足到目标值 v。"
+    ],
+    "proof_risks": [
+      "前缀贡献 P_i 的方向是随 i 单调不增，后缀贡献 S_i 才是单调不减；写反后二维偏序方向会整体错误。",
+      "第二维必须定义为 y_i=v-P_i，而不是直接使用 P_i。这样 P_i 单调不增才会转化成 y_i 单调不减。",
+      "二维链到实际操作的逆向证明不可省略：P_i=v-y_i、S_i=x_i 需要先在选中位置间作单调延拓，再分别用 P_i-P_{i+1} 和 S_i-S_{i-1} 还原操作次数。",
+      "A_i>V 可以删除，但 A_i=V 仍可能贡献，对应唯一候选点 (0,V)。",
+      "连续等值段可以整体合并依赖 c_i>0；若允许负权，选择整段不一定最优。",
+      "有效段数 O(V) 依赖 A 确实由前缀和后缀操作生成。对任意给定的普通数组，该结论不成立。",
+      "二维 Fenwick 中当前段的 query 和 update 必须分成两轮，否则刚写入的状态会再次转移到同一段，造成重复计权。",
+      "Fenwick 保存的是最大值而不是求和，未到达状态应初始化为足够小的负无穷；空选择由 (0,0)->0 保证。",
+      "c_i 总和超过 32 位整数范围，DP、Fenwick 和答案都必须使用 64 位整数。",
+      "O(V^2 log^2 V) 的常数明显高于 O(V^2 log V)；实现时应避免频繁分配和不连续内存访问。"
+    ],
+    "uncertainty_points": [
+      "官方 Solution 1 使用 saved LR pairs、cntL、cntR 描述状态，文字解释较简略。这里没有依赖该术语，而是使用 Luogu 的正向增量公式和二维链充要性重新推导。",
+      "官方评论给出了一个 O(V^2) Accepted 提交，但源码页被 Cloudflare 阻挡。本次只确认其 verdict，没有审阅算法，因此不把 O(V^2) 方案列为已验证 solution variant。",
+      "小规模穷举是对边界和状态方向的有限验证，不能替代一般情形下的单调序列与二维链充要性证明。",
+      "没有提出新 tag；现有 dp/lis-dp、data-structure/fenwick-tree、trick/state-compression、dp/prefix-max-optimization 已足够准确描述主解。"
+    ],
+    "small_scale_verification": {
+      "method": "固定随机种子 2029。随机生成 n=1..5、V=1..4、m=1..8 的前缀/后缀初始操作和正权 c。对于每个 v，穷举取值在 [0,v] 内的所有单调不增 P 序列和单调不减 S 序列，直接计算最大 beauty；再运行显式二维链 DP并比较答案。同时统计过滤 A_i>V 后的等值段数量。",
+      "coverage": "共 300 个随机实例，逐实例比较全部 1<=v<=V。额外检查每个实例的有效段数不超过 2V+1。",
+      "result": "全部 300 个实例中，操作穷举答案与二维链 DP 完全一致；有效段数界也全部成立，测试中达到过 2V+1 的上界。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "two-dimensional-dominance-chain-dp",
+      "summary": "把每个有效高度 d 转成对角线点 (x,x+d)，按原位置顺序求最大权二维非降链。二维 Fenwick 支持矩形前缀最大值查询和单点最大值更新，最后以 query(v,v) 得到每个目标 v 的答案。",
+      "complexity": "O(n+m+V^2 log^2 V) time and O(V^2) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "positive-variation-budget-dp",
+      "summary": "若选中位置的初始高度依次为 d_1,...,d_k，则最小可行目标值为 d_1+sum_{i=2..k}max(0,d_i-d_{i-1})。以该正向增量作为预算做最大权子序列 DP；按 d_i 与前驱高度的大小分类，并用一维 Fenwick 维护两类最大值转移。",
+      "complexity": "O(n+m+V^2 log V) time and O(V^2) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/lis-dp",
+      "importance": "primary",
+      "evidence": "主问题被严格转化为按原下标顺序选择最大权二维非降链；每个状态从坐标均不大的前驱转移，是加权 LIS/偏序链 DP 的直接变体。",
+      "solution_variant": "two-dimensional-dominance-chain-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "主方案必须对二维坐标执行前缀矩形最大值查询和点更新；二维 Fenwick 将每次 DP 转移从 O(V^2) 降为 O(log^2 V)，使总复杂度达到 O(V^2 log^2 V)。",
+      "solution_variant": "two-dimensional-dominance-chain-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "过滤高度大于 V 的位置并合并相邻等值段后，利用初始数组来自前后缀操作的结构证明有效段数只有 O(V)，这是消除 n、m 对二次 DP 规模影响的关键。",
+      "solution_variant": "two-dimensional-dominance-chain-dp"
+    },
+    {
+      "tag": "dp/prefix-max-optimization",
+      "importance": "secondary",
+      "evidence": "二维链 DP 的转移正是查询所有 p<=x、q<=y 的前缀矩形最大值，再在当前点加入权值。",
+      "solution_variant": "two-dimensional-dominance-chain-dp"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "secondary",
+      "evidence": "正向增量变体把 d_1+sum max(0,d_i-d_{i-1}) 作为不超过 v 的预算，在保序选择位置的同时最大化权值。",
+      "solution_variant": "positive-variation-budget-dp"
+    }
+  ]
+}

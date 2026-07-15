@@ -1,0 +1,118 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "F",
+    "title": "Palindrome Everywhere",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/F",
+      "notes": "完整读取二色环、允许非简单 route 的回文边色定义以及 sum n<=1e6。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "核对官方双人同步移动解释，以及同色相邻边、最大单色段奇偶性的完整必要充分分类。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/s51m2lcx",
+      "notes": "阅读独立的双人相遇证明和 O(n) 实现，交叉确认零个、一个、至少两个偶长度 R 段的分类。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/F",
+      "notes": "建立有序点对乘积图，把回文 route 化为两端同步走相同颜色边直至重合或相邻，并穷举所有小环核对线性判据。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "一个环的每条边染成 R 或 B。判断任意两个顶点之间是否都存在边色序列为回文的 route；route 可以重复经过顶点和边。",
+    "constraints": "t<=1e5，3<=n<=1e6，所有测试的 n 总和<=1e6。",
+    "core_idea": "从 route 两端同时向中间剥去同色边，可将问题理解为两名行者从两个端点出发，每一步必须各走一条同色边，直到位于同一顶点或相邻顶点。若环上同时存在 RR 与 BB 的循环相邻对，把两人分别放在对应中心即可得到无法同步迈出第一步的反例。否则交换颜色，使可能重复相邻的颜色为 R，此时 B 边互不相邻。全同色显然可行；只有一条 B 时，剩余 n-1 条 R 构成覆盖所有顶点的同色路径，也可行。其余情况把 B 之间的最大 R 边段按循环顺序分解：所有段均为奇数时存在永远保持相对位置的反例；至少两个偶段时可把两人困在不同偶段；恰好一个偶段时可利用它改变两人的相对奇偶和方向，使任意起点对最终相遇。因此答案恰为上述特殊情形或“恰好一个偶长度 R 段”。",
+    "complexity": "O(n) time and O(1) extra memory per test case（实现可边扫描边计数）。",
+    "tricks": [
+      "把回文 route 从两端同步剥离，转化为双点同步移动。",
+      "先用颜色互补对称性把唯一可能连续出现的颜色统一为 R。",
+      "在环上按孤立 B 边切分最大 R 段，只统计段长奇偶。",
+      "单独处理全同色和只有一条异色边的边界。"
+    ],
+    "proof_risks": [
+      "route 允许非简单；若只检查环上的两条简单路径，会错误拒绝需要来回移动的合法点对。",
+      "RR/BB 的检测必须包含 c[n-1] 与 c[0] 的循环相邻关系。",
+      "段长统计的是 R 边数而不是段内顶点数。",
+      "若只有一条 B，即使唯一 R 段为奇数，也应由 n-1 条同色边的特殊情况直接判 YES。",
+      "若原串只有 BB 而无 RR，必须先整体交换 R/B 后再统计段。",
+      "乘积图的终止状态既包括两点重合，也包括两点相邻；后者对应奇数长度 route 的中间一条边。"
+    ],
+    "uncertainty_points": [
+      "“恰好一个偶段”情形的充分性证明较依赖同步行走与方向调整的图像化论证；本结论已由官方题解、Luogu 独立证明及全部 n<=10 二色环的乘积图穷举共同确认。"
+    ],
+    "small_scale_verification": {
+      "method": "建立点对状态图；若两端分别沿同色边移动，则连一条状态边。以两点重合或相邻为终止状态做反向 BFS，精确判断每个顶点对是否有回文 route，再与 O(n) 分段判据比较。",
+      "coverage": "穷举 n=3..10 的全部 2040 个二色环。",
+      "result": "每个环、每个点对的精确可达结果均与同色相邻及 R 段奇偶分类一致。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cyclic-monochromatic-run-classification",
+      "summary": "排除 RR 与 BB 同时出现的情况，按颜色互补规范化后，将环切成 B 分隔的最大 R 段；结合全同色、单个 B 的特殊情况，通过偶长度 R 段数量作 O(n) 判定。",
+      "complexity": "O(n) time, O(1) extra memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "线性判定的核心是把循环二色串分解成由孤立 B 分隔的最大 R runs，并统计各 run 长度的奇偶。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "在排除特殊情况后，答案完全由偶长度 R 段的数量是否恰为一决定。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    },
+    {
+      "tag": "graph",
+      "importance": "secondary",
+      "evidence": "正确性基于环图上两个端点同步沿同色边移动的点对可达性，而不是普通字符串回文匹配。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    },
+    {
+      "tag": "string/palindrome",
+      "importance": "secondary",
+      "evidence": "目标性质是 route 的边色序列回文，并通过从序列两端同步剥离同色边完成建模。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "证明必须区分同时存在 RR/BB、全同色、单异色边、零个/一个/多个偶段等结构情形。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    },
+    {
+      "tag": "trick/complement-symmetry",
+      "importance": "secondary",
+      "evidence": "R 与 B 完全对称，可整体交换颜色，统一为只有 R 可能连续出现后再分析。",
+      "solution_variant": "cyclic-monochromatic-run-classification"
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "I",
+    "title": "Variance Challenge",
+    "rating": 3400,
+    "rating_status": "official",
+    "official_tags": [
+      "flows",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/I",
+      "notes": "Read the complete statement, examples, and constraints. Confirmed 1 <= n,m <= 5000, n*m <= 20000 per test, sum(n*m) <= 20000, and that every answer concerns exactly p nonempty interval additions and is multiplied by n^2."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "Read the complete official 2029I tutorial and embedded C++ implementation. It confirms the variance-to-free-center transformation, enumeration of O(nm) candidate sums, separable convex-cost flow model, residual regret greedy, forward and reverse minimum-subarray scans, O((nm)^2) time, and the __int128 requirement."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2029I",
+      "notes": "Read the complete first solution and the visible derivations of the other solution cards. They independently explain why extra enumerated center values cannot lower the true answer, identify the two residual augmenting-path shapes, require reverse edges to stay inside positive coverage, and implement both choices by minimum-subarray scans."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/wshcl/p/18901103",
+      "notes": "Read the CF2029I section and full implementation in an independent article about simulated min-cost flow. It explicitly builds unit marginal-cost edges, derives convexity from increasing quadratic differences, scans both forward and reverse residual intervals, and confirms O(n^2*m^2) time."
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/contest/2029/submission/290868793",
+      "notes": "Codeforces contest.status API was queried and confirmed submission 290868793 is verdict OK for 2029I, C++20, 5578 ms, 409600 bytes, with 100 passed tests. The anonymous submission page did not expose its source, so this entry corroborates acceptance and performance only and was not used as line-level code evidence."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/I",
+      "notes": "Re-derived the scaled quadratic objective, candidate-sum completeness, convex marginal costs, residual forward/reverse path characterization, and exact-operation padding argument. An in-memory exhaustive differential test compared the simulated-flow algorithm with enumeration of every interval-operation sequence on all 1080 instances with n<=4, m<=3, a_i in [1,3], and k in [1,3]; every answer matched. It also reproduced the first three statement examples. No files, SQLite rows, or Git state were modified."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "For every p from 1 to m, choose exactly p intervals and add k on each of them so that the final array variance is minimized. The solution first removes the moving-mean dependency, then solves the resulting interval-addition problem as a separable convex-cost flow on a chain and simulates its successive residual augmentations with regret greedy.",
+    "constraints": "Up to 100 tests; 1 <= n,m <= 5000; n*m <= 20000 per test and sum(n*m) <= 20000; 1 <= k,a_i <= 100000. The time limit is 6 seconds and memory limit is 256 MB. Intermediate squared expressions and accumulated costs can exceed signed 64-bit range, so __int128 is required.",
+    "core_idea": "Let b be a final array and let s be a candidate value for sum(b). Define H_s(b)=n*sum_i(b_i^2)-2*s*sum_i(b_i)+s^2=n*sum_i(b_i-s/n)^2. For fixed b this is minimized at s=sum(b), where it equals n^2*V(b). After at most m interval operations, every possible sum(b) is sum(a)+k*q for an integer 0<=q<=n*m, so enumerate these n*m+1 values of s. Extra values that are not compatible with a particular p are harmless: H_s(b) is never below H_sum(b)(b), while the true sum of every feasible b is present in the enumeration. For fixed s, let c_i be the number of selected intervals covering position i. The position cost is the convex function C_i(c)=n*(a_i+k*c)^2-2*s*(a_i+k*c). Its next-unit marginal is d_i(c)=n*(2*(a_i+k*c)*k+k^2)-2*s*k and increases by exactly 2*n*k^2 per unit. Model one interval as one unit of flow entering a chain before its left endpoint, traversing its covered position edges, and leaving after its right endpoint. The flow on position edge i is c_i; splitting every convex edge into ordered unit marginal edges gives a min-cost-flow formulation. Starting from an optimal flow of value p-1, successive shortest augmentation gives the optimum for p. Because the residual graph is a line and source/sink may attach at arbitrary boundaries, a shortest simple augmenting path can be chosen as exactly one contiguous forward chain segment or one contiguous backward segment; a path changing direction contains a removable residual cycle. A forward segment adds one coverage layer and costs the sum of current d_i. A backward segment removes one layer from positions with c_i>0 and costs sum_i(2*n*k^2-d_i); it represents regretting and splitting/rerouting earlier intervals while total flow value still rises. Find the cheapest segment of each type by two Kadane minimum-subarray scans, choose the cheaper one, update that interval, and record the cost after every augmentation. Although a reverse augmentation may reduce total cell coverage, after p augmentations the resulting coverage vector needs at most p intervals; any missing operations can be whole-array additions, which translate every value equally and therefore preserve variance. Taking the minimum over all enumerated s yields every requested answer.",
+    "complexity": "For each of n*m+1 candidate sums, perform m augmentations; each augmentation uses O(n) time for two Kadane scans and an O(n) worst-case interval update. Thus time is O((n*m)^2) per test and O(sum_tests((n*m)^2)) overall, bounded by 4*10^8 low-constant operations under sum(n*m)<=20000. Memory is O(n+m).",
+    "tricks": [
+      "Use n^2*V(b)=min_s [n*sum(b_i^2)-2*s*sum(b_i)+s^2], where s denotes the candidate final sum rather than the mean itself.",
+      "Enumerate every sum(a)+k*q for 0<=q<=n*m; infeasible center values can only increase the fixed-array squared-error objective.",
+      "Linearize a separable convex flow cost by its increasing unit marginal costs.",
+      "Simulate successive shortest augmenting paths instead of running a generic min-cost-flow implementation.",
+      "Scan both forward add-costs and backward undo-costs; considering only the cheapest new interval is not a correct greedy.",
+      "Reset the backward Kadane scan whenever c_i=0 because the corresponding reverse residual edge does not exist.",
+      "Pad a representation using fewer than p intervals with whole-array operations, which do not change variance.",
+      "Use __int128 for the scaled quadratic expressions and accumulated answers."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "The official prose compresses the residual-path and exact-p arguments into the phrase regret greedy. These details were independently reconstructed and exhaustively checked on the stated finite domain, but should remain explicit in the stored annotation.",
+      "Submission 290868793 was confirmed Accepted through the official API, but its source text was inaccessible anonymously. Implementation cross-checking therefore relies on the official embedded code, the Luogu solution, and the independent CNBlogs implementation.",
+      "The proposed convex-cost-flow and regret-greedy tags are new taxonomy candidates and require main-agent approval plus WebUI translations.",
+      "The asymptotic upper bound permits roughly 4*10^8 simple operations. Adding a logarithmic data structure, generic shortest-path flow, repeated allocation, or 128-bit work in unnecessary inner-loop locations can exceed the 6-second limit."
+    ],
+    "proof_risks": [
+      "Do not keep the original array mean fixed. Every interval operation changes the mean, and that dependency is exactly why the auxiliary center s must be introduced.",
+      "The enumerated integer s is the final array sum; the corresponding center is s/n. Mixing these two quantities loses factors of n in both the objective and marginal costs.",
+      "It is invalid to restrict s to sums apparently feasible for the current p unless the bounds are derived carefully. Enumerating the common superset 0<=q<=n*m is simpler and remains correct.",
+      "Convexity is essential: the marginal cost of the next unit must increase by 2*n*k^2. Using unordered parallel costs invalidates the flow interpretation.",
+      "A backward augmentation is legal only across a contiguous segment with strictly positive current coverage. Letting Kadane cross c_i=0 uses nonexistent reverse residual edges.",
+      "Repeatedly choosing only the cheapest forward interval omits residual regret and can fail; the reverse candidate must be compared on every augmentation.",
+      "After a reverse update, the coverage array need not look like the union of exactly p visibly stored intervals. Correctness uses flow decomposition or the bound on the minimum interval count, followed by variance-preserving whole-array padding.",
+      "The total is O((n*m)^2), not O(n*m). There are O(n*m) centers and O(n*m) work for all augmentations at each center.",
+      "Signed 64-bit arithmetic is insufficient for all intermediate s^2 and n*a_i^2 expressions even when the final printed answer happens to fit."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "candidate-sum-enumeration-and-regret-greedy-convex-flow",
+      "summary": "Enumerate the candidate final sum s. For each s, maintain current coverage counts and the forward marginal cost of increasing every position once. At each operation, use Kadane to find the minimum-cost forward interval and a second zero-delimited Kadane scan to find the minimum-cost reversible interval. Apply the cheaper residual augmentation, update its marginal costs by plus or minus 2*n*k^2, and minimize every p-th cost over all s.",
+      "complexity": "O((n*m)^2) time and O(n+m) memory per test.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/flow/min-cost-flow/convex-cost-flow",
+      "display_name": "Convex-cost flow",
+      "importance": "primary",
+      "evidence": "For fixed candidate sum, the objective is a sum of convex functions of the integer flow c_i on chain edges. Splitting each function into nondecreasing unit marginal costs produces the exact min-cost-flow model, and successive residual augmentations give the optimum for every operation count.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow",
+      "description": "Minimum-cost flow where an edge has a separable convex cost as a function of its integer flow, handled by nondecreasing unit marginal costs or an equivalent residual simulation. Use when convex flow amount, rather than only fixed linear edge cost, is essential to the model.",
+      "parent": "graph/flow/min-cost-flow",
+      "created_reason": "The existing generic min-cost-flow tag does not distinguish the reusable convex marginal-cost structure that makes this chain model correct and simulatable without a generic shortest-path implementation.",
+      "status": "candidate",
+      "aliases": [
+        "convex cost flow",
+        "separable convex cost flow"
+      ]
+    },
+    {
+      "tag": "paradigm/greedy/regret-greedy",
+      "display_name": "Regret greedy",
+      "importance": "primary",
+      "evidence": "Every new optimum is obtained by comparing a fresh forward interval with a reverse residual interval that undoes and reorganizes earlier choices. Keeping these explicit undo moves is the core difference from an invalid forward-only greedy.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow",
+      "description": "An incremental greedy method that retains explicit undo or replacement moves, often derived from residual edges, so later iterations can regret earlier choices while preserving optimality for each cardinality. Excludes ordinary local greedy justified only by a static exchange argument.",
+      "parent": "paradigm/greedy",
+      "created_reason": "Generic greedy and min-cost-flow tags do not retrieve problems whose accepted implementation is a successive residual augmentation reduced to choosing between a new action and an undo action.",
+      "status": "candidate",
+      "aliases": [
+        "regret greedy",
+        "undo greedy",
+        "反悔贪心"
+      ]
+    },
+    {
+      "tag": "math/identity",
+      "importance": "primary",
+      "evidence": "The decisive reduction is the variational identity n^2*V(b)=min_s [n*sum(b_i^2)-2*s*sum(b_i)+s^2], which removes the moving mean and exposes a separable objective.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow"
+    },
+    {
+      "tag": "math/geometry/convexity",
+      "importance": "secondary",
+      "evidence": "Each position's quadratic cost in its coverage count is convex, so consecutive unit marginal costs are ordered and differ by the constant 2*n*k^2.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow"
+    },
+    {
+      "tag": "dp/max-subarray",
+      "importance": "secondary",
+      "evidence": "Each residual augmentation is selected by Kadane-style minimum-subarray scans over forward marginals and over positive-coverage reverse marginals.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "The product constraint is exploited by exhaustively enumerating all n*m+1 candidate final sums, with O(n*m) residual work for each candidate.",
+      "solution_variant": "candidate-sum-enumeration-and-regret-greedy-convex-flow"
+    }
+  ]
+}

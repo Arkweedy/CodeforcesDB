@@ -1,0 +1,167 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "H",
+    "title": "Message Spread",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "brute force",
+      "combinatorics",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/H",
+      "notes": "完整读取题面、同步传播规则、n<=21、边每日独立出现及模意义下分母可逆保证。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "官方题解确认：先构造 O(3^n) 的概率状态 DP，再将累计转移概率通过容斥拆成只依赖 T、S\\T、S 的乘积，使用 subset convolution 优化到 O(n^2*2^n)。同时核对了官方实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2029H",
+      "notes": "实际阅读题解索引及 SleeplessSouris 的完整题解和代码；用于确认停留时间分解、内部边失败概率乘积、按 popcount 进行半在线卷积，以及固定顶点 1 后缩减一半状态。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Sktn0089/p/18647644",
+      "notes": "交叉核对 f_S、停留概率 h_S、累计转移 R(T,S) 的递推及半在线子集卷积实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/nullptr-qwq/p/18559547",
+      "notes": "交叉核对将期望贡献拆到每个访问状态、把恰好转移改成累计转移，以及用内部边乘积完成系数分离的证明思路。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://shijiuwan.github.io/CF2029H/",
+      "notes": "阅读独立推导和完整实现，确认按集合大小逐层更新 FMT/IFMT 的半在线结构及 O(n^2*2^n) 复杂度。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/H",
+      "notes": "自行补全官方题解略去的累计概率恒等式和卷积系数证明；使用 Fraction 对 32 个 n=2..5 的随机连通图进行直接期望、精确跳链 DP、分解递推三方对拍，全部通过。"
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/contest/2029/status/H",
+      "notes": "确认存在多份 Accepted 提交；单条提交源码页受 Codeforces 权限检查阻挡，因此未将其记为已读取的 accepted-code。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2029/submission/290823275",
+      "notes": "状态页确认该提交 Accepted，但本次无法读取源码，仅保留为候选，不作为已验证来源。"
+    }
+  ],
+  "annotation": {
+    "summary": "一个消息从顶点 1 开始传播。每天每条无向边独立地以给定概率出现，某顶点在当天结束时收到消息，当且仅当它或它的某个邻点在前一天已有消息。求所有顶点收到消息所需天数的期望。",
+    "constraints": "1<=n<=21，n-1<=m<=n(n-1)/2；图在所有边出现时连通。每条边概率为 p/q，且 0<p<q<998244353。对于每个非空真子集，跨割边全部不出现的概率不等于 1（模 998244353），保证离开非终止状态的概率可逆。n=1 时答案直接为 0。",
+    "core_idea": "令 U 为全集，q_e=1-w_e。状态是当前已收到消息的集合，只会单调增大且始终包含顶点 1。令 b_S 为所有跨越割 (S,U\\S) 的边均不出现的概率；若跳链访问了 S，则在 S 停留的天数服从参数 1-b_S 的几何分布，期望为 1/(1-b_S)。令 f_S 为压缩掉自环后的跳链访问状态 S 的概率，则答案为所有真子集 S 的 f_S/(1-b_S) 之和。直接用精确一步概率 W(T,S) 转移需要枚举 T subset S，复杂度为 O(3^n)。改令 A(T,S) 表示当前为 T 时，下一天的状态包含于 S 的概率。它只要求 T 到 U\\S 的边全部不出现，因此 A(T,S)-b_T 是一次严格跳转后落入某个 R、T proper-subset R subseteq S 的总概率。对所有 T 求和并利用精确访问概率递推，可得 f_S = sum_{T proper-subset S} f_T*(A(T,S)-b_T)/(1-b_T) - sum_{R proper-subset S,R!={1}} f_R。再令 P_X 为两端都在 X 内的边的 q_e 乘积，则 A(T,S)=P_{U\\(S\\T)}/(P_T*P_{U\\S})。因此主和式成为关于不交划分 S=T disjoint-union (S\\T) 的 subset convolution；按 popcount 从小到大计算 f，并用分层 OR-zeta/FMT 与逆变换实现半在线子集卷积。由于所有合法状态都包含顶点 1，可固定该位，只在其余 n-1 位上变换。",
+    "complexity": "O(n^2*2^(n-1)) time and O(n*2^(n-1)+2^n) memory；内部边乘积和割概率的预处理被该复杂度支配。",
+    "tricks": [
+      "把原马尔可夫链的自环压缩为几何停留时间，答案按访问状态线性求和。",
+      "用“下一状态包含于 S”的累计概率替代“下一状态恰好为 S”的概率。",
+      "把跨集合边的失败概率写成三个内部边乘积的比值，得到可卷积的可分离系数。",
+      "按 popcount 逐层维护半在线 subset convolution，保证所需的真子集状态已经求出。",
+      "固定必然存在于状态中的顶点 1，把变换维度从 n 降到 n-1。"
+    ],
+    "proof_risks": [
+      "传播是同步的：一天内只能由当天开始前已经有消息的 T 向外传播，不能沿新收到消息的顶点继续走第二条边。",
+      "f_S 是跳链曾访问 S 的概率，不是任意一天处于 S 的概率；自环已经全部计入 1/(1-b_S)，否则会重复计算。",
+      "A(T,S) 包含停留在 T 的事件，因此在条件化为严格跳转前必须减去 b_T。",
+      "累计严格转移贡献等于 f_S 加所有非初始真子状态的 f_R；初始状态 {1} 没有入边，隔离 f_S 时不能把它按普通状态减掉。",
+      "P_X 必须使用边不出现概率 q_e，且只乘两端都在 X 内的边；系数恒等式应逐类检查 T 内、U\\S 内以及二者之间的边。",
+      "普通 OR 卷积允许两个子集相交；必须按 popcount 分层，只有秩相加等于目标秩的项才对应不交 subset convolution。",
+      "全集 U 的 b_U=1，但到达全集后过程立即结束，因此答案不包含 U，也不会计算 1/(1-b_U)。",
+      "所有除法都发生在模域中；q_e 非零，而题目的额外保证确保每个非终止状态的 1-b_S 非零。"
+    ],
+    "uncertainty_points": [
+      "官方题解展示的乘积公式符号较含混，把顶点集合与边集合都写成 e；本文依据官方代码、三份独立题解和逐边分类重新推导。",
+      "Codeforces 单条 Accepted 提交源码页本次被访问权限检查拦截，未直接审阅；不影响主结论，因为官方实现、洛谷实现、独立博客代码和小规模精确对拍一致。",
+      "O(3^n) 基线的多项式因子取决于转移概率预处理方式；它只作为推导基线，不作为推荐复杂度。"
+    ],
+    "small_scale_verification": {
+      "method": "使用 Python Fraction 枚举每个小图的全部子集状态，分别计算直接期望方程、精确跳链访问概率、累计概率分解递推，并逐项验证 A(T,S)=P_{U\\(S\\T)}/(P_T*P_{U\\S})。",
+      "coverage": "固定随机种子 2029；n=2..5，每个 n 生成 8 个随机连通图，共 32 个图，概率取自 1/4、1/3、1/2、2/3。",
+      "result": "全部状态和最终期望一致。样例 1 得到精确值 10；三点完全图样例得到 20/9，模值为 887328316。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "ranked-half-online-subset-convolution",
+      "summary": "压缩自环后维护状态访问概率 f_S，将精确转移改写为累计转移 A(T,S)，再用内部边失败概率乘积 P_X 把 A(T,S) 分解为 T、S\\T、S 三部分。按照集合大小递增，用分层 OR-zeta/Mobius 变换计算半在线 subset convolution，并固定顶点 1 降低一半状态量。",
+      "complexity": "O(n^2*2^(n-1)) time, O(n*2^(n-1)+2^n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "ternary-exact-transition-dp",
+      "summary": "直接维护跳链访问概率。对每个当前集合 T 枚举新增集合 X，与 T 不交，并计算 X 中每个点至少由 T 的一条边触达、其余点完全未被 T 触达的概率，然后转移到 T union X。可用于理解主递推和小规模验证；官方记录中存在卡常通过的非预期实现。",
+      "complexity": "O(poly(n)*3^(n-1)) time, O(2^(n-1)) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/transform/subset-convolution",
+      "importance": "primary",
+      "evidence": "把累计转移系数分解后，核心和式是对不交划分 S=T disjoint-union X 的 subset convolution；按 popcount 半在线计算是从 O(3^n) 降至 O(n^2*2^n) 的决定性步骤。",
+      "solution_variant": "ranked-half-online-subset-convolution",
+      "description": "计算 h[S]=sum_{A disjoint-union B=S} f[A]g[B] 的子集卷积，通常按集合大小分层并结合子集 zeta/Mobius 变换做到 O(n^2*2^n)；也包括依赖较小集合结果、按 popcount 逐层推进的半在线形式。不要用于允许 A、B 重叠的普通 OR 卷积。",
+      "parent": "math/transform",
+      "created_reason": "现有 math/transform/fwt/or-fwt 描述的是允许重叠的按位 OR 卷积，不能准确检索本题核心的“不交并 + popcount 分层 + 半在线依赖”子集卷积。",
+      "status": "candidate"
+    },
+    {
+      "tag": "dp/subset-dp",
+      "importance": "primary",
+      "evidence": "DP 状态由当前收到消息的顶点子集确定，访问概率只从真子集转移；所有递推和复杂度均建立在子集格上。",
+      "solution_variant": "ranked-half-online-subset-convolution"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "primary",
+      "evidence": "必须把“恰好到达 S”改写为“下一状态包含于 S”的累计概率，再减去真子状态贡献以恢复精确 f_S；这是得到可分离卷积系数的关键容斥步骤。",
+      "solution_variant": "ranked-half-online-subset-convolution"
+    },
+    {
+      "tag": "dp/probability-dp",
+      "importance": "secondary",
+      "evidence": "状态值是跳链访问概率，转移系数由独立边事件的概率乘积组成，并在模域中处理几何等待时间。",
+      "solution_variant": "ranked-half-online-subset-convolution"
+    },
+    {
+      "tag": "math/transform/fwt/or-fwt",
+      "importance": "secondary",
+      "evidence": "实际实现把各 popcount 层做 OR-zeta/FMT，点乘后逆变换；秩约束把 OR 卷积筛成不交 subset convolution。",
+      "solution_variant": "ranked-half-online-subset-convolution"
+    },
+    {
+      "tag": "math/probability/linearity-of-expectation",
+      "importance": "secondary",
+      "evidence": "总耗时被拆成每个状态被访问的概率乘以该状态几何停留时间的期望，再对所有非终止状态求和。",
+      "solution_variant": "ranked-half-online-subset-convolution"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "incidental",
+      "evidence": "O(3^n) 的精确转移枚举是推导基线，并且官方题解记录了卡常通过的非预期实现，但不是推荐主解。",
+      "solution_variant": "ternary-exact-transition-dp"
+    }
+  ]
+}

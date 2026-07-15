@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "E",
+    "title": "Common Generator",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "constructive algorithms",
+      "math",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/E",
+      "notes": "完整读取生成操作、数组两两不同、a_i<=4e5 以及总 n<=1e5。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "核对官方三个关键结论：2 可生成所有合数、质数只能由自身生成、唯一质数候选对奇偶合数的最小质因子判据。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/bj8tcza8",
+      "notes": "阅读完整引理证明与线性筛实现，交叉确认奇合数的最大直接前驱为 x-spf(x)。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/E",
+      "notes": "显式构造小值域可达图，核对每个质数候选与官方充要条件。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "操作允许给当前整数加上它的任意不小于二的约数。给定两两不同的目标值，寻找能通过若干操作到达所有目标的共同起点。",
+    "constraints": "t<=1e4，1<=n<=1e5，2<=a_i<=4e5，数组内元素两两不同，所有测试 n 总和<=1e5。",
+    "core_idea": "质数只能由它自己生成，因此若数组含两个不同质数必定无解；若没有质数，2 能生成所有合数，直接输出 2。若恰有一个质数 p，则共同生成器只能是 p。对偶合数 x，p 第一步只能先到 2p，之后可不断加 2，所以充要条件为 x>=2p。对奇合数 x，任何最后一步前驱均为 x-d，其中 d 是 x 的非平凡约数；最大的合法前驱是 x-spf(x)，且它为偶数。因此 p 能生成 x 当且仅当 x-spf(x)>=2p。用线性筛预处理 primality 与最小质因子即可逐项检查。",
+    "complexity": "O(V+sum n) time and O(V) memory，V=400000。",
+    "tricks": [
+      "先用目标中的质数把候选生成器压缩为零个、唯一一个或无解。",
+      "把到达奇合数的最后一步反推为 x-d，并选择最小质因子得到最大可能前驱。",
+      "使用最小质因子线性筛把每个目标的判定降为 O(1)。"
+    ],
+    "proof_risks": [
+      "证明质数只能由自身生成时，应利用最后一步 y=z+d 且 d|z，从而 d|y；不能只凭操作递增直觉。",
+      "遇到另一个质数必须立即判无解，不能套用合数判据。",
+      "奇合数判据中的 spf(x) 是最小质因子，使用任意因子会使 x-d 不再是最大前驱。",
+      "奇数 x 的所有直接前驱 x-d 都是偶数，因而可以调用“p 生成偶数 iff 偶数>=2p”的结论。",
+      "若 p=2，判据仍适用并覆盖 2 生成全部合数的情形。"
+    ],
+    "uncertainty_points": [],
+    "small_scale_verification": {
+      "method": "对每个起点 p 显式枚举当前数的全部约数并 BFS 所有不超过 90 的可达整数，再与奇偶及最小质因子判据逐项比较。",
+      "coverage": "所有不超过 23 的质数 p 与目标 x=2..90，共 801 个质数-目标对。",
+      "result": "显式可达性与公式完全一致，包括 p=2、偶合数、奇合数和其他质数。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "unique-prime-and-spf",
+      "summary": "按数组中质数的数量确定候选；对唯一候选质数 p，使用偶数阈值和奇数的 x-spf(x) 阈值检查全部目标，最小质因子由线性筛预处理。",
+      "complexity": "O(V+sum n) time, O(V) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/number-theory/prime-factorization",
+      "importance": "primary",
+      "evidence": "必须判定质数并取得每个奇合数的最小质因子，线性 SPF 筛是实现所有 O(1) 判定的核心。",
+      "solution_variant": "unique-prime-and-spf"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "primary",
+      "evidence": "生成关系的最后一步满足 d 同时整除前驱与目标，由此推出质数唯一性及 x-spf(x) 的最大前驱判据。",
+      "solution_variant": "unique-prime-and-spf"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "secondary",
+      "evidence": "算法不只判定存在性，还根据质数分类直接构造并输出共同生成器 2 或唯一质数 p。",
+      "solution_variant": "unique-prime-and-spf"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "完整判定分为无质数、多个质数、唯一质数下的偶合数和奇合数四类。",
+      "solution_variant": "unique-prime-and-spf"
+    }
+  ]
+}

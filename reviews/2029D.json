@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "D",
+    "title": "Cool Graph",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "data structures",
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "greedy",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/D",
+      "notes": "完整读取三角形三边取反操作、空图/树目标和 2*max(n,m) 次操作限制。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "核对官方做法：不断处理度数至少二的点，将图降为匹配加孤点，再把所有分量并成树。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6de393mt",
+      "notes": "阅读独立的定根构造：消去全部非根边得到星形子图，再把孤点逐个接入；该方案作为更简洁的主 variant。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/D",
+      "notes": "逐步验证定根构造的不变量、操作数上界，并对全部小图模拟三角边翻转。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "每次选择三个不同顶点，将它们之间三条可能的边全部取反；要求在操作次数限制内把任意简单无向图变为空图或一棵树。",
+    "constraints": "3<=n<=1e5，m<=min(n(n-1)/2,2e5)，所有测试的 n 总和<=1e5、m 总和<=2e5；操作数不得超过 2*max(n,m)。",
+    "core_idea": "固定根 1。对输入中的每条非根边 (u,v) 执行 (1,u,v)：该操作删除当前必然存在的 (u,v)，只会取反两条根边，因此处理完后所有非根边都消失，图成为若干根边组成的星形子图。若星形为空，直接得到空图；否则选一条现存根边 (1,p)。对每个孤点 q 执行 (1,p,q)，此时恰好删除树边 (1,p) 并加入 (1,q)、(p,q)，把 q 插入当前树且不产生环，然后令 p=q。其余星形叶子保持不变，最终得到覆盖全部顶点的树。",
+    "complexity": "定根主解 O(n+m) time、O(n+m) memory；操作数至多 m+n-2。",
+    "tricks": [
+      "固定一个根，把所有复杂边统一消成只与根相连的星形结构。",
+      "第二阶段每次用一条现存树边和一个孤点扩展树。",
+      "利用操作前恰好存在一条三角边，确保删一加二且保持树结构。"
+    ],
+    "proof_risks": [
+      "第一阶段必须遍历原始非根边；其他操作不会触碰该非根点对，因此轮到它时这条边仍然存在。",
+      "根边会被多次取反，不能假定原始根邻居在第一阶段后仍然相邻，必须维护最终奇偶状态。",
+      "第二阶段的 q 必须真的是孤点，p 必须是当前根邻居，三点也必须互异。",
+      "若第一阶段后没有根边，应直接输出空图，不能继续选择不存在的基准边。",
+      "操作数证明应使用非根边数不超过 m、孤点数不超过 n-2，从而得到 m+n-2<=2*max(n,m)。"
+    ],
+    "uncertainty_points": [
+      "官方题解采用“降到匹配再合并”的方案；Luogu 的定根方案结构更简单。两者均独立核对，主标注选择定根方案并保留官方方案为备选。"
+    ],
+    "small_scale_verification": {
+      "method": "对每个小图实际维护边集合，逐次执行三角三边取反，并检查最终边集为空或满足连通且边数为 n-1。",
+      "coverage": "穷举 n=3..6 的全部 33864 个带标号简单无向图。",
+      "result": "定根构造全部得到空图或树，且每例操作数均不超过 2*max(n,m)。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "root-star-normalization",
+      "summary": "固定根，逐条消去非根边，将任意图规范化为星形子图；若非空，再把孤点逐个插入一条不断延伸的树链。",
+      "complexity": "O(n+m) time, O(n+m) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "degree-peeling-to-matching",
+      "summary": "对任意度数至少二的点取两个邻点执行操作，每次至少减少一条边，直到图只剩匹配与孤点；选一条匹配边作为基底，把孤点和其他匹配边依次并入树。",
+      "complexity": "O(n+m log m) time with adjacency sets, O(n+m) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "题目要求输出受限次数的三角翻转序列，定根两阶段构造直接保证最终为空图或树。",
+      "solution_variant": "root-star-normalization"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "第一阶段维持“已处理非根边永不再出现”，第二阶段维持“已接入部分始终是一棵树”，两个不变量构成正确性核心。",
+      "solution_variant": "root-star-normalization"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "第二阶段通过删一条现存树边并加入两条边插入孤点，显式保持连通与无环。",
+      "solution_variant": "root-star-normalization"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "官方 variant 可任取度数至少二的顶点及两个邻点，每步都严格减少边数而无需回溯。",
+      "solution_variant": "degree-peeling-to-matching"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "官方第一阶段每次至少删除一条净边，因此该阶段操作总数由初始 m 线性摊还。",
+      "solution_variant": "degree-peeling-to-matching"
+    }
+  ]
+}

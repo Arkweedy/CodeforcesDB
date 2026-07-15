@@ -1,0 +1,117 @@
+{
+  "contest": {
+    "contest_id": 2029,
+    "title": "Refact.ai Match 1 (Codeforces Round 985)"
+  },
+  "problem": {
+    "contest_id": 2029,
+    "index": "C",
+    "title": "New Rating",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2029/problem/C",
+      "notes": "完整读取题面；确认必须跳过一个非空连续区间，n 总和不超过 3e5，a_i 位于 [1,n]。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/133516",
+      "notes": "核对官方三阶段线性 DP，以及二分答案、正向 rating 与反向最低需求的备选解法。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/t3xoqg1k",
+      "notes": "阅读线性 DP 题解及 AC 代码，交叉确认按是否已经进入/离开 skip 区间划分状态。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2029/problem/C",
+      "notes": "证明单次 rating 更新关于当前 rating 单调不降，因此每个阶段只保留最大 rating 即可；另用穷举区间对拍三状态 DP。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "从 n 场比赛中强制跳过一个非空连续区间，其余比赛按 performance 与当前 rating 的大小关系使 rating 加一、减一或不变，求最终 rating 最大值。",
+    "constraints": "t<=5e4，1<=n<=3e5，1<=a_i<=n，所有测试的 n 总和<=3e5。",
+    "core_idea": "令 U(x,a)=x+(x<a)-(x>a)。维护三个阶段的最大 rating：d0 表示尚未开始跳过，d1 表示当前位仍在被跳过区间内，d2 表示跳过区间已经结束。处理 a_i 时并行转移 d0'=U(d0,a_i)，d1'=max(d1,d0)，d2'=max(U(d1,a_i),U(d2,a_i))。U 关于 x 单调不降，所以同一阶段中较小 rating 对任何后缀都不会优于较大 rating，可以只保留最大值。最终只允许 d1 或 d2，保证跳过区间非空。",
+    "complexity": "主解 O(n) time、O(1) extra memory per test case。",
+    "tricks": [
+      "把一个连续区间的选择编码为 before / inside / after 三个有限状态。",
+      "利用 rating 转移的单调性证明每个阶段只需保存最大值。",
+      "答案不能取尚未开始跳过的 d0。"
+    ],
+    "proof_risks": [
+      "三个状态必须从上一轮同时转移，原地更新可能错误地让同一场比赛跨越多个阶段。",
+      "d1、d2 初值必须为负无穷，不能让尚未发生的 skip 状态参与转移。",
+      "最终排除 d0，否则会违反必须跳过至少一场比赛的条件。",
+      "状态压缩依赖 U(x,a) 关于 x 单调不降；若直接认为每步选局部较优而不证明单调支配，论证不完整。"
+    ],
+    "uncertainty_points": [
+      "Luogu 题解使用的二维状态记号与官方三阶段记号不同；其 AC 代码用于交叉验证线性阶段 DP，最终以官方三阶段递推作为规范描述。"
+    ],
+    "small_scale_verification": {
+      "method": "枚举所有跳过区间得到真实最优值，与三状态 DP 对拍。",
+      "coverage": "穷举 n=1..6 且每个 a_i 位于 [1,n] 的全部 50069 个数组。",
+      "result": "全部一致，包括 n=1、整段跳过和最优区间位于首尾的边界。"
+    },
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "three-phase-skip-dp",
+      "summary": "用 before / inside / after 三阶段 DP，借助 rating 转移的单调支配性，每阶段仅维护最大 rating。",
+      "complexity": "O(n) time, O(1) extra memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "threshold-binary-search",
+      "summary": "二分最终 rating 阈值 k。正向求不跳过时每个前缀的 rating 及其前缀最大值，反向求保证后缀最终至少为 k 所需的最小起始 rating；枚举 skip 区间右端点判断两者能否衔接。",
+      "complexity": "O(n log n) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "连续 skip 区间被编码成 before、inside、after 三个有限状态，三状态递推直接给出 O(n) 主解。",
+      "solution_variant": "three-phase-skip-dp"
+    },
+    {
+      "tag": "trick/state-dominance",
+      "importance": "secondary",
+      "evidence": "更新函数关于当前 rating 单调不降，同阶段较大的 rating 支配所有较小状态，这是每阶段只存一个值的正确性依据。",
+      "solution_variant": "three-phase-skip-dp"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "备选解法二分最终 rating k，并用正向/反向可行性数组判定是否存在可跳过区间。",
+      "solution_variant": "threshold-binary-search"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "从结尾反推在每场比赛之前至少需要多少 rating，才能使最终 rating 达到阈值 k。",
+      "solution_variant": "threshold-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "若最终 rating 至少为 k 可行，则更小阈值也可行，构成二分答案所需的单调判定。",
+      "solution_variant": "threshold-binary-search"
+    }
+  ]
+}
