@@ -58,7 +58,7 @@ New tags must include:
 - `created_reason`: why existing tags are insufficient.
 - `status`: usually `candidate`.
 
-When creating a new tag, also keep the WebUI translation in sync. Add a Chinese display name in `web/src/i18n.ts`, or run `python scripts/check_tag_translations.py` and explicitly record that the fallback display is acceptable for now.
+When creating a new tag, also keep the WebUI translation in sync. Add the full tag path to `web/src/i18n/tags.zh.json` and, when the new path segment is reusable, add its fallback label to `web/src/i18n.ts`. Then run `python scripts/check_tag_translations.py`; if a translation is intentionally deferred, explicitly record that the English fallback is acceptable for now.
 
 Good examples:
 

@@ -92,7 +92,7 @@ worker 数量：
 - 按难度切片并分配 worker。
 - 汇总并审核 worker 的 reviewed JSON 草稿。
 - 统一判断新 tag 是否应该创建，避免近义 tag、重复 tag 或错误父级。
-- 同步维护 `web/src/i18n.ts` 中的新 tag 中文翻译。
+- 同步维护 `web/src/i18n/tags.zh.json` 中的完整 tag 路径翻译；新路径片段可复用时，同时维护 `web/src/i18n.ts` 的 segment fallback。
 - 统一规范化来源类型和 URL；候选链接只有实际读取后才能进入 `sources[]`，无法确认 verdict 的代码不得标成 accepted code。
 - 串行运行 `apply_review_batch.py` 写入数据库。
 - 以 contest 为写入屏障：上一场的 DB 必须完成校验、commit 和 push，才允许 apply 下一场，避免 SQLite 二进制改动无法按场次拆分。

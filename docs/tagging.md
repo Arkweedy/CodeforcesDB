@@ -105,8 +105,11 @@ FWHT -> math/transform/fwt
 创建新 tag 后，应同步维护：
 
 ```text
+web/src/i18n/tags.zh.json  # 完整 tag path 的中文名称，翻译检查以此为准
 web/src/i18n.ts
 ```
+
+`i18n.ts` 中的 `SEGMENT_TEXT_ZH` 只承担未知完整路径的片段 fallback。新增 tag 应优先补完整路径；新片段具有复用价值时，再同时补 segment fallback。
 
 然后运行：
 
