@@ -1,0 +1,107 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "E",
+    "title": "Monster",
+    "rating": 2300,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "constructive algorithms",
+      "greedy",
+      "implementation",
+      "math",
+      "ternary search"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2035/E",
+      "notes": "完整阅读英文题面、样例和约束；确认初始伤害为 0，升级连续次数至多 k，升级和攻击分别收费 x、y。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "阅读官方 E 教程；确认固定升级/攻击次数的最优伤害公式，以及根号规模候选加单调二分的主解。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397611",
+      "notes": "页面明确显示 Accepted；核对 opt_a、opt_b、交点 L 的二分和两侧候选枚举。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/zf2qsiao",
+      "notes": "阅读题解公式；交叉验证最优操作序列由若干 k 次升级加一次攻击的完整块，以及最后升级后连续攻击组成。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "武器伤害从 0 开始；升级一次花 x，攻击一次花 y，且不能连续升级超过 k 次，求造成至少 z 总伤害的最小费用。",
+    "constraints": "1<=t<=100，1<=x,y,z,k<=1e8；费用与伤害公式必须使用 64 位整数。",
+    "core_idea": "固定总升级次数 a 和攻击次数 b。升级越早贡献给越多后续攻击，因此最优序列把升级尽量前移：令 c=min(floor(a/k),b)，先做 c 个“升级 k 次再攻击”块，再做剩余升级，最后用当前伤害 a 攻击 b-c 次。最大总伤害 D(a,b)=k*c(c+1)/2+a*(b-c)，费用为 ax+by。对固定 a，D 关于 b 单调，记 B(a) 为使 D>=z 的最小 b；A(b) 同理。B(a) 单调不增，二分最小 L 使 L>=B(L)。枚举 a=1..L 的 (a,B(a))，再枚举 b=1..L 的 (A(b),b)。若某 Pareto 最优解 a>L，则 B(a)<=B(L)<=L，必被第二轮覆盖；反之被第一轮覆盖。取 s 为满足 s(s+1)/2>=z 的最小整数，k>=1 时交替一次升级一次攻击即可用 (s,s) 达标，故 L<=s=O(sqrt(z))。",
+    "complexity": "O(sqrt(z) log z) time and O(1) extra memory per test case.",
+    "tricks": [
+      "用交换论证把所有可提前的升级移到攻击之前，得到足够覆盖最优解的块状正规形。",
+      "固定一个计数后，另一个计数的最小可行值可用伤害单调性二分。",
+      "用单调前沿交点 L 覆盖所有正费用下的 Pareto 最优整数点，而不必枚举整个二维平面。",
+      "最坏 k=1 时的三角形伤害给出 L=O(sqrt(z)) 的严格规模界。",
+      "a,b 至少为 1；当 c=b 时多余升级不产生伤害，最小化二分会自动排除它们。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sqrt-frontier-with-monotone-binary-search",
+      "summary": "推导固定 (a,b) 的闭式伤害，二分两个单调最小可行函数，并只枚举交点两侧 O(sqrt(z)) 个 Pareto 前沿候选。",
+      "complexity": "O(sqrt(z) log z) time and O(1) memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定升级与攻击次数后，所有升级应在连续 k 次限制允许的范围内尽量前移；该正规形直接导出伤害闭式。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "对固定 a 或 b，分别二分最小可行 b 或 a；还二分单调谓词 a>=B(a) 找到前沿交点。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "以 k=1 的可行交替策略得到 s(s+1)/2 的伤害下界，从而证明交点 L=O(sqrt(z))，这是枚举能通过的关键。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    },
+    {
+      "tag": "trick/one-parameter-optimization",
+      "importance": "secondary",
+      "evidence": "正费用使每个固定 a 只需保留最小 B(a)，再借交点把二维整数优化化为两次一维前沿扫描。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "D(a,b) 对任一计数单调不减，B(a) 对 a 单调不增，保证所有二分与覆盖论证成立。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    },
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "secondary",
+      "evidence": "最终显式枚举两组各至多 O(sqrt(z)) 个计数候选，并对每个候选求另一维最小值。",
+      "solution_variant": "sqrt-frontier-with-monotone-binary-search"
+    }
+  ]
+}

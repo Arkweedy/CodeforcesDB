@@ -1,0 +1,165 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "H",
+    "title": "Peak Productivity Forces",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2035/H",
+      "notes": "读完英文题面、操作的精确定义、四组样例与完整约束；页面同时确认 official rating 3500 和 official tag constructive algorithms。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "读完 Codeforces Global Round 27 官方 H tutorial 的动态加载正文；确认 b^{-1}(a) 归一化、n=2 障碍、n+1 步半有序构造、n-1 步修复，以及 O(n) 偏移数组或 O(n log n) 隐式平衡树两种维护方式。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397713",
+      "notes": "页面明确显示 Hori 的 C++20 提交 verdict 为 Accepted；读完完整代码，核对了降序插入、最高值的额外分支、末段 n/n-1 操作和带周期重建的 O(1) 偏移维护。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/r9ze1zcz",
+      "notes": "读完完整中英文题解与代码；独立确认前缀插入不变量、互不相交相邻交换的半有序形态、n+1 加 n-1 的操作数证明，以及只改三个例外位置的 O(n) 模拟。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/w9dl9kb1",
+      "notes": "读完完整题解与实现；再次交叉确认末位元素的二步处理、用操作 n-1 与 n 修复相邻逆序对，以及总复杂度 O(n)。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://codeforces.com/blog/entry/135608",
+      "notes": "读完 orz 的赛后文和作者在评论中的 H 题说明；其高层思路确认把每次操作与全局循环位移合成后只有 O(1) 个位置改变，并把构造理解为围绕固定元素 n 的线性数量换位/三循环。该文不提供完整证明。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2035/H",
+      "notes": "独立推导两阶段构造与三个例外位置的更新公式，并朴素模拟穷举 n=1..9 的全部 409113 个归一化排列：除 n=2 的 [2,1] 外全部在不超过 2n 步内变为单位排列；另逐步复核题面两组非平凡样例输出。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "给定两个 n 阶排列 a、b。一次操作选定枢轴 i，保持 a_i 不动，并分别把其左侧前缀和右侧后缀循环右移一位；需在至多 2n 次操作内把 a 变成 b，若不可达则输出 -1。",
+    "constraints": "1 <= t <= 50000，1 <= n <= 500000，所有测试的 n 之和不超过 500000；时限 3 秒、内存 256 MB。a、b 都是 1..n 的排列，输出操作数必须不超过 2n。官方 rating 为 3500。",
+    "core_idea": "先令 p_i=pos_b[a_i]，问题化为把 p 排成单位排列。n=2 时两侧区间长度都至多 1，任何操作都是恒等变换，因此只有 p=[2,1] 无解；n=1 显然可解。对 n>=3 分两阶段构造。第一阶段从 x=n 降到 1，把尚未处理的值插到前缀，并维持已处理部分是按目标值顺序排列的块序列，每块要么是单点，要么是一个相邻交换块 [y+1,y]。若 x 在位置 j<n，对 j+1 操作即可把 x 移到最前且不破坏旧块内部顺序；若 x 在末位且 x>1，先对 pos(x-1)+1 操作把 x-1 移到最前，再看 x 的新位置：仍在末位就对 1 操作得到前缀 [x-1,x]，否则对 pos(x)+1 操作得到交换块 [x,x-1]，并一次消费两个值。若最高值 n 产生 [n,n-1]，不能立即消费 n-1，而要在下一轮再把 n-1 放到 n 前，保证最终 n 在末位；若 x=1 仍在末位，对 1 操作恰好得到允许的 [2,1]。第一阶段每消费一个值至多一次操作，只有最高值分支可能多一次，所以至多 n+1 步，结果是单位排列加若干互不相交的相邻交换，且 n 固定在末位。第二阶段处理前 n-1 个位置：普通尾元素用一次操作 n 旋到最前；若末尾两格是交换块 [y+1,y]，连续操作 n-1、n 会把 P,[y+1,y],n 变为 [y,y+1],P,n。按块从右向左共消费 n-1 个元素，恰用 n-1 步并得到单位排列，总步数至多 2n。为线性实现，观察一次操作相对于整列统一右移一位，只有旧位置 i-1、i、n 上的至多三个元素例外：它们分别去到 1、i、i+1（越界项省略）。用全局位移量加 value->base-position 与 shifted-position->value 两个互逆数组，只重写这些例外即可 O(1) 完成操作、按值找位置和按位置取值。",
+    "complexity": "主实现先 O(n) 归一化，再生成至多 2n 个操作且每次维护 O(1)，故单测时间 O(n)、空间 O(n)，总时间 O(sum n)。官方给出的隐式 treap/splay 备选为 O(n log n) 时间、O(n) 空间。",
+    "tricks": [
+      "用 b 的逆排列把任意目标归一化为单位排列，操作本身只依赖位置。",
+      "先构造仅含互不相交相邻交换的半有序排列，再用固定末位 n 统一修复，而不是直接模拟任意排序。",
+      "把操作看成全局右移加至多三个例外位置，使用全局 offset 消去绝大多数位置更新。",
+      "第一阶段按消费值计费：通常一值一步或两值两步，只有最高值反序分支多一步，从而得到 n+1 的紧上界。",
+      "第二阶段用操作 n 旋转前 n-1 项，并以 n-1、n 两步局部修复当前尾部交换块，操作数恰为 n-1。",
+      "偏移数组必须使用足够大的扩展下标区间或周期性重建，避免累计 offset 使 value_at/position_of 越界。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "sample_checks": [
+      {
+        "sample": 1,
+        "verification": "n=1 且 a=b，输出 0 合法。"
+      },
+      {
+        "sample": 2,
+        "verification": "n=2、a=[1,2]、b=[2,1]；两个可选枢轴只有 1 或 2，左右区间均无法改变，故 -1。"
+      },
+      {
+        "sample": 3,
+        "verification": "从 [2,1,3] 依次操作 1、3，得到 [2,3,1]、[3,2,1]=b。"
+      },
+      {
+        "sample": 4,
+        "verification": "朴素模拟题面输出 3,4,5,1,2,1,1，最终恰得到 [2,1,6,4,5,3,8,7]。"
+      }
+    ],
+    "uncertainty_points": [
+      "主线性方案没有未解决的正确性疑点：官方 tutorial、官方 Accepted 代码、两篇完整洛谷题解和 n<=9 全排列穷举一致。",
+      "官方 tutorial 对两个阶段的不变量与操作数证明较简略；本 annotation 中的块序列证明是独立补全，主 agent 仍应重点复核最高值分支和第二阶段的下标。",
+      "隐式 BBST 变体由官方 tutorial 明确给出，但本次实际读取的 Accepted 代码与两篇洛谷实现均采用 O(1) 偏移数组，因此该变体置信度低于主实现。",
+      "没有提出新 tag；所用 tag 均已存在于当前 taxonomy。"
+    ],
+    "retrieval_blockers": [
+      "官方 editorial 页面 135609 的静态 HTML 只有 Tutorial is loading... 占位符，必须在可执行页面脚本的浏览器会话中读取动态载入的 2035H 正文；直接 POST /data/problemTutorial 会遇到 Cloudflare 检查。",
+      "搜索结果容易先命中 135608 的 Screencast & Editorial；该页只有视频入口和评论中的高层思路，不是包含完整 H tutorial 的官方 135609。",
+      "官方题解没有给出逐行形式化证明，尤其没有展开最高值额外分支为何只出现一次；需要结合 Accepted 代码、洛谷实现和独立穷举补足。"
+    ],
+    "proof_risks": [
+      "归一化方向必须是 p_i=pos_b[a_i]=b^{-1}(a_i)；写成 pos_a[b_i] 会改变后续输出操作对应的排列。",
+      "无解判定只针对归一化后的 n=2、p=[2,1]。n>=3 的任意排列都由构造覆盖，不能把半有序阶段暂时出现的 [2,1] 误判为无解。",
+      "当 x 在末位时，先插入 x-1 后必须重新查询 x 的位置；沿用旧位置会选择错误枢轴。",
+      "若 x=n 的二步分支得到 [n,n-1]，本轮只能视为消费 n，下一轮仍要处理 n-1；若像普通交换块一样跳过两值，最终 n 不在末位，第二阶段证明失效。",
+      "x=1 在末位时操作 1 不是把 1 放到首位，而是把它放到当前首项 2 之后形成 [2,1]；这依赖第一阶段已有的前缀块不变量。",
+      "第二阶段检测的是当前位置 n-2、n-1 上的逆序对；修复顺序必须先操作 n-1 再操作 n，并在循环计数中消费两个位置，任何一个 off-by-one 都会破坏 2n 上界。",
+      "第一阶段的 n+1 上界依赖只有最高值反序分支额外消耗一步；实现若同时保留独立的 n 初始化和未调整的通用循环，可能重复处理并超出 2n。",
+      "O(1) 维护中必须在增加全局 offset 前读取旧 a_{i-1},a_i,a_n，再在新坐标写回 1,i,i+1；读写顺序错误会覆盖仍需使用的值。",
+      "实际位置若直接写成 base+offset 而不取模，则必须像官方代码一样在 offset 达到 n 时重建，或像洛谷代码一样预留约 3n 的下标空间；否则最多 2n 次操作会越界。",
+      "隐式 treap/splay 变体不仅要支持 split/merge 和区间循环移位，还要用节点指针加父链/子树大小在 O(log n) 内求某个值的当前排名。"
+    ],
+    "main_agent_review": [
+      "重点复核主构造代码是否完整保留官方 Accepted 中 i==n-1 时不跳过 n-1 的补偿逻辑，以及 n=1、n=2 的输出格式。",
+      "确认是否保留 two-phase-implicit-bbst 作为独立非主变体；它有官方来源，但本次没有第二份明确 Accepted 实现交叉验证，因此标为 medium。",
+      "本 JSON 使用的 paradigm/constructive、trick/sparse-exception-updates、data-structure/implicit-sequence、trick/permutation-structure、trick/invariant 均已存在且当前中文翻译齐全，无需创建 candidate tag。",
+      "应用前可再用仓库 validator 检查 source_type accepted-code 的连字符、variant 引用和 primary evidence；本 worker 未修改文件或数据库。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "two-phase-linear-offset",
+      "summary": "按值从大到小把排列构造成由单点和互不相交相邻交换块组成的半有序前缀，再以末位 n 为锚用 n/n-1 操作修复；用全局右移 offset 与三个例外点更新在 O(1) 时间模拟每次操作和双向位置查询。",
+      "complexity": "O(n) time and O(n) memory per test case; at most 2n emitted operations.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "two-phase-implicit-bbst",
+      "summary": "沿用相同的两阶段构造，但用隐式 treap 或 splay 对枢轴两侧序列做 split/merge 和循环右移，并通过值对应节点求当前排名，从而实现按值找位置、按位置取值和执行操作。",
+      "complexity": "O(n log n) amortized time and O(n) memory per test case.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "核心任务是显式输出至多 2n 个合法枢轴；两阶段算法构造半有序块并逐块修复，同时给出 n+1+n-1 的最坏步数证明。",
+      "solution_variant": "two-phase-linear-offset"
+    },
+    {
+      "tag": "trick/sparse-exception-updates",
+      "importance": "primary",
+      "evidence": "每次操作对绝大多数元素都是统一的位置 +1 右移，只有旧位置 i-1、i、n 上至多三个元素偏离公共转移；懒维护公共 offset、仅重写例外正是把 O(n^2) 模拟降为 O(n) 的决定性技巧。",
+      "solution_variant": "two-phase-linear-offset"
+    },
+    {
+      "tag": "data-structure/implicit-sequence",
+      "importance": "primary",
+      "evidence": "官方备选方案把排列作为隐式序列维护，以平衡树 split/merge 实现枢轴两侧的循环移位，并用子树大小求指定值节点的当前位置；这是该 O(n log n) 变体的核心数据结构。",
+      "solution_variant": "two-phase-implicit-bbst"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "第一阶段把任意排列压到单位排列仅含若干互不相交相邻交换的特殊形态，第二阶段完全依赖这一块结构而不再处理一般排列。",
+      "solution_variant": "two-phase-linear-offset"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "降序插入始终保持已处理值构成目标顺序的前缀块序列，且每块只可能是单点或相邻交换；该不变量同时保证插入正确、交换互不相交及末段修复可行。",
+      "solution_variant": "two-phase-linear-offset"
+    }
+  ]
+}

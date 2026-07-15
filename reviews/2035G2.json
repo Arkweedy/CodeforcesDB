@@ -1,0 +1,133 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "G2",
+    "title": "Go Learn! (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "divide and conquer",
+      "dp"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2035G1",
+    "relationship": "The statement, feasible-subset theorem, four value-range factors, and no-double-count argument are unchanged. G2 has n <= 300000 and sum(n) <= 1000000, so G1's all-predecessor O(m^2 log n) DP is invalid here. The hard version must process tests by increasing k and aggregate all predecessors sharing an LCA of their implicit binary-search paths."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2035/problem/G2",
+      "notes": "Read the complete hard statement and version difference: n <= 300000, sum(n) <= 1000000, with the same tests, objective, modulo, and 5-second limit as G1."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "Read the rendered full G2 tutorial after the G1 section. It proves the at-most-one shared midpoint inside (j,i), factors transitions by their LCA, stores two weighted predecessor sums, sweeps tests by increasing k, and states O(m log n)."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397685",
+      "notes": "Inspected Hori's Accepted C++20 G2 submission. It queries and updates O(log n) implicit-tree ancestors per test, maintains best-length sums S0 and k_j-weighted sums S1, and handles midpoint-equals-endpoint cases explicitly."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4mion7pm",
+      "notes": "Read the full cross-version article. It independently derives the implicit segment-tree model, LIS reduction, separable left/right LCA weights, and an O(n log^2 n) segment-tree plus sweep-line hard optimization."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/xg1ma3zx",
+      "notes": "Read the full independent G2 article and code. It processes tests by increasing k, maintains per-LCA sums of predecessor counts and k_j-weighted counts, treats the LCA-equals-j case separately, and claims O(n log n)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2035/problem/G2",
+      "notes": "Independently reconstructed the LCA factorization and the official update/query recurrence. An in-memory check on 1200 random distinct-(x,k) instances with n <= 5 matched brute force, the G1 DP, and the G2 batched recurrence; no files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Solve the same maximum-compatible-test and optimal-array counting problem as G1 for n up to 300000 by batching the weighted LIS transitions on the implicit binary-search decision tree.",
+    "constraints": "1 <= t <= 10000; 1 <= m <= n <= 300000; sum(n) <= 1000000; all x_i are distinct and all k_i are distinct; array values lie in [1,n]; answers are modulo 998244353. Time limit 5 seconds, memory limit 256 MB.",
+    "core_idea": "Reuse G1's theorem: valid kept tests form a strict LIS of k in x order, excluding (x>1,k=1), and the count for a transition j->i is the product of four path-membership range sizes. The hard optimization uses the balanced interval decision tree of the binary search. For j<i, among positions strictly between j and i, P(j) and P(i) share at most one inspected midpoint q, their separating LCA; all other constrained positions split into a j-side factor U(j,q) and an i-side factor V(i,q). When q lies strictly between the endpoints, its factor is k_i-k_j, so all equally optimal predecessors grouped at q contribute V(i,q) * (k_i*S0(q)-S1(q)), where S0(q)=sum dpCount_j*U(j,q) and S1(q)=sum k_j*dpCount_j*U(j,q). The q=j endpoint is encoded separately because a_j is already fixed and no k_i-k_j choice remains. Process tests in increasing k, so every inserted predecessor automatically has k_j<k_i; pairing a left-side update with a right-side query at q enforces j<i. Query O(log n) ancestors to form dp_i, multiply the single-test prefix and final suffix factors, then update S0/S1 on O(log n) ancestors. All aggregates retain only the maximum predecessor length and sum counts on ties.",
+    "complexity": "Using on-demand root-to-leaf paths, O(n + m log m + m log n) time and O(n + m) memory, which is O(n + m log n) because m<=n. Since k_i are distinct integers in [1,n], a bucket scan can replace sorting and make the event order O(n+m). The O(n) initialization and power table are included; a design that precomputes every position's full path instead uses O(n log n) memory and should not be conflated with this bound.",
+    "tricks": [
+      "Keep the G1 feasibility and counting proof; optimize only the predecessor aggregation.",
+      "Use the separating LCA of two implicit binary-search paths to factor a transition into predecessor-only, endpoint-only, and one shared linear factor.",
+      "Linearize k_i-k_j as k_i*S0-S1 by maintaining both ordinary and k_j-weighted predecessor sums.",
+      "Sweep tests by increasing k so value compatibility is enforced by insertion order.",
+      "Store max-length plus sum-on-ties pairs in every LCA aggregate and handle an endpoint midpoint separately."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness issue remains for the primary O(n + m log n) recurrence after the official tutorial and Accepted code, two independent Luogu derivations, and the in-memory brute-force comparison.",
+      "The official G2 tutorial is concise about the LCA-equals-endpoint case; the exact signed aggregate handling was confirmed from both the official Accepted code and the independent Luogu code.",
+      "The xg1ma3zx Luogu article contains full code but no separate submission-verdict page was inspected, so it is recorded as luogu_solution rather than accepted-code.",
+      "The 4mion7pm article sketches a different O(n log^2 n) segment-tree plus sweep-line optimization but omits enough implementation and endpoint detail that it is used only as a structural cross-check, not recorded as a separate high-confidence solution variant.",
+      "No new taxonomy tag is proposed; existing LIS/counting-DP, LCA, divide-and-conquer, offline, and contribution-maintenance tags cover the method."
+    ],
+    "proof_risks": [
+      "The at-most-one intersection claim concerns shared touched positions strictly inside (j,i), not the entire two root paths; common ancestors outside that open interval belong to already-counted prefix or suffix regions.",
+      "The factor k_i-k_j applies only when the separating midpoint is a free position strictly between j and i. If the midpoint equals an endpoint, that array value is fixed and needs separate algebra.",
+      "S0 and S1 must aggregate exactly the same maximum DP length. Combining a best length in one sum with a shorter length in the other corrupts k_i*S0-S1.",
+      "Increasing-k processing enforces k_j<k_i, while the LCA left/right pairing enforces j<i. Dropping either condition admits incompatible predecessors.",
+      "Tests with k=1 and x>1 must be skipped as DP endpoints and never inserted into LCA aggregates.",
+      "Raw-power and n-normalized implementations are algebraically equivalent only if every free-position factor is adjusted consistently; mixing their formulas loses powers of n.",
+      "Precomputing all touch paths changes memory to O(n log n). The official on-demand path method is needed for the stated O(n+m) memory.",
+      "As in G1, the final sum over optimal chains relies on the proof that a counted array has a unique maximum satisfied-test set."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "increasing-k-lca-batched-counting-dp",
+      "summary": "Process valid tests by increasing k. For each implicit-tree midpoint q, maintain max-length aggregates S0(q)=sum weighted predecessor counts and S1(q)=sum k_j times those counts. Query the O(log n) ancestors on i's side using the factored expression V(i,q)*(k_i*S0(q)-S1(q)), combine the best transition with the single-test base, then publish dp_i along i's opposite-side ancestors with the corresponding U(i,q) weights.",
+      "complexity": "O(n + m log m + m log n) time and O(n+m) memory with on-demand paths; bucket ordering by distinct k in [1,n] removes the m log m term.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/lis-dp",
+      "importance": "primary",
+      "evidence": "The optimized state still computes the longest strict k-increasing subsequence in x order; only the all-predecessor transition is batched.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "Every endpoint and LCA aggregate stores the number of arrays attaining its maximum chain length, multiplies path-choice weights, and sums equal-length contributions.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    },
+    {
+      "tag": "graph/lca",
+      "importance": "primary",
+      "evidence": "Transitions are grouped by the separating lowest common ancestor of the two leaves in the implicit binary-search decision tree, which is what makes left and right weights separable.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    },
+    {
+      "tag": "algorithm/divide-and-conquer",
+      "importance": "secondary",
+      "evidence": "The fixed recursive split [l,r] -> [l,mid] and [mid+1,r] supplies the balanced hierarchy whose O(log n) ancestor paths support the hard optimization.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "Sorting or bucketing tests by k lets the algorithm insert only smaller-k predecessors before querying each endpoint.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Each LCA maintains ordinary and k_j-weighted predecessor contributions so an entire transition class is evaluated as k_i*S0-S1.",
+      "solution_variant": "increasing-k-lca-batched-counting-dp"
+    }
+  ]
+}

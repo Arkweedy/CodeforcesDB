@@ -1,0 +1,114 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "G1",
+    "title": "Go Learn! (Easy Version)",
+    "rating": 3300,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "trees"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2035G2",
+    "relationship": "The objective, feasibility characterization, and counting weights are identical. G1 has n <= 3000 and sum(n) <= 10000, so it may inspect every predecessor pair and their O(log n)-length binary-search paths. G2 raises n to 300000 and sum(n) to 1000000, so this quadratic predecessor DP cannot be reused and must be replaced by an increasing-k sweep with LCA-batched transitions."
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2035/problem/G1",
+      "notes": "Read the complete statement, binary-search pseudocode, correctness definition, both samples, and the easy constraints n <= 3000 and sum(n) <= 10000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "Read the rendered full G1 tutorial. It proves the increasing-test characterization, unique optimal kept set per counted array, four-way path-overlap weight, endpoint DP, and O(m^2 log n) approach."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397661",
+      "notes": "Inspected Hori's Accepted C++20 G1 submission. It explicitly builds each touch path, applies the four transition factors, combines maximum length with tie counts, and completes the suffix count."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/4mion7pm",
+      "notes": "Read the full cross-version article filed under G2. It independently models the search as a segment-tree path, reduces compatibility to LIS after deleting the x > 1, k = 1 case, and derives the Easy counting DP and O(n^2 log n)-type bound."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2035/problem/G1",
+      "notes": "Independently derived the path inequalities, sufficiency construction, transition product, and no-double-count argument. An in-memory check on 1200 random distinct-(x,k) instances with n <= 5 matched brute force, the G1 DP, and the G2 batched recurrence; no files or database rows were written."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Choose a largest subset of tests (x_i,k_i) that one array over [1,n] can satisfy under the given lower-bound-style binary search, then count all arrays satisfying an optimal-size subset.",
+    "constraints": "1 <= t <= 10000; 1 <= m <= n <= 3000; sum(n) <= 10000; all x_i are distinct and all k_i are distinct; array values lie in [1,n]; answers are modulo 998244353. Time limit 5 seconds, memory limit 256 MB.",
+    "core_idea": "Represent the fixed binary search on positions by the balanced interval decision tree: an interval [l,r] stores mid=floor((l+r)/2), with children [l,mid] and [mid+1,r]. The inspected indices for a return position x form its root-to-leaf path P(x). A test (x,k) fixes a_x=k, requires a_p<k for p in P(x) with p<x, and requires a_p>=k for p in P(x) with p>x. A set of tests is feasible exactly when, after sorting by x, its k values are strictly increasing and it excludes (x>1,k=1). Necessity follows at the separating midpoint of any inversion; sufficiency follows by constructing a nondecreasing step array whose first occurrence of each kept k is its x. Hence the maximum kept count is an LIS. For counting, let dp_i=(best length, number of assignments to a_1..a_i) for optimal kept chains ending at test i. For adjacent kept tests j<i with k_j<k_i, constraints from older tests on the gap are weaker than the bound from j, so each position j<p<i is classified using only P(j) and P(i): neither path, only P(j), only P(i), or both, giving respectively n, n-k_j+1, k_i-1, or k_i-k_j choices. Multiply these factors by dp_j, maximize the chain length, and sum counts on ties. Base states count the prefix constraints of one test, and a final analogous factor completes the suffix. Counts of different optimal chains are disjoint: an array satisfying two distinct maximum-size chains would satisfy their union, contradicting maximality.",
+    "complexity": "With tests stored compactly by position, path generation and each predecessor transition take O(log n), for O(n + m^2 log n) time and O(n + m log n) memory. The inspected official implementation scans all positions j for each tested endpoint, so its literal bound is O(nm + m^2 log n), still O(n^2 log n) under m <= n. These are conservative bounds including modular exponentiation.",
+    "tricks": [
+      "Turn the binary-search trace into a root-to-leaf path in a fixed balanced interval tree.",
+      "Prove compatible tests are exactly an increasing subsequence in k after sorting by x, apart from the impossible x > 1, k = 1 test.",
+      "Partition new positions by membership in the two touch paths and multiply the four exact value-range sizes.",
+      "Store DP values in a max-length plus sum-on-ties pair.",
+      "Use uniqueness of the optimal satisfied-test set for each counted array to avoid inclusion-exclusion."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "uncertainty_points": [
+      "No unresolved correctness issue remains for the primary G1 recurrence after the official tutorial and Accepted code, the independent cross-version Luogu derivation, and the in-memory brute-force comparison.",
+      "The dedicated Luogu G1 solution index was consulted but currently lists zero G1-specific articles; the Luogu cross-check is therefore the article filed under G2 that explicitly analyzes both Easy and Hard.",
+      "The official tutorial states O(m^2 log n), while the literal Accepted code scans n possible positions for every tested endpoint. The payload records both the compact implementation bound and the conservative source-code bound.",
+      "No new taxonomy tag is proposed; dp/lis-dp, dp/counting-dp, graph/tree, and math/combinatorics already cover the reusable content."
+    ],
+    "proof_risks": [
+      "Increasing k is not merely necessary. Sufficiency must be proved, for example by a nondecreasing step-array construction with first occurrences at the selected x positions.",
+      "The test (x>1,k=1) is impossible because every array value is at least 1, so the binary search for 1 can never take a right branch and always returns position 1.",
+      "Counting must constrain only inspected path positions, not force the whole array to be sorted. The sorted step array is an existence proof, not the family being counted.",
+      "The reduction to the two adjacent kept tests on a gap needs the path-laminarity argument; otherwise constraints from an older test may appear to have been omitted.",
+      "For j<i, the exact factors are n-k_j+1 on P(j) only, k_i-1 on P(i) only, and k_i-k_j on both. Swapping a strict and non-strict inequality changes the answer.",
+      "The fixed entries a_j=k_j and a_i=k_i are excluded from the free-position exponents; midpoint endpoint cases must not count them again.",
+      "Summing counts over optimal chains is valid only after proving that one array cannot satisfy two distinct maximum-size chains."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "quadratic-touch-path-counting-lis-dp",
+      "summary": "Sort tests by position. For every endpoint i, combine all earlier j with k_j<k_i. Scan the O(log n)-length touch paths of j and i to count positions in the four overlap classes, multiply their exact choice counts into dp_j, and retain the maximum chain length with summed tie counts. Add single-test bases and suffix-completion factors.",
+      "complexity": "O(n + m^2 log n) time with compact test iteration and O(n + m log n) memory; the official Accepted implementation's position scan gives O(nm + m^2 log n), bounded by O(n^2 log n).",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/lis-dp",
+      "importance": "primary",
+      "evidence": "After sorting tests by x, feasibility is exactly strict increase in k, and dp_i maximizes the length of a compatible subsequence ending at i.",
+      "solution_variant": "quadratic-touch-path-counting-lis-dp"
+    },
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "Each state stores both the best compatible-chain length and the number of prefix arrays attaining it; transitions multiply assignment counts and sum them on equal-length ties.",
+      "solution_variant": "quadratic-touch-path-counting-lis-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "primary",
+      "evidence": "Every test is a root-to-leaf path in the implicit balanced binary-search decision tree, and transition weights are determined by intersections of two such paths.",
+      "solution_variant": "quadratic-touch-path-counting-lis-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The array count is a product of independent value-range sizes for free and path-constrained positions, followed by a disjoint sum over optimal chains.",
+      "solution_variant": "quadratic-touch-path-counting-lis-dp"
+    }
+  ]
+}

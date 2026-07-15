@@ -1,0 +1,100 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "D",
+    "title": "Yet Another Real Number Problem",
+    "rating": 1800,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "divide and conquer",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2035/D",
+      "notes": "完整阅读英文题面、样例和约束；确认因子 2 只能从较小下标向较大下标转移，并要求每个非空前缀的最大和模 1e9+7。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "阅读官方 D 教程；确认静态问题从右向左分配因子 2，并利用最多约 31 个有效候选在线维护各前缀。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397595",
+      "notes": "页面明确显示 Accepted；核对奇数部分加二次幂指数的栈状态、饱和比较和模数贡献计算。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/iq0ghaau",
+      "notes": "阅读完整题解与代码；交叉验证决策点单调性、因子 2 的单向合并和单调结构维护。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "对数组每个前缀，把较早元素的因子 2 只能向右转移，求可达到的最大元素和并对 1e9+7 取模。",
+    "constraints": "1<=t<=1e4，1<=n<=2e5，1<=a_i<=1e9，所有测试用例的 n 之和不超过 2e5。",
+    "core_idea": "写成 a_i=q_i*2^e_i，其中 q_i 为奇数。维护尚可能保留因子 2 的决策点栈；新位置先持有自己的指数 E。若栈顶为 (q,e)，当前聚合值为 y=q_cur*2^E，则保留与把栈顶全部 e 个因子转给当前的总和之差为 (2^e-1)*(y-q)，所以当且仅当 y>=q 时应合并。弹出后栈顶只留下 q，指数 e 加到 E；反复进行直到栈顶奇数部分严格大于当前聚合值，再压入当前点。栈从底到顶形成不会被后继支配的决策前沿，因此一旦栈顶挡住当前点，更早的点也不能获益地越过它。同步把每次弹出造成的贡献变化 -(2^e-1)q 和新点 q_cur*2^E 计入模意义答案即可。",
+    "complexity": "O(n log S) time with on-demand modular exponentiation, where S=sum v2(a_i)<=30n; stack operations are O(n) amortized and memory is O(n). A pow2 table gives O(n+S) time instead.",
+    "tricks": [
+      "把每个数拆成奇数部分与 2-adic 指数，操作只是在下标递增方向搬运指数。",
+      "一次性搬完某决策点的全部因子，其收益符号由精确交换式 (2^e-1)(y-q) 决定。",
+      "每个决策点至多入栈、出栈一次，合并链可摊还。",
+      "比较真实大小时若 E>=30 即可判定当前值不小于任意 q<=1e9；否则用 64 位左移，不能用模值或浮点 log2 比较。",
+      "模数只用于维护答案，支配关系必须按真实整数大小判断。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "power-of-two-transfer-monotonic-stack",
+      "summary": "用单调栈维护未被后继聚合值支配的奇数决策点；满足交换阈值时弹栈并把全部二次幂指数转给当前点，同时增量维护前缀最优和。",
+      "complexity": "O(n log S) time and O(n) memory with fast modular powers; O(n) amortized stack operations",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "交换式证明每个旧决策点的全部因子 2 要么保留、要么整体转给第一个足够大的后继；局部合并不会损失全局最优性。",
+      "solution_variant": "power-of-two-transfer-monotonic-stack"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "栈维护未被后继支配的决策前沿，新元素持续弹出可整体合并的栈顶，直到恢复严格支配关系。",
+      "solution_variant": "power-of-two-transfer-monotonic-stack"
+    },
+    {
+      "tag": "math/number-theory/divisibility",
+      "importance": "secondary",
+      "evidence": "每个 a_i 必须按 a_i=q_i*2^e_i 分解，转移操作等价于保持奇数部分并重新分配二次幂指数。",
+      "solution_variant": "power-of-two-transfer-monotonic-stack"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "弹栈时把旧贡献 q*2^e 改为 q，并把累计指数后的当前贡献加入，从而在线输出每个前缀答案。",
+      "solution_variant": "power-of-two-transfer-monotonic-stack"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "secondary",
+      "evidence": "每个决策点只会被压栈一次、在被更优后继支配时弹出一次，保证总合并次数为 O(n)。",
+      "solution_variant": "power-of-two-transfer-monotonic-stack"
+    }
+  ]
+}

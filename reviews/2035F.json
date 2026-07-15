@@ -1,0 +1,119 @@
+{
+  "contest": {
+    "contest_id": 2035,
+    "title": "Codeforces Global Round 27"
+  },
+  "problem": {
+    "contest_id": 2035,
+    "index": "F",
+    "title": "Tree Operations",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "dfs and similar",
+      "dp",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2035/F",
+      "notes": "完整阅读英文题面、操作顺序、样例和约束；确认第 i 次操作的目标按节点编号 1..n 周期循环，且可在目标节点子树内任选一点加一或减一。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135609",
+      "notes": "阅读官方 F 教程；确认 m->m+2n 的可行性单调、固定 m 的线性树 DP、按模 2n 分组二分和 O(n^2) 上界窗口。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2035/submission/288397640",
+      "notes": "页面明确显示 Accepted；核对每个节点的可用次数、后序 DP 转移、放宽问题下界和 O(n^2) 搜索窗口。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ckytb5oq",
+      "notes": "阅读完整中英文题解与代码；交叉验证 surplus 只保留奇偶、每个模 2n 余类独立二分，以及所有实例最终均可完成。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "树根为 x，操作目标按节点编号循环；每次可在目标节点的子树内把一个点加一或减一，求把所有初值变成 0 的最少操作数。",
+    "constraints": "1<=t<=100，1<=n<=2000，1<=x<=n，0<=a_i<=1e9，所有测试用例的 n 之和不超过 2000；答案和 DP 使用 64 位整数。",
+    "core_idea": "固定总操作数 m。节点 u 被作为目标的次数为 g_u=floor(m/n)+[u<=m mod n]。根树后序 DP：令 R_u=a_u+sum need_v，其中 v 为 u 的孩子，need_v 是孩子子树仍需祖先操作补足的单位数。用完 u 的 g_u 次操作后，若 R_u>=g_u，则 need_u=R_u-g_u；否则多出的 g_u-R_u 次操作可以两两用 +1/-1 浪费，只剩 need_u=(g_u-R_u) mod 2。固定 m 可行当且仅当 need_root=0。若 m 可行，追加两个完整周期并让每个节点先对自身 +1、下一周期再 -1，即得 m+2n 也可行；故对每个 r=m mod 2n，可行性随商单调，可二分该余类的首个可行值。先把 R_u<=g_u 时直接置 0，二分得到允许丢弃多余操作的放宽问题最小值 t；官方构造可在额外 O(n^2) 次操作内统一所有节点的 0/1 奇偶并清零，因此真实答案位于 [t,t+O(n^2)]。每个余类的商区间仅长 O(n)，二分需 O(log n) 次检查。",
+    "complexity": "O(n log(nA) + n^2 log n) time and O(n) memory per test case, where A=max a_i.",
+    "tricks": [
+      "固定 m 时，操作目标次数只由节点编号和 m mod n 决定，与 DFS 次序无关。",
+      "子树需求超过本节点操作数时把差额上传；操作数过剩时只能成对抵消，因此只上传 surplus 的奇偶。",
+      "可行 m 追加 2n 次必仍可行，所以不能直接在所有整数上二分，而要按 m mod 2n 拆成单调序列。",
+      "必要条件 m mod 2 = sum a_i mod 2，可把要检查的余类减半。",
+      "先解允许丢弃操作的放宽问题，再用有限构造给真实答案一个 O(n^2) 宽窗口。",
+      "题面允许输出 -1，但有限构造说明所有输入都有解；n=1 时退化为单点按奇偶检查，DP 仍适用。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "bounded-residue-binary-search-tree-dp",
+      "summary": "用 O(n) 后序 DP 检查固定 m；先求放宽问题下界和 O(n^2) 上界窗口，再对至多 2n 个模 2n 余类二分最小可行商。",
+      "complexity": "O(n log(nA) + n^2 log n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "coarse-residue-binary-search-tree-dp",
+      "summary": "省略放宽问题的紧窗口，直接对每个模 2n 余类在足够大的 64 位上界内二分，并使用相同的 O(n) 树 DP 判定。",
+      "complexity": "O(n^2 log V) time and O(n) memory, where V is the chosen cycle-count bound",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "固定操作数的可行性由后序子树 DP 精确判定，状态是子树仍需祖先操作承担的最小残余。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "algorithm/search/binary-search-on-answer",
+      "importance": "primary",
+      "evidence": "每个 m mod 2n 余类内部满足可行后永久可行，必须对该单调答案序列二分首个可行操作数。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "操作目标每 n 次循环一次，而任意可行方案可追加两个完整周期保持终态，形成步长 2n 的可行性单调结构。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "trick/residue-class-decomposition",
+      "importance": "secondary",
+      "evidence": "全局可行性不随 m 普通单调，算法把候选操作数按模 2n 分组后分别搜索。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "secondary",
+      "evidence": "过剩操作只能两两抵消，DP 在过剩分支只保留奇偶；总操作数还必须与初始权值总和同奇偶。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "操作可作用范围是有根子树，孩子子树的残余只能汇总到父节点并由祖先操作处理。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    },
+    {
+      "tag": "graph/tree-dfs",
+      "importance": "secondary",
+      "evidence": "需要从给定根建立父子关系并按后序遍历聚合所有孩子的 DP 残余。",
+      "solution_variant": "bounded-residue-binary-search-tree-dp"
+    }
+  ]
+}
