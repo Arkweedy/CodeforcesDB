@@ -1,0 +1,157 @@
+{
+  "contest": {
+    "contest_id": 2064,
+    "title": "Codeforces Round 1005 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2064,
+    "index": "F",
+    "title": "We Be Summing",
+    "rating": 2600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2064/problem/F",
+      "notes": "Statement and constraints checked: contiguous subarrays, n<k<2n, values in [1,n], and total n at most 2e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138912",
+      "notes": "Official editorial and embedded code checked for uniqueness of the extremum pair, the value sweep, activated-position segment trees, endpoint capacities, and binary search."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/vu3wcowr",
+      "notes": "The CF2064F section identifies the monotonic-stack boundary reduction, complementary min/max values, interval overlap test, product contribution, and Fenwick aggregation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/5dc05f53.html",
+      "notes": "Used for the four nearest-extremum boundaries and the canonical first-prefix-minimum and last-suffix-maximum witness formulation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kmjp.hatenablog.jp/entry/2025/06/21/0900",
+      "notes": "Cross-checked the unique x and k-x classification and the official-style grouped-position contribution calculation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2064/problem/F",
+      "notes": "Re-derived the weighted witness-pair formula and compared it against direct enumeration of every subarray and cut on randomized instances up to n=9."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2064F",
+      "notes": "The solution index did not expose readable bodies; the readable Luogu column above was used instead."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2064/submission/307985033",
+      "notes": "Accepted implementation linked by the monotonic-stack blog; direct source access was bot-protected, so the article, official implementation, and independent derivation were used."
+    }
+  ],
+  "annotation": {
+    "summary": "Count contiguous subarrays that admit a cut where the minimum on the non-empty left part plus the maximum on the non-empty right part equals k.",
+    "constraints": "Across test cases, sum(n) is at most 2e5; 2<=n<=2e5, n<k<2n, and 1<=a_i<=n. The answer fits in 64-bit signed arithmetic.",
+    "core_idea": "As a cut moves right, both its prefix minimum and suffix maximum are non-increasing. Therefore, if a subarray has one or more valid cuts, every valid cut has the same unique pair (x,y) with x+y=k. Canonicalize an x-epic subarray by i, the first occurrence witnessing prefix minimum x, and j, the last occurrence witnessing suffix maximum y. Let L_le(i) be the nearest index left of i with value <=x, R_lt(i) the nearest index right of i with value <x, L_gt(j) the nearest index left of j with value >y, and R_ge(j) the nearest index right of j with value >=y. For i<j and a_i+a_j=k, a valid cut exists exactly when L_gt(j)<R_lt(i). This witness pair contributes (i-L_le(i))*(R_ge(j)-j) choices of subarray endpoints. Monotonic stacks compute all four boundaries, and complementary-value witness pairs can be aggregated in O(n log n).",
+    "complexity": "O(n log n) time and O(n) memory per test case.",
+    "tricks": [
+      "prove that every epic subarray has a unique prefix-minimum and suffix-maximum value pair",
+      "choose the first x witness and last y witness to avoid double counting",
+      "reduce cut existence to overlap of two extremum-validity intervals",
+      "factor each witness pair into independent left-endpoint and right-endpoint counts",
+      "aggregate complementary-value pairs with range-query data structures"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "official-value-sweep-segment-tree",
+      "summary": "Group positions by value and sweep x upward with y=k-x. Segment trees over activated values locate the first value below x after each x occurrence and the last value above y before each y occurrence. Precompute each y occurrence's valid right-endpoint capacity, binary-search the valid prefix of y occurrences for every x witness, and multiply by its valid left-endpoint count.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "four-boundary-fenwick-pairing",
+      "summary": "Use monotonic stacks to compute L_le, R_lt, L_gt, and R_ge. For every complementary value pair x,y, merge-scan their occurrence lists by position. Insert an earlier x witness i into a Fenwick tree at key R_lt(i) with weight i-L_le(i); for each y witness j, query keys greater than L_gt(j) and multiply by R_ge(j)-j. Query before insertion when x=y, and roll back inserted weights after the pair.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/prefix-suffix-extrema",
+      "importance": "primary",
+      "evidence": "The problem is reduced to the monotone prefix minimum and suffix maximum associated with every possible cut.",
+      "solution_variant": "official-value-sweep-segment-tree"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "Assigning each subarray its unique value pair, first x witness, and last y witness prevents multiple valid cuts or repeated extrema from being counted more than once.",
+      "solution_variant": "official-value-sweep-segment-tree"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "The official solution dynamically locates the first smaller-than-x position and last greater-than-y position among values activated by the value sweep.",
+      "solution_variant": "official-value-sweep-segment-tree"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "primary",
+      "evidence": "The alternative solution requires tie-correct nearest <=, <, >, and >= boundaries to delimit every witness's valid endpoint and cut ranges.",
+      "solution_variant": "four-boundary-fenwick-pairing"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "primary",
+      "evidence": "Weighted earlier x witnesses are indexed by R_lt(i), and suffix queries count exactly those satisfying L_gt(j)<R_lt(i).",
+      "solution_variant": "four-boundary-fenwick-pairing"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "secondary",
+      "evidence": "For each x witness, the official solution binary-searches the last y occurrence whose last-greater boundary remains before the first-smaller boundary.",
+      "solution_variant": "official-value-sweep-segment-tree"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "The Fenwick variant scans occurrence positions in order while maintaining exactly the earlier x witnesses eligible to pair with the current y witness.",
+      "solution_variant": "four-boundary-fenwick-pairing"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "Each canonical witness pair contributes a product of independent left and right endpoint counts, which is accumulated through weighted range queries.",
+      "solution_variant": "four-boundary-fenwick-pairing"
+    },
+    {
+      "tag": "dp",
+      "importance": "incidental",
+      "evidence": "Although present among the official tags, neither reviewed solution needs a dynamic-programming state; both use canonical witness counting.",
+      "solution_variant": "official-value-sweep-segment-tree"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "incidental",
+      "evidence": "Occurrence lists may be merge-scanned with two cursors, but this is bookkeeping around the boundary and Fenwick argument rather than the central technique.",
+      "solution_variant": "four-boundary-fenwick-pairing"
+    }
+  ]
+}
+

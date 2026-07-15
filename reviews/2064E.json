@@ -1,0 +1,136 @@
+{
+  "contest": {
+    "contest_id": 2064,
+    "title": "Codeforces Round 1005 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2064,
+    "index": "E",
+    "title": "Mycraft Sand Sort",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dsu",
+      "greedy",
+      "math",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2064/problem/E",
+      "notes": "Statement and constraints checked: p is a permutation, colors are in [1,n], total n is at most 2e5, and answers are modulo 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138912",
+      "notes": "Official editorial and code checked for c'=c, the same-color exchange criterion, laminar feasible ranges, and DSU component-choice counting."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Used for the equivalent ascending-height deletion interpretation: deleting one item from the appropriate active equal-color run and multiplying its current size."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/w9095/p/18728194",
+      "notes": "Cross-checked the same-color swap condition, nested feasible intervals, and the segment-tree placement-counting formulation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2064/problem/E",
+      "notes": "Re-derived the active-run recurrence and compared its product against exhaustive enumeration of all candidate permutations on randomized instances up to n=8."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2064E",
+      "notes": "The Luogu solution index was checked but did not expose readable solution bodies in this session, so it was not used as evidence."
+    },
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2064/submission/307300383",
+      "notes": "Linked accepted implementation for the deletion-style solution; direct source access was bot-protected, so the readable blog explanation and official code were used."
+    }
+  ],
+  "annotation": {
+    "summary": "Count permutations p' and color arrays c' that produce exactly the same colored block layout after every column falls under gravity.",
+    "constraints": "Across test cases, sum(n) is at most 2e5; p is a permutation of 1..n and the result is required modulo 998244353.",
+    "core_idea": "After gravity, column h contains, in preserved vertical order, the colors c_i of rows satisfying p_i>=h. Column 1 therefore fixes c'=c. Let pos[h] be the original position carrying height h. Moving from threshold h to h+1 deletes pos[h] from the active color sequence. To produce the same next sequence, height h may be assigned to exactly any position in the maximal active run having color c[pos[h]]; deleting any one of these indistinguishable colors gives the same remaining color sequence. Multiply the run size, canonically delete pos[h], splice it from a doubly linked active order, and union the newly adjacent runs when their colors agree. A DSU storing the number of still-active positions in each run supports all factors.",
+    "complexity": "O(n*alpha(n)) time and O(n) memory per test case.",
+    "tricks": [
+      "view every gravity-sorted column as a threshold-filtered color subsequence",
+      "column one proves that the color array is immutable",
+      "count permutations through a canonical ascending-height deletion sequence",
+      "rows inside one active equal-color run are indistinguishable for the next deletion",
+      "splice each position once and merge newly adjacent equal-color runs"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "active-color-run-deletion-dsu",
+      "summary": "Initialize maximal adjacent equal-color runs in a DSU with active sizes. Process heights h=1..n using the inverse permutation. Multiply by the active size of pos[h]'s run, mark pos[h] deleted, splice it from predecessor/successor arrays, and union its live neighbors if their colors match.",
+      "complexity": "O(n*alpha(n)) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "per-color-laminar-range-dsu",
+      "summary": "For each color, temporarily remove that color from a range-maximum segment tree, process its positions by increasing height, and union same-color positions reachable without crossing a different-color height at least as large. The reachable ranges are laminar; multiply component size minus already fixed positions.",
+      "complexity": "O(n*log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "DSU maintains the current equal-color choice components and their remaining active sizes as deletions expose new adjacencies.",
+      "solution_variant": "active-color-run-deletion-dsu"
+    },
+    {
+      "tag": "math/combinatorics/permutation-counting",
+      "importance": "primary",
+      "evidence": "There is a bijective recursive count in which height h has exactly the current equal-color run size choices, so the answer is the product of these factors.",
+      "solution_variant": "active-color-run-deletion-dsu"
+    },
+    {
+      "tag": "trick/amortized-delete-once",
+      "importance": "primary",
+      "evidence": "Every position is spliced exactly once and every newly exposed adjacency causes at most one successful DSU merge.",
+      "solution_variant": "active-color-run-deletion-dsu"
+    },
+    {
+      "tag": "trick/laminar-family",
+      "importance": "primary",
+      "evidence": "In the official formulation, feasible same-color placement intervals are nested or disjoint, allowing components to grow monotonically while smaller heights are fixed.",
+      "solution_variant": "per-color-laminar-range-dsu"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The official variant uses range maxima over different-colored positions to detect the first height barrier preventing a same-color exchange.",
+      "solution_variant": "per-color-laminar-range-dsu"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "The complete permutation is processed in known height order, turning layout equivalence into monotone component updates.",
+      "solution_variant": "active-color-run-deletion-dsu"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "The official implementation sorts each color's positions by height, but the primary deletion formulation obtains the order directly from the inverse permutation.",
+      "solution_variant": "per-color-laminar-range-dsu"
+    }
+  ]
+}
+

@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2064,
+    "title": "Codeforces Round 1005 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2064,
+    "index": "D",
+    "title": "Eating",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "bitmasks",
+      "brute force",
+      "data structures",
+      "dp",
+      "greedy",
+      "trees",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2064/problem/D",
+      "notes": "Statement and constraints checked: non-persistent queries, total n and q at most 2e5, and all weights are positive and below 2^30."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138912",
+      "notes": "Official editorial and embedded C++ checked for the most-significant-bit phase argument, prefix XOR skipping, and nearest preceding barrier table."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/n59ttxmg",
+      "notes": "Cross-checked the high-to-low bit interpretation, pre[i][bit] definition, and O(log V) work per query."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://ottffyzy.github.io/sols/codeforces/2064/d/",
+      "notes": "Checked an independent implementation using prefix XOR and the nearest position whose most significant bit reaches the current threshold."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2064/problem/D",
+      "notes": "Re-derived the barrier invariant and compared the phase-jump algorithm against direct simulation on randomized cases."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2064D",
+      "notes": "The solution index did not expose additional readable solution text in this session; the readable Luogu article above was used instead."
+    }
+  ],
+  "annotation": {
+    "summary": "For every query weight x, determine how many slimes it can consume while moving left, where each consumed weight is XORed into x and queries do not modify the original array.",
+    "constraints": "Across test cases, sum(n) and sum(q) are at most 2e5; 1 <= w_i,x < 2^30. Direct simulation per query is too slow, while a 30-bit phase decomposition is sufficient.",
+    "core_idea": "Let b=msb(x). Every consecutive slime with msb(w_i)<b is smaller than the current x, and XORing any collection of such weights cannot clear bit b, so the entire consecutive suffix of lower-msb slimes can be eaten and folded into x with one prefix-XOR query. The next barrier has msb at least b. A larger-msb barrier is impossible to eat; an equal-msb barrier is checked exactly, and if eaten its leading bit cancels under XOR, strictly decreasing msb(x). Precompute last[i][b], the rightmost position at or before i whose weight has msb at least b. Each query therefore crosses at most 30 barriers.",
+    "complexity": "With B=30, O(B*n) preprocessing, O(B) time per query, and O(B*n) memory.",
+    "tricks": [
+      "bulk-consume a maximal suffix whose weights have smaller most significant bit",
+      "use prefix XOR to update x for an entire consumed interval",
+      "an eaten equal-msb barrier strictly lowers the current most significant bit",
+      "precompute the nearest preceding position meeting every bit threshold"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "msb-barrier-table",
+      "summary": "Precompute prefix XOR and last[i][b], the nearest position at or before i with msb at least b. For a query, jump over lower-msb suffixes, test the next barrier, and repeat after the current msb decreases.",
+      "complexity": "O(B*n+B*q) time and O(B*n) memory, where B=30.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "msb-barrier-segment-tree",
+      "summary": "Store msb(w_i) in a static range-maximum segment tree. In each phase, descend to the rightmost position not exceeding the current cursor whose msb reaches the current threshold, while prefix XOR still consumes the skipped suffix in O(1).",
+      "complexity": "O(n+B*q*log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "primary",
+      "evidence": "The decisive ordering and progress measure are the most significant set bits of x and the slime weights.",
+      "solution_variant": "msb-barrier-table"
+    },
+    {
+      "tag": "algorithm/prefix-xor",
+      "importance": "primary",
+      "evidence": "Every maximal run of guaranteed-eatable lower-msb slimes is applied to x through one range XOR.",
+      "solution_variant": "msb-barrier-table"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "The most significant bit of x never increases and strictly decreases whenever an equal-msb barrier is eaten, limiting a query to 30 phases.",
+      "solution_variant": "msb-barrier-table"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The memory-reduced variant finds the rightmost position whose stored msb reaches a threshold by descending a range-maximum segment tree.",
+      "solution_variant": "msb-barrier-segment-tree"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "incidental",
+      "evidence": "Each phase consumes the entire provably safe suffix, but there is no optimization choice; the bit invariant and jump structure are the substantive techniques.",
+      "solution_variant": "msb-barrier-table"
+    }
+  ]
+}
+
