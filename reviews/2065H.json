@@ -1,0 +1,44 @@
+{
+  "contest": {"contest_id": 2065, "title": "Codeforces Round 1003 (Div. 4)"},
+  "problem": {
+    "contest_id": 2065,
+    "index": "H",
+    "title": "Bro Thinks He's Him",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "data structures", "divide and conquer", "dp", "math", "matrices"]
+  },
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2065/problem/H", "notes": "Statement and constraints: binary string point flips, total length and total queries at most 2e5, answer modulo 998244353."},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/139178", "notes": "Official editorial and code checked for the adjacent-selected-pair contribution formula and weighted Fenwick maintenance under flips."},
+    {"source_type": "self_derivation", "url": "https://codeforces.com/contest/2065/problem/H", "notes": "Re-derived the weighted-pair formula and a 5-state affine-matrix segment-tree alternative; exhaustively checked both against all subsequences for every binary string of length at most 9."}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2065H", "notes": "Candidate solution index required authorization and was not used for algorithm details."}
+  ],
+  "annotation": {
+    "summary": "After every persistent bit flip, compute the sum of the run count over all nonempty subsequences of the current binary string.",
+    "constraints": "Total string length and query count are at most 2e5, so point updates and weighted prefix/suffix queries must be logarithmic.",
+    "core_idea": "For a nonempty subsequence b, runs(b)=1 plus the number of adjacent selected characters that differ. The constant contributes 2^n-1. For i<j with s_i!=s_j to be adjacent in the chosen subsequence, select i,j, omit every index between them, and freely choose outside indices, giving weight 2^{i-1}*2^{n-j}. Thus the answer is the constant plus the sum of these weights over differing pairs. Flipping position k changes only pairs incident to k. Its contribution equals 2^{n-k} times the opposite-bit weighted prefix plus 2^{k-1} times the opposite-bit weighted suffix. Maintain both weight systems for bits 0 and 1 with four Fenwick trees; subtract old contribution, move k between bit buckets, and add new contribution.",
+    "complexity": "O(n+q log n) time and O(n) memory.",
+    "tricks": ["write run count as one plus adjacent selected changes", "count each adjacent selected pair independently", "factor containing subsequences into free prefix and suffix", "update only pairs incident to the flipped position", "store left/right power weights separately for each bit"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "weighted-pair-contribution-fenwick", "summary": "Maintain the pair formula with four Fenwick trees storing 2^{i-1} and 2^{n-i} at positions of each bit.", "complexity": "O(n+q log n) time and O(n) memory.", "confidence": "high", "is_primary": true},
+    {"name": "finite-state-affine-matrix-segment-tree", "summary": "Represent subsequence counts and run sums ending in each bit as a 5-state affine transition; store ordered character-matrix products in a segment tree.", "complexity": "O(n+q log n) with specialized constant-size products.", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/combinatorics/subset-counting", "importance": "primary", "evidence": "A fixed adjacent selected pair occurs in exactly 2^{i-1}*2^{n-j} subsequences.", "solution_variant": "weighted-pair-contribution-fenwick"},
+    {"tag": "trick/maintain-contribution", "importance": "primary", "evidence": "Each flip subtracts and adds exactly the weighted differing-pair contributions incident to its index.", "solution_variant": "weighted-pair-contribution-fenwick"},
+    {"tag": "data-structure/fenwick-tree", "importance": "primary", "evidence": "Four point-update/range-sum Fenwick trees provide the opposite-bit weighted prefix and suffix sums.", "solution_variant": "weighted-pair-contribution-fenwick"},
+    {"tag": "string/subsequence", "importance": "primary", "evidence": "The reduction counts when a pair becomes consecutive inside a selected subsequence.", "solution_variant": "weighted-pair-contribution-fenwick"},
+    {"tag": "algorithm/prefix-sums", "importance": "secondary", "evidence": "Fenwick queries dynamically maintain weighted prefix and suffix aggregates.", "solution_variant": "weighted-pair-contribution-fenwick"},
+    {"tag": "dp/finite-state-dp", "importance": "secondary", "evidence": "The alternative uses four ending-bit count/sum states plus a constant affine coordinate.", "solution_variant": "finite-state-affine-matrix-segment-tree"},
+    {"tag": "math/linear-algebra/matrix", "importance": "secondary", "evidence": "Each character is a fixed affine transition matrix and concatenation is matrix multiplication.", "solution_variant": "finite-state-affine-matrix-segment-tree"},
+    {"tag": "data-structure/segment-tree", "importance": "secondary", "evidence": "The matrix alternative stores ordered transition products under point flips.", "solution_variant": "finite-state-affine-matrix-segment-tree"},
+    {"tag": "algorithm/divide-and-conquer", "importance": "incidental", "evidence": "It appears only through the segment-tree product decomposition.", "solution_variant": "finite-state-affine-matrix-segment-tree"},
+    {"tag": "math/number-theory/modular-arithmetic", "importance": "incidental", "evidence": "Counts use a modulus, but no deeper modular-number-theory property is used.", "solution_variant": "weighted-pair-contribution-fenwick"}
+  ]
+}

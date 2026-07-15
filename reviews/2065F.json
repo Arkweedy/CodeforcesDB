@@ -1,0 +1,42 @@
+{
+  "contest": {"contest_id": 2065, "title": "Codeforces Round 1003 (Div. 4)"},
+  "problem": {
+    "contest_id": 2065,
+    "index": "F",
+    "title": "Skibidus and Slay",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["data structures", "dfs and similar", "graphs", "greedy", "trees"]
+  },
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2065/problem/F", "notes": "Statement and constraints: for every label decide whether it is a strict majority on some non-trivial tree path; total n <= 5e5."},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/139178", "notes": "Official editorial checked for the length-2/3 local witness and the alternative per-label virtual-tree plus tree-Kadane method."},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/lhz5nmoe", "notes": "Cross-checked that equal labels at distance at most two are necessary and sufficient and that closed-neighborhood scans implement the test."},
+    {"source_type": "self_derivation", "url": "https://codeforces.com/contest/2065/problem/F", "notes": "Proved the distance-at-most-two equivalence and randomized it against exhaustive path-majority enumeration on small trees."}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2065F", "notes": "Luogu solution index; the concrete consulted article is listed in sources."}
+  ],
+  "annotation": {
+    "summary": "For every value x, decide whether some simple tree path of at least two vertices has x as a strict majority of its labels.",
+    "constraints": "The total number of vertices is at most 5e5 and labels lie in [1,n], ruling out per-value traversals or arbitrary path enumeration.",
+    "core_idea": "If x is a strict majority on a non-trivial path, two x occurrences must be at distance at most two: otherwise consecutive x occurrences have at least two non-x vertices between them, so x cannot outnumber non-x vertices. Conversely, two x vertices at distance one give [x,x], and at distance two give [x,other,x], both strict majorities. Thus x is feasible exactly when two x-labeled vertices have tree distance <=2. For every center u, count labels in the closed neighborhood {u} union N(u); any duplicate gives such a pair. The total scanned size is sum(deg(u)+1)=3n-2, so touched-frequency arrays yield O(n).",
+    "complexity": "O(n) time and O(n) memory for the primary solution.",
+    "tricks": ["replace an arbitrary majority path by a length-2 or length-3 witness", "equate feasibility with equal labels at distance at most two", "scan closed neighborhoods", "clear only touched frequency buckets"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "closed-neighborhood-duplicate-scan", "summary": "For each vertex count labels of itself and its neighbors; mark every duplicate label and clear only touched counters.", "complexity": "O(n) time and O(n) memory.", "confidence": "high", "is_primary": true},
+    {"name": "per-label-virtual-tree-max-path", "summary": "For each label build the virtual tree of its vertices and LCAs, give matching vertices +1 and skipped vertices negative weight, then run a maximum-path-sum tree DP.", "complexity": "O(n log n) total time with LCA preprocessing.", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "graph/distance-2-pairs", "importance": "primary", "evidence": "A value is feasible exactly when two vertices carrying it are at distance one or two.", "solution_variant": "closed-neighborhood-duplicate-scan"},
+    {"tag": "trick/pigeonhole-principle", "importance": "primary", "evidence": "A strict majority forces two consecutive majority occurrences to have at most one intervening vertex.", "solution_variant": "closed-neighborhood-duplicate-scan"},
+    {"tag": "graph/tree", "importance": "secondary", "evidence": "The linear scan uses tree adjacency lists and sum of degrees.", "solution_variant": "closed-neighborhood-duplicate-scan"},
+    {"tag": "graph/virtual-tree", "importance": "secondary", "evidence": "The alternative compresses the tree separately to each label's vertices and their LCAs.", "solution_variant": "per-label-virtual-tree-max-path"},
+    {"tag": "dp/max-subarray", "importance": "secondary", "evidence": "The virtual-tree alternative runs a Kadane-style maximum path-sum DP under +1/-1 weights.", "solution_variant": "per-label-virtual-tree-max-path"},
+    {"tag": "graph/lca", "importance": "secondary", "evidence": "LCA is required to build each per-label virtual tree and encode compressed path lengths.", "solution_variant": "per-label-virtual-tree-max-path"},
+    {"tag": "paradigm/greedy", "importance": "incidental", "evidence": "The primary solution is an exact local-witness equivalence rather than a greedy choice.", "solution_variant": "closed-neighborhood-duplicate-scan"}
+  ]
+}

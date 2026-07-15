@@ -1,0 +1,39 @@
+{
+  "contest": {"contest_id": 2065, "title": "Codeforces Round 1003 (Div. 4)"},
+  "problem": {
+    "contest_id": 2065,
+    "index": "E",
+    "title": "Skibidus and Rizz",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": ["constructive algorithms", "greedy", "strings"]
+  },
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2065/problem/E", "notes": "Statement and constraints: construct a binary string with prescribed counts and exact maximum substring imbalance; total output length is bounded by 4e5."},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/139178", "notes": "Official editorial and embedded construction checked for the feasibility bounds and dominant-block plus alternation construction."},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/hiussv8p", "notes": "Cross-checked the same feasibility interval and construction, including zero-count boundary cases."},
+    {"source_type": "self_derivation", "url": "https://codeforces.com/contest/2065/problem/E", "notes": "Re-derived the prefix-walk range identity and exhaustively checked the construction for all n,m <= 6 and all k."}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2065E", "notes": "Luogu solution index; the concrete consulted article is listed in sources."}
+  ],
+  "annotation": {
+    "summary": "Construct a binary string with exactly n zeroes and m ones whose largest absolute zero-one count difference over every contiguous substring is exactly k, or report impossibility.",
+    "constraints": "Up to 1e4 tests; 0 <= n,m <= 2e5, n+m >= 1, 1 <= k <= n+m, and total counts per symbol are at most 2e5, so construction must be linear in output length.",
+    "core_idea": "Map 0 to +1 and 1 to -1. A substring imbalance is the difference of two prefix sums, so the maximum is max(P)-min(P). Necessarily |n-m| <= k because the whole string is a substring, and k <= max(n,m) because no substring can have larger excess than the available count of one symbol. These are sufficient. WLOG n>=m, let r=n-k and u=m-r=k-(n-m), then output 0^k (10)^r 1^u. Prefix sums rise to k, alternate between k and k-1, then decrease to n-m without going below 0, giving range exactly k. If m>n, complement the symmetric construction.",
+    "complexity": "O(n+m) time and O(1) auxiliary space excluding output.",
+    "tricks": ["turn substring imbalance into a prefix-sum range", "characterize feasibility as |n-m| <= k <= max(n,m)", "attain k with a dominant block and cancel the remainder by alternation", "use bit-complement symmetry"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "prefix-range-block-alternation", "summary": "Emit k dominant symbols, pair each remaining dominant symbol with one minority symbol, append leftover minority symbols, and complement when ones dominate.", "complexity": "O(n+m) time and O(1) auxiliary space.", "confidence": "high", "is_primary": true}
+  ],
+  "tags": [
+    {"tag": "paradigm/constructive", "importance": "primary", "evidence": "An explicit count-preserving binary-string construction realizes the exact target prefix-range width.", "solution_variant": "prefix-range-block-alternation"},
+    {"tag": "trick/convert-to-prefix", "importance": "primary", "evidence": "Maximum substring imbalance becomes max prefix sum minus min prefix sum after mapping bits to +1/-1.", "solution_variant": "prefix-range-block-alternation"},
+    {"tag": "paradigm/greedy", "importance": "secondary", "evidence": "After forcing one excursion of size k, alternation cancels remaining symbols without leaving the chosen interval.", "solution_variant": "prefix-range-block-alternation"},
+    {"tag": "trick/symmetry", "importance": "secondary", "evidence": "Swapping zero and one negates prefix sums without changing their range.", "solution_variant": "prefix-range-block-alternation"},
+    {"tag": "string", "importance": "incidental", "evidence": "The output is a string, but no string algorithm is used.", "solution_variant": "prefix-range-block-alternation"}
+  ]
+}

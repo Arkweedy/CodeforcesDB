@@ -1,0 +1,42 @@
+{
+  "contest": {"contest_id": 2065, "title": "Codeforces Round 1003 (Div. 4)"},
+  "problem": {
+    "contest_id": 2065,
+    "index": "G",
+    "title": "Skibidus and Capping",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": ["combinatorics", "math", "number theory"]
+  },
+  "sources": [
+    {"source_type": "statement", "url": "https://codeforces.com/contest/2065/problem/G", "notes": "Statement and constraints: count pairs i<=j whose lcm is a product of exactly two primes; total n <= 2e5."},
+    {"source_type": "editorial", "url": "https://codeforces.com/blog/entry/139178", "notes": "Official editorial and code checked for the exhaustive three-case classification and frequency formulas."},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/kln8vua8", "notes": "Cross-checked prime/semiprime classification, factor-incidence counting, and prime-square handling."},
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/article/ij1a0qmt", "notes": "Second cross-check for the lcm exponent argument and cases p, p^2, and p*q."},
+    {"source_type": "self_derivation", "url": "https://codeforces.com/contest/2065/problem/G", "notes": "Re-derived the frequency formula and randomized it against direct i<=j lcm enumeration on small arrays."}
+  ],
+  "reference_candidates": [
+    {"source_type": "luogu_solution", "url": "https://www.luogu.com.cn/problem/solution/CF2065G", "notes": "Luogu solution index; concrete consulted articles are listed in sources."}
+  ],
+  "annotation": {
+    "summary": "Count pairs of indices i<=j whose values have an LCM equal to a product of exactly two primes, allowing equal primes.",
+    "constraints": "n and total n are at most 2e5, and values are at most n, enabling a global smallest-prime-factor sieve and linear frequency arrays.",
+    "core_idea": "Since each value divides the lcm, any usable value has at most two prime factors counted with multiplicity. Valid pairs are exactly: two distinct primes p,q; a semiprime s=pq paired with one of its prime factors (only once when p=q); or two occurrences of the same semiprime, including i=j. With frequency c[x] and P prime-valued occurrences, unequal-prime pairs contribute (P^2-sum c[p]^2)/2. Each semiprime s=pq contributes c[s](c[s]+1)/2 plus c[s](c[p]+(p!=q ? c[q] : 0)). A sieve precomputes primality and the two factors of every semiprime.",
+    "complexity": "O(M log log M + sum n) time and O(M) memory for M=200000.",
+    "tricks": ["discard values with more than two prime factors", "classify pairs into unequal primes, semiprime-with-factor, and equal semiprimes", "count prime squares only once", "include i=j via c[s](c[s]+1)/2"],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {"name": "offline-frequency-case-sum", "summary": "Preclassify values, aggregate unequal-prime pairs, then iterate semiprimes and add equal-semiprime and prime-factor partners.", "complexity": "O(M log log M) preprocessing and O(n) per test.", "confidence": "high", "is_primary": true},
+    {"name": "online-second-endpoint-contributions", "summary": "Scan values and count each valid pair when its second endpoint arrives, maintaining prime and factor-incidence frequencies.", "complexity": "O(M log log M) preprocessing and O(n) per test.", "confidence": "high", "is_primary": false}
+  ],
+  "tags": [
+    {"tag": "math/number-theory/lcm", "importance": "primary", "evidence": "The pair classification follows from componentwise maxima of prime exponents in lcm(x,y).", "solution_variant": "offline-frequency-case-sum"},
+    {"tag": "math/number-theory/prime-factor-count", "importance": "primary", "evidence": "Values and lcms are classified by total prime-factor multiplicity, and all values above two are irrelevant.", "solution_variant": "offline-frequency-case-sum"},
+    {"tag": "math/number-theory/prime-factorization", "importance": "primary", "evidence": "The algorithm recovers the concrete factors p and q of each semiprime to count compatible prime-valued partners.", "solution_variant": "offline-frequency-case-sum", "description": "Recover concrete prime factors and exponents of input values, usually with a smallest-prime-factor sieve or trial division, when factor identities drive the algorithm; excludes tasks using only generic divisibility tests.", "parent": "math/number-theory", "created_reason": "The existing prime-factor-count tag records omega/Omega-style counts but does not identify problems that must recover concrete prime factors for compatibility logic.", "status": "candidate", "aliases": ["factorization", "prime-factorisation"]},
+    {"tag": "trick/case-analysis", "importance": "primary", "evidence": "Correctness requires proving the three pair types exhaustive, including the p=q square boundary.", "solution_variant": "offline-frequency-case-sum"},
+    {"tag": "math/combinatorics/subset-counting", "importance": "secondary", "evidence": "Valid index pairs are counted from value frequencies with cross products and c[s](c[s]+1)/2.", "solution_variant": "offline-frequency-case-sum"},
+    {"tag": "trick/maintain-contribution", "importance": "secondary", "evidence": "The online variant adds exactly the new compatible pairs contributed by each arriving value.", "solution_variant": "online-second-endpoint-contributions"}
+  ]
+}

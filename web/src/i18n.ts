@@ -366,6 +366,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "persistent-balanced-tree": "可持久化平衡树",
   "persistent-segment-tree": "可持久化线段树",
   "prime-factor-count": "质因子计数",
+  "prime-factorization": "质因数分解",
   "probability": "概率",
   "prufer-sequence": "Prüfer 序列",
   "queue": "队列",

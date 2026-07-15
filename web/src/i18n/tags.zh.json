@@ -222,6 +222,7 @@
   "math/number-theory/multiplicative-order": "乘法阶",
   "math/number-theory/mobius": "莫比乌斯",
   "math/number-theory/prime-factor-count": "质因子计数",
+  "math/number-theory/prime-factorization": "质因数分解",
   "math/order-statistics": "顺序统计",
   "math/order-statistics/median-minimization": "中位数最小化",
   "math/probability": "概率",
