@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2060,
+    "title": "Codeforces Round 998 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2060,
+    "index": "F",
+    "title": "Multiplicative Arrays",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "dp",
+      "number theory"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2060/F",
+      "notes": "Read the full statement and bounds: k <= 100000, n <= 900000000, sum k <= 100000, and answers are required for every product x in [1,k] modulo 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138342",
+      "notes": "The official editorial gives both intended approaches: ordered-factorization DP plus the hockey-stick identity, and a degree-at-most-17 polynomial evaluated by Lagrange interpolation."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/6o6uu881",
+      "notes": "Cross-checked the DP over products and non-one count, the insertion-of-ones interpretation, direct small-r binomial evaluation, and O(k log^2 k) implementation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://kisuraop.github.io/posts/abc8fb81.html",
+      "notes": "Independently cross-checked the cap of 16 non-one entries and the simplification sum_{m=1..n} C(m,j)=C(n+1,j+1)."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2060/F",
+      "notes": "Re-derived both formulas. The binomial-basis answer matched direct length DP for k <= 12 and n <= 7 (546 product entries), and 18-point interpolation matched direct values at n=25 for all x <= 30."
+    }
+  ],
+  "annotation": {
+    "summary": "For every x from 1 to k, count arrays of any length from 1 through n whose positive entries have product x, modulo 998244353.",
+    "constraints": "t <= 1000; k <= 100000; n <= 900000000; sum k <= 100000. The huge n rules out DP by total length, while x <= k sharply bounds how many entries can exceed 1.",
+    "core_idea": "For x>1, an array with product x has at most floor(log2 x) <= 16 entries greater than 1. Let dp[x][j] be the number of ordered j-tuples of integers greater than 1 with product x. It obeys dp[x][j]=sum_{d|x,d>1} dp[x/d][j-1], implementable by sieve-style transitions over multiples. For a total length m, choose the j non-one positions in C(m,j) ways; summing m from 1 to n and applying the hockey-stick identity gives ans[x]=sum_j dp[x][j] C(n+1,j+1). Compute these small-lower-index binomials directly modulo 998244353. The exceptional product x=1 has exactly the n all-one arrays. An official alternative observes that the exact-length count f_x(m) has degree Omega(x), so its prefix sum S_x(n) has degree at most 17 and can be evaluated from 18 small samples by Lagrange interpolation.",
+    "complexity": "O(k log^2 k) time and O(k log k) memory per test in the primary approach; the sum-k bound applies across tests.",
+    "tricks": [
+      "Bound the number of entries greater than 1 by 16 using 2^17 > 100000.",
+      "Count the ordered non-one subsequence before inserting ones.",
+      "Collapse the sum over all allowed lengths with the hockey-stick identity.",
+      "Evaluate C(n+1,r) from a short falling product because r <= 17 even though n is large.",
+      "Alternative: prove low polynomial degree from the proper-divisor recurrence and interpolate."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "The proposed math/polynomial-interpolation tag is new. The main agent must confirm its taxonomy path and add the WebUI Chinese translation if accepted."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "ordered-factorization-dp-hockey-stick",
+      "summary": "Precompute dp[x][j] for ordered factorizations into j factors greater than 1 using divisor/multiple transitions. Weight each j by C(n+1,j+1), obtained after summing choices of non-one positions over every allowed length; output n separately for x=1.",
+      "complexity": "O(k log^2 k) time and O(k log k) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "small-degree-polynomial-lagrange",
+      "summary": "Let f_x(m) count length-m arrays and S_x(n)=sum_{m=1..n} f_x(m). From f_x(m)-f_x(m-1)=sum_{d|x,d<x} f_d(m-1), inductively deg f_x=Omega(x) and deg S_x=Omega(x)+1 <= 17. Precompute S_x at 18 small arguments and evaluate S_x(n) with Lagrange interpolation modulo 998244353.",
+      "complexity": "O(k log^2 k) time and O(k log k) memory with the degree bounded by 17.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "The main precomputation counts ordered non-one factorizations by the two-dimensional state (product x, number j of factors).",
+      "solution_variant": "ordered-factorization-dp-hockey-stick"
+    },
+    {
+      "tag": "math/number-theory/divisor-sieve",
+      "importance": "primary",
+      "evidence": "Each DP layer aggregates over proper divisors, equivalently propagating dp[p][j] to all multiples p*d, which is sieve-style computation on the divisibility poset.",
+      "solution_variant": "ordered-factorization-dp-hockey-stick"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "After choosing positions for j non-one values, the decisive simplification is sum_{m=1..n} C(m,j)=C(n+1,j+1), eliminating the enormous length dimension.",
+      "solution_variant": "ordered-factorization-dp-hockey-stick"
+    },
+    {
+      "tag": "trick/maximum-count-bound",
+      "importance": "primary",
+      "evidence": "The proof that at most 16 entries can exceed 1 is what reduces an n-sized dimension to a constant-sized factor-count dimension.",
+      "solution_variant": "ordered-factorization-dp-hockey-stick"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "secondary",
+      "evidence": "For each of O(log k) factor-count layers, transitions over products p and multipliers d cost sum_p floor(k/p)=O(k log k), yielding O(k log^2 k).",
+      "solution_variant": "ordered-factorization-dp-hockey-stick"
+    },
+    {
+      "tag": "math/polynomial-interpolation",
+      "display_name": "Polynomial interpolation",
+      "importance": "secondary",
+      "evidence": "The official second solution proves S_x(n) has degree at most 17, samples it at 18 small arguments, and evaluates the requested large n by Lagrange interpolation.",
+      "solution_variant": "small-degree-polynomial-lagrange",
+      "description": "Evaluate or reconstruct a bounded-degree polynomial from sufficiently many sample values; use when proving a low degree makes a very large argument tractable.",
+      "parent": "math",
+      "created_reason": "The existing taxonomy has no interpolation tag, while the official alternative is fundamentally polynomial evaluation rather than the primary binomial-identity formula.",
+      "status": "candidate",
+      "aliases": [
+        "Lagrange interpolation",
+        "Lagrange polynomial interpolation"
+      ],
+      "main_agent_review_required": true,
+      "main_agent_review_note": "Confirm the taxonomy path and add the WebUI Chinese translation before accepting this candidate."
+    }
+  ]
+}

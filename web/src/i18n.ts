@@ -362,6 +362,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "periodicity": "周期性",
   "pigeonhole-principle": "鸽巢原理",
   "polygon-inequality": "多边形不等式",
+  "polynomial-interpolation": "多项式插值",
   "popcount-invariant": "popcount 不变量",
   "prefix-max-optimization": "前缀最大值优化",
   "prefix-suffix-extrema": "前后缀极值",

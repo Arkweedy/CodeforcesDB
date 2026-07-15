@@ -1,0 +1,83 @@
+{
+  "contest": {
+    "contest_id": 2060,
+    "title": "Codeforces Round 998 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2060,
+    "index": "E",
+    "title": "Graph Composition",
+    "rating": 1500,
+    "rating_status": "official",
+    "official_tags": [
+      "dfs and similar",
+      "dsu",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2060/E",
+      "notes": "Read the full statement and aggregate bounds: sum n, sum m1, and sum m2 are each at most 200000. The target is equality of the two connectivity relations, not equality of edge sets."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138342",
+      "notes": "The official editorial confirms the two-stage optimum: remove every F edge crossing G components, then add the difference between the remaining F component count and the G component count."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/califeee/p/18681214",
+      "notes": "Cross-checked a clean two-DSU implementation that counts G components, unions only admissible F edges, and outputs forced removals plus cf-cg."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2060/E",
+      "notes": "Independently proved both lower bounds and achievability, then exhaustively compared the formula with all target graphs and starting graphs on n up to 4 (4165 graph pairs)."
+    }
+  ],
+  "annotation": {
+    "summary": "Given undirected graphs F and G on the same vertices, toggle the minimum number of edges of F so that F and G induce exactly the same connected-component partition.",
+    "constraints": "t <= 10000; per test n,m1,m2 <= 200000; the sums of n, m1, and m2 over all tests are each <= 200000. F edges must be retained until G's components are known.",
+    "core_idea": "First compute the component id compG[v] in G. Every F edge whose endpoints have different compG values is forced to be deleted: retaining even one would connect two vertices that G separates. Union all other F edges in a second DSU, producing F' whose components lie wholly inside G components. If a G component contains r components of F', at least r-1 added edges are necessary and sufficient to connect them. Summed over G components, additions equal cc(F')-cc(G). Therefore the exact answer is cross_edges(F,G) + cc(F') - cc(G).",
+    "complexity": "O((n + m1 + m2) alpha(n)) time and O(n + m1) extra memory per test.",
+    "tricks": [
+      "Treat the requested connectivity relation as a partition of the vertex set.",
+      "Delete all edges crossing target components before counting missing connections.",
+      "Within each target component, r surviving components need exactly r-1 added edges."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "forced-cuts-component-deficit-dsu",
+      "summary": "Build a DSU for G, count and discard F edges crossing its components, union every remaining F edge in a second DSU, and add cc(F')-cc(G). DFS component labels can replace either DSU but do not materially change the argument.",
+      "complexity": "O((n + m1 + m2) alpha(n)) time and O(n + m1) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/connectivity",
+      "importance": "primary",
+      "evidence": "The required final property is equality of connected-component partitions, and the optimum is expressed entirely through target and surviving component counts.",
+      "solution_variant": "forced-cuts-component-deficit-dsu"
+    },
+    {
+      "tag": "data-structure/dsu",
+      "importance": "primary",
+      "evidence": "Two DSUs provide the intended linear-time implementation: one identifies G components and one counts components formed by admissible F edges.",
+      "solution_variant": "forced-cuts-component-deficit-dsu"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "primary",
+      "evidence": "The proof decomposes the task by G component; each contains r surviving F components and contributes independently exactly r-1 additions.",
+      "solution_variant": "forced-cuts-component-deficit-dsu"
+    }
+  ]
+}

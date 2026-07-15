@@ -233,6 +233,7 @@
   "math/number-theory/prime-factorization": "质因数分解",
   "math/order-statistics": "顺序统计",
   "math/order-statistics/median-minimization": "中位数最小化",
+  "math/polynomial-interpolation": "多项式插值",
   "math/probability": "概率",
   "math/probability/bayesian-update": "贝叶斯更新",
   "math/probability/expected-progress": "期望推进",

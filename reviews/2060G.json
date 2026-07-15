@@ -1,0 +1,108 @@
+{
+  "contest": {
+    "contest_id": 2060,
+    "title": "Codeforces Round 998 (Div. 3)"
+  },
+  "problem": {
+    "contest_id": 2060,
+    "index": "G",
+    "title": "Bugged Sort",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2060/G",
+      "notes": "Read the full operation and bounds: n >= 3, sum n <= 200000, and a+b is a permutation of 1..2n, so all comparisons are strict."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/138342",
+      "notes": "The official editorial establishes pair preservation, pure pair swaps via a third index, the even-flip invariant, sorting pairs by their minimum, and the four-state orientation/parity DP."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/03tx4sf0",
+      "notes": "Cross-checked explicit operation sequences for pure swaps and two-pair flips, the impossibility of an odd number of flips, and all DP transitions."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/lois1zjj",
+      "notes": "Consulted a materially different no-DP characterization using normalized intervals, overlap blocks, and parity of the original orientations."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2060/G",
+      "notes": "Derived the reachable-state characterization and both decision algorithms independently. Both matched explicit BFS over operations for all 720 inputs with n=3 and 250 random inputs with n=4."
+    }
+  ],
+  "annotation": {
+    "summary": "The 2n distinct values are arranged as n columns (a_i,b_i). An operation swaps two columns while flipping both; decide whether both rows can become increasing.",
+    "constraints": "t <= 10000; 3 <= n <= 200000; sum n <= 200000; a+b is a permutation of 1..2n. The condition n >= 3 is essential for implementing a pure swap with a third column.",
+    "core_idea": "Each original pair {a_i,b_i} remains bound forever. One operation swaps two pairs and flips both. Using any third index, three operations realize a pure swap, so the pairs can be permuted arbitrarily without changing orientation; composing a basic operation with a pure swap flips exactly two chosen pairs in place. Thus the reachable orientations are exactly those differing from the input in an even number of columns. In any successful final state, columns have the unique order of increasing min(a_i,b_i), so sort by that key. Run a constant-state DP over this order: state (parity,last_orientation) records whether both row prefixes are increasing, and trying the next orientation checks both coordinate inequalities. Accept exactly states with even total flips. Equivalently, normalize columns to intervals [l_i,r_i]. Nested intervals are impossible; overlapping consecutive intervals force a common orientation, while gaps split independent blocks, yielding a direct block-parity criterion.",
+    "complexity": "O(n log n) time for sorting plus O(n) DP time, with O(1) rolling DP memory (or O(n) if pairs are stored).",
+    "tricks": [
+      "View the operation as swapping two bound columns and flipping both.",
+      "Use a third column to realize arbitrary pure swaps when n >= 3.",
+      "Track the invariant that only an even number of original columns can be flipped.",
+      "Prove that increasing column minima give the only possible final order.",
+      "Alternative: decompose sorted normalized intervals into overlap blocks."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "sorted-pair-orientation-parity-dp",
+      "summary": "Sort bound pairs by min(a_i,b_i). Maintain four booleans for the parity of flips used in the prefix and whether the current pair is flipped. Transition between orientations only when both resulting row values increase; accept either last orientation with even parity.",
+      "complexity": "O(n log n) time and O(1) DP memory after storing and sorting the pairs.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "overlap-block-parity-characterization",
+      "summary": "Normalize every pair to [l_i,r_i] and remember whether the input orientation is reversed. Sort by l_i; if r_i is not strictly increasing, answer NO. With increasing right endpoints, consecutive overlapping intervals must share one final orientation, while disjoint gaps separate independent blocks. Starting from all-normalized orientations, changing one whole block toggles the flip parity iff its size is odd. Therefore answer YES iff the original reversed-count parity is even or at least one overlap block has odd size.",
+      "complexity": "O(n log n) time and O(n) memory for sorting.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "Sorting columns by their distinct minimum element produces the unique candidate final order; all remaining work is choosing orientations in that order.",
+      "solution_variant": "sorted-pair-orientation-parity-dp"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "A constant four-state DP tracks prefix flip parity and the current column orientation while enforcing the two row inequalities.",
+      "solution_variant": "sorted-pair-orientation-parity-dp"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Reachability imposes exactly one global restriction on orientations: the number of columns flipped relative to the input must be even.",
+      "solution_variant": "sorted-pair-orientation-parity-dp"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "The reduction relies on two operation invariants: each unordered column pair remains bound, and flip-count parity never changes.",
+      "solution_variant": "sorted-pair-orientation-parity-dp"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "In the no-DP variant, sorted intervals split at disjoint gaps into independent overlap blocks, each forced to use one common orientation.",
+      "solution_variant": "overlap-block-parity-characterization"
+    }
+  ]
+}
