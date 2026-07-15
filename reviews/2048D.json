@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "D",
+    "title": "Kevin and Competition Memories",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "brute force",
+      "data structures",
+      "greedy",
+      "sortings",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/D",
+      "notes": "Read the full statement and constraints, including arbitrary grouping and leaving m mod k problems unused."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Official editorial confirms the solver-count reduction, sorted-block greedy, two-pointer or binary-search preprocessing, and harmonic bound."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/di2srs90",
+      "notes": "Actually read; cross-checks the three difficulty cases, lower_bound solver counts, and every-k-th sorted contribution."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/chen-nie/p/18619286",
+      "notes": "Actually read; independently states that the largest m mod k costs are discarded and the k-th, 2k-th, ... costs are the optimal maxima."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2048/problem/D",
+      "notes": "Proved the order-statistic lower bound and exhaustively matched the formula against optimal grouping on 1,848 small cost-multiset cases."
+    }
+  ],
+  "annotation": {
+    "summary": "For every contest size k, choose floor(m/k) disjoint k-problem contests to minimize the sum of Kevin's ranks.",
+    "constraints": "Up to 5e4 test cases; 1 <= n,m <= 3e5 per case; sum n and sum m are each at most 3e5; ratings and difficulties are in [0,1e9]; answers are required for every k from 1 to m.",
+    "core_idea": "Discard contestants with rating below a1, since they can never outrank Kevin. Give each problem a cost c: c=0 if Kevin solves it or nobody solves it; otherwise c is the number of contestants with rating at least its difficulty. In any contest Kevin's rank is 1+max(c), because among the problems he cannot solve, the easiest one determines exactly the nested suffix of contestants who solve something extra. For fixed k, let q=floor(m/k). Sort all costs, keep the qk smallest (equivalently discard the largest m mod k), and split them into consecutive blocks of k. The j-th smallest group maximum must be at least the (jk)-th smallest kept cost, and consecutive blocks attain all these bounds, so the answer is q plus the costs at sorted positions k,2k,...,qk. Sort ratings and difficulties and sweep them to obtain all c values; the total number of sampled positions over every k is sum floor(m/k)=O(m log m).",
+    "complexity": "O(n log n + m log m) time and O(n+m) memory per test case; the all-k scan is bounded by the harmonic series.",
+    "tricks": [
+      "Remove contestants who can never beat Kevin.",
+      "Map both Kevin-solvable and globally impossible problems to zero rank contribution.",
+      "Reduce each contest to the maximum solver-count cost of one problem.",
+      "Discard the largest remainder and group consecutive sorted costs.",
+      "Use the harmonic-series bound for all k."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "solver-count-block-greedy",
+      "summary": "Sort ratings and difficulties, use a monotone sweep to compute each problem's extra-solver count, sort those costs, and for every k sum one plus each consecutive block maximum at positions k,2k,... after omitting the largest remainder. Per-problem lower_bound is an interchangeable preprocessing implementation, not a materially different solution.",
+      "complexity": "O(n log n + m log m) time and O(n+m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/sorting",
+      "importance": "primary",
+      "evidence": "After the rank reduction, sorting the costs exposes both the optimal discarded suffix and the exact k-th order statistics that must be group maxima.",
+      "solution_variant": "solver-count-block-greedy"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "For each k, greedily keep the qk smallest costs and group consecutive sorted costs; this simultaneously attains the lower bound on every ordered group maximum.",
+      "solution_variant": "solver-count-block-greedy"
+    },
+    {
+      "tag": "trick/exchange-argument",
+      "importance": "primary",
+      "evidence": "A selected cost can be exchanged with any smaller discarded cost, and interleaved groups can be normalized into consecutive sorted blocks without increasing their maxima.",
+      "solution_variant": "solver-count-block-greedy"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "With contestants and problems sorted by value, one monotone rating pointer gives the number of contestants able to solve each problem.",
+      "solution_variant": "solver-count-block-greedy"
+    },
+    {
+      "tag": "trick/harmonic-sum",
+      "importance": "secondary",
+      "evidence": "Computing every answer visits floor(m/k) block maxima for each k, totaling O(m log m) visits.",
+      "solution_variant": "solver-count-block-greedy"
+    }
+  ]
+}

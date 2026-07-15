@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "I1",
+    "title": "Kevin and Puzzle (Easy Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/I1",
+      "notes": "Read the good-array equations, constructive output requirement, and the bounds t <= 10000, n <= 200000, sum n <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Official tutorial proves d = distinct_count - maximum is in {0,1}, analyzes all four endpoint pairs, and derives the linear recursive construction and obstruction."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/DaiRuiChen007/p/18702724",
+      "notes": "Independent writeup and code cross-check the endpoint recursion, offset shifts, fresh extreme value for LL/RR, and the failure when an inner RL forces d = 0 under a d = 1 requirement."
+    }
+  ],
+  "annotation": {
+    "summary": "Given an L/R string, construct any non-negative integer array whose L positions equal the number of distinct values strictly to their left and whose R positions equal the number strictly to their right, or report impossibility.",
+    "constraints": "Up to 10000 tests; 2 <= n <= 200000 and total n <= 200000, so construction and validation must be linear in the total input size.",
+    "core_idea": "Normalize a recursive interval by subtracting its common outside offset. If mx is its maximum value and c its number of distinct values, every feasible normalized interval has d = c - mx in {0,1}. Peel symmetric endpoints. For LR, both endpoints are the current offset and the inner answer is shifted by one, preserving d. For LL or RR, the endpoint whose condition sees an empty side gets the current offset, the other endpoint receives a fresh value one above the inner maximum, and the inner interval must have d = 1. For RL, filling the whole remaining interval with offset + 1 is valid and gives d = 0. Hence, while scanning pairs outside-in, an RL layer is impossible if an earlier LL/RR layer has already required d = 1; otherwise it closes the remaining interval. If no RL layer appears, recursively unwind all deterministic layers to the center.",
+    "complexity": "O(n) time and O(n) output/recursion storage per test",
+    "tricks": [
+      "Compress global distinct-count behavior to the one-bit invariant d = c - mx.",
+      "Normalize every inner subproblem by shifting all of its values by one.",
+      "Pair the two current endpoints and use four structural transitions LR, LL, RR, and RL.",
+      "Detect impossibility as a d = 1 requirement followed by an inner RL layer that forces d = 0."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "outer-to-inner-offset-construction",
+      "summary": "Peel endpoint pairs with a current value offset and a flag recording whether the inner interval must have d = 1. Store the deterministic LR/LL/RR layers, terminate on a compatible RL layer or the center, then unwind to assign endpoint values.",
+      "complexity": "O(n) time and O(n) space including the answer",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task is solved by explicitly assigning every array value while preserving the distinct-count equations at each peeled layer.",
+      "solution_variant": "outer-to-inner-offset-construction"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "primary",
+      "evidence": "The solution removes the two endpoints, solves a normalized inner interval, shifts it, and reconstructs the removed values while maintaining d.",
+      "solution_variant": "outer-to-inner-offset-construction"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The feasibility proof and every transition depend on the invariant d = number of distinct values minus the maximum, which can only be 0 or 1.",
+      "solution_variant": "outer-to-inner-offset-construction"
+    },
+    {
+      "tag": "trick/symmetric-pairing",
+      "importance": "secondary",
+      "evidence": "The string is processed by pairing its leftmost and rightmost remaining characters and classifying the mirrored pair.",
+      "solution_variant": "outer-to-inner-offset-construction"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "Correctness requires separate and exhaustive transitions for LR, LL, RR, and RL endpoint pairs.",
+      "solution_variant": "outer-to-inner-offset-construction"
+    }
+  ]
+}

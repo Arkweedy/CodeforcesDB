@@ -1,0 +1,139 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "F",
+    "title": "Kevin and Math Class",
+    "rating": 2500,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "data structures",
+      "divide and conquer",
+      "dp",
+      "implementation",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/F",
+      "notes": "Read the complete operation definition, examples, and constraints: sum(n) <= 2e5, a_i <= 1e18, and b_i >= 2."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Official editorial confirms Cartesian-tree interval normalization, the operation-count/minimum-maximum tree DP, the 63-state bound, and the linear merge of monotone min-max convolution states."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/vp4q9yac",
+      "notes": "Read the verifier-authored solution and code; it proves operation-order independence and implements the direct O(K^2) child merge, including the a_i-1 floor-division representation."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/chen-nie/p/18619286",
+      "notes": "Independent contest write-up cross-checks the Cartesian-tree DP and gives the exact two-pointer rule: spend the next operation on the child whose current maximum is larger."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2048/problem/F",
+      "notes": "Re-proved ceiling-division commutativity and the monotone min-max merge; exhaustive BFS matched both DP merges on 111150 compact instances, and 100000 random monotone-curve merges matched quadratic convolution."
+    }
+  ],
+  "annotation": {
+    "summary": "Two positive arrays a and b are given. One operation chooses a segment, lets x be the minimum b-value on it, and replaces every covered a_i by ceil(a_i/x). Find the minimum operations needed to make every a_i equal to 1.",
+    "constraints": "There are up to 1e4 tests; 1 <= n <= 2e5 per test and sum(n) <= 2e5; 1 <= a_i <= 1e18 and 2 <= b_i <= 1e18. Values require 64-bit arithmetic. Repeating the whole-array operation needs at most 60 divisions, so a conservative state cap K=63 is sufficient.",
+    "core_idea": "For positive p and q, ceil(ceil(x/p)/q)=ceil(x/(pq)), so operations affecting the same position commute and may be reordered. For any chosen segment, take its leftmost minimum position u and expand the segment as far as possible while preserving b_u as that tie-broken minimum; the divisor is unchanged and covering more positions cannot hurt. With the stable tie rule, these maximal intervals are exactly the subtrees of the min Cartesian tree of b. Let f_u[k] be the minimum possible maximum current a-value in u's subtree after exactly k operations wholly inside that subtree. Merge the child curves by base_u[k]=min_{i+j=k} max(f_left[i],f_right[j],a_u), with the evident one-child cases, then account for using u's whole subtree interval by f_u[0]=base_u[0] and f_u[k]=min(base_u[k],ceil(f_u[k-1]/b_u)). Every curve is non-increasing. Therefore the two-child min-max convolution is computed in O(K): start i=j=0, output max(f_left[i],f_right[j]) for total k=i+j, and advance the pointer whose current value is larger, since advancing the non-bottleneck side cannot improve the maximum. Build the Cartesian tree with a monotonic stack and process it bottom-up; the answer is the first k with f_root[k]=1.",
+    "complexity": "O(n log(max a_i)) time and O(n log(max a_i)) memory with K=63 and the monotone min-max merge; the direct merge variant is O(n log^2(max a_i)) time with the same memory.",
+    "tricks": [
+      "Choose the leftmost occurrence of a segment minimum to make equal b-values obey one stable Cartesian-tree tie convention.",
+      "Expand every operation to its canonical maximal interval because the divisor stays fixed and extra covered positions cannot be harmed.",
+      "Use ceil(ceil(x/p)/q)=ceil(x/(pq)) to reorder all child operations before ancestor-interval operations.",
+      "Swap the objective and budget: store the smallest achievable subtree maximum for each operation count instead of storing a huge numeric value as a state.",
+      "Cap the operation-count dimension at 63 because the global minimum b is at least 2.",
+      "Merge two non-increasing DP curves by always advancing the side that currently realizes the bottleneck maximum.",
+      "Optionally replace each a_i by a_i-1 so every ceiling division becomes ordinary floor division and the target becomes zero."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "Exhaustive shortest-path search over all 111150 instances with 1 <= n <= 4, a_i in [1,6], and b_i in [2,4] matched both the quadratic and optimized Cartesian-tree DP, including duplicate b-values.",
+      "On 100000 random pairs of non-increasing curves of lengths up to 20, the bottleneck-advancing merge produced exactly the same convolution as enumerating every split."
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "cartesian-tree-dp-monotone-minmax-merge",
+      "summary": "Build the stable min Cartesian tree of b. In postorder, keep the K+1 operation-count/minimum-maximum states, merge two child curves along the bottleneck-advancing two-pointer path, include a_u, and relax repeated whole-subtree divisions by b_u.",
+      "complexity": "O(n log(max a_i)) time and O(n log(max a_i)) memory; concretely O(63n) for the stated limits.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "cartesian-tree-dp-direct-knapsack-merge",
+      "summary": "Use the same canonical intervals and tree-DP state, but at each node with two children enumerate every split i+j=k to compute the min-max merge. This is the simpler verifier-solution implementation and retains the same 63-state cap.",
+      "complexity": "O(n log^2(max a_i)) time and O(n log(max a_i)) memory; concretely O(63^2 n) in the worst-case bound.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/divide-and-conquer/cartesian-tree",
+      "importance": "primary",
+      "evidence": "Every useful operation is normalized to a maximal interval with one tie-broken minimum b_u, and those laminar intervals are exactly the subtrees of the min Cartesian tree on b.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "primary",
+      "evidence": "The solution computes f_u[k] bottom-up for each Cartesian-tree subtree, combines the two child subproblems, and then applies the transition belonging to node u's whole subtree.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "dp/min-max-convolution",
+      "display_name": "Min-max convolution",
+      "description": "Dynamic-programming merges of the form h[k]=min_{i+j=k} max(f[i],g[j]) over a bottleneck objective; use when recognizing or optimizing this convolution is a central reusable step, not for arbitrary transitions that merely contain min or max.",
+      "parent": "dp",
+      "created_reason": "Existing dp/knapsack-dp and trick/monotonicity do not identify the reusable bottleneck convolution at the center of CF2048F. The official optimized solution explicitly treats the child merge as min-max convolution and reduces it from quadratic to linear time for monotone curves.",
+      "status": "candidate",
+      "aliases": [
+        "minmax-convolution",
+        "bottleneck-convolution"
+      ],
+      "importance": "primary",
+      "evidence": "For each total child-operation budget k, the merge is exactly min over i+j=k of max(f_left[i],f_right[j]); evaluating all these bottleneck states is the dominant DP transition.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "primary",
+      "evidence": "Both child DP curves are non-increasing in their operation counts, so only reducing the currently larger value can lower the bottleneck; this monotonicity collapses each quadratic min-max merge to one O(K) path.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "secondary",
+      "evidence": "The optimized merge maintains one operation-count pointer per child and advances the pointer on the side with the larger current DP value.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "data-structure/monotonic-stack",
+      "importance": "secondary",
+      "evidence": "A monotonic stack constructs the stable min Cartesian tree of b in O(n), including a consistent strict-comparison rule for equal values.",
+      "solution_variant": "cartesian-tree-dp-monotone-minmax-merge"
+    },
+    {
+      "tag": "dp/knapsack-dp",
+      "importance": "secondary",
+      "evidence": "The simpler documented variant distributes a fixed operation budget k between the two child subtrees by enumerating every split i+j=k, which is a tree-knapsack merge.",
+      "solution_variant": "cartesian-tree-dp-direct-knapsack-merge"
+    }
+  ]
+}

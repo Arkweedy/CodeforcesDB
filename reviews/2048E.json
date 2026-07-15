@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "E",
+    "title": "Kevin and Bipartite Graph",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "graphs",
+      "greedy"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/E",
+      "notes": "Read the full statement and constraints for coloring all edges of K_(2n,m) with n colors and forbidding monochromatic cycles."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Official editorial confirms the tight m <= 2n-1 forest bound and the cyclic pair-coloring construction."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/chen-nie/p/18619286",
+      "notes": "Actually read; independently derives the forest edge bound and cross-checks the shifted cyclic construction."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2048/problem/E",
+      "notes": "Re-derived each color class as a subdivided path and exhaustively found no monochromatic cycle in all 900 feasible pairs with 1 <= n <= 30."
+    }
+  ],
+  "annotation": {
+    "summary": "Decide when every edge of K_(2n,m) can be colored with n colors so that every monochromatic subgraph is acyclic, and construct such a coloring.",
+    "constraints": "Up to 100 test cases; 1 <= n,m <= 1000; both the sum of n and the sum of m are at most 1000; output contains 2nm colors for each feasible case.",
+    "core_idea": "Every color class must be a forest on 2n+m vertices, so it has at most 2n+m-1 edges. Across n colors this forces 2nm <= n(2n+m-1), hence m <= 2n-1. This is also sufficient. Using zero-based left index i and right index j, output color(i,j)=floor(((i+j) mod 2n)/2)+1. Fix a color c. At right vertex j, exactly the two left residues 2(c-1)-j and 2(c-1)+1-j modulo 2n receive c. Suppress that degree-two right vertex into an edge between those two consecutive residues. As j runs from 0 through 2n-2, these projected edges are all but one edge of the 2n-cycle, hence a path; the original monochromatic graph is its edge subdivision and is therefore a tree. For smaller m, taking the first m columns leaves a subforest. Thus the construction works exactly when m <= 2n-1.",
+    "complexity": "O(nm) time, which is optimal up to constants because 2nm colors must be printed, and O(1) auxiliary memory apart from buffered output.",
+    "tricks": [
+      "Bound every color class by the maximum number of edges in a forest.",
+      "Construct the extremal case m=2n-1 and truncate columns for smaller m.",
+      "Suppress each right vertex into an edge between its two same-color left neighbors.",
+      "Use shifted consecutive residue pairs so every color projects to a path."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "forest-bound-cyclic-path-construction",
+      "summary": "Reject m>2n-1 by summing forest edge bounds. Otherwise color edge (i,j) by floor(((i+j) mod 2n)/2)+1; for each fixed color the right vertices subdivide consecutive edges of a path on the left vertices.",
+      "complexity": "O(nm) time and O(1) auxiliary memory apart from output.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/arboricity",
+      "importance": "primary",
+      "evidence": "The condition is exactly a partition of all edges into n acyclic color classes; both the impossibility bound and the extremal construction reason about those forests.",
+      "solution_variant": "forest-bound-cyclic-path-construction",
+      "description": "Partition graph edges into forests, minimize or bound the number of forests needed, or exploit edge-count constraints of such a forest decomposition; exclude ordinary proper edge coloring where each color class is a matching.",
+      "parent": "graph",
+      "created_reason": "CF2048E is centrally an edge partition into forests. The existing graph/edge-coloring tag describes proper edge coloring into matchings, which is a different condition and would misclassify this problem.",
+      "status": "candidate",
+      "aliases": [
+        "forest decomposition",
+        "edge partition into forests"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "After proving the feasibility threshold, the solution must explicitly output a cyclic color formula for all 2nm edges and prove every color class acyclic.",
+      "solution_variant": "forest-bound-cyclic-path-construction"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "primary",
+      "evidence": "The necessary and exact feasibility threshold follows from 2nm <= n(2n+m-1), which simplifies to m <= 2n-1.",
+      "solution_variant": "forest-bound-cyclic-path-construction"
+    },
+    {
+      "tag": "graph/bipartite-graph",
+      "importance": "secondary",
+      "evidence": "The object being decomposed is K_(2n,m), and each right vertex becomes the subdivision vertex of one projected left-side edge for every color.",
+      "solution_variant": "forest-bound-cyclic-path-construction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "At m=2n-1 every monochromatic class is proved to be a spanning subdivided path, hence a tree; smaller m gives a subforest.",
+      "solution_variant": "forest-bound-cyclic-path-construction"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "secondary",
+      "evidence": "The construction shifts consecutive residue pairs modulo 2n so the projected edge for each color advances once around a cycle.",
+      "solution_variant": "forest-bound-cyclic-path-construction"
+    }
+  ]
+}

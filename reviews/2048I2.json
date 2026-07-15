@@ -1,0 +1,131 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "I2",
+    "title": "Kevin and Puzzle (Hard Version)",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "bitmasks",
+      "fft",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/I2",
+      "notes": "Read the same good-array equations, the requirement to count all arrays modulo 998244353, and the bounds n <= 200000 with total n <= 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Official tutorial classifies solutions by the common RL-layer value m and extremal positions x,y, derives O(n) candidates and the symmetric-interval predicate, and gives O(n^2 / word_size) bitset validation; the author's follow-up comment sketches blocked convolution."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/1dn48iuc",
+      "notes": "Opened and read the Luogu solution. It cross-checks the x > y and x < y cases, the necessary-and-sufficient run imbalance condition, uniqueness after deleting m, and the bitset/convolution bounds."
+    }
+  ],
+  "annotation": {
+    "summary": "For the same L/R distinct-count equations as I1, count every good non-negative integer array modulo 998244353 instead of constructing one.",
+    "constraints": "Up to 10000 tests; 2 <= n <= 200000 and total n <= 200000. Enumerating arrays, values, or all intervals explicitly is impossible; the accepted bitset route uses the 6 second and 512 MB limits.",
+    "core_idea": "Reuse I1's endpoint invariant. Layers LR, LL, and RR are deterministic once the inner array is fixed. If no RL layer is reached there is exactly one array; if a same-letter outer layer requires d = 1 before an inner RL forces d = 0, there are none. In the non-unique case, strip the outer LR layers and normalize to an outer RL pair. Its two endpoint values must be equal; call the value m. Let x be the rightmost R assigned m and y the leftmost L assigned m. For x > y, fixing m determines x, y, and the rest uniquely, so these cases are counted in O(n). For x < y, delete every forced-m R at or left of x and every forced-m L at or right of y. Let a be the number of remaining L positions left of x and b the number of remaining R positions right of y. If a >= b, the middle substring must end in at least a-b R characters; after removing exactly that excess, the residual core must have d = 1, equivalently no peeled symmetric pair may be RL. The b > a case is the reversed counterpart. Run lengths restrict this classification to O(n) candidate pairs (x,y), and each valid candidate has exactly one completion. Group the resulting interval predicates offline and use packed bitsets while scanning the right endpoint to detect forbidden mirrored R...L pairs by diagonal sum l+r in O(n^2 / word_size) total.",
+    "complexity": "O(n^2 / word_size + n) time and O(n) space for the primary packed-bitset solution",
+    "tricks": [
+      "Use the easy-version invariant to isolate RL as the only source of multiple arrays.",
+      "Canonically identify a solution by m, the rightmost R with value m, and the leftmost L with value m.",
+      "Delete all forced occurrences of m so every surviving candidate reduces to one uniquely fillable d = 1 core.",
+      "Turn d = 1 into a forbidden mirrored-pair query: no symmetric endpoints may be R on the left and L on the right.",
+      "Use run imbalance to generate only O(n) candidate intervals before applying word-parallel offline checks."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "linear-candidates-bitset-validation",
+      "summary": "Classify by (m,x,y), count x > y directly, generate only O(n) x < y candidates using prefix/suffix counts and adjacent runs, then answer all residual-core no-RL-under-peeling predicates offline with packed bitsets indexed by mirrored-position sums.",
+      "complexity": "O(n^2 / word_size + n) time and O(n) space",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "blocked-convolution-validation",
+      "summary": "Keep the same O(n) structural candidate generation, but batch the symmetric RL existence queries by blocks of right endpoints. Convolve each block's indicator with relevant prefixes to find diagonal sums l+r that contain a violating pair, refine the first violating endpoint inside the block, and handle same-block cases with bitsets. The editorial also notes a harder full-convolution refinement reaching O(n log^2 n).",
+      "complexity": "O(n^2 log n / B + nB / word_size), optimized to O(n * sqrt(n log n / word_size)); a more involved convolution solution is O(n log^2 n)",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "The count is obtained by a canonical partition of all arrays into (m,x,y) cases, with each valid candidate contributing exactly one completion.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "primary",
+      "evidence": "The d = distinct_count - maximum invariant separates deterministic layers, impossible layers, and the RL layer responsible for multiplicity.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "trick/symmetric-pairing",
+      "importance": "primary",
+      "evidence": "After deleting forced m positions, candidate validity is exactly the absence of an R-left/L-right pair among every pair of mirrored endpoints in the residual interval.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "data-structure/bitset",
+      "importance": "primary",
+      "evidence": "The primary algorithm packs mirrored-pair predicates into machine-word bit vectors and resolves many interval candidates at once with word-level Boolean operations, yielding the word-size speedup.",
+      "solution_variant": "linear-candidates-bitset-validation",
+      "description": "Use packed bit vectors and machine-word Boolean operations to evaluate many predicates or transitions in parallel. Use when word-parallel bitset operations are a central complexity improvement; exclude ordinary subset-mask enumeration, and add dp/bitset-dp separately when the bitset specifically optimizes a DP.",
+      "parent": "data-structure",
+      "created_reason": "The existing algorithm/bitmask tag describes finite subset masks, while dp/bitset-dp is DP-specific. CF2048I2 instead relies on general word-parallel bitset queries as its primary algorithmic acceleration.",
+      "status": "candidate",
+      "aliases": [
+        "bitset",
+        "packed bitset",
+        "word-parallel bitset"
+      ]
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "All candidate interval predicates are collected first and answered in batches while scanning endpoints rather than queried online.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "trick/case-analysis",
+      "importance": "secondary",
+      "evidence": "The counting proof splits into no-RL, impossible nested-RL, x > y, x < y with a >= b, and the reversed b > a cases.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "trick/recursive-construction",
+      "importance": "secondary",
+      "evidence": "Each accepted candidate is proved to have one completion by recursively filling its d = 1 residual core and reinserting the forced value m.",
+      "solution_variant": "linear-candidates-bitset-validation"
+    },
+    {
+      "tag": "math/transform/convolution",
+      "importance": "secondary",
+      "evidence": "The alternative batches mirrored R...L existence by diagonal sum l+r using blockwise correlation/convolution.",
+      "solution_variant": "blocked-convolution-validation"
+    },
+    {
+      "tag": "math/transform/fft",
+      "importance": "secondary",
+      "evidence": "FFT/NTT is the implementation tool for the blocked or full convolution alternative that improves on the pure O(n^2 / word_size) scan.",
+      "solution_variant": "blocked-convolution-validation"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "G",
+    "title": "Kevin and Matrices",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "combinatorics",
+      "dp",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/G",
+      "notes": "Read the full statement, examples, and constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Confirms the forced min-max equality, extremal rectangle, two-set inclusion-exclusion, and binomial-theorem collapse."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/gmerofrg",
+      "notes": "Actually read; independently derives the equality characterization and row-set binomial inversion."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/Oken-Cat-Girl/p/19783406",
+      "notes": "Actually read; gives the alternative threshold-event F(x,y) inclusion-exclusion formulation."
+    }
+  ],
+  "annotation": {
+    "summary": "Count n by m matrices over [1,v] whose minimum row maximum is at most their maximum column minimum.",
+    "constraints": "1 <= t <= 8000; 1 <= n,v and n*v <= 10^6; 1 <= m <= 10^9; the sum of n*v over tests is at most 10^6; answers are modulo 998244353. Iterating columns, cells, or matrices is impossible.",
+    "core_idea": "Let A=min_i max_j a[i][j] and B=max_j min_i a[i][j]. If row r realizes A and column c realizes B, then A >= a[r][c] >= B, so every matrix has B <= A and the requested inequality holds exactly when A=B=k. For fixed k, use inclusion-exclusion over a nonempty chosen row set R whose entries are constrained to be <=k and a nonempty chosen column set C whose entries are constrained to be >=k. Every cell in R x C is then forced to k, so those rows have maximum k and those columns have minimum k. For |R|=i and |C|=j the block count is k^(i(m-j))*(v-k+1)^((n-i)j)*v^((n-i)(m-j)), with coefficient (-1)^(i+j) C(n,i) C(m,j). Put X=k^i*v^(n-i) and Y=(v-k+1)^(n-i). The entire nonempty-column sum is sum_{j=1}^m (-1)^j C(m,j) X^(m-j)Y^j=(X-Y)^m-X^m. Therefore the answer is sum_{k=1}^v sum_{i=1}^n (-1)^i C(n,i) ((X-Y)^m-X^m), evaluated modulo 998244353. Precompute combinations and maintain the powers with exponent at most n while binary exponentiation handles m.",
+    "complexity": "O(n*v*log m) time per test after O(n) combinatorial preprocessing, and O(n) auxiliary memory; the aggregate n*v over all tests is at most 10^6.",
+    "tricks": [
+      "use the universal max-min <= min-max inequality to force equality",
+      "the extremal cells form a Cartesian product of nonempty row and column sets",
+      "apply inclusion-exclusion over both extremal row and column events",
+      "collapse the whole column-subset-size sum with the binomial theorem"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "extremal-rectangle-binomial-collapse",
+      "summary": "Enumerate the common extremal value k and inclusion-exclude nonempty sets of rows bounded above by k and columns bounded below by k. Count the resulting four matrix blocks, then use the binomial theorem to eliminate the column-set-size loop and retain only k and the row-set size.",
+      "complexity": "O(n*v*log m) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "threshold-discrete-difference",
+      "summary": "Define F(x,y) as the number of matrices in which every row has maximum at least x and every column has minimum at most y. Inclusion-excluding i rows that violate the first condition gives F(x,y)=sum_i (-1)^i C(n,i) [v^(n-i)(x-1)^i-(v-y)^(n-i)max(x-y-1,0)^i]^m. The matrices with A=B=k are F(k,k)-F(k+1,k)-F(k,k-1)+F(k+1,k-1); sum this over k.",
+      "complexity": "O(n*v*log m) time with maintained power tables (or O(n*v*(log n+log m)) with direct exponentiation) and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/inclusion-exclusion/minmax",
+      "importance": "primary",
+      "evidence": "Validity is equality of two extrema, and for each k the main variant inclusion-excludes nonempty row-max and column-min event sets whose intersection is forced to k.",
+      "solution_variant": "extremal-rectangle-binomial-collapse"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "The binomial theorem turns the sum over all j=1..m chosen-column counts into (X-Y)^m-X^m, removing an impossible O(m) factor when m can be 10^9.",
+      "solution_variant": "extremal-rectangle-binomial-collapse"
+    },
+    {
+      "tag": "math/inclusion-exclusion",
+      "importance": "secondary",
+      "evidence": "The alternate variant inclusion-excludes rows violating max>=x and uses a four-term discrete difference to force both extrema to equal k.",
+      "solution_variant": "threshold-discrete-difference"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "secondary",
+      "evidence": "The solution counts choices of extremal row and column sets with binomial coefficients and independent block fillings.",
+      "solution_variant": "extremal-rectangle-binomial-collapse"
+    },
+    {
+      "tag": "math/inequality",
+      "importance": "secondary",
+      "evidence": "The structural reduction starts from the universal inequality max_j min_i a[i][j] <= min_i max_j a[i][j], so the requested reverse inequality forces equality.",
+      "solution_variant": "extremal-rectangle-binomial-collapse"
+    },
+    {
+      "tag": "math/number-theory/modular-arithmetic",
+      "importance": "incidental",
+      "evidence": "Factorials, inverse factorials, signs, and large-exponent powers are evaluated modulo 998244353.",
+      "solution_variant": "extremal-rectangle-binomial-collapse"
+    }
+  ]
+}

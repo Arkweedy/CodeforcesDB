@@ -1,0 +1,155 @@
+{
+  "contest": {
+    "contest_id": 2048,
+    "title": "Codeforces Global Round 28"
+  },
+  "problem": {
+    "contest_id": 2048,
+    "index": "H",
+    "title": "Kevin and Strange Operation",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "dp"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2048/problem/H",
+      "notes": "Read the full operation, examples, and limits: t <= 10^4, |s| <= 10^6, total length <= 10^6, modulo 998244353."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/137473",
+      "notes": "Confirmed the interval-endpoint invariant, canonical largest-feasible-endpoint greedy, range-sum DP, and O(n log n) segment-tree optimization."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/2wrwglho",
+      "notes": "Independently confirmed deletion of l_p and r_1, the reversed greedy DP, and an O(n log n) Fenwick implementation with a global offset."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/max0810/p/19194016",
+      "notes": "Used for the materially different O(n) subsequence-automaton DP compressed by maximal zero-runs."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/cjoierzdc/p/19099826",
+      "notes": "Cross-checked the O(n) zero-run state compression and difference-array range-add formulation."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2048/problem/H",
+      "notes": "Re-derived both transitions; exhaustive BFS over all 1,022 binary strings of length at most 9 matched both reviewed algorithms."
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "Count all distinct nonempty binary strings reachable when one operation simultaneously replaces every position before p by the maximum of its adjacent pair and then deletes position p.",
+    "constraints": "There are at most 10^4 test cases; each |s| and the sum of |s| are at most 10^6. The 2-second limit rules out explicit reachable-string generation and quadratic endpoint DP.",
+    "core_idea": "Represent every current character as max(s[l_i..r_i]). An operation at p deletes l_p from the increasing l-sequence and deletes r_1 from the r-sequence; therefore after q operations, r=(q+1,...,n) while l is any length-(n-q) subsequence of (1,...,n). For a candidate output of length m, reverse it and seek n >= p_1 > ... > p_m >= 1 with bit i equal to max(s[p_i..n-i+1]). Choosing each p_i as large as possible is a canonical feasibility test, so every distinct output has one greedy state trajectory. Let dp[i][j] count length-i reversed outputs whose canonical p_i is j. From a state j, every transition shifts to j-1; when s[j-1..n-i+1] is all zero, choosing output bit 1 instead jumps to pos, the rightmost 1 not past n-i+1, and is available exactly from states j >= pos+2. Hence a layer is one global index shift plus one suffix-sum-to-point update. A Fenwick tree or segment tree with a global coordinate offset maintains this in O(log n) per layer, and summing every layer counts all nonempty lengths.",
+    "complexity": "Primary variant: O(n log n) time and O(n) memory per test case. Run-compressed alternative: O(n) time and O(n) memory.",
+    "tricks": [
+      "model each surviving character by an interval maximum",
+      "separate one operation into deleting l_p and deleting r_1",
+      "canonicalize multiple endpoint witnesses by the largest-feasible greedy choice",
+      "treat the DP transition as a global coordinate shift plus one exceptional point update",
+      "compress the alternative automaton by maximal zero-runs and difference updates"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "canonical-endpoint-range-sum-dp",
+      "summary": "Use the interval-endpoint characterization and greedy-largest p_i witness. The endpoint DP applies a global j -> j-1 shift each layer and adds one suffix sum into the rightmost feasible 1-position; implement the shift lazily and the range sum/point update with a Fenwick tree or segment tree.",
+      "complexity": "O(n log n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "zero-run-subsequence-automaton-dp",
+      "summary": "Match each target backward by its unique greedy path in a subsequence automaton. A source zero changes its effective matched bit exactly when enough positions to its right have been deleted to reach the next one. The naive (position, deletion-count) state collapses at 1-to-0 transitions to a zero-gap length; process maximal zero-runs, maintain the latest state for each gap length, and use rolling difference sums because adjacent positions in one run differ by only one transition term.",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp",
+      "importance": "primary",
+      "evidence": "The main algorithm counts canonical reachable-output prefixes by target length and last greedy endpoint; this recurrence is the central solution.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "One output may have many valid interval-endpoint witnesses, but greedily taking the largest feasible p_i gives a unique representative trajectory and prevents duplicate counting.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "Each DP layer needs a suffix sum of prior endpoint states followed by one point insertion; range-sum aggregation removes the quadratic transition.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "data-structure/fenwick-tree",
+      "importance": "secondary",
+      "evidence": "The Luogu implementation maintains point additions and prefix/suffix sums under a global coordinate offset with a Fenwick tree.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "secondary",
+      "evidence": "The official O(n log n) implementation route maintains the shifted endpoint DP and suffix-sum-to-point transition with a segment tree.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "trick/sparse-exception-updates",
+      "importance": "secondary",
+      "evidence": "Every layer applies the same index shift to all endpoint states, while only the current rightmost-1 state receives an exceptional recomputed suffix contribution.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Reachability is tested by choosing each decreasing lower endpoint as large as possible, preserving maximal room for all later target characters.",
+      "solution_variant": "canonical-endpoint-range-sum-dp"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "primary",
+      "evidence": "After q operations the l-endpoints are an arbitrary subsequence of 1..n, and the linear alternative counts unique greedy matches in the resulting subsequence automaton.",
+      "solution_variant": "zero-run-subsequence-automaton-dp"
+    },
+    {
+      "tag": "string/run-length-encoding",
+      "importance": "primary",
+      "evidence": "The O(n) alternative groups equal zero positions into maximal runs; zero-run lengths are exactly the compressed transition states.",
+      "solution_variant": "zero-run-subsequence-automaton-dp"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The linear solution removes the naive deletion-count dimension by proving that only zero-gap lengths at run boundaries can become relevant.",
+      "solution_variant": "zero-run-subsequence-automaton-dp"
+    },
+    {
+      "tag": "dp/automaton-dp",
+      "importance": "secondary",
+      "evidence": "The alternative counts paths of the canonical backward matcher over source positions and effective output bits.",
+      "solution_variant": "zero-run-subsequence-automaton-dp"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "secondary",
+      "evidence": "After zero-run compression, batches of equivalent DP transitions are range additions accumulated by a difference array.",
+      "solution_variant": "zero-run-subsequence-automaton-dp"
+    }
+  ]
+}
