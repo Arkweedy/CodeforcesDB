@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "L",
+    "title": "Legacy Screensaver",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-statement.pdf",
+      "notes": "官方 NERC 题面。确认矩形进行离散反射运动、相交要求正面积，以及 W,H<=4000、所有测试 W+H 之和不超过 8000。"
+    },
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2052/problem/L",
+      "notes": "Codeforces mirror 题面与规范入口。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "官方 tutorial：将矩形相交拆成两轴投影相交；分别枚举轴向公共周期，再用 gcd 同余类和广义 CRT 合并两个周期序列。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/P12103",
+      "notes": "独立题解交叉验证：推导了每轴周期、全局 lcm 周期，以及 i≡j (mod gcd(Tx,Ty)) 当且仅当两个时间余数可由同一时刻匹配。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/364574769",
+      "notes": "通过代码复核了边界反弹顺序、严格正长度区间相交、轴向周期枚举、按 gcd 余数计数及最终分数约分。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2052/problem/L",
+      "notes": "独立重推 CRT 计数，并对 5000 组随机小规模数据比较公式与完整全局周期暴力模拟，结果全部一致。"
+    }
+  ],
+  "annotation": {
+    "summary": "两个矩形在离散时间内于屏幕边界反射运动，求它们具有正面积交集的长期时间频率。无限过程具有有限周期，可以转化为一个周期内的精确计数。",
+    "constraints": "T<=1000，3<=W,H<=4000，矩形宽高至少比对应屏幕尺寸小 2；所有测试的 W+H 之和不超过 8000。该范围允许枚举长度为两条轴向运动周期最小公倍数的序列。",
+    "core_idea": "矩形相交当且仅当 x、y 两轴投影都以正长度相交。长度为 s 的线段在长度为 S 的轴上反射运动，其位置和方向状态存在周期 2(S-s)。因此两条 x 投影的公共周期可取 Tx=lcm(2(W-w1),2(W-w2))，y 轴类似得到 Ty。分别模拟一个轴向周期，记录各时刻投影是否相交。令 g=gcd(Tx,Ty)。x 周期中的时刻 i 与 y 周期中的时刻 j 能对应同一个全局时刻，当且仅当 i≡j (mod g)；广义 CRT 还保证每个兼容余数对在长度 L=lcm(Tx,Ty) 的全局周期中恰好出现一次。若 c[r]、d[r] 分别表示两轴相交时刻中模 g 为 r 的数量，则全局周期内相交次数为 N=sum_r c[r]d[r]，答案为约分后的 N/L。",
+    "complexity": "令 Tx、Ty 为两轴公共周期，g=gcd(Tx,Ty)。流式累计余数计数时，时间 O(Tx+Ty+g)，额外空间 O(g)；由约束可写为最坏 O(W^2+H^2) 时间。",
+    "tricks": [
+      "先按坐标轴分离二维矩形相交条件。",
+      "用反射运动的有限周期代替无限时间极限。",
+      "不枚举长度 lcm(Tx,Ty) 的全局周期，而按 gcd(Tx,Ty) 同余类统计兼容余数对。",
+      "区间只有严格满足 max(l1,l2)<min(r1,r2) 时才算正长度相交。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "residue-count-streaming",
+      "summary": "预先计算 Tx、Ty 和 g，分别模拟两个轴向公共周期；遇到投影相交时直接增加对应的 cnt[t mod g]，无需保存完整 01 串。最后计算 sum cntX[r]*cntY[r] 并以 lcm(Tx,Ty) 为分母。",
+      "complexity": "O(Tx+Ty+g) time, O(g) extra space",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "materialized-period-bitstrings",
+      "summary": "按官方 tutorial 和通过代码的写法，先显式生成长度 Tx、Ty 的轴向相交 01 串，再扫描两串构造模 g 的频数。逻辑相同，但会多使用 O(Tx+Ty) 的存储。",
+      "complexity": "O(Tx+Ty+g) time, O(Tx+Ty+g) space",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/periodicity",
+      "importance": "primary",
+      "evidence": "必须识别反射运动的有限周期，才能把 t→∞ 的频率转化为有限周期内的精确计数。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "math/number-theory/chinese-remainder-theorem",
+      "importance": "primary",
+      "evidence": "合并两轴周期的核心是广义 CRT：余数 i、j 可对应同一时刻当且仅当 i≡j (mod gcd(Tx,Ty))，并据此按同余类统计兼容对。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "trick/dimension-separation",
+      "importance": "secondary",
+      "evidence": "二维矩形相交被拆成两个独立的一维投影相交序列，之后才通过时间同余关系重新合并。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "math/number-theory/lcm",
+      "importance": "secondary",
+      "evidence": "两条线段的轴向公共周期以及二维过程的全局周期分别由最小公倍数确定。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "math/number-theory/gcd",
+      "importance": "secondary",
+      "evidence": "gcd(Tx,Ty) 决定两个周期余数的兼容同余类，同时用于最终分数约分。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "math/geometry",
+      "importance": "secondary",
+      "evidence": "需要把矩形正面积相交准确转化为两轴上开内部意义下的正长度区间相交。",
+      "solution_variant": "residue-count-streaming"
+    },
+    {
+      "tag": "implementation",
+      "importance": "incidental",
+      "evidence": "实现需正确处理先在边界翻转方向再移动，以及端点接触不算相交，但这些不是主要算法。",
+      "solution_variant": "materialized-period-bitstrings"
+    }
+  ]
+}

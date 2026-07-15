@@ -1,0 +1,91 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "E",
+    "title": "Expression Correction",
+    "rating": 1900,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "expression parsing",
+      "strings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/E",
+      "notes": "Read the grammar and constraints: total length<=100, numbers contain 1..10 digits with no extra leading zeroes, expressions use +/-, and exactly one digit may be removed and reinserted."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial confirms exhaustive digit moves are sufficient and highlights leading zeroes, 11-digit numbers, empty operands, zero, and boundary operators as critical parser cases."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/296524254",
+      "notes": "Inspected an accepted contest implementation that enumerates digit relocation by adjacent movement and validates every resulting expression."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/E",
+      "notes": "Verified that remove-and-insert enumeration covers every possible digit move. Differential-tested the hand parser against an independent regular-expression grammar/evaluator on all 97,655 strings of lengths 1..7 over the alphabet {0,1,+,-,=}."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2052E",
+      "notes": "Luogu solution index candidate; unavailable during this review and therefore not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine whether an arithmetic equality is already correct or can be made correct by moving one decimal digit to another position.",
+    "constraints": "The input length L is at most 100. O(L^2) moved strings with O(L) parsing each fit comfortably.",
+    "core_idea": "First parse and evaluate the original equality; if it is correct, output Correct. Otherwise, enumerate every digit as the removed character and every insertion slot in the remaining string. Parse each candidate strictly: require one equals sign, nonempty expressions, alternating numbers and operators, numbers of at most 10 digits, and no leading zero except for the number 0. Evaluate both sides with signed 64-bit arithmetic and return any valid equality whose values match.",
+    "complexity": "O(L^3) time and O(L) auxiliary memory.",
+    "tricks": [
+      "Enumerate only digits as movable characters.",
+      "Validate grammar before evaluating arithmetic.",
+      "Reject empty operands, leading zeroes, and numbers longer than 10 digits.",
+      "Treat the original correct equality separately because no move is needed.",
+      "Use signed 64-bit values because expression results may be negative or exceed ten digits."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "enumerate-move-and-parse",
+      "summary": "For each digit position, remove that digit and insert it at every possible position. Run a strict linear parser and evaluator on each resulting string until a correct equality is found.",
+      "complexity": "O(L^3) time and O(L) auxiliary memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/brute-force",
+      "importance": "primary",
+      "evidence": "The length bound permits exhaustive enumeration of every source digit and every destination position.",
+      "solution_variant": "enumerate-move-and-parse"
+    },
+    {
+      "tag": "implementation/parsing/expression",
+      "importance": "primary",
+      "evidence": "Correctness depends on a strict parser enforcing the complete number, expression, and equality grammar before evaluation.",
+      "solution_variant": "enumerate-move-and-parse"
+    },
+    {
+      "tag": "string",
+      "importance": "secondary",
+      "evidence": "Candidate generation is performed by deleting and reinserting characters in the equality string.",
+      "solution_variant": "enumerate-move-and-parse"
+    }
+  ]
+}

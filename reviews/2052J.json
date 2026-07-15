@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "J",
+    "title": "Judicious Watching",
+    "rating": 2000,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "greedy",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/J",
+      "notes": "Read the scheduling model and constraints: tasks are non-preemptive with deadlines, episodes are watched in fixed order, calls may occur during homework, and total n,m,q over tests are each at most 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial sorts tasks by deadline, computes suffix latest-start times backward, and answers each call by splitting early and postponed tasks."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://blog.csdn.net/zhuyingye_123456/article/details/144872259",
+      "notes": "Independent solution derives an equivalent preprocessing method based on suffix deadline capacities and the earliest achievable completion time of each episode."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/296524526",
+      "notes": "Inspected an accepted contest implementation that constructs available watching intervals from deadline-sorted homework and answers calls offline."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/J",
+      "notes": "Re-derived both formulations. Compared the latest-start query formula with exhaustive schedules on 57,000 small random queries and compared the earliest-episode thresholds on another 4,000 random instances; all results matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2052J",
+      "notes": "Luogu solution index candidate; unavailable during this review and therefore not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "For each possible call time, maximize the prefix of episodes completed by then while scheduling every non-preemptive homework task before its deadline.",
+    "constraints": "n,m,q<=200000 per test with corresponding sums<=200000; deadlines and call times reach 10^15, so 64-bit arithmetic and logarithmic queries are required.",
+    "core_idea": "Sort homework by nondecreasing deadline, which is the canonical feasible order. Let P_i be the duration of the first i tasks. Define S_n=+infinity and S_i=min(d_i,S_{i+1})-a_i, the latest start of task i when the suffix is executed consecutively. For a split after i early tasks, the largest uninterrupted watching interval ending no later than call t has length min(t,S_i)-P_i. Both P_i and S_i increase, so the maximum is attained at lower_bound(S,t) or its predecessor. After finding the best nonnegative duration, binary-search the episode-duration prefix sums for the number that fit.",
+    "complexity": "O(n log n+m+q(log n+log m)) time and O(n+m) memory per test.",
+    "tricks": [
+      "Use earliest-deadline order for all homework tasks.",
+      "Compute latest feasible suffix start times backward.",
+      "Represent every schedule by a split between tasks done immediately and tasks postponed as late as possible.",
+      "Only two split positions around lower_bound(S,t) can maximize the free interval.",
+      "Use prefix sums and upper_bound for the ordered episode lengths."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "latest-start-split",
+      "summary": "Official formulation: sort tasks by deadline, compute task-duration prefixes and latest suffix start times, inspect the two split points adjacent to each call time, then binary-search episode prefix sums.",
+      "complexity": "O(n log n+m+q(log n+log m)) time and O(n+m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "earliest-episode-thresholds",
+      "summary": "For each deadline-sorted task i, compute the maximum episode prefix fitting in d_i minus the homework prefix duration, then take suffix minima of these capacities. Scan tasks and watch every newly permitted episode before the next task, recording the earliest completion time of each episode. Each query is an upper_bound on that completion-time array.",
+      "complexity": "O(n log n+n log m+m+q log m) time and O(n+m) memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/scheduling",
+      "importance": "primary",
+      "evidence": "The central problem is arranging deadline-constrained non-preemptive tasks around a maximum free interval before each call.",
+      "solution_variant": "latest-start-split"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "Tasks before the watching interval are done as early as possible, while the suffix is scheduled backward as late as possible.",
+      "solution_variant": "latest-start-split"
+    },
+    {
+      "tag": "algorithm/search/binary-search",
+      "importance": "primary",
+      "evidence": "Each query locates its relevant task split in the monotone latest-start array and then locates the longest affordable episode prefix.",
+      "solution_variant": "latest-start-split"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Homework tasks must first be placed in nondecreasing deadline order.",
+      "solution_variant": "latest-start-split"
+    },
+    {
+      "tag": "algorithm/prefix-sums",
+      "importance": "secondary",
+      "evidence": "Task-duration and episode-duration prefixes convert each candidate split into constant-time arithmetic and a monotone threshold query.",
+      "solution_variant": "latest-start-split"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "Latest suffix starts and homework prefixes are increasing, reducing the maximum over all split points to two neighbors of a binary-search boundary.",
+      "solution_variant": "latest-start-split"
+    }
+  ]
+}

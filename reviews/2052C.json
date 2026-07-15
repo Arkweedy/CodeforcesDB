@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "C",
+    "title": "Cactus without Bridges",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://nerc.icpc.global/archive/2024/nef-2024-statement.pdf",
+      "notes": "Official NERC statement. Confirmed the bridgeless-cactus promise, odd-cycle length condition, interval edge-label requirement, and n <= 100000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.icpc.global/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial. Supplies the parity obstruction and the two-state induction using signed differences of magnitude 1 or 2 around every cactus cycle."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/P12094",
+      "notes": "Independent Luogu statement mirror checked against the official statement. Its solution page currently contains zero published solutions, so no algorithmic claim was taken from Luogu."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://nerc.icpc.global/archive/2024/nef-2024-archive.zip",
+      "notes": "Read problems/cactus-wo-bridges/solutions/solution.cpp and independent accepted submission 295753283_ikrpprppp_ok.cpp. They confirm the m-parity criterion and two different constructive implementations."
+    }
+  ],
+  "annotation": {
+    "summary": "Determine whether a bridgeless cactus admits an interval edge coloring: all incident edge labels at every vertex must be distinct and consecutive, while the globally used labels must be exactly 1 through t. If possible, construct such a labeling.",
+    "constraints": "3 <= n <= 100000, n <= m <= floor(3(n-1)/2). The graph is a connected simple cactus without bridges. Every odd cycle has length at least the total number of odd cycles.",
+    "core_idea": "Every vertex has even degree. In any consecutive interval of even length, odd and even labels occur equally often; counting label-parity incidences therefore forces m to be even. Since every edge of a bridgeless cactus lies on exactly one cycle, this is equivalent to requiring an even number of odd cycles. For sufficiency, root the cactus cycle decomposition and induct on components with two states: a component containing an even number of odd cycles receives a complete interval coloring, while an odd component receives a root-defective coloring whose spectrum becomes an interval after inserting two colors x and x+2. After deleting one cycle, assign each attachment vertex a signed difference F of magnitude 1 for an even child component and 2 for an odd child component. Choose the signs so that the differences sum to zero around the cycle, then shift each recursive component coloring so its spectrum joins the two cycle-edge colors. For an odd cycle, the length condition guarantees at least two even child components, exactly what is needed to balance the signed differences. Finally shift all labels so the minimum is 1; connectedness makes the global union of vertex spectra one gapless interval.",
+    "complexity": "O(n + m) time and O(n + m) memory for the cycle-decomposition construction.",
+    "tricks": [
+      "Count odd/even label incidences at even-degree vertices to prove that m must be even.",
+      "Maintain two recursive states: fully interval-colorable and interval-colorable with a two-hole root defect.",
+      "Represent differences of consecutive cycle-edge labels by signed values in {+1,-1,+2,-2} and force their cycle sum to zero.",
+      "Shift complete component colorings at articulation vertices instead of rebuilding their internal labels.",
+      "Use the odd-cycle length promise to prove that an odd cycle has at least two even-parity attachment components."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "cycle-decomposition-two-state-induction",
+      "summary": "Extract and root the cactus cycles. Compute the parity type of every attached component, assign balanced signed differences of magnitude 1 or 2 around each cycle, and recursively shift child colorings so every vertex spectrum becomes consecutive.",
+      "complexity": "O(n + m) time and O(n + m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "euler-circuit-alternating-pairing",
+      "summary": "An accepted alternative exploits that a bridgeless cactus is Eulerian. It alternates binary marks along an Euler circuit, pairs successor edges through vertices, assigns label-potential differences of magnitude 1 or 2 around the resulting cycles, and recursively shifts these local constructions to pack every incident spectrum into an interval.",
+      "complexity": "O((n + m) log n) in the inspected std::set implementation; the traversal and pairing can be implemented in O(n + m).",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/edge-coloring/interval-edge-coloring",
+      "importance": "primary",
+      "evidence": "The requested labeling is exactly the named interval edge-coloring problem: adjacent edges have distinct integer colors, every vertex spectrum is consecutive, and all global colors 1 through t are used.",
+      "solution_variant": "cycle-decomposition-two-state-induction",
+      "description": "Assign integer colors to graph edges so incident edges have distinct colors, every vertex's incident-color set is a consecutive integer interval, and the global palette has no unused color. Use only when the consecutive-spectrum condition is essential, not for ordinary proper edge coloring.",
+      "parent": "graph/edge-coloring",
+      "created_reason": "The existing graph/edge-coloring tag covers proper edge coloring but does not expose the substantially stronger and named consecutive-spectrum constraint that completely defines CF2052C.",
+      "status": "candidate",
+      "aliases": [
+        "interval edge coloring",
+        "consecutive edge coloring"
+      ]
+    },
+    {
+      "tag": "graph/cactus",
+      "importance": "primary",
+      "evidence": "Edge-disjoint cycles and the tree-like cycle decomposition are essential to defining independent attachment components and recursively combining their colorings.",
+      "solution_variant": "cycle-decomposition-two-state-induction"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "After the parity feasibility test, the task requires explicitly constructing every edge label by balancing cycle differences and shifting recursively built component colorings.",
+      "solution_variant": "cycle-decomposition-two-state-induction"
+    },
+    {
+      "tag": "trick/parity",
+      "importance": "primary",
+      "evidence": "Feasibility is characterized by m being even, and both the impossibility proof and the recursive component states depend on the parity of the number of odd cycles.",
+      "solution_variant": "cycle-decomposition-two-state-induction"
+    },
+    {
+      "tag": "graph/dfs",
+      "importance": "secondary",
+      "evidence": "A DFS extracts the cactus cycles, roots their attachment structure, and computes subtree parity before the top-down labeling pass.",
+      "solution_variant": "cycle-decomposition-two-state-induction"
+    },
+    {
+      "tag": "graph/euler-trail",
+      "importance": "primary",
+      "evidence": "The independent accepted alternative centrally constructs an Euler circuit of the even-degree cactus and alternates marks along that circuit before deriving label potentials.",
+      "solution_variant": "euler-circuit-alternating-pairing"
+    }
+  ]
+}

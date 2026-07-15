@@ -1,0 +1,116 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "K",
+    "title": "Knowns and Unknowns",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2052/problem/K",
+      "notes": "阅读题面并核对约束：两份长度为 k 的带 -1 通配符子序列来自同一个大小为 k 的学生集合；n 与所有测试的 n 之和均不超过 2000。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "官方 NERC 题解，确认已知锚点/未知连续段的 block 建模、带容量二分网络最大流，以及用残量网络有向环判断学生边能否在不同满流间翻转。"
+    },
+    {
+      "source_type": "statement_mirror",
+      "url": "https://qoj.ac/problem/10424",
+      "notes": "独立题库镜像，用于再次核对题目身份、限制与样例；该页面没有公开独立题解。"
+    },
+    {
+      "source_type": "status",
+      "url": "https://codeforces.com/contest/2052/status/K",
+      "notes": "核对到多份公开 Accepted 记录；提交源码页受反爬限制，因此未把未读取的代码当作算法证据。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2052/problem/K",
+      "notes": "独立实现 block+残量 SCC 判定，并对 n<=7 的 21000 个随机小实例枚举所有大小为 k 的集合；Inconsistent/Y/N/? 与穷举结果全部一致。"
+    }
+  ],
+  "annotation": {
+    "summary": "给定两个教授各自的学生全排列，以及同一到访集合在两个排列中形成的带通配符子序列，判断数据是否一致；若一致，对每名学生判断其在所有可行到访集合中必选、必不选还是可选。",
+    "constraints": "1 <= n <= 2000，1 <= k <= n，所有测试用例的 n 之和不超过 2000；每份非 -1 名单元素互不重复。允许 O(n^2) 时间与 O(n) 级图存储。",
+    "core_idea": "对每位教授，把名单中的已知学生作为容量 1 的 singleton block，把每个最大连续 -1 段作为需求等于段长的 unknown block。unknown block 的候选学生恰为原排列中其左右已知锚点之间的元素（首尾用排列边界作锚点）；若已知锚点次序错误或候选数不足则直接不一致。每名学生在每一侧至多属于一个 block，于是建立左侧 block 到右侧 block 的容量 1 学生边，源到左 block、右 block 到汇的容量等于 block 需求。最大流达到 k 当且仅当存在可行到访集合。固定任意一个满流后，对每条学生边考察残量图：它能在保持流值和所有 block 需求不变时翻转，当且仅当当前残量方向位于有向环中，即左右端点属于同一强连通分量。可翻转输出 ?；不可翻转且当前有流输出 Y，否则输出 N；没有学生边者同样输出 N。",
+    "complexity": "O(n^2) time and O(n) memory per test case; block graph has O(n) vertices/edges, at most n unit augmentations, followed by one residual SCC decomposition.",
+    "tricks": [
+      "未知连续段的候选集合由左右已知锚点在原排列中的开区间唯一确定。",
+      "每个学生在每一侧至多属于一个 block，因此自然对应一条容量 1 的二分边。",
+      "两个同值满流之差是循环；学生边可翻转等价于其残量方向位于有向环。",
+      "把逐边残量可达性批量化为 SCC：同一 SCC 内为 ?，否则按当前流量判 Y/N。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "residual-scc",
+      "summary": "按已知锚点拆 block，构造带 block 容量的二分最大流；若得到大小 k 的满流，在残量图上求 SCC。每条学生边的两个 block 端点同 SCC 时可沿残量环切换选择状态，否则其当前流量状态在所有满流中固定。",
+      "complexity": "O(n^2) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "per-edge-residual-reachability",
+      "summary": "沿用相同 block 最大流模型。得到满流后，不预先求 SCC，而对每条学生边从其当前残量方向的终点搜索回起点，直接检查该方向是否位于残量环；这是官方题解表述的逐边版本。",
+      "complexity": "O(n^2) time, O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/flow",
+      "importance": "primary",
+      "evidence": "一致性恰好等价于 block 网络存在流量 k 的满流，之后还必须使用该满流的残量网络分析所有可行解。",
+      "solution_variant": "residual-scc"
+    },
+    {
+      "tag": "graph/matching",
+      "importance": "primary",
+      "evidence": "每名学生是一条左 block 到右 block 的容量 1 边，各 block 有指定需求，本质是二分图 b-matching/带点容量匹配。",
+      "solution_variant": "residual-scc"
+    },
+    {
+      "tag": "graph/flow/residual-cycle",
+      "display_name": "残量环换流",
+      "description": "在已经得到可行流或最大流后，通过残量网络中的有向环、互相可达性或等价的循环流，判断某条单位边能否在不改变总流量与端点需求的前提下开关。仅用于残量环刻画多组最优/可行流之间边灵活性的题，不用于普通最大流模板实现。",
+      "parent": "graph/flow",
+      "created_reason": "现有 graph/flow 只能检索到所有网络流题，无法定位本题最关键且可复用的“利用残量环判断一条边在所有满流中必选/可选”技巧。",
+      "status": "candidate",
+      "importance": "primary",
+      "evidence": "Y/N/? 的判定完全依赖学生边是否能沿残量有向环翻转；若不存在该环，当前流量状态在所有满流中固定。",
+      "solution_variant": "residual-scc"
+    },
+    {
+      "tag": "graph/scc",
+      "display_name": "强连通分量",
+      "description": "在有向图中分解互相可达的强连通分量，用于批量判断有向环、双向可达或缩点结构；不用于普通无向连通块。",
+      "parent": "graph",
+      "aliases": [
+        "strongly-connected-components"
+      ],
+      "created_reason": "当前 taxonomy 没有 SCC 专用 tag；本题可用一次 SCC 批量替代对每条学生边的残量可达性搜索，且该算法在大量有向图题中可复用。",
+      "status": "candidate",
+      "importance": "secondary",
+      "evidence": "学生边可切换当且仅当其两个 block 端点在残量图中互相可达，直接等价于属于同一个 SCC。",
+      "solution_variant": "residual-scc"
+    },
+    {
+      "tag": "string/subsequence",
+      "importance": "secondary",
+      "evidence": "每份观察名单是教授全排列删去未到访学生后的带通配符子序列；已知锚点之间的子序列位置决定 unknown block 的候选区间。",
+      "solution_variant": "residual-scc"
+    }
+  ]
+}

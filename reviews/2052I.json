@@ -1,0 +1,121 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "I",
+    "title": "Incompetent Delivery Guy",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "graphs",
+      "shortest paths"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2052/problem/I",
+      "notes": "Canonical problem identity. Statement and constraints were cross-checked against the official contest statement PDF."
+    },
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2052/attachments/download/28917/2024-2025-icpc-nerc-northern-eurasia-finals.pdf",
+      "notes": "Official statement used to verify the pointer restrictions, adversarial guarantee, special outputs, and n,m <= 4e5 constraints."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial. Used for the vertex-type characterization, immediate k-vertices, shortest-path retroanalysis, and complexity."
+    },
+    {
+      "source_type": "luogu_problem",
+      "url": "https://www.luogu.com.cn/problem/P12100",
+      "notes": "Luogu mirror used to cross-check the Chinese statement and the exact meaning of following a pointer versus wandering."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/complexor/p/19350092",
+      "notes": "Independent solution. Cross-checked the equivalent 0/1-edge safety-distance interpretation and the two-phase reverse propagation."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-runs.zip",
+      "notes": "Inspected jury source runs/jury-I-4-incompetent-driver_mi_cpp.cpp. It implements reverse Dijkstra, tight-edge outdegree counters, and alternating BFS/retrograde queues."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2052/problem/I",
+      "notes": "Independently checked the min-deviations-to-failure interpretation, off-by-one levels, unreachable entrance, infinite-safety, loops, parallel edges, and 64-bit distances."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/P12100",
+      "notes": "The solution page was not publicly readable during this review, so it was not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Choose one outgoing edge lying on a shortest path to vertex n as the pointer at every vertex that can reach n. An adversarial orc may ignore pointers at most d times and choose arbitrary outgoing edges. Find the largest d for which some pointer assignment guarantees reaching n from vertex 1.",
+    "constraints": "2 <= n <= 4e5, 0 <= m <= 4e5, positive edge weights up to 1e6; directed loops and parallel edges are allowed. Distances require 64-bit integers.",
+    "core_idea": "Let type[u] be the maximum number of deviations that can always be survived from u under an optimal pointer assignment. Vertices unable to reach n have type -1, while vertices that remain unclassified have infinite type. First run Dijkstra from n on the reversed graph. Edges satisfying dist[u] = w + dist[v] are the legal pointer edges; positive weights make them a DAG. Starting from all type -1 vertices, process types in increasing order. If any outgoing edge u->v reaches a vertex of type k-1, then u becomes an immediate candidate of type k because one deviation can enter that layer. Within the same layer, propagate backward through legal pointer edges: once every legal pointer edge of u leads to an already absorbed vertex, no pointer choice can avoid that layer, so u receives the same type. Tight outgoing-edge counters and two queues implement these existential and universal transitions in linear total time after Dijkstra. Vertex 1's type is the answer; an unclassified vertex is reported as n.",
+    "complexity": "O((n + m) log n) time and O(n + m) memory.",
+    "tricks": [
+      "Replace randomness by an adversary because delivery must be guaranteed for every possible sequence of choices.",
+      "Interpret type[u] + 1 as the minimum number of non-pointer edges needed to reach an unreachable vertex under an optimal pointer assignment.",
+      "Legal pointer edges strictly decrease shortest-path distance and therefore form a DAG.",
+      "Alternate arbitrary-edge predecessor expansion, which increases the type by one, with all-tight-successors retrograde closure, which preserves the type.",
+      "Ignore outgoing edges of Orthanc because reaching vertex n terminates the process.",
+      "Use n as the finite representation of infinity: every finite type consumes at least one newly classified vertex."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "dijkstra-retrograde-leveling",
+      "summary": "Run reverse Dijkstra, count each vertex's tight outgoing edges, initialize unreachable vertices with type -1, and maintain two work queues. Processing a fixed vertex through all incoming edges proposes predecessor type +1. Processing the retrograde queue decrements counters only along tight incoming edges; when a predecessor has no remaining unabsorbed tight successor, assign it the current type. Every edge participates only constantly many times.",
+      "complexity": "O((n + m) log n) time and O(n + m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/shortest-path/dijkstra",
+      "importance": "primary",
+      "evidence": "Distances to Orthanc determine reachability and exactly which outgoing edges may be selected as pointers; reverse Dijkstra is indispensable at n,m <= 4e5.",
+      "solution_variant": "dijkstra-retrograde-leveling"
+    },
+    {
+      "tag": "graph/retrograde-analysis",
+      "importance": "primary",
+      "evidence": "The decisive post-Dijkstra algorithm propagates terminal failure levels backward, combining an existential arbitrary-edge transition with an all-tight-successors counter transition.",
+      "solution_variant": "dijkstra-retrograde-leveling",
+      "description": "Propagate solved terminal states or outcome levels backward through a directed state graph, using predecessor worklists and all-successor counters to resolve adversarial, game, or safety states. Use when reverse attractor/outcome propagation is central, not for an ordinary reverse BFS.",
+      "parent": "graph",
+      "created_reason": "Existing graph/bfs and graph/dag tags do not identify CF2052I's essential AND/OR reverse propagation: one arbitrary bad edge raises the level, while every legal pointer successor must be absorbed before a vertex joins the same level.",
+      "status": "candidate",
+      "aliases": [
+        "retroanalysis",
+        "retrograde analysis",
+        "reverse attractor propagation"
+      ]
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "All legal pointer edges strictly decrease dist because weights are positive, so their acyclic structure makes the all-successor retrograde closure well-founded.",
+      "solution_variant": "dijkstra-retrograde-leveling"
+    },
+    {
+      "tag": "trick/worst-case-guarantee",
+      "importance": "secondary",
+      "evidence": "Although wandering is described as random, the required guarantee forces the solution to handle every possible outgoing-edge choice adversarially.",
+      "solution_variant": "dijkstra-retrograde-leveling"
+    }
+  ]
+}

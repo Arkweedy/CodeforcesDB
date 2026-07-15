@@ -1,0 +1,88 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "A",
+    "title": "Adrenaline Rush",
+    "rating": 1600,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/A",
+      "notes": "Read the statement and constraints: n<=1000, cars start in identity order, each directed overtake between a pair may occur at most once, and the output must realize the longest sequence ending in the given permutation."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial proves the pairwise upper bound n(n-1)-inv(c) and constructs it by processing cars in reverse finishing order."
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/SteinsGateSg/p/18745275",
+      "notes": "Independent write-up confirms the one-overtake/two-overtake pair classification and the reverse-final-order construction."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/A",
+      "notes": "Re-proved the pairwise bound and exhaustively simulated the construction for all 46,233 permutations with 1<=n<=8, checking the final order, directed-pair uniqueness, and exact optimal length."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2052A",
+      "notes": "Luogu solution index candidate; unavailable during this review and therefore not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Given the final permutation of cars, output a maximum-length sequence of adjacent overtakes that starts from 1,2,...,n, reaches that permutation, and never repeats the same directed overtake.",
+    "constraints": "n<=1000. The maximum output contains O(n^2) overtakes, so an output-sensitive quadratic construction is appropriate.",
+    "core_idea": "For a pair x<y, if y finishes before x, their relative order must change and the maximum is one overtake, y over x. If x still finishes before y, their relative order is unchanged and the maximum is two overtakes, one in each direction. Hence the upper bound is n(n-1)-inv(c). To attain it, process c_n,c_{n-1},...,c_1. Move the current car left to the front by adjacent overtakes, then let successive cars overtake it until it reaches its required final position. Already fixed suffix positions remain unchanged, and every pair receives exactly its maximum allowed number of overtakes.",
+    "complexity": "O(n^2) time including the O(n^2) output, with O(n) auxiliary memory.",
+    "tricks": [
+      "Classify each pair independently by whether its final relative order is reversed.",
+      "Use inversion count as the exact deficit from the two-overtakes-per-pair upper bound.",
+      "Build the final permutation from its last position toward its first.",
+      "Record the overtaker and overtaken car at every adjacent swap."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "reverse-final-order-construction",
+      "summary": "Maintain the current car order. For i from n down to 1, move c_i to the front and then move it right to position i, emitting the corresponding directed adjacent overtakes. This realizes n(n-1)-inv(c) overtakes.",
+      "complexity": "O(n^2) time and O(n) auxiliary memory, excluding the required output storage.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The solution must explicitly construct an optimal sequence of adjacent overtakes rather than merely compute its length.",
+      "solution_variant": "reverse-final-order-construction"
+    },
+    {
+      "tag": "trick/inversion-count",
+      "importance": "primary",
+      "evidence": "Each inversion permits only one overtake instead of two, making inv(c) exactly the amount subtracted from n(n-1).",
+      "solution_variant": "reverse-final-order-construction"
+    },
+    {
+      "tag": "trick/reverse-process",
+      "importance": "secondary",
+      "evidence": "Processing finishing positions from last to first keeps the completed suffix fixed and makes the pairwise optimum simultaneously attainable.",
+      "solution_variant": "reverse-final-order-construction"
+    }
+  ]
+}

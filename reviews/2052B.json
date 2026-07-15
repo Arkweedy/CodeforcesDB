@@ -1,0 +1,140 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "B",
+    "title": "BitBitJump",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": []
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/B",
+      "notes": "阅读完整机器模型、可自修改的 c 操作数、IO-word 约定及限制：输出至多 4095 个内存字，生成程序必须在至多 4096 条指令内判断任意初始 IO-word 是否等于 x。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.ifmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "官方题解给出两个相距 64 个字的 17 指令 block：把输入位复制到当前指令 c 操作数的第 6 位，以选择下一层所在 block；另一 block 立即返回 false。"
+    },
+    {
+      "source_type": "independent_code",
+      "url": "https://nerc.icpc.global/archive/2024/nef-2024-runs.zip",
+      "notes": "只读检查归档中的独立参赛代码 runs/spb203-B-1-b.cpp。它采用不同的 4095-word 构造：每位使用带 padding 的分支表，把输入位写入后续 c 操作数的第 2 位，再根据 x_i 选择继续或失败。归档本身未附逐文件 verdict，因此另外进行了完整模拟验证。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2052/problem/B",
+      "notes": "独立实现 BitBitJump 模拟器。对官方双 block 构造和归档独立构造，遍历全部 65536 个 x，并分别测试 y=x 及每个单比特翻转 y=x xor 2^i，共各 1,114,112 组。官方构造最多执行 17 条指令，独立构造最多执行 64 条，结果全部正确。单比特翻转覆盖任意可能的首个失配位置，之后程序立即失败，故同时覆盖所有 y!=x 的控制流。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/P12093",
+      "notes": "本次实际检查时页面显示 0 篇题解，因此未作为解法证据；Luogu 题面镜像为 https://www.luogu.com.cn/problem/P12093。"
+    }
+  ],
+  "annotation": {
+    "summary": "输入 16 位目标值 x，输出一份 BitBitJump 内存转储。该程序随后面对未知的初始 IO-word，仅靠复制一个 bit 并跳转这一种指令，判断 IO-word 是否等于 x，并把最低位写成判断结果。",
+    "constraints": "0<=x<2^16；内存有 4096 个 16-bit words，IO-word 为 word 4095；输出前 n 个 words，1<=n<=4095；生成的比较器必须在不超过 4096 条指令后停止。c 在复制完成后才读取，因此允许通过修改当前指令自身的 c 实现数据相关跳转。",
+    "core_idea": "建立两个起点分别为 word 0 和 word 64 的 17 层代码块。进入第 i 层时，所在 block 表示上一位输入值；只有该值等于 x 的上一位时，该位置才放置继续检查的指令，另一 block 的对应位置直接返回 false。检查输入第 i 位的指令把 IO-word 的第 i 位复制到自身 c 操作数字的第 6 位。两个 block 地址恰好相差 64，因此复制 0 后跳到下一层的 block 0，复制 1 后跳到 block 1。由于 c 在复制之后读取，这就用自修改代码实现了条件分支。处理完 16 位后，和 x 的最高位对应的 block 返回 true，另一个返回 false。返回指令分别复制 word 0 的 bit 4 和 bit 0；word 0 固定为 0xfff0，所以这两个位置恰好提供常量 1 和 0。最后跳到 word 4095，使 IP 越过执行范围并停止。",
+    "complexity": "生成器输出 115 个 words，使用 O(16) time 和 O(1) auxiliary memory；生成的比较器最多执行 17 条指令。",
+    "tricks": [
+      "利用题目强调的“c 在复制后读取”，直接修改当前指令自己的跳转地址。",
+      "让两个代码块的地址相差 2^6，使一个输入位天然成为跳转地址的第 6 位。",
+      "把控制流所在 block 当成上一输入位，只在它等于目标位的 block 中继续检查，失配立即退出。",
+      "从固定程序字 0xfff0 中同时取得常量 0 和 1，无需额外可写常量区。",
+      "生成器、生成的机器程序以及被比较的隐藏 IO-word 属于三个不同层次，地址计算时必须严格区分 word address 与 bit address。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "review_risks": [
+      "Luogu 当前没有可用题解，独立交叉来源改用 NERC 官方 runs archive 中的参赛代码。",
+      "runs archive 没有直接附带该源码的 verdict；不过该构造已在本地模拟器上覆盖全部目标值、相等输入和所有首失配位置。",
+      "实现最容易混淆的是 word 地址和 bit 地址，以及测试指令 c 操作数所在 word 的 bit 6。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "two-block-self-modifying-comparator",
+      "summary": "官方紧凑构造。用相距 64 words 的两个 block 表示当前输入 bit，复制下一输入 bit 到自身 c 的 bit 6 以选择下一 block；目标前缀一旦失配便跳入 return-false，全部匹配后 return-true。",
+      "complexity": "O(16) generator time, 115 output words, at most 17 executed instructions",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "padded-per-bit-branch-table",
+      "summary": "NERC runs archive 中的独立构造。每个输入位占一个 16-word stage：先把 IO bit 写入后一条指令 c 的 bit 2，再进入由输入位选择的两个常量跳转之一；与 x_i 匹配则进入下一 stage，否则进入清零收尾。全部匹配后先把 IO bit 0 置一，再清理其余位并停止。",
+      "complexity": "O(16) construction plus 4095 output words, at most 64 executed instructions",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/program-synthesis",
+      "display_name": "Program synthesis",
+      "importance": "primary",
+      "description": "Construct an executable program, circuit, instruction dump, or automaton for a specified machine so that the generated artifact satisfies a behavioral contract over later or hidden inputs. Do not use for ordinary constructive outputs that are not subsequently executed or interpreted.",
+      "parent": "paradigm/constructive",
+      "created_reason": "Generic constructive and communication tags do not distinguish problems whose required output is itself executable code. In CF2052B, the submitted solver succeeds only by synthesizing a comparator program for a constrained virtual machine.",
+      "status": "candidate",
+      "aliases": [
+        "program synthesis",
+        "code generation",
+        "machine-code construction",
+        "程序合成",
+        "代码生成"
+      ],
+      "evidence": "The required answer is not the comparison result but a complete BitBitJump memory image that must correctly compare every possible later IO-word.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    },
+    {
+      "tag": "trick/self-modifying-code",
+      "display_name": "Self-modifying code",
+      "importance": "primary",
+      "description": "Modify bits or words belonging to the currently executing or future instruction stream so runtime data changes later operands or control flow. Use only when writable code memory is a central correctness mechanism, not for ordinary mutable state or generated lookup tables.",
+      "parent": "trick",
+      "created_reason": "The decisive operation in CF2052B is copying an input bit into the current instruction's c operand before c is read. Existing implementation, bitmask, and state tags do not identify this reusable low-level control-flow technique.",
+      "status": "candidate",
+      "aliases": [
+        "self-modifying code",
+        "writable code",
+        "runtime instruction patching",
+        "自修改代码"
+      ],
+      "evidence": "Each testing instruction overwrites one bit of its own c word, turning the copied IO bit directly into the next-block selector.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "The task requires explicitly constructing a valid bounded-size comparator program rather than computing a unique numeric answer.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    },
+    {
+      "tag": "paradigm/communication",
+      "importance": "secondary",
+      "evidence": "The solver never reads the eventual IO-word directly; it communicates the comparison strategy through an emitted program that the checker later executes against that hidden machine state.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    },
+    {
+      "tag": "algorithm/bitmask",
+      "importance": "secondary",
+      "evidence": "The construction processes all 16 target bits independently and encodes copied input bits into selected address bits of instruction operands.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "Correctness depends on exact conversion between word and bit addresses, hexadecimal output, instruction alignment, writable operand positions, and stop-address bounds.",
+      "solution_variant": "two-block-self-modifying-comparator"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "F",
+    "title": "Fix Flooded Floor",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "constructive algorithms",
+      "dp",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/F",
+      "notes": "Read the statement and constraints: classify the number of domino tilings of damaged cells in a 2xn strip as zero, one, or multiple; the total n over tests is at most 200000."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial gives the left-to-right forced-placement invariant and proves that a fully empty 2x2 block witnesses non-uniqueness whenever a tiling exists."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/296521973",
+      "notes": "Inspected an accepted contest implementation using forced horizontal placements, vertical placements, and a persistent multiple-solutions flag."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/F",
+      "notes": "Implemented an exact domino-tiling counter capped at two and compared it with the greedy classifier for all 87,380 obstacle masks with 1<=n<=8; every classification matched."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2052F",
+      "notes": "Luogu solution index candidate; unavailable during this review and therefore not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Count the domino tilings of the damaged cells in a 2xn board only up to the categories None, Unique, and Multiple.",
+    "constraints": "Up to 10000 tests with total n<=200000, requiring linear time over the board.",
+    "core_idea": "Scan columns from left to right while maintaining that all earlier columns are completely resolved. If exactly one cell in the current column is empty, it has only one possible partner: the same row in the next column; failure to find it means None. If both cells are empty, a vertical domino is always possible. When the next column is also fully empty, two horizontal dominoes are an alternative to two vertical dominoes, so any eventual tiling is not unique; choose the vertical dominoes and continue. The local replacement between these two arrangements proves that choosing vertical cannot discard the only existing completion.",
+    "complexity": "O(n) time and O(1) extra memory per test for the greedy solution.",
+    "tricks": [
+      "Maintain a processed-prefix invariant over the two-row board.",
+      "A single exposed cell forces a horizontal domino extending right.",
+      "A fully empty 2x2 block provides two interchangeable local tilings.",
+      "Cap the number of tilings at two because only zero, one, or multiple matters."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "left-to-right-forced-tiling",
+      "summary": "Resolve the leftmost uncovered cell greedily. Forced horizontal placements detect impossibility; vertical placements handle two empty cells, and any fully empty 2x2 block marks the answer as multiple if the scan succeeds.",
+      "complexity": "O(n) time and O(1) extra memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "two-bit-profile-dp",
+      "summary": "Run profile DP by column with a two-bit occupancy mask. Enumerate all domino placements compatible with damaged and undamaged cells, and cap every state count at two. The final empty profile directly gives None, Unique, or Multiple.",
+      "complexity": "O(n) time with a constant number of states and O(1) rolling memory.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "The main solution repeatedly resolves the leftmost remaining damaged cell using a forced placement and never backtracks.",
+      "solution_variant": "left-to-right-forced-tiling"
+    },
+    {
+      "tag": "trick/tiling",
+      "importance": "primary",
+      "evidence": "The problem is fundamentally about existence and uniqueness of domino tilings, with the decisive ambiguity arising from a 2x2 local replacement.",
+      "solution_variant": "left-to-right-forced-tiling"
+    },
+    {
+      "tag": "trick/invariant",
+      "importance": "secondary",
+      "evidence": "Correctness relies on keeping every column strictly before the scan position completely covered.",
+      "solution_variant": "left-to-right-forced-tiling"
+    },
+    {
+      "tag": "dp/finite-state-dp",
+      "importance": "primary",
+      "evidence": "The alternative solution counts tilings with a constant two-bit frontier state and caps each count at two.",
+      "solution_variant": "two-bit-profile-dp"
+    }
+  ]
+}

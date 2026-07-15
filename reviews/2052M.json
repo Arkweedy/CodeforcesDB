@@ -1,0 +1,128 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "M",
+    "title": "Managing Cluster",
+    "rating": 2700,
+    "rating_status": "official",
+    "official_tags": [
+      "dp",
+      "graphs",
+      "math",
+      "trees"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://neerc.ifmo.ru/archive/2024/nef-2024-statement.pdf",
+      "notes": "Official NERC statement. There are 2n tree vertices, every service label occurs exactly twice, and each machine may participate in at most one swap. The total n over test cases is at most 1e5."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.ifmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official NERC tutorial establishes the maximum-tree-matching upper bound and constructs swaps by decomposing the service multigraph induced by matching edges into paths and cycles."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/duguktna",
+      "notes": "Independent solution cross-check. It gives a postorder greedy maximum matching and an explicit degree-two contraction implementation for path and cycle components."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2052/problem/M",
+      "notes": "Re-derived the matching upper bound, verified the virtual closing edge for path components, and exhaustively or deterministically checked 997 small tree/label instances; the optimum always equaled the tree maximum-matching size."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "accepted_code",
+      "url": "https://codeforces.com/contest/2052/submission/299131657",
+      "notes": "Codeforces status confirms this submission was accepted. Its source page was blocked by the Codeforces browser challenge, so it was not used as solution evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Given a tree whose 2n vertices contain two replicas of every service, output disjoint swaps maximizing the number of services whose two replicas finish on adjacent tree vertices.",
+    "constraints": "Up to 1e5 test cases, 1 <= n <= 1e5 per test, and sum(n) <= 1e5. The tree has 2n vertices. Every label from 1 to n appears exactly twice, and every vertex may occur in at most one output swap.",
+    "core_idea": "Every service that is good after the swaps occupies the two endpoints of one tree edge. Edges belonging to different good services are vertex-disjoint, so they form a matching and the answer is at most the maximum matching size of the tree. Find a maximum matching M in linear time. Build an auxiliary multigraph on service labels: every matched tree edge (u,v) contributes an edge between a_u and a_v. Since each service has only two replicas and every tree vertex belongs to at most one edge of M, every auxiliary vertex has degree at most two; hence every component is a path, cycle, loop, or two-edge multicycle. For a cycle, order the underlying machine positions alternately by matched edges and equal-service links, then pair positions symmetrically as in the official construction; these disjoint swaps make every matched edge monochromatic. For a path, each endpoint service has one occurrence outside M. Add a virtual edge between those two unused occurrences, apply the same cycle construction, and ignore the virtual edge afterward. Thus every edge of M becomes a good service edge, reaching the upper bound while using every machine at most once.",
+    "complexity": "O(n) time and O(n) memory per test case; O(sum n) over all test cases.",
+    "tricks": [
+      "Bound the objective by observing that successful service edges must form a tree matching.",
+      "Turn matching edges into a service multigraph of maximum degree two.",
+      "Solve auxiliary components independently as paths or cycles.",
+      "Close a path virtually with the unused replicas of its endpoint services.",
+      "Use a postorder greedy algorithm to reconstruct a maximum matching in a tree."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "greedy-tree-matching-construction",
+      "summary": "Root the tree and process vertices in postorder. Whenever a non-root vertex and its parent are both unmatched, match them. This produces a maximum tree matching. Decompose the induced degree-at-most-two service multigraph and construct disjoint swaps component by component.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "tree-dp-matching-construction",
+      "summary": "Use the standard two-state tree DP to compute and reconstruct a maximum matching, distinguishing whether a vertex is matched to one child. Apply the same path/cycle swap construction to the reconstructed matching.",
+      "complexity": "O(n) time and O(n) memory",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/matching/tree-matching",
+      "importance": "primary",
+      "evidence": "The exact optimum is the maximum matching size of the input tree, and the solution must compute and reconstruct such a matching before constructing swaps.",
+      "solution_variant": "greedy-tree-matching-construction",
+      "description": "Find, reconstruct, or exploit a maximum matching in a tree using its acyclic structure, usually through postorder greedy processing or tree DP. Do not use for generic matching in arbitrary graphs.",
+      "parents": [
+        "graph/matching",
+        "graph/tree"
+      ],
+      "created_reason": "The existing graph/matching tag does not distinguish the reusable linear-time tree-matching pattern, while graph/tree alone does not indicate that matching is the optimization object.",
+      "status": "candidate",
+      "parent": "graph/matching",
+      "aliases": [
+        "tree matching"
+      ]
+    },
+    {
+      "tag": "paradigm/constructive",
+      "importance": "primary",
+      "evidence": "Computing the optimum value is insufficient: the main difficulty is constructing legal pairwise-disjoint swaps that attain every edge of the maximum matching.",
+      "solution_variant": "greedy-tree-matching-construction"
+    },
+    {
+      "tag": "trick/component-decomposition",
+      "importance": "secondary",
+      "evidence": "The auxiliary service multigraph has maximum degree two, allowing the swap construction to process independent path and cycle components.",
+      "solution_variant": "greedy-tree-matching-construction"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "A postorder rule that matches an unmatched vertex with its unmatched parent reconstructs a maximum matching in a tree.",
+      "solution_variant": "greedy-tree-matching-construction"
+    },
+    {
+      "tag": "graph/tree",
+      "importance": "secondary",
+      "evidence": "The input network being a tree is what makes maximum matching linear and supplies the matching upper bound used by the construction.",
+      "solution_variant": "greedy-tree-matching-construction"
+    },
+    {
+      "tag": "dp/tree-dp",
+      "importance": "secondary",
+      "evidence": "The maximum matching can alternatively be computed and reconstructed with the standard matched-to-child versus not-matched-to-child tree DP.",
+      "solution_variant": "tree-dp-matching-construction"
+    }
+  ]
+}

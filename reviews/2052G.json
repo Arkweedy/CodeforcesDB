@@ -1,0 +1,111 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "G",
+    "title": "Geometric Balance",
+    "rating": 2800,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "geometry",
+      "implementation"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/G",
+      "notes": "阅读完整题面与约束：n<=50000，draw 指令不超过 2000，方向始终为 45 度的倍数，且墨迹线段内部不重复覆盖。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "NERC 官方题解确认四个独立方向分量的精确表示、共线相邻线段合并、平移后集合比较，以及只需测试 45/90/180 度。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ybvc8ib5",
+      "notes": "独立题解详细解释了 a+b*sqrt(2) 代数坐标、端点前驱后继合并、规范锚点选择和多个易错样例，用于补足官方题解的实现细节。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/314897989",
+      "notes": "通过 Luogu 题解内嵌的完整 AC 代码核对：draw 后必须更新当前位置；线段按无向端点规范化后用映射连接同向相邻段，再减去最小端点并排序比较。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/G",
+      "notes": "独立证明四整数基表示的单射性与旋转子群候选集合；将规范化算法和独立的半单位点集平移枚举检查器在 8000 个随机或人工对称线段图形上对拍，结果全部一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "执行八方向 turtle 指令得到若干墨迹线段，求该线段并集在允许任意平移后保持不变的最小正旋转角。",
+    "constraints": "1<=n<=50000，每段长度不超过 1e9，draw 指令数 m<=2000；坐标总量可达 5e13 且包含 sqrt(2) 分量，不能使用栅格展开或普通整数二维坐标。",
+    "core_idea": "把四个无向基本方向 E、NE、N、NW 视为整数基，反方向使用负系数；由于 1 与 sqrt(2) 在有理数上线性无关，所有可达点都有唯一四整数表示，45 度旋转只是该四元组的带符号循环置换。流式执行指令得到所有 draw 线段，并按方向族及其余三个固定坐标分组，把相接的共线区间合并，消除命令对同一几何线段的不同切分。随后取所有端点中字典序最小者作为锚点，统一减去该点并排序线段对，得到与平移无关的唯一规范表示。旋转原线段集合后重复规范化并比较即可。任何旋转对称都必须把现有线段方向映到八方向之一，所以角度是 45 度的倍数；全部对称构成 C8 的子群，其最小正角只可能为 45、90、180 或 360 度，因此依次检查前三者，均失败则输出 360。",
+    "complexity": "O(n+m log m) time and O(m) auxiliary memory when commands are streamed and the m<=2000 drawn segments are rotated directly.",
+    "tricks": [
+      "用四整数方向基或等价的 a+b*sqrt(2) 坐标精确表示八方向移动，完全避免浮点判等。",
+      "比较的是墨迹点集而不是 draw 指令列表；共享端点的同向共线段必须先合并。",
+      "通过减去字典序最小端点并排序线段，将任意平移等价类压成唯一规范形。",
+      "利用 C8 的子群结构把八个候选角压缩为 45、90、180，最后兜底 360。",
+      "draw 与 move 都会改变当前位置；draw 的额外作用只是记录经过的线段。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "exact-algebraic-segment-canonicalization",
+      "summary": "用四整数方向基维护端点，合并每条支撑线上的相接区间；对原图及 45/90/180 度旋转图分别做平移规范化和排序，返回首个相等角度。也可等价地把每个二维坐标存成两项 a+b*sqrt(2)。",
+      "complexity": "O(n+m log m) time, O(m) auxiliary memory",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/geometry/rotational-symmetry",
+      "display_name": "Rotational symmetry",
+      "importance": "primary",
+      "description": "Determine or exploit invariance of a planar point, segment, or shape set under a nonzero rotation, possibly after choosing a rotation center or applying a translation. Use when rotational self-congruence or symmetry order is central, not for array cyclic shifts or reflection-only symmetry.",
+      "parents": [
+        "math/geometry",
+        "trick/symmetry"
+      ],
+      "created_reason": "The existing math/geometry and trick/symmetry tags are too broad to retrieve problems whose main objective is finding the order of planar rotational self-symmetry. CF2052G is exactly a rotation-invariance test on a segment union.",
+      "status": "candidate",
+      "aliases": [
+        "rotational symmetry",
+        "rotation invariance",
+        "k-fold rotational symmetry",
+        "旋转对称"
+      ],
+      "evidence": "The required answer is the least nonzero rotation preserving the drawn segment set up to translation, and the C8 rotational-symmetry subgroup reduces the candidates to 45, 90, 180, and 360 degrees.",
+      "solution_variant": "exact-algebraic-segment-canonicalization",
+      "parent": "math/geometry"
+    },
+    {
+      "tag": "trick/canonical-form",
+      "importance": "primary",
+      "evidence": "Merging collinear adjacent segments, subtracting one translation-invariant lexicographic anchor, and sorting produces a unique representation that can be compared exactly across rotations.",
+      "solution_variant": "exact-algebraic-segment-canonicalization"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "secondary",
+      "evidence": "Intervals on each supporting line are sorted before merging, and the final normalized segment pairs are sorted for deterministic equality comparison.",
+      "solution_variant": "exact-algebraic-segment-canonicalization"
+    },
+    {
+      "tag": "implementation",
+      "importance": "secondary",
+      "evidence": "A correct solution depends on an exact signed rotation transform for algebraic coordinates, undirected endpoint normalization, adjacency-chain merging, 64-bit bounds, and updating position after both move and draw commands.",
+      "solution_variant": "exact-algebraic-segment-canonicalization"
+    }
+  ]
+}

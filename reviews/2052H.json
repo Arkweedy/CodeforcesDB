@@ -1,0 +1,110 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "H",
+    "title": "Hunting Hoglins in Hogwarts",
+    "rating": 3500,
+    "rating_status": "official",
+    "official_tags": [
+      "interactive"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2052/attachments/download/28917/2024-2025-icpc-nerc-northern-eurasia-finals.pdf",
+      "notes": "Official NERC statement. Used to confirm the stochastic movement model, interaction responses, n <= 10^18, k <= 800, and the 200000-round limit."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://neerc.ifmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official NERC tutorial. Confirms posterior-ordered candidate intervals, midpoint blocking, Bayesian reweighting after a bump, the probability-level invariant, and the approximately 3.9*log2(n) expected rounds per hoglin."
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/ft0eunrz",
+      "notes": "Independent Luogu explanation by NATO. Cross-checks why ordinary binary search fails, derives the posterior factor 2^{-(j-i+1)}, and gives a reverse-and-split implementation."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/297089699",
+      "notes": "Accepted implementation by jiangly. Tracks unnormalized negative-log2 posterior weights, updates each prefix interval by j-i after a bump, splits it, and sorts the resulting intervals."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/296559219",
+      "notes": "Accepted contest submission with a local simulator and a more explicit belief-state distribution over current-position and accessible-range intervals. Used as an independent implementation-level cross-check."
+    }
+  ],
+  "annotation": {
+    "summary": "在长度为 n 的走廊中，通过交互式封锁位置捕获 k 只随机移动的 hoglin。撞墙响应只能说明它跨过了某个已经封锁的位置，不能直接确定它位于该位置的左侧还是右侧，因此普通二分无法在查询上限内完成任务。",
+    "constraints": "1 <= n <= 10^18, 1 <= k <= 800；总交互轮数至多 200000；interactor 非自适应，每只 hoglin 的初始位置和每轮目标位置均按题面规定独立均匀随机。",
+    "core_idea": "把当前信念状态表示为若干互不相交、长度近似相等的候选区间，并按 hoglin 位于各区间的后验概率从高到低排序。依次封锁这些区间的中点。若在处理第 j 个区间后首次撞墙，则 hoglin 只可能来自前 j 个区间；若它原来位于第 i 个区间，首次在此时撞墙的似然为 2^{-(j-i+1)}。因此其新后验质量正比于 p_i*2^{-(j-i+1)}。把前 j 个区间各自按中点劈成两个子区间，使用该似然更新权重并重新排序；后面的候选区间全部排除。若所有中点都已封锁但仍未撞墙，就持续输出 0，直到 hoglin 跨过自己区间的中点。每次撞墙都会把真实可达区间长度减半，所以只需 O(log n) 个阶段；后验概率按二的幂次成层衰减，使每阶段期望查询数保持常数。",
+    "complexity": "Expected about 3.9*k*ceil(log2(n)) interaction rounds according to the official analysis. With explicit exponent weights, local processing is O(Q log Q) time and O(Q) memory for Q <= 200000.",
+    "tricks": [
+      "撞墙只暴露跨越了某堵墙，不能判断落在墙的哪一侧，因此不能使用普通二分搜索。",
+      "用未归一化的负二进制对数权重保存后验概率：第 j 次询问撞墙后，第 i 个候选的权重只需增加 j-i，避免浮点误差和反复归一化。",
+      "未抓到 hoglin 时，中点本身可以从新候选区间中删除，因为 hoglin 若位于该位置就已经返回 caught。",
+      "查询完全部候选中点后无需新增墙，只需输出 0 等待一次必然以几何分布到来的撞墙事件。",
+      "概率层是二的幂次且同一层连续出现次数有常数上界，因此可利用反转加复制维持顺序；显式权重排序是更稳健的实现。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "posterior_exponent_intervals",
+      "summary": "维护三元组 (weight,l,r)，其中区间后验质量正比于 2^{-weight}，并按 weight 升序查询中点。若第 j 个查询后撞墙，只保留前 j 个区间；对第 i 个区间执行 weight += j-i，再分裂为去掉中点后的左右子区间并排序。抓到 hoglin 后重置为 [1,n]。这是官方策略的直接、无浮点实现。",
+      "complexity": "Expected O(k log n) interaction rounds with an approximately 3.9 constant; O(Q log Q) local time and O(Q) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "exact_belief_distribution",
+      "summary": "显式维护由当前可能位置区间和 hoglin 自身可达区间组成的状态及其概率密度，选择累计概率质量最大的候选中点进行封锁，并分别根据无声或撞墙响应更新整张后验分布。这能更精确处理不等长区间，但状态和实现明显更复杂。",
+      "complexity": "Accepted under the same 200000-query limit; practical complexity depends on the number of surviving belief states and is less clean than the primary interval-exponent formulation.",
+      "confidence": "medium",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/interactive",
+      "importance": "primary",
+      "evidence": "查询位置必须根据此前的无声、撞墙和捕获响应在线调整；整个解法及查询上限证明都依赖交互协议。",
+      "solution_variant": "posterior_exponent_intervals"
+    },
+    {
+      "tag": "algorithm/search/bayesian-search",
+      "importance": "primary",
+      "evidence": "算法维护隐藏位置所属候选区间的后验概率，并按后验概率从高到低安排探测；撞墙后的似然重排直接决定下一轮搜索顺序。",
+      "solution_variant": "posterior_exponent_intervals",
+      "description": "Search for a hidden state under a known stochastic response or transition model by maintaining posterior probabilities over candidate states or regions and choosing probes according to posterior mass. Use when Bayesian belief updates and posterior-driven probe ordering are essential, not for deterministic binary search or an algorithm that is merely randomized.",
+      "parent": "algorithm/search",
+      "created_reason": "Existing algorithm/search and math/probability/bayesian-update expose the broad ingredients separately, but do not identify the reusable search pattern where posterior ranking drives the adaptive probing strategy. CF2052H explicitly requires this pattern instead of ordinary binary search.",
+      "status": "candidate"
+    },
+    {
+      "tag": "math/probability/bayesian-update",
+      "importance": "primary",
+      "evidence": "首次在第 j 次探测后撞墙时，第 i 个旧区间的后验质量按 p_i*2^{-(j-i+1)} 更新；这一贝叶斯重加权是候选区间排序和正确性的核心。",
+      "solution_variant": "posterior_exponent_intervals"
+    },
+    {
+      "tag": "math/probability/expected-progress",
+      "importance": "primary",
+      "evidence": "能否在 200000 轮内捕获最多 800 只 hoglin 取决于概率层指数衰减带来的每次区间减半阶段常数期望查询数，而不仅是最终必然定位。",
+      "solution_variant": "posterior_exponent_intervals"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "secondary",
+      "evidence": "长度可达 10^18 的位置分布被压缩成少量等概率候选区间及整数概率指数，无需维护每个位置或完整浮点概率分布。",
+      "solution_variant": "posterior_exponent_intervals"
+    }
+  ]
+}

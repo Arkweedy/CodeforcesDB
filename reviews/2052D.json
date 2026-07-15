@@ -1,0 +1,104 @@
+{
+  "contest": {
+    "contest_id": 2052,
+    "title": "2024-2025 ICPC, NERC, Northern Eurasia Finals (Unrated, Online Mirror, ICPC Rules, Teams Preferred)"
+  },
+  "problem": {
+    "contest_id": 2052,
+    "index": "D",
+    "title": "DAG Serialization",
+    "rating": 2100,
+    "rating_status": "official",
+    "official_tags": [
+      "brute force",
+      "graphs"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/problemset/problem/2052/D",
+      "notes": "Read the operation semantics and constraints: n,m<=100000, the initial register is false, the input DAG specifies precedence, and at most two operations returned true."
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://nerc.itmo.ru/archive/2024/nef-2024-tutorial.pdf",
+      "notes": "Official tutorial compresses the register lifetime into false/true/false phases and reduces feasibility to a topological ordering with phase constraints."
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2052/submission/296530259",
+      "notes": "Inspected an accepted contest implementation using phase-aware zero-indegree queues for the four operation/result classes."
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/problemset/problem/2052/D",
+      "notes": "Proved that eagerly consuming a currently legal zero-indegree no-change operation cannot hurt. Differential-tested the phase-aware Kahn algorithm against exhaustive topological-order simulation on 28,000 random DAG instances with n<=7."
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2052D",
+      "notes": "Luogu solution index candidate; unavailable during this review and therefore not used as evidence."
+    }
+  ],
+  "annotation": {
+    "summary": "Find a linear extension of a DAG of set/unset operations whose observed boolean return values are consistent with executing the operations from an initially false register.",
+    "constraints": "n,m<=100000 and at most two operations returned true, requiring an O(n+m) graph algorithm.",
+    "core_idea": "A true result changes the register, so at most two true results imply at most three phases: false, then possibly true, then possibly false. In a false phase, only unset-false operations preserve the state; in a true phase, only set-false operations preserve it. Set-true and unset-true are the phase transitions. First validate that the true-result operations form one of the possible transition patterns. Run Kahn's algorithm with ready vertices separated by operation class: drain all currently legal no-change operations, require the next transition to have zero indegree, switch phase, and continue. Remaining unset-false operations may naturally fall before the first transition or after the second according to the DAG.",
+    "complexity": "O(n+m) time and O(n+m) memory.",
+    "tricks": [
+      "Compress the entire register history into at most three phases.",
+      "Classify vertices by both operation type and reported result.",
+      "Maintain separate zero-indegree queues so only operations legal in the current phase are emitted.",
+      "Handle zero, one, or two true-result operations explicitly and reject impossible transition patterns."
+    ],
+    "confidence": "high",
+    "review_status": "reviewed"
+  },
+  "solution_variants": [
+    {
+      "name": "phase-aware-kahn-toposort",
+      "summary": "Use four ready queues for unset-false, set-false, set-true, and unset-true. Drain the legal no-change queue for each register phase and emit a required transition only when it is ready. A solution exists exactly when all vertices are emitted.",
+      "complexity": "O(n+m) time and O(n+m) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "graph/dag/topological-sort",
+      "display_name": "Topological Sort",
+      "description": "Use a topological ordering, usually constructed with indegrees and Kahn's algorithm, as the central construction or feasibility test; exclude DAG problems where topological ordering is only incidental.",
+      "parent": "graph/dag",
+      "created_reason": "The existing graph/dag tag is too broad for retrieving problems whose decisive operation is constructing a constrained topological order.",
+      "status": "candidate",
+      "aliases": [
+        "topological-sort",
+        "toposort"
+      ],
+      "importance": "primary",
+      "evidence": "The required serialization is exactly a topological ordering, with zero-indegree choices additionally restricted by the current register phase.",
+      "solution_variant": "phase-aware-kahn-toposort"
+    },
+    {
+      "tag": "trick/state-compression",
+      "importance": "primary",
+      "evidence": "The bound of two true results compresses an arbitrary-length execution into at most three register-state phases.",
+      "solution_variant": "phase-aware-kahn-toposort"
+    },
+    {
+      "tag": "graph/dag",
+      "importance": "secondary",
+      "evidence": "All given precedence constraints form a DAG and are maintained through indegree updates.",
+      "solution_variant": "phase-aware-kahn-toposort"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "Every currently legal zero-indegree no-change operation can be emitted immediately without reducing future feasibility.",
+      "solution_variant": "phase-aware-kahn-toposort"
+    }
+  ]
+}

@@ -130,6 +130,7 @@ const RATING_STATUS_TEXT: Record<Locale, Record<RatingStatus, string>> = {
 const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
   zh: {
     "accepted-code": "通过代码",
+    accepted_code: "通过代码",
     accepted_submission: "通过提交",
     "auto-seeded": "自动种子",
     auto_seeded: "自动种子",
@@ -140,6 +141,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     editorial: "题解",
     excluded: "已排除",
     high: "高",
+    independent_code: "独立代码",
     "luogu-solution": "洛谷题解",
     luogu_problem: "洛谷题面",
     luogu_solution: "洛谷题解",
@@ -150,10 +152,13 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     reviewed: "已复核",
     secondary: "次解法",
     self_derivation: "自行推导",
-    statement: "题面"
+    statement: "题面",
+    statement_mirror: "题面镜像",
+    status: "提交状态"
   },
   en: {
     "accepted-code": "Accepted code",
+    accepted_code: "Accepted code",
     accepted_submission: "Accepted submission",
     "auto-seeded": "Auto seeded",
     auto_seeded: "Auto seeded",
@@ -164,6 +169,7 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     editorial: "Editorial",
     excluded: "Excluded",
     high: "High",
+    independent_code: "Independent code",
     "luogu-solution": "Luogu solutions",
     luogu_problem: "Luogu problem",
     luogu_solution: "Luogu solutions",
@@ -174,7 +180,9 @@ const GENERIC_VALUE_TEXT: Record<Locale, Record<string, string>> = {
     reviewed: "Reviewed",
     secondary: "Secondary",
     self_derivation: "Self derivation",
-    statement: "Statement"
+    statement: "Statement",
+    statement_mirror: "Statement mirror",
+    status: "Submission status"
   }
 };
 
@@ -189,6 +197,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "batch-simulation": "批量模拟",
   "back-edge-enumeration": "返祖边枚举",
   "bayesian-update": "贝叶斯更新",
+  "bayesian-search": "贝叶斯搜索",
   "bfs": "BFS",
   "binary-lifting": "倍增",
   "binary-search": "二分",
@@ -300,6 +309,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "information-theory": "信息论",
   "information-encoding": "信息编码",
   "interval-feasibility": "区间可行性",
+  "interval-edge-coloring": "区间边染色",
   "kmp-prefix-function": "KMP 前缀函数",
   "knapsack-dp": "背包 DP",
   "layered-graph": "分层图",
@@ -364,6 +374,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "parsing": "解析",
   "palindrome": "回文",
   "parallel-binary-search": "整体二分",
+  "program-synthesis": "程序合成",
   "path-counting": "路径计数",
   "permutation-counting": "排列计数",
   "permutation-structure": "排列结构",
@@ -390,6 +401,9 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "quadtree": "四叉树",
   "quotient-state-space": "商状态空间",
   "query-differencing": "查询差分",
+  "residual-cycle": "残量环调整",
+  "retrograde-analysis": "逆向状态分析",
+  "rotational-symmetry": "旋转对称",
   "residue-knapsack": "同余背包",
   "rolling-hash": "滚动哈希",
   "run-length-encoding": "游程编码",
@@ -397,6 +411,8 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "reverse-process": "逆向处理",
   "rook-graph": "车图",
   "scheduling": "调度",
+  "scc": "强连通分量",
+  "self-modifying-code": "自修改代码",
   "deadline-greedy": "截止时间贪心",
   "search": "搜索",
   "segmentation": "分段",
@@ -433,6 +449,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "tight-loose-state": "紧/松状态",
   "tiling": "平铺构造",
   "top-k-maintenance": "Top-K 维护",
+  "topological-sort": "拓扑排序",
   "transform": "变换",
   "tree": "树",
   "tree-centroid": "树重心",
@@ -440,6 +457,7 @@ const SEGMENT_TEXT_ZH: Record<string, string> = {
   "tree-dp": "树形 DP",
   "tree-dfs": "树上 DFS",
   "tree-hashing": "树哈希",
+  "tree-matching": "树匹配",
   "trie": "字典树",
   "trick": "技巧",
   "two-pointers": "双指针",
