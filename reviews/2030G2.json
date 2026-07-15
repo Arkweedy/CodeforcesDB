@@ -1,0 +1,158 @@
+{
+  "contest": {
+    "contest_id": 2030,
+    "title": "Codeforces Round 979 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2030,
+    "index": "G2",
+    "title": "The Destruction of the Universe (Hard Version)",
+    "rating": 3100,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "math"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2030G1",
+    "relationship": "题意、分数定义和固定子集的最优性证明均与 G1 相同。G2 将 n、sum(n) 提升到 10^6，必须把 G1 的端点对枚举或逐切割二项式求和降为线性或 O(n log n) 扫描。G1 的 O(n^2) 解法不可用于 G2；本题的 G2 解法可以直接覆盖 G1。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2030/problem/G2",
+      "notes": "完整读取 Hard 题面和约束，确认与 G1 的唯一题面差异是规模。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135218",
+      "notes": "读取官方 Hard 教程与嵌入代码；确认单端点贡献、p<q 的二项式计数、H(N,K) 前缀和递推及摊还扫描。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2030/submission/286824383",
+      "notes": "页面明确显示 Accepted；读取官方题解作者的完整实现，核对双向端点扫描和动态二项式前缀和维护。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2030/submission/286844309",
+      "notes": "页面明确显示 Accepted；读取独立 O(n) 实现，确认坐标频率、离散导数以及两个二项式前缀和的常数时间更新。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/0fn8274e",
+      "notes": "读取完整推导；独立确认区间距离转为端点 L1 距离、中位数最优化及按中位端点拆贡献。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/real60t/p/19333382",
+      "notes": "读取 CF2030G2 小节；交叉确认离散导数、正部贡献、Vandermonde 化简和 O(n) 滚动更新。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2030/problem/G2",
+      "notes": "独立推导 F(A,B) 闭式、重复端点事件顺序和线性扫描；使用同一内存 oracle 与 G1、直接子集暴力进行对拍。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "计算与 G1 相同的所有区间子集最小公共交点扩展代价之和，但 n 提升到 10^6。",
+    "constraints": "1 <= t <= 10000；1 <= n <= 10^6；1 <= l_i <= r_i <= n；sum(n) <= 10^6；模数 998244353；时限 4 秒，内存 512 MB。",
+    "core_idea": "固定子集 S，令 f_S(x) 为把公共点放在整数 x 时的总扩展次数。区间代价满足 2d(x,[l,r])=|x-l|+|x-r|-(r-l)，因此 f_S 是凸函数，最优点位于所选区间全部端点的中位数区间。更适合线性统计的形式是离散导数。令 A_S(x) 为所选且 r_i<=x 的区间数，B_S(x) 为所选且 l_i>x 的区间数，则 f_S(x+1)-f_S(x)=A_S(x)-B_S(x)。从 x=0 开始，f_S(0)=sum_{i in S}l_i；导数单调不减，所以最小值等于该基准减去所有 max(B_S-A_S,0)。交换对子集和坐标的求和顺序。对固定切割 x，设全体区间中 A 个完全在左侧、B 个完全在右侧，剩余 C=n-A-B 个跨越切割。跨越区间任意选择，贡献 2^C。定义 F(A,B)=sum_{p=0}^A sum_{q=0}^B max(q-p,0)C(A,p)C(B,q)。令 H(N,K)=sum_{i=0}^K C(N,i)，则利用 qC(B,q)=BC(B-1,q-1)、pC(A,p)=AC(A-1,p-1) 和 Vandermonde 恒等式可得 F(A,B)=B*H(A+B-1,B)-A*H(A+B-1,B-1)。扫描 x=0..n-1，A 只增加、B 只减少；通过 H(N,K)=2H(N-1,K)-C(N-1,K) 和 H(N,K)=H(N,K-1)+C(N,K)，以及模意义下的 2 的逆元，可在每个端点事件 O(1) 更新两个 H。因为端点在 [1,n]，直接使用坐标频率数组即可线性扫描。",
+    "complexity": "阶乘、逆阶乘、二次幂和端点频率预处理 O(n)，每个左右端点只触发一次 O(1) 更新，总时间 O(n)、空间 O(n)。若采用官方排序加 multiset 的单端点贡献实现，则为 O(n log n) 时间和 O(n) 空间。",
+    "tricks": [
+      "把点到区间的距离转成两个端点的 L1 距离减去区间长度常量。",
+      "用凸函数的离散导数代替直接枚举每个子集的中位数。",
+      "先把所有子集的公共点放在 0，再减去每个切割处仍为正的改进量。",
+      "把左右已选数量的双重求和压缩成两个二项式前缀和。",
+      "沿坐标扫描时同时滚动 N 和 K，使用 Pascal 递推及 2 的模逆元常数时间更新。",
+      "聚合所有相同端点的频率，避免重复端点的秩次和摊还复杂度问题。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "穷举 n=1..4 的全部 10226 个有序区间列表，并枚举所有非空子集和公共点。",
+      "随机验证 n=5..8 的 4000 个额外实例。",
+      "直接答案、G1 端点对公式、切割 min(A,B) 公式和 G2 离散导数公式在全部 14226 个实例上一致。",
+      "额外对全部 0<=A,B<=8 验证 F(A,B) 双重求和与 B*H(A+B-1,B)-A*H(A+B-1,B-1) 完全相等。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；官方题解、两个 Accepted 实现、Luogu、独立博客和小规模对拍相互一致。",
+      "官方文字对 H(N,K) 在连续事件间的摊还移动说明较简略；坐标频率 O(n) 实现提供了更直接的独立交叉验证。",
+      "官方单端点贡献和离散导数方案的中间公式不同，但都来自同一个中位数或极端配对结构。",
+      "没有提出新 tag；现有 median-minimization、binomial-identity、subset-counting、sweep-line 和 maintain-contribution 足以描述本题。"
+    ],
+    "proof_risks": [
+      "f_S(x+1)-f_S(x) 中左侧区间使用 r_i<=x，右侧区间使用 l_i>x；边界写反会在重复端点处出错。",
+      "A 类和 B 类区间互不相交依赖 l_i<=r_i，因此自由区间数才是 n-A-B。",
+      "只能减去 max(B_S-A_S,0)，不能对导数取绝对值；正部来自 f_S 的凸性和从左向右到达最小点的过程。",
+      "基准 sum_S f_S(0) 等于 sum_i l_i*2^(n-1)，空子集贡献为零。",
+      "F(A,B) 的两个前缀分别是 H(A+B-1,B) 和 H(A+B-1,B-1)，下标差一会系统性错计 q=p+1 的边界。",
+      "当 A+B=0 或前缀上界小于 0 时应返回零，不能访问负组合数下标。",
+      "相同坐标事件应先形成准确的 A=#{r_i<=x}、B=#{l_i>x} 再计算该切割；逐端点排序实现则必须使用一致的稳定秩序。",
+      "H 的逆向递推需要乘 inv(2)；普通整数除法或未归一化负模会破坏结果。",
+      "G1 的端点对 O(n^2) 算法在 n=10^6 时不可用。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "coordinate-frequency-positive-derivative-sweep",
+      "summary": "从公共点 0 的总子集代价出发，逐切割减去所有子集的正改进量；用两个滚动二项式前缀和计算 F(A,B)，并按端点频率线性扫描。",
+      "complexity": "O(n) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "official-endpoint-contribution-sweep",
+      "summary": "把每个配对距离拆成正左端点和负右端点贡献。对右端点 r_i，若其之前有 x 个右端点、右侧有 y 个左端点，则选择数满足 p<q，ways=2^(x+y)-H(x+y,x)；左端点对称处理，并在排序扫描中摊还维护 H。",
+      "complexity": "O(n log n) time and O(n) memory in the official sort-plus-multiset implementation.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "math/order-statistics/median-minimization",
+      "importance": "primary",
+      "evidence": "固定子集的区间扩展代价等价于全部左右端点到公共点的 L1 距离减常量，最优公共点由端点中位数决定。",
+      "solution_variant": "coordinate-frequency-positive-derivative-sweep"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "每个坐标切割都必须按左右各选 p、q 个区间以及自由跨越区间统计全部子集的总改进量。",
+      "solution_variant": "coordinate-frequency-positive-derivative-sweep"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "F(A,B) 的双重组合求和和官方 p<q 计数均依靠 Vandermonde 恒等式与二项式前缀递推化为常数次组合数运算。",
+      "solution_variant": "coordinate-frequency-positive-derivative-sweep"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "primary",
+      "evidence": "算法沿公共点坐标扫描，左侧区间数 A 单调增加、右侧区间数 B 单调减少，并增量维护该切割的全部子集贡献。",
+      "solution_variant": "coordinate-frequency-positive-derivative-sweep"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "每个左右端点事件只调整一次 A、B 和两个二项式前缀和，从而滚动维护当前切割对总答案的贡献。",
+      "solution_variant": "coordinate-frequency-positive-derivative-sweep"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "与 G1 共用的固定子集证明仍可解释为不断配对最小右端点与最大左端点；Hard 方案只替换了跨所有子集的汇总方式。",
+      "solution_variant": "official-endpoint-contribution-sweep"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "官方变体需要分别按右端点升序和左端点降序处理事件；坐标频率主变体可省去排序。",
+      "solution_variant": "official-endpoint-contribution-sweep"
+    }
+  ]
+}

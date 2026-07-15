@@ -1,0 +1,120 @@
+{
+  "contest": {
+    "contest_id": 2030,
+    "title": "Codeforces Round 979 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2030,
+    "index": "D",
+    "title": "QED's Favorite Permutation",
+    "rating": 1700,
+    "rating_status": "official",
+    "official_tags": [
+      "data structures",
+      "implementation",
+      "sortings"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2030/problem/D",
+      "notes": "完整读取允许交换方向、持久翻转查询、每次从原排列重新开始，以及 sum(n)+sum(q)<=2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135218",
+      "notes": "核对官方 LR 屏障、元素目标位置区间、差分覆盖以及单次翻转只影响两个相邻边界的线性方案与代码。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/The-Shadow-Dragon/p/18537906",
+      "notes": "读取完整中文证明与实现；独立确认元素能回到目标位置当且仅当其移动区间内没有 LR 屏障，并用计数器维护查询。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2030/problem/D",
+      "notes": "独立从路径图连通分量证明充要性，并穷举 n=3..6 的全部合法 LR 字符串与排列，共 12588 组；显式 BFS 可达性与边界覆盖判定完全一致。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2030D",
+      "notes": "Luogu 题解索引候选；本次未稳定取得并实际阅读一篇独立文章，因此未移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "固定一个排列和控制相邻交换方向的 LR 字符串；每次翻转一个字符后，判断能否通过允许的相邻交换把原排列排成单位排列。",
+    "constraints": "1<=t<=1e4；3<=n<=2e5；1<=q<=2e5；查询位置位于 [2,n-1]；所有测试的 n 与 q 总和不超过 2e5。",
+    "core_idea": "边界 k 连接位置 k 与 k+1。只要 s_k=R 或 s_{k+1}=L，就能跨边界交换；唯一完全封闭的边界是 s_k=L 且 s_{k+1}=R。删去这些 LR 边界后，位置形成若干连续连通分量，分量内部的相邻交换可以生成任意排列。因此可排序当且仅当每个值 v 的当前位置 pos_v 与目标位置 v 属于同一分量。等价地，对每个 v 覆盖半开边界区间 [min(v,pos_v),max(v,pos_v))，任何被至少一个区间覆盖的边界都必须开放。用差分数组预处理每条边界的覆盖次数 need_k，再维护满足 need_k>0 且边界为 LR 的违规边界数 bad。翻转 s_i 只可能改变边界 i-1 和 i；重算这两项后，bad=0 即回答 YES。也可直接使用位置 i 到目标 p_i 的区间，所得边界覆盖集合相同。",
+    "complexity": "每个测试 O(n+q) 时间、O(n) 空间；每次查询 O(1)。",
+    "tricks": [
+      "把有向操作描述还原成无向的相邻可交换边：只要任一端字符指向该边即可交换。",
+      "将不可跨越的 LR 边界看成切断路径图的屏障。",
+      "排列中值 v 的目标位置就是 v，因此每个元素产生一段必须连通的边界区间。",
+      "用差分一次性合并所有必须跨越区间。",
+      "字符单点翻转只改变左右两条边界，维护全局违规计数即可。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "对 n=3..6 的全部合法字符串和全部排列，从单位排列在允许边上显式 BFS。",
+      "共核验 12588 个字符串-排列组合，BFS 可达性与差分屏障判定全部相同。"
+    ],
+    "uncertainty_points": [
+      "主方案由官方题解、独立完整实现和全枚举验证共同确认，没有未解决的正确性问题。",
+      "本次没有实际读到独立 Luogu 文章，因此只把其索引保留为候选来源。",
+      "不需要 official sortings tag：算法不执行排序，决定性内容是屏障分段、差分覆盖和在线局部维护。"
+    ],
+    "proof_risks": [
+      "封闭模式是 s_k=L、s_{k+1}=R，而不是 RL；RL 边界两侧都能主动跨边交换。",
+      "区间覆盖的是元素当前位置与目标位置之间的边界，右端必须排除，否则会多标一条边。",
+      "必须证明连通分量内的所有相邻边都可用，才能推出该分量内可实现任意排列。",
+      "翻转 s_i 前后都应重算边界 i-1 和 i；仅检查其中一侧会漏掉新产生或消失的 LR。",
+      "维护计数时应先删除旧状态再写入新字符，或使用统一的边界重算函数，避免正负号写反。",
+      "官方代码可用 pos_v，另一实现可用位置 i 与值 p_i；两者等价，但不能混用下标和值后形成错误区间。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "required-boundary-difference-and-local-counter",
+      "summary": "差分标记所有元素回到目标位置时必须跨越的边界，维护其中当前呈 LR 封闭状态的数量；每次字符翻转只重算两条边。",
+      "complexity": "O(n+q) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "trick/barrier-segmentation",
+      "importance": "primary",
+      "evidence": "LR 边界把位置路径切成独立连续分量；可排序性完全等价于每个元素与其目标位置未被这些屏障分隔。",
+      "solution_variant": "required-boundary-difference-and-local-counter"
+    },
+    {
+      "tag": "data-structure/difference-array",
+      "importance": "primary",
+      "evidence": "每个元素产生一段必须开放的边界区间，差分数组在线性时间内求出每条边界是否被至少一个移动需求覆盖。",
+      "solution_variant": "required-boundary-difference-and-local-counter"
+    },
+    {
+      "tag": "paradigm/online",
+      "importance": "primary",
+      "evidence": "字符串翻转持久生效，算法必须在每次更新后立即回答；它通过维护全局违规边界计数实现 O(1) 在线查询。",
+      "solution_variant": "required-boundary-difference-and-local-counter"
+    },
+    {
+      "tag": "trick/maintain-contribution",
+      "importance": "secondary",
+      "evidence": "翻转一个字符只改变两条相邻边界对 bad 的布尔贡献，可以删除旧贡献并加入新贡献。",
+      "solution_variant": "required-boundary-difference-and-local-counter"
+    },
+    {
+      "tag": "trick/permutation-structure",
+      "importance": "secondary",
+      "evidence": "排列中元素 v 的最终位置固定为 v，使全局排序条件可拆成每个元素当前位置到目标位置的连通性要求。",
+      "solution_variant": "required-boundary-difference-and-local-counter"
+    }
+  ]
+}

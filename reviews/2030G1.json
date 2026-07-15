@@ -1,0 +1,142 @@
+{
+  "contest": {
+    "contest_id": 2030,
+    "title": "Codeforces Round 979 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2030,
+    "index": "G1",
+    "title": "The Destruction of the Universe (Easy Version)",
+    "rating": 2900,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "greedy",
+      "math"
+    ]
+  },
+  "version_relationship": {
+    "related_problem": "2030G2",
+    "relationship": "两版题意与答案完全相同，仅约束不同。G1 的 n 与 sum(n) 均不超过 5000，允许 O(n^2) 枚举端点对或坐标切割；G2 提升到 10^6，G1 的任何二次做法都不能复用。G2 的线性或 O(n log n) 扫描算法可以直接用于 G1。"
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2030/problem/G1",
+      "notes": "完整读取题面、样例、扩展操作定义和 Easy 约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135218",
+      "notes": "读取官方 G1/G2 教程及代码；确认极端端点贪心配对、固定端点对的子集计数和 Vandermonde 化简。"
+    },
+    {
+      "source_type": "accepted-code",
+      "url": "https://codeforces.com/contest/2030/submission/286845053",
+      "notes": "页面明确显示 Accepted；读取完整源码，确认另一种按坐标切割、累计二项式尾和的 O(n^2) 实现。"
+    },
+    {
+      "source_type": "blog",
+      "url": "https://www.cnblogs.com/happybob/p/18450583",
+      "notes": "读取 CF2030G1 完整小节；独立确认极端区间递归、端点对贡献及 Vandermonde 恒等式。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2030/problem/G1",
+      "notes": "独立推导固定子集分数、重复端点的稳定秩序和两种总贡献公式；使用内存脚本完成小规模对拍，未修改文件或数据库。"
+    }
+  ],
+  "reference_candidates": [
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/problem/solution/CF2030G1",
+      "notes": "Luogu 题解索引候选；本次未取得可稳定核验的独立 G1 文章，因此未移入 sources。"
+    }
+  ],
+  "annotation": {
+    "summary": "每个区间可向左或向右扩展单位长度。对所有非空区间子集，求使该子集拥有公共交点所需最少扩展次数之和。",
+    "constraints": "1 <= t <= 1000；1 <= n <= 5000；1 <= l_i <= r_i <= n；sum(n) <= 5000；模数 998244353；时限 4 秒，内存 512 MB。",
+    "core_idea": "固定子集 S。若最小右端点 r_u 不小于最大左端点 l_v，则所有区间已经相交；否则任何方案至少要付出 l_v-r_u，使这两个最远分离的区间相交。删除 u、v 后递归，并把该距离加回，可以达到这个下界。因此按右端点升序和左端点降序，第 k 小右端点与第 k 大左端点在仍分离时配对，子集分数等于全部配对距离之和。为重复端点建立稳定顺序：右端点按 (r_i,i) 升序，左端点按 (l_i,i) 降序。固定 r_i<l_j，令 g 为右端点顺序中严格早于 i 的区间数，h 为左端点顺序中严格早于 j 的区间数。该端点对被配对，当且仅当子集从这两组中各选择相同数量 k；其余 n-2-g-h 个区间任意。因此贡献系数为 sum_k C(g,k)C(h,k)2^(n-2-g-h)=C(g+h,g)2^(n-2-g-h)，乘以距离 l_j-r_i 即可。",
+    "complexity": "端点排序和组合数预处理 O(n log n)，枚举有序端点对 O(n^2)，总时间 O(n^2)，空间 O(n)。官方示例代码用二次比较求秩，渐进复杂度仍为 O(n^2)。",
+    "tricks": [
+      "先解决固定子集的最优化，再交换求和顺序统计每个端点对被使用的子集数。",
+      "把第 k 小右端点与第 k 大左端点配对，直到两者相交。",
+      "用稳定的端点加编号顺序消除重复端点造成的秩歧义。",
+      "两侧各选 k 个区间的计数通过 Vandermonde 恒等式压成一个组合数。",
+      "等价地，分数也可写成所有坐标切割上 min(左侧已选区间数, 右侧已选区间数) 之和。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "穷举 n=1..4 的全部 10226 个有序区间列表，并对每个列表枚举全部非空子集。",
+      "另随机生成 n=5..8 的 4000 个实例。",
+      "直接枚举公共点、极端端点对贡献公式、坐标切割公式与 G2 的离散导数公式在全部 14226 个实例上完全一致。"
+    ],
+    "uncertainty_points": [
+      "没有未解决的正确性问题；官方题解、独立博客、Accepted 代码和小规模穷举一致。",
+      "未取得可稳定读取的独立 Luogu G1 题解，因此 Luogu 索引仅保留为 reference candidate。",
+      "G2 算法可用于 G1，但数据库应保留 G1 的二次端点对算法，因为它更直接体现 Easy 版本的复杂度设计。"
+    ],
+    "proof_risks": [
+      "不能只取一次最小 r 与最大 l；删除该对后必须继续递归，直到剩余区间已有公共交点。",
+      "固定端点对的两组候选必须使用同一个稳定秩序；重复端点下混用严格和非严格比较会重复或漏计。",
+      "条件是两组各选择相同数量，而不是要求子集总共只包含这些区间；其余区间独立贡献 2 的幂。",
+      "只有 r_i<l_j 的端点对产生正距离，端点相等时贡献为零。",
+      "G1 的 O(n^2) 枚举在 G2 的 n=10^6 下完全不可行，不能通过常数优化复用。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "extreme-endpoint-pair-contribution",
+      "summary": "递归配对第 k 小右端点和第 k 大左端点；枚举每个分离端点对，用稳定秩次、子集选择和 Vandermonde 恒等式计算总贡献。",
+      "complexity": "O(n^2) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "coordinate-cut-binomial-tail-sum",
+      "summary": "使用 score(S)=sum_x min(A_x,B_x)，其中 A_x 为已选且 r_i<=x 的数量，B_x 为已选且 l_i>x 的数量；对每个切割用二项式尾和统计所有子集。",
+      "complexity": "O(n^2) time and O(n^2) memory with a Pascal table.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "paradigm/greedy",
+      "importance": "primary",
+      "evidence": "固定子集分数由反复选择最小右端点和最大左端点、支付其距离并删除两者的极端配对贪心精确得到。",
+      "solution_variant": "extreme-endpoint-pair-contribution"
+    },
+    {
+      "tag": "math/combinatorics/subset-counting",
+      "importance": "primary",
+      "evidence": "主算法必须统计每个端点对在多少个非空子集中成为同秩配对，并将这些子集的贡献一次性求和。",
+      "solution_variant": "extreme-endpoint-pair-contribution"
+    },
+    {
+      "tag": "math/combinatorics/binomial-identity",
+      "importance": "primary",
+      "evidence": "关键求和 sum_k C(g,k)C(h,k) 通过 Vandermonde 恒等式化为 C(g+h,g)，使每个端点对可以 O(1) 计数。",
+      "solution_variant": "extreme-endpoint-pair-contribution"
+    },
+    {
+      "tag": "math/order-statistics/median-minimization",
+      "importance": "secondary",
+      "evidence": "区间到公共点的代价可改写为两个端点到该点的 L1 距离减去区间长度常量，最优公共点是全部端点的中位数区间。",
+      "solution_variant": "coordinate-cut-binomial-tail-sum"
+    },
+    {
+      "tag": "paradigm/sweep-line",
+      "importance": "secondary",
+      "evidence": "替代解按坐标切割扫描，维护完全位于切割两侧的区间数量并累计所有子集跨越该切割的代价。",
+      "solution_variant": "coordinate-cut-binomial-tail-sum"
+    },
+    {
+      "tag": "algorithm/sorting",
+      "importance": "incidental",
+      "evidence": "需要分别建立右端点升序和左端点降序的稳定秩次。",
+      "solution_variant": "extreme-endpoint-pair-contribution"
+    }
+  ]
+}

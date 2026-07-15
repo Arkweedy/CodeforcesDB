@@ -1,0 +1,132 @@
+{
+  "contest": {
+    "contest_id": 2030,
+    "title": "Codeforces Round 979 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2030,
+    "index": "E",
+    "title": "MEXimize the Score",
+    "rating": 2200,
+    "rating_status": "official",
+    "official_tags": [
+      "combinatorics",
+      "data structures",
+      "dp",
+      "greedy",
+      "implementation",
+      "math"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2030/problem/E",
+      "notes": "完整读取任意多非空多重集划分、MEX 和、所有非空子序列求和、a_i<n 与 sum(n)<=2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135218",
+      "notes": "核对官方 score=频次前缀最小值之和、按前缀最小频次设计 DP、组合数转移、后缀和优化和总有效状态 O(n) 的证明与实现。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com.cn/article/8q1xc7p3",
+      "notes": "读取完整推导和代码；独立给出两类最小值转移、组合数后缀和优化以及第二维总状态数为 O(n)。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/hcot2sdv",
+      "notes": "读取另一份完整题解和实现；交叉确认固定子序列的最优分数公式、自由高值元素的 2 次幂因子和滚动状态边界。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2030/problem/E",
+      "notes": "独立证明分层划分达到所有前缀最小值上界，并对 n=1..8 各随机 1000 个数组枚举全部非空子序列；共 8000 组与 DP 精确一致。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "对原数组的每个非空子序列，先把其元素任意划分为多重集并最大化各集合 MEX 之和；求所有子序列最优分数之和。",
+    "constraints": "1<=t<=1e4；1<=n<=2e5；0<=a_i<n；所有测试的 sum(n)<=2e5；答案模 998244353。",
+    "core_idea": "固定一个子序列，设值 i 的出现次数为 c_i。对任意划分，MEX 总和中第 x+1 层的贡献等于包含 0..x 的集合数量，至多为 min(c_0,...,c_x)。把每种值的第 1 份放入第一层、第 2 份放入第二层，逐层组成 0,1,... 的最长前缀，可以同时达到所有上界，所以 score=sum_x min(c_0,...,c_x)。现在只需对所有位置子集统计这些前缀最小值。令原数组中值 i 的总频次为 F_i，dp_i[j] 表示只选择值 0..i 的位置且所选频次前缀最小值恰为 j>=1 的方案数。初始化 dp_0[j]=C(F_0,j)。加入值 i 时，新最小值为 j 有两个互斥来源：旧最小值 k>j 且恰选 j 个 i，贡献 C(F_i,j)*sum_{k>j}dp_{i-1}[k]；或旧最小值已经是 j 且选择至少 j 个 i，贡献 dp_{i-1}[j]*sum_{h>=j}C(F_i,h)。两个求和都用后缀和 O(1) 转移。处理到 i 后，状态 j 对 score 的第 i 项贡献 j，同时所有值大于 i 的位置可任意选择，故再乘 2^(sum_{x>i}F_x)。有效 j 最大为 min(F_0,...,F_i)，而这些上界之和不超过 sum_i F_i=n；组合数后缀表的总长度也为 O(n)，因此总复杂度线性。",
+    "complexity": "预处理阶乘和逆阶乘后，每个测试 O(n) 时间、O(n) 空间；所有测试合计 O(sum n)。",
+    "tricks": [
+      "把最优 MEX 划分改写成各频次前缀最小值的和。",
+      "按元素副本编号分层，可以同时达到每个前缀最小值上界。",
+      "DP 只保留正的当前前缀最小值；一旦某个值频次为零，后续前缀贡献全为零。",
+      "将新频次等于 j 与至少 j 两类组合选择分开，避免转移重叠。",
+      "对旧 DP 和当前组合数分别维护后缀和，使每个状态 O(1) 转移。",
+      "利用 min(F_0,...,F_i)<=F_i，证明所有层的有效状态总数而非单层宽度为 O(n)。",
+      "尚未处理的较大值对当前 score 项没有影响，仅提供任意选或不选的二次幂倍数。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "对 n=1..8 各生成 1000 个随机数组。",
+      "逐个枚举所有非空位置子集，直接计算频次前缀最小值之和，并与组合 DP 的整数结果比较。",
+      "共 8000 组全部一致，覆盖 F_0=0、频次断层、重复零和多个相同最小频次等情况。"
+    ],
+    "uncertainty_points": [
+      "官方题解、两份独立洛谷实现和子序列暴力验证一致，没有未解决的正确性问题。",
+      "不同实现可能使用前缀和或后缀和、二维向量或滚动数组，但状态含义和两类转移相同。",
+      "没有提出新 tag；现有 counting-dp、prefix-sum-optimization、combinatorics、mex 和 frequency-buckets 足以精确检索。"
+    ],
+    "proof_risks": [
+      "score 不是各值频次之和；第 x 项必须是 min(c_0,...,c_x)，缺少任意较小值就会截断后续 MEX 贡献。",
+      "子序列按位置选择，出现次数为 h 的方案数必须乘 C(F_i,h)，不能只按不同频次数计一次。",
+      "新最小值为 j 的两个来源应是旧最小值严格大于 j并恰选 j个，以及旧最小值等于 j并至少选 j个；边界写错会重计。",
+      "值大于当前 i 的位置必须乘 2 的剩余频次次幂；漏掉该因子只统计了值域前缀自身的子序列。",
+      "状态 j=0 对当前及之后所有前缀最小值贡献都为零，可以丢弃，但不能把空状态误计入答案。",
+      "线性复杂度依赖按实际 F_i 或当前前缀最小值限制循环；为每个 i 固定枚举 1..n 会退化为 O(n^2)。",
+      "所有组合数、状态和二次幂运算都必须在模 998244353 下进行。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "frequency-prefix-minimum-counting-dp",
+      "summary": "按值递增维护所选频次的当前前缀最小值分布，用组合数选择本值的出现位置，并以两组后缀和将每个状态转移降为 O(1)。",
+      "complexity": "O(n) time and O(n) memory after factorial preprocessing.",
+      "confidence": "high",
+      "is_primary": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "dp/counting-dp",
+      "importance": "primary",
+      "evidence": "核心状态统计所有值域前缀选择方案的最小频次分布，并把每个状态的方案数累加到所有子序列分数。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    },
+    {
+      "tag": "dp/prefix-sum-optimization",
+      "importance": "primary",
+      "evidence": "转移需要旧状态的严格后缀和及组合数的非严格后缀和；预处理这些和后才能让总 O(n) 个状态各自 O(1) 转移。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    },
+    {
+      "tag": "math/combinatorics",
+      "importance": "primary",
+      "evidence": "从 F_i 个相同值的位置中选择 h 个产生 C(F_i,h)，未处理位置任意选择产生 2 的幂；这些组合计数构成全部 DP 权重。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    },
+    {
+      "tag": "math/mex",
+      "importance": "primary",
+      "evidence": "决定性转化是把最优 MEX 总和精确写成 sum_x min(c_0,...,c_x)，而非仅把 MEX 当作题面术语。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    },
+    {
+      "tag": "data-structure/frequency-buckets",
+      "importance": "secondary",
+      "evidence": "原数组的顺序对答案无影响，算法先压缩为各值频次 F_i，并让每一层状态宽度受当前频次限制。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    },
+    {
+      "tag": "paradigm/greedy",
+      "importance": "secondary",
+      "evidence": "固定子序列的分数公式通过按副本层贪心构造集合 [0,1,...,j-1] 达到所有前缀最小值上界。",
+      "solution_variant": "frequency-prefix-minimum-counting-dp"
+    }
+  ]
+}

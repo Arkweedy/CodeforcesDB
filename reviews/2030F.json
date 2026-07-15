@@ -1,0 +1,133 @@
+{
+  "contest": {
+    "contest_id": 2030,
+    "title": "Codeforces Round 979 (Div. 2)"
+  },
+  "problem": {
+    "contest_id": 2030,
+    "index": "F",
+    "title": "Orangutan Approved Subarrays",
+    "rating": 2400,
+    "rating_status": "official",
+    "official_tags": [
+      "binary search",
+      "data structures",
+      "dp",
+      "greedy",
+      "implementation",
+      "two pointers"
+    ]
+  },
+  "sources": [
+    {
+      "source_type": "statement",
+      "url": "https://codeforces.com/contest/2030/problem/F",
+      "notes": "完整读取每种值只能使用一次删除操作、当前连续块删除规则、静态区间询问以及 sum(n)+sum(q)<=2e5 的约束。"
+    },
+    {
+      "source_type": "editorial",
+      "url": "https://codeforces.com/blog/entry/135218",
+      "notes": "核对官方充要条件：不存在不同值形成的 abab 子序列；并读取 previous/next occurrence、单调左边界、区间最大值线段树和 O(1) 回答询问的方案与代码。"
+    },
+    {
+      "source_type": "luogu_solution",
+      "url": "https://www.luogu.com/article/n8prwx30",
+      "notes": "读取完整题解和代码；独立确认固定右端点的合法左端点构成后缀，并用线段树向右优先查找跨越前驱位置的最右 occurrence。"
+    },
+    {
+      "source_type": "self_derivation",
+      "url": "https://codeforces.com/contest/2030/problem/F",
+      "notes": "独立补全禁止交叉模式的归纳证明。枚举三字符字母表上长度不超过 8 的全部 9841 个序列，递归模拟合法删除与 no-abab 判定完全一致；并对所有非空序列逐区间验证左边界递推。"
+    }
+  ],
+  "reference_candidates": [],
+  "annotation": {
+    "summary": "每种不同值至多选择一次，并且只能在其全部剩余出现已连成连续块时将该块删除；对多个静态子数组判断能否最终删空。",
+    "constraints": "1<=t<=1e4；1<=n,q<=2e5；1<=a_i<=n；所有测试的 n 与 q 总和不超过 2e5；时限 3 秒、内存 512 MB。",
+    "core_idea": "一个序列不可删空当且仅当存在 w<x<y<z，使 b_w=b_y、b_x=b_z 且两值不同，即出现 abab 交叉模式。必要性：在只剩这两种关键出现之前，无论先删 a 还是 b，其两次出现都被另一种值隔开，因此二者都不能成为第一个可删除值。充分性用强归纳：取首值 a，把其相邻出现之间及最后一次出现后的片段分开；若两个片段共享某个值 b，就会形成 a b a b。不存在交叉时这些片段的值集合互不相交，且各片段自身仍无 abab，可分别递归删空，最后所有 a 相邻并一次删除。该性质对子数组具有遗传性，所以固定右端点 r 时，合法左端点必为一个后缀 [L_r,r]。扫描 r，维护每个值的前一次出现 x，以及线段树中每个旧位置 w 已知的下一次出现 next_w。在把 x->r 写入树之前，若存在 w<x 且 next_w>x，则 w<x<next_w<r 构成交叉 a_w,a_x,a_next_w,a_r；所有 l<=w 都非法。在线段树上查找满足 next_w>x 的最右 w，更新 L_r=max(L_{r-1},w+1)，再把位置 x 的 next 值设为 r。已在更早右端点形成的交叉由 L_{r-1} 保留；任何首次由 r 形成的交叉都能归约到当前值的前一次出现。最终询问 [l,r] 合法当且仅当 l>=L_r。",
+    "complexity": "预处理 O(n log n)，每个询问 O(1)，空间 O(n)；所有测试合计 O((sum n) log(sum n)+sum q)。官方逐步右移左指针的实现同为 O(n log n)，因为左指针总共只增 O(n) 次。",
+    "tricks": [
+      "把递归删除过程转换成禁止两个不同值按 abab 顺序交叉出现。",
+      "利用性质对子数组封闭，证明固定右端点时合法左端点是一段后缀。",
+      "扫描第二次出现时，只需寻找一条跨过其前一次出现位置的其他值 occurrence 边。",
+      "在线段树节点维护 next occurrence 最大值，并右子树优先下降寻找最右违规起点。",
+      "将所有询问按右端点理解；预处理最小合法左端点后即可 O(1) 回答。"
+    ],
+    "confidence": "high",
+    "review_status": "reviewed",
+    "verification_notes": [
+      "递归暴力仅允许删除当前所有出现已形成单一连续块的值。",
+      "在三字符字母表上枚举长度 0..8 的全部 9841 个序列，暴力可删性与禁止 abab 判定完全一致。",
+      "对其中所有非空序列枚举全部子数组，线段树所依据的左边界递推与暴力得到的最小合法左端点完全一致。"
+    ],
+    "uncertainty_points": [
+      "充要条件、滑动左边界和区间最大值方案经官方证明、独立 Luogu 实现与完整小规模枚举确认，没有未解决的正确性问题。",
+      "官方把 left 数组描述为 DP/双指针，但决定复杂度的实际组件是单调左边界、最近出现位置和线段树查找；没有机械加入宽泛 dp tag。",
+      "没有新增 forbidden-abab tag：现有 nearest-occurrence、classify-overlap、two-pointers 和 segment-tree 已足以检索该实现，避免为单题模式扩张 taxonomy。"
+    ],
+    "proof_risks": [
+      "禁止的是作为子序列出现的 abab，不要求四个位置连续。",
+      "仅比较每种值的 first/last 区间是否嵌套并不充分；例如 a b a b a 的 first/last 区间嵌套但仍含交叉模式。",
+      "充分性证明必须说明首值各间隙的值集合互不相交，否则在一个间隙中删除某值会使另一个间隙失去使用该值的资格。",
+      "处理 r 时必须先查询旧线段树，再写入 prev[a_r]->r；否则会把当前值自身的新 occurrence 边误当作交叉。",
+      "阈值是 next_w>x，且需 w<x；四个位置必须严格递增。",
+      "若一个 abab 在 r 之前已经形成，它应由 L_{r-1} 保留；证明新模式可由当前值的前一次出现捕获时不能忽略这一点。",
+      "查询答案方向是 l>=L_r；把 L_r 理解成最右非法点而少加 1 会产生 off-by-one。",
+      "线段树查找需要返回最右满足条件的位置；只取区间最大 next 值而不定位其下标，无法正确更新左边界。"
+    ]
+  },
+  "solution_variants": [
+    {
+      "name": "monotone-left-boundary-next-occurrence-segment-tree",
+      "summary": "扫描右端点，以前一次出现为分割点，用线段树寻找最右侧跨过该点的 occurrence 边，维护每个右端点的最小合法左端点。",
+      "complexity": "O(n log n+q) time and O(n) memory.",
+      "confidence": "high",
+      "is_primary": true
+    },
+    {
+      "name": "amortized-two-pointer-range-maximum",
+      "summary": "维护单调左指针 L；加入新右端点时，只要 [L,prev[a_r]) 中存在 next occurrence 跨过 prev[a_r]，就右移 L，并用区间最大值结构重复判定。",
+      "complexity": "O(n log n+q) time and O(n) memory because L advances at most n times.",
+      "confidence": "high",
+      "is_primary": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "algorithm/two-pointers",
+      "importance": "primary",
+      "evidence": "固定右端点的合法起点形成后缀，最小合法左端点 L_r 随 r 单调不减；官方实现通过持续右移该指针排除新交叉。",
+      "solution_variant": "amortized-two-pointer-range-maximum"
+    },
+    {
+      "tag": "data-structure/segment-tree",
+      "importance": "primary",
+      "evidence": "需要在位置前缀中判断并定位最右的 w，使该位置的下一次同值出现跨过当前 prev[a_r]；线段树维护区间最大 next 并支持定向下降。",
+      "solution_variant": "monotone-left-boundary-next-occurrence-segment-tree"
+    },
+    {
+      "tag": "trick/nearest-occurrence",
+      "importance": "primary",
+      "evidence": "每次加入 r 只围绕当前值的前一次出现 x 检测交叉，并在旧位置记录下一次出现；这一压缩把任意 abab 搜索降为 occurrence 边查询。",
+      "solution_variant": "monotone-left-boundary-next-occurrence-segment-tree"
+    },
+    {
+      "tag": "trick/classify-overlap",
+      "importance": "secondary",
+      "evidence": "可删性由两种值的出现顺序是否交叉决定：嵌套或分离可以递归删除，w<x<next_w<r 的交叉模式不可以。",
+      "solution_variant": "monotone-left-boundary-next-occurrence-segment-tree"
+    },
+    {
+      "tag": "trick/monotonicity",
+      "importance": "secondary",
+      "evidence": "合法序列的任意子数组仍合法，因此对固定 r，若 [l,r] 合法，则所有更大的左端点也合法，查询域压缩为单个阈值 L_r。",
+      "solution_variant": "monotone-left-boundary-next-occurrence-segment-tree"
+    },
+    {
+      "tag": "paradigm/offline",
+      "importance": "secondary",
+      "evidence": "数组与所有区间询问均静态；算法一次按右端点扫描预处理 L_r，之后每个询问只比较两个整数。",
+      "solution_variant": "monotone-left-boundary-next-occurrence-segment-tree"
+    }
+  ]
+}
